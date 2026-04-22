@@ -103,14 +103,14 @@
 <header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
     <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
         <div class="flex items-center space-x-12">
-            <div class="relative group py-6 -my-6 cursor-pointer">
+            <div id="nav-trigger-zone" class="relative group py-6 -my-6 cursor-pointer">
                 <button class="text-white flex flex-col justify-center items-start gap-1.5 focus:outline-none">
                     <span class="w-6 h-[2px] bg-current rounded-full"></span>
                     <span class="w-4 h-[2px] bg-current rounded-full transition-all group-hover:w-6"></span>
                     <span class="w-6 h-[2px] bg-current rounded-full"></span>
                 </button>
                 <!-- Simplified Sidebar Bridge -->
-                <div class="fixed left-0 top-20 bottom-0 w-80 bg-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border-r border-white/5 pointer-events-none group-hover:pointer-events-auto">
+                <div id="sidebar-menu" class="fixed left-0 top-20 bottom-0 w-80 bg-black opacity-0 invisible transition-all duration-300 z-50 border-r border-white/5 pointer-events-none">
                     <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 pt-6">
                         <a href="index.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Tax Intelligence</a>
                         <a href="income.html" class="flex items-center px-10 py-5 bg-[#111] text-white border-l-4 border-white transition-colors">Salaries & RSUs</a>
@@ -3126,5 +3126,31 @@ I certify that the above workday split is accurate for the relevant grant period
         </div>
     </div>
 
+    <script>
+        // Stable Hover Navigation Logic
+        (function() {
+            const trigger = document.getElementById('nav-trigger-zone');
+            const menu = document.getElementById('sidebar-menu');
+            let timeout;
+
+            const openMenu = () => {
+                clearTimeout(timeout);
+                menu.classList.remove('opacity-0', 'invisible', 'pointer-events-none');
+                menu.classList.add('opacity-100', 'visible', 'pointer-events-auto');
+            };
+
+            const closeMenu = () => {
+                timeout = setTimeout(() => {
+                    menu.classList.remove('opacity-100', 'visible', 'pointer-events-auto');
+                    menu.classList.add('opacity-0', 'invisible', 'pointer-events-none');
+                }, 150);
+            };
+
+            trigger.addEventListener('mouseenter', openMenu);
+            trigger.addEventListener('mouseleave', closeMenu);
+            menu.addEventListener('mouseenter', openMenu);
+            menu.addEventListener('mouseleave', closeMenu);
+        })();
+    </script>
 </body>
 </html>
