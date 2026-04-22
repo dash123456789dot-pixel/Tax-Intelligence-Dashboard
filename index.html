@@ -7,119 +7,72 @@
 <!-- Tailwind CSS v3 with plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
-        tailwind.config = {
-          theme: {
-            extend: {
-              fontFamily: {
-                sans: ['Inter', 'sans-serif'],
-                display: ['Outfit', 'sans-serif'],
-                mono: ['JetBrains Mono', 'monospace'],
-              },
-              colors: {
-                brandDark: '#0c0c0c',
-                brandGray: '#1c1c1c',
-                brandGold: '#D4AF37',
-                brandRed: '#991B1B',
-                brandGreen: '#10B981',
-                brandCyan: '#06B6D4'
-              },
-              letterSpacing: {
-                widest: '0.25em',
-                header: '0.5em'
-              },
-              animation: {
-                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                'beam': 'beam-flow 3s linear infinite',
-                'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
-                'flow-down': 'flow-down 2s linear infinite',
-              },
-              keyframes: {
-                'beam-flow': {
-                  '0%': { backgroundPosition: '200% 0' },
-                  '100%': { backgroundPosition: '-200% 0' },
-                },
-                'glow-pulse': {
-                  '0%, 100%': { opacity: 0.4, filter: 'blur(1px)' },
-                  '50%': { opacity: 1, filter: 'blur(3px)' },
-                },
-                'flow-down': {
-                  '0%': { top: '0%', opacity: 0 },
-                  '20%': { opacity: 1 },
-                  '80%': { opacity: 1 },
-                  '100%': { top: '100%', opacity: 0 },
-                }
-              }
-            }
-          }
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brandDark: '#0c0c0c',
+            brandGray: '#1c1c1c',
+            brandGold: '#D4AF37',
+            brandRed: '#991B1B',
+            brandGreen: '#10B981',
+            brandCyan: '#06B6D4'
+          },
+          letterSpacing: { widest: '0.25em', header: '0.5em' }
         }
-    </script>
-<style data-purpose="custom-typography">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
-        
-        ::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #05070a;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(255,255,255,0.15);
-          border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(212, 175, 55, 0.4);
-        }
+      }
+    }
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
+    
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
 
-        body {
-          font-family: 'Inter', sans-serif;
-          background-color: #050505;
-          color: #A1A1AA;
-          background-image: 
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #050505;
+        color: #A1A1AA;
+        background-image: 
             radial-gradient(circle at top right, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
             radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.02) 0%, transparent 40%);
-          background-attachment: fixed;
-        }
+        background-attachment: fixed;
+    }
 
-        .silver-shimmer {
-          color: #E2E8F0;
-          font-weight: 500;
-          letter-spacing: 0.15em;
-        }
+    .glass-card {
+        background-color: #121212;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card-hover:hover, .glass-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background-color: #161616;
+    }
 
-        .stat-hero {
-          font-family: 'Inter', sans-serif;
-          font-weight: 400;
-          letter-spacing: -0.02em;
-          color: #F8FAFC;
-        }
+    .heading-silver-shimmer {
+        background: linear-gradient(90deg, #94A3B8 0%, #F1F5F9 45%, #FFFFFF 50%, #F1F5F9 55%, #94A3B8 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer-text 5s linear infinite;
+        font-weight: 800;
+        text-shadow: 0 0 20px rgba(255,255,255,0.05);
+    }
+    @keyframes shimmer-text { 
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
 
-        .glass-card {
-          background-color: #121212;
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
-        }
-
-        .glass-card-hover:hover {
-          background-color: #181818;
-          border-color: rgba(255, 255, 255, 0.1);
-          transition: all 0.2s ease;
-        }
-
-        .heading-silver-shimmer {
-          background: linear-gradient(90deg, #94A3B8 0%, #F8FAFC 50%, #94A3B8 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: shimmer-text 4s linear infinite;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          display: inline-block;
-        }
-
-        @keyframes shimmer-text {
-          to { background-position: 200% center; }
-        }
+    .stat-hero { font-family: 'Inter', sans-serif; font-weight: 400; letter-spacing: -0.02em; color: #F8FAFC; }
 
         input[type=range] {
           -webkit-appearance: none;
@@ -208,158 +161,196 @@
           border: 1px solid rgba(6, 182, 212, 0.2);
           backdrop-filter: blur(10px);
         }
+
+        /* CPA Audit Report Styles */
+        @media print {
+          body { background: white !important; color: black !important; font-family: 'Inter', sans-serif !important; }
+          #dashboard-shell, header, .sidebar-drawer, .no-print, button, .pulsating-beam, .flow-dot { display: none !important; }
+          .print-only { display: block !important; width: 100% !important; margin: 0 !important; }
+          .report-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+          .report-table th, .report-table td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 10pt; }
+          .report-table th { background-color: #f5f5f5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; }
+          .report-header { border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 40px; }
+          .report-footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; font-size: 8pt; color: #666; }
+        }
+        .print-only { display: none; }
+        
+        /* Currency and Tooltip helpers */
+        .currency-font { font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
     </style>
 </head>
 <body class="bg-[#050505] min-h-screen text-white antialiased selection:bg-brandGold selection:text-black">
-<!-- BEGIN: Navigation -->
-<header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-<div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
-<div class="flex items-center space-x-6 lg:space-x-12">
-    <!-- Hamburger Menu with Dropdown -->
-    <div class="relative group py-6 -my-6 cursor-pointer">
-        <button class="text-white group-hover:text-brandCyan transition-colors focus:outline-none flex flex-col justify-center items-start gap-1.5 py-4 pr-6">
-            <span class="w-6 h-[2px] bg-current rounded-full"></span>
-            <span class="w-4 h-[2px] bg-current rounded-full transition-all group-hover:w-6"></span>
-            <span class="w-6 h-[2px] bg-current rounded-full"></span>
-        </button>
-        
-        <!-- Dropdown Menu -->
-        <div class="fixed left-0 top-20 bottom-0 w-80 bg-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-y-auto border-r border-white/5 pointer-events-none group-hover:pointer-events-auto">
-            <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 w-full pt-6 pb-12">
-                <!-- Dashboard (Active) -->
-                <a href="#" class="flex items-center px-10 py-5 bg-[#111] text-white border-l-4 border-white transition-colors">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    </span>
-                    <span>Dashboard</span>
-                </a>
-                
-                <!-- Wising AI -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M5 16l1 2.5L8.5 19.5 6 20.5 5 23l-1-2.5L1.5 19.5 4 18.5z"/></svg>
-                    </span>
-                    <span>Wising AI</span>
-                </a>
 
-                <!-- Active Positions -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                    </span>
-                    <span>Active Positions</span>
-                </a>
-
-                <!-- AI Behavioral Insights -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    </span>
-                    <span>AI Behavioral Insights</span>
-                </a>
-
-                <!-- Behavioral Insights -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                    </span>
-                    <span>Behavioral Insights</span>
-                </a>
-
-                <!-- Trade History -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
-                    </span>
-                    <span>Trade History</span>
-                </a>
-
-                <!-- P&L Calendar -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    </span>
-                    <span>P&L Calendar</span>
-                </a>
-
-                <!-- Integrations -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                    </span>
-                    <span>Integrations</span>
-                </a>
-
-                <!-- Tax Intelligence -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                    </span>
-                    <span>Tax Intelligence</span>
-                </a>
-
-                <div class="h-20"></div>
-                
-                <!-- Settings -->
-                <a href="#" class="flex items-center px-10 py-5 hover:text-white hover:bg-white/5 transition-colors border-l-4 border-transparent mt-auto">
-                    <span class="w-4 h-4 mr-8 flex justify-center items-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51h.22a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
-                    </span>
-                    <span>Settings</span>
-                </a>
-            </div>
+<!-- BEGIN: CPA TABULAR AUDIT REPORT (PRINT ONLY) -->
+<div id="cpa-audit-report" class="print-only p-12">
+    <div class="report-header flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-black uppercase tracking-[0.2em] mb-2">Cross-Border Tax Certification</h1>
+            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">WISING Wealth Intelligence · FY 2025-26 · Cross-Border Audit</p>
+        </div>
+        <div class="text-right">
+            <p class="text-[10px] font-bold uppercase text-gray-400">Exported: <span id="reportTimestamp"></span></p>
         </div>
     </div>
-    <div class="flex items-center cursor-pointer ml-2">
-        <svg class="mr-3" width="36" height="36" viewBox="0 0 100 100" fill="none">
-            <!-- Left stroke -->
-            <path d="M15 35 L35 75 L45 55" stroke="url(#silverGrad)" stroke-width="12" stroke-linejoin="round" fill="none"/>
-            <!-- Right stroke arrow -->
-            <path d="M35 75 L65 30 L85 10" stroke="url(#silverGrad)" stroke-width="12" stroke-linejoin="round" fill="none"/>
-            <!-- Arrow Head -->
-            <polygon points="65,10 95,5 80,35" fill="url(#silverGrad)"/>
-            <defs>
-              <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#94A3B8" />
-                <stop offset="50%" stop-color="#F8FAFC" />
-                <stop offset="100%" stop-color="#64748B" />
-              </linearGradient>
-            </defs>
-        </svg>
-        <span class="text-2xl font-light text-white uppercase tracking-[0.4em] pt-1" style="color: #d1d5db;">WISING</span>
-    </div>
-</div> <!-- Close left flex group -->
 
-<!-- Right Actions -->
-<div class="flex items-center space-x-6">
-    <!-- Search Icon -->
-    <button class="text-white/40 hover:text-white transition-colors">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    </button>
-    
-    <!-- Connect Button -->
-    <button class="bg-white text-black px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-white/90 transition-all flex items-center space-x-2">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-        <span>Connect</span>
-    </button>
-
-    <!-- Credits Pill -->
-    <div class="bg-[#111] border border-white/10 px-4 py-1.5 rounded-full text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] flex items-center space-x-2">
-        <svg class="text-white/80" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-        <span>12 / 50 left</span>
+    <!-- Audit Assumptions & Statutory Basis [NEW] -->
+    <div class="grid grid-cols-2 gap-8 my-10">
+        <div>
+            <h2 class="text-sm font-black uppercase tracking-widest mb-4">A. Audit Assumptions & Basis</h2>
+            <table class="report-table">
+                <tbody>
+                    <tr><td class="bg-gray-50 font-bold">Exchange Rate Basis</td><td>₹83.50 / USD (Ref: SBI/IRS Avg)</td></tr>
+                    <tr><td class="bg-gray-50 font-bold">India Surcharge Tier</td><td>15.00% (High-Net-Worth NRI)</td></tr>
+                    <tr><td class="bg-gray-50 font-bold">US 1116 Category</td><td>Passive Category (s.904)</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2 class="text-sm font-black uppercase tracking-widest mb-4">B. Statutory Certifications</h2>
+            <table class="report-table">
+                <tbody>
+                    <tr><td class="bg-gray-50 font-bold">US Residency</td><td>Resident Alien (Form 1040)</td></tr>
+                    <tr><td class="bg-gray-50 font-bold">India Residency</td><td>Non-Resident (NRI)</td></tr>
+                    <tr><td class="bg-gray-50 font-bold">Treaty Basis</td><td>US-India DTAA (Article 25)</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Refresh Action Icon -->
-    <button class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-[#080808] hover:bg-white/5">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-    </button>
+    <!-- Table 1: Global Household Income -->
+    <h2 class="text-sm font-black uppercase tracking-widest mb-4">I. Global Household Income Composition</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Income Component</th>
+                <th>Jurisdiction</th>
+                <th>Type</th>
+                <th>Amount (INR)</th>
+            </tr>
+        </thead>
+        <tbody id="reportIncomeTable">
+            <tr><td>Standard Salary (W2 equivalent)</td><td>US/India</td><td>Ordinary</td><td>₹2,50,00,000</td></tr>
+            <tr><td>Investment Portfolio (Base)</td><td>Global</td><td>Capital</td><td>₹1,50,00,000</td></tr>
+            <tr class="font-bold"><td>Projected Real Estate Exit</td><td>India</td><td>LTCG</td><td id="rptSimGain">₹0</td></tr>
+            <tr class="bg-gray-100 font-black"><td>TOTAL WORLDWIDE INCOME</td><td>-</td><td>-</td><td id="rptTotalIncome">₹4,00,00,000</td></tr>
+        </tbody>
+    </table>
 
-    <!-- User Profile Icon -->
-    <button class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-[#080808] hover:bg-white/5">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-    </button>
+    <!-- Table 2: India Source Tax (s.112) -->
+    <h2 class="text-sm font-black uppercase tracking-widest mt-12 mb-4">II. Jurisdiction A: India (Source) Computation</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Provision</th>
+                <th>Treaty Citation</th>
+                <th>Characterization</th>
+                <th>Base Amount</th>
+                <th>Liability</th>
+            </tr>
+        </thead>
+        <tbody id="reportIndiaTable">
+            <tr><td>s.112 LTCG</td><td>Article 6 / 13</td><td>Real Estate Exit</td><td id="rptIndBase">₹0</td><td id="rptIndTax">₹0</td></tr>
+            <tr><td>Income Assessment</td><td>Article 25</td><td>Other Source</td><td>₹2.50 Cr</td><td>₹77,28,000</td></tr>
+            <tr class="bg-gray-100 font-black"><td>NET INDIA LIABILITY</td><td>-</td><td>-</td><td>-</td><td id="rptIndNet">₹64,82,800</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Table 3: US Federal Bridge (Form 1116) -->
+    <h2 class="text-sm font-black uppercase tracking-widest mt-12 mb-4">III. Jurisdiction B: USA (Global) Federal Bridge</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Federal Component</th>
+                <th>IRS Basket</th>
+                <th>Gross Liability</th>
+                <th>FTC s.1116 Cap</th>
+                <th>Net US Payable</th>
+            </tr>
+        </thead>
+        <tbody id="reportUSTable">
+            <tr>
+                <td>Worldwide Assessment</td>
+                <td class="text-blue-600 font-bold">Passive</td>
+                <td id="rptUSGross">₹1.09 Cr</td>
+                <td id="rptUSFTC">- ₹64,82,800</td>
+                <td id="rptUSNet">₹46,34,064</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Table 4: Final Consolidation -->
+    <h2 class="text-sm font-black uppercase tracking-widest mt-12 mb-4">IV. Global Performance Consolidation</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Total Economic Outflow (INR)</th>
+                <th>Global Effective Rate (%)</th>
+                <th>Tax Leakage Variance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="font-black">
+                <td>Consolidated Liability</td>
+                <td id="rptGlobalTotal">₹1,11,16,864</td>
+                <td id="rptGlobalRate">27.79%</td>
+                <td id="rptLeakage">0.00%</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="report-footer flex justify-between items-start">
+        <div class="max-w-2xl">
+            <p class="font-bold uppercase text-[9px] mb-2 tracking-widest text-gray-500">CPA Technical Note:</p>
+            <p class="text-[9px] text-gray-400 italic leading-relaxed">This audit report traces simulated India property gains to US Form 1116 (Passive Category). It assumes DTAA Article 25 relief mechanisms. This document is a technical computation model and should be cross-verified with actual Form 1040/1116 instructions for high-income surcharges (s.1411/s.1). State nexus taxes are explicitly excluded from this federal model.</p>
+        </div>
+        <div class="w-64 border-t border-black mt-8 text-center pt-2">
+            <p class="text-[10px] font-black uppercase">Certified WISING Audit Signature</p>
+            <p class="text-[8px] text-gray-500">System Attestation Identifier: 9287-AG-26</p>
+        </div>
+    </div>
 </div>
-</div>
+
+<div id="dashboard-shell"> <!-- Start Shell to hide on print -->
+<!-- BEGIN: Navigation -->
+<header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+        <div class="flex items-center space-x-12">
+            <div class="relative group py-6 -my-6 cursor-pointer">
+                <button class="text-white flex flex-col justify-center items-start gap-1.5 focus:outline-none">
+                    <span class="w-6 h-[2px] bg-current rounded-full"></span>
+                    <span class="w-4 h-[2px] bg-current rounded-full transition-all group-hover:w-6"></span>
+                    <span class="w-6 h-[2px] bg-current rounded-full"></span>
+                </button>
+                <!-- Simplified Sidebar Bridge -->
+                <div class="fixed left-0 top-20 bottom-0 w-80 bg-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border-r border-white/5 pointer-events-none group-hover:pointer-events-auto">
+                    <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 pt-6">
+                        <a href="index.html" class="flex items-center px-10 py-5 bg-[#111] text-white border-l-4 border-white transition-colors">Tax Intelligence</a>
+                        <a href="income.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Salaries & RSUs</a>
+                    </div>
+                </div>
+            </div>
+            <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                <div class="w-8 h-8 bg-brandGold rounded flex items-center justify-center text-black font-black text-lg">W</div>
+                <span class="text-xs font-black uppercase tracking-[0.4em] text-white">Wising Intelligence</span>
+            </a>
+        </div>
+        <div class="flex items-center space-x-8">
+            <div class="flex items-center space-x-4">
+                <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
+                <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Global Node: Active</span>
+            </div>
+            <div class="w-px h-6 bg-white/10"></div>
+            <!-- Export Icon (Dashboard Specific) -->
+            <button onclick="window.print()" class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-[#080808] hover:bg-white/5 relative group">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span class="absolute top-full mt-2 right-0 bg-black border border-white/10 px-2 py-1 rounded text-[8px] font-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">CPA Audit Export</span>
+            </button>
+            <button class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </button>
+        </div>
+    </div>
 </header>
 <!-- BEGIN: Secondary Header Alert Bar -->
 <div class="border-b border-white/5 bg-black/60">
@@ -385,13 +376,13 @@
 <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
 <div class="relative flex flex-col space-y-6">
 <p class="text-lg leading-relaxed text-white/95 max-w-5xl">
-<span class="text-brandGold font-extrabold">Good morning Arjun.</span> You owe roughly <span class="text-brandGold font-extrabold underline decoration-brandGold/30 underline-offset-4">INR 1.20 Crore</span> in taxes this year across India, the US, and UAE. Your most urgent risk: your Indian mutual funds may be creating a <span class="text-brandRed font-extrabold underline decoration-brandRed/50 underline-offset-4">permanent US tax problem that cannot be undone</span> — tap the red alert below. Your biggest immediate saving: <span class="text-brandGold font-extrabold">hold your Apple shares for 12 more days</span> and save INR 67,000 without selling anything. Most urgent deadline: <span class="text-brandRed font-extrabold">US tax payment in 23 days.</span>
+<span class="text-brandGold font-extrabold">Good morning Arjun.</span> You owe roughly <span class="text-brandGold font-extrabold underline decoration-brandGold/30 underline-offset-4">INR 1.11 Crore</span> in taxes this year across India and the US. Your most urgent risk: your Indian mutual funds may be creating a <span class="text-brandRed font-extrabold underline decoration-brandRed/50 underline-offset-4">permanent US tax problem that cannot be undone</span> — tap the red alert below. Your biggest immediate saving: <span class="text-brandGold font-extrabold">hold your Apple shares for 12 more days</span> and save INR 67,000 without selling anything. Most urgent deadline: <span class="text-brandRed font-extrabold">US tax payment in 23 days.</span>
 </p>
 <!-- BEGIN: Interactive Summary Chips -->
 <div class="flex flex-wrap items-center gap-4 pt-6 pb-2">
 <div class="glass-card-hover bg-white/5 border border-white/10 px-6 py-3 rounded-xl flex flex-col cursor-pointer transition-all">
 <span class="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase mb-1">Total Owed</span>
-<span class="text-lg font-bold heading-silver-shimmer">₹1.20 Cr</span>
+<span class="text-lg font-bold heading-silver-shimmer">₹1.11 Cr</span>
 </div>
 <div class="glass-card-hover bg-white/5 border border-brandRed/40 px-6 py-3 rounded-xl flex flex-col cursor-pointer transition-all">
 <span class="text-[10px] font-bold text-brandRed/80 tracking-[0.2em] uppercase mb-1">Biggest Risk</span>
@@ -411,16 +402,21 @@
 <span class="w-2 h-2 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,0.8)]"></span>
 <span class="text-[11px] font-black text-white uppercase tracking-wider">PFIC ALERT</span>
 </div>
-<div class="px-5 py-2 bg-brandCyan/15 border border-brandCyan/40 rounded-full flex items-center space-x-3 cursor-pointer glass-card-hover">
+<div class="px-5 py-2 bg-brandCyan/15 border border-brandCyan/40 rounded-full flex items-center space-x-3 cursor-pointer glass-card-hover group relative">
 <span class="w-2 h-2 rounded-full bg-brandCyan shadow-[0_0_12px_rgba(6,182,212,0.8)]"></span>
-<span class="text-[11px] font-black text-white uppercase tracking-wider">GC YEAR</span>
+<span class="text-[11px] font-black text-white uppercase tracking-wider">GC YEAR 4</span>
+<!-- Tooltip for GC Specificity -->
+<div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-[#111] border border-white/10 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Immigration Delta</p>
+    <p class="text-xs font-bold text-white leading-relaxed">Year 4 of 8. LTR Threshold starts at Year 6. v4.1 Deemed IRA Distribution alert active.</p>
 </div>
 </div>
 </div>
-<div class="border-t border-white/10 pt-6 flex items-center justify-between text-xs font-bold uppercase tracking-widest">
+</div>
+<div class="border-t border-white/10 pt-6 flex items-center justify-between text-[11px] font-bold uppercase tracking-widest">
 <div class="flex items-center space-x-3">
 <span class="w-2 h-2 rounded-full bg-brandGold"></span>
-<span class="text-white/60">Your liability estimate uses incomplete data — <span class="text-brandGold">Retirement (40%)</span> and <span class="text-brandGold">Business (0%)</span> remaining.</span>
+<span class="text-white/70">Your liability estimate uses incomplete data — <span class="text-brandGold">Retirement (40%)</span> and <span class="text-brandGold">Business (0%)</span> remaining.</span>
 </div>
 <a class="text-brandGold hover:text-white transition-colors px-4 py-2 border border-brandGold/30 rounded-lg bg-brandGold/5" href="#">Complete Profile now →</a>
 </div>
@@ -428,36 +424,39 @@
 </section>
 <!-- BEGIN: Context Filters Info -->
 <div class="grid grid-cols-4 gap-12 pb-6 border-b border-white/10">
-<div>
-<h4 class="text-[10px] font-bold text-white/40 uppercase tracking-[0.25em] mb-2 heading-silver-shimmer">Tax Year</h4>
-<p class="text-base font-bold text-brandGold">FY 2025-2026</p>
-</div>
-<div>
-<h4 class="text-[10px] font-bold text-white/40 uppercase tracking-[0.25em] mb-2 heading-silver-shimmer">Your Tax Identity</h4>
-<p class="text-base font-bold text-brandGold">NRI — India Status</p>
-</div>
-<div>
-<h4 class="text-[10px] font-bold text-white/40 uppercase tracking-[0.25em] mb-2 heading-silver-shimmer">Countries Active</h4>
-<p class="text-base font-bold text-brandGold">India · US · UAE</p>
-</div>
-<div class="flex justify-between items-end">
-<div>
-<h4 class="text-[10px] font-bold text-white/40 uppercase tracking-[0.25em] mb-2 heading-silver-shimmer">Primary Currency</h4>
-<p class="text-base font-bold text-brandGold">INR (₹)</p>
-</div>
-<span class="text-[11px] italic text-white/30 font-medium">Auto-updates across all nodes</span>
-</div>
+    <div>
+        <h4 class="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase mb-2">Tax Year</h4>
+        <p class="text-base font-black text-brandGold uppercase tracking-tight">FY 2025-2026</p>
+    </div>
+    <div>
+        <h4 class="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase mb-2">Your Tax Identity</h4>
+        <p class="text-base font-black text-brandGold uppercase tracking-tight">NRI — India Status</p>
+    </div>
+    <div>
+        <h4 class="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase mb-2">Countries Active</h4>
+        <p class="text-base font-black text-brandGold uppercase tracking-tight">India · US</p>
+    </div>
+    <div class="flex justify-between items-end">
+        <div>
+            <h4 class="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase mb-2">Primary Currency</h4>
+            <p class="text-base font-black text-brandGold uppercase tracking-tight">INR (₹)</p>
+        </div>
+        <span class="text-[9px] italic text-white/30 font-bold uppercase tracking-widest">Auto-Sync Active</span>
+    </div>
 </div>
 <!-- BEGIN: Top Stat Cards -->
-<div class="grid grid-cols-12 gap-8">
-<!-- Total Owed Card (8 columns) -->
-<div class="col-span-12 lg:col-span-8 glass-card p-10 rounded-3xl flex flex-col justify-between">
-<div>
-<h3 class="text-[11px] font-bold text-white/50 tracking-[0.3em] uppercase mb-10 heading-silver-shimmer">Total Estimated Tax Liability</h3>
+<div class="grid grid-cols-12 gap-8" id="statCardsSection">
+    <!-- Total Owed Card (8 columns) -->
+    <div class="col-span-12 lg:col-span-8 glass-card p-12 rounded-3xl flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-12 opacity-5">
+            <span class="text-[120px] font-black leading-none">₹</span>
+        </div>
+        <div>
+            <h3 class="text-[11px] font-black text-white/40 tracking-[0.4em] uppercase mb-12">Total Estimated Tax Liability</h3>
 <div class="flex flex-col items-center justify-center flex-grow py-8">
 <div class="text-center">
-<div class="stat-hero text-white mb-4 text-8xl">₹1.20 Cr</div>
-<p class="text-sm font-bold text-brandRed uppercase tracking-widest">+12.4% vs last year <span class="opacity-60 ml-2 font-medium">· Projection mismatch detected</span></p>
+<div class="stat-hero text-white mb-4 text-8xl">₹1.11 Cr</div>
+<p class="text-[13px] font-bold text-brandRed uppercase tracking-widest">+12.4% vs last year <span class="opacity-70 ml-2 font-medium">· Projection mismatch detected</span></p>
 </div>
 </div>
 </div>
@@ -465,18 +464,18 @@
 <div class="space-y-2">
 <div class="flex items-center space-x-3">
 <span class="w-2.5 h-2.5 rounded-full bg-brandGold shadow-[0_0_8px_rgba(197,160,89,0.5)]"></span>
-<span class="text-[11px] font-bold text-white/60 uppercase tracking-widest heading-silver-shimmer">India Liability</span>
+<span class="text-[13px] font-bold text-white/70 uppercase tracking-widest heading-silver-shimmer">Net India Liability</span>
 </div>
-<div class="text-3xl font-extrabold text-white">₹77.28L</div>
-<div class="text-[11px] font-bold text-brandGreen uppercase tracking-wider bg-brandGreen/10 px-3 py-1 rounded inline-block">Tax treaty active — FTC applied</div>
+<div class="text-3xl font-extrabold text-white">₹64.83L</div>
+<div class="text-[13px] font-bold text-brandGreen uppercase tracking-wider bg-brandGreen/10 px-3 py-1 rounded inline-block">Post-TDS Credit (Form 26AS)</div>
 </div>
 <div class="space-y-2 border-l border-white/10 pl-10">
 <div class="flex items-center space-x-3">
 <span class="w-2.5 h-2.5 rounded-full bg-brandCyan shadow-[0_0_8px_rgba(6,182,212,0.5)]"></span>
-<span class="text-[11px] font-bold text-white/60 uppercase tracking-widest heading-silver-shimmer">United States Liability</span>
+<span class="text-[13px] font-bold text-white/70 uppercase tracking-widest heading-silver-shimmer">Net US Liability</span>
 </div>
-<div class="text-3xl font-extrabold text-white">₹35.28L</div>
-<div class="text-[11px] font-bold text-brandGold uppercase tracking-wider bg-brandGold/10 px-3 py-1 rounded inline-block">Withheld at source · claimable</div>
+<div class="text-3xl font-extrabold text-white">₹46.34L</div>
+<div class="text-[13px] font-bold text-brandGold uppercase tracking-wider bg-brandGold/10 px-3 py-1 rounded inline-block">Post-FTC Claim (Reg + NIIT)</div>
 </div>
 </div>
 </div>
@@ -543,7 +542,7 @@
 <!-- India Status Zone -->
 <div class="glass-card p-8 rounded-3xl flex flex-col space-y-8">
 <div class="flex justify-between items-start">
-<span class="px-3 py-1.5 bg-brandGold/20 border border-brandGold/40 rounded text-[11px] font-black text-brandGold uppercase tracking-widest">NRI / RNOR Status</span>
+<span class="px-3 py-1.5 bg-brandGold/20 border border-brandGold/40 rounded text-[11px] font-black text-brandGold uppercase tracking-widest">NRI / NR Status</span>
 <span class="text-[10px] font-bold text-white/20 uppercase tracking-widest">WISING-v6.2</span>
 </div>
 <div class="space-y-6">
@@ -607,23 +606,20 @@
 <div class="w-40 h-40 border border-brandGold rounded-full animate-ping"></div>
 </div>
 <div class="text-center relative z-10">
-<p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-3">FTC Credit Bridge</p>
-<p class="text-4xl font-black heading-silver-shimmer stat-hero">₹35.36L</p>
-<p class="text-[10px] font-black text-brandCyan uppercase mt-3 tracking-widest bg-brandCyan/10 px-4 py-1.5 rounded-full border border-brandCyan/20">Double Tax Protection Active</p>
+<p class="text-[12px] font-bold text-white/60 uppercase tracking-[0.3em] mb-3">FTC Credit Bridge (Capped)</p>
+<p class="text-4xl font-black heading-silver-shimmer stat-hero">₹64.83L</p>
+<p class="text-[12px] font-black text-brandCyan uppercase mt-3 tracking-widest bg-brandCyan/10 px-4 py-1.5 rounded-full border border-brandCyan/20">US FTC Claim: s.901</p>
 </div>
 </div>
 <div class="space-y-4 pt-4 border-t border-white/10">
-<div class="flex items-start space-x-4 p-4 bg-brandRed/10 border border-brandRed/30 rounded-2xl">
-<div class="w-2.5 h-2.5 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,0.8)] mt-1.5 shrink-0"></div>
+<div class="flex items-start space-x-4 p-4 bg-brandCyan/10 border border-brandCyan/30 rounded-2xl">
+<div class="w-2.5 h-2.5 rounded-full bg-brandCyan shadow-[0_0_12px_rgba(6,182,212,0.8)] mt-1.5 shrink-0"></div>
 <p class="text-[12px] font-bold text-white leading-relaxed">
-                                    DUAL RESIDENCY DETECTED: WISING AI requires manual verification of Form 67 data before filing.
-                                </p>
+    FTC BRIDGE ACTIVE: Claiming credit on US Node (Form 1116) for taxes paid at India source.
+</p>
 </div>
-<div class="p-4 bg-white/5 border border-white/10 rounded-2xl">
-<p class="text-[11px] font-medium text-white/60 leading-relaxed italic">
-<span class="text-brandGold font-bold not-italic uppercase tracking-widest mr-2">CPA Alert:</span> No-lapse rule active. Node routed for manual review.
-                                </p>
-</div>
+<!-- Removed Dual Residency Conflation -->
+<!-- CPA Alert relocated to US Card -->
 </div>
 </div>
 </div>
@@ -678,8 +674,17 @@
 </div>
 </div>
 <p class="text-[10px] text-white/30 uppercase tracking-[0.2em] leading-relaxed pt-2">
-                        Engine rerun scheduled for 01-OCT. Status-lock active.
-                    </p>
+    Engine rerun scheduled for 01-OCT. Status-lock active.
+</p>
+<div class="mt-4 p-4 bg-white/5 border border-white/10 rounded-2xl">
+    <p class="text-[11px] font-medium text-white/60 leading-relaxed italic">
+    <span class="text-brandGold font-bold not-italic uppercase tracking-widest mr-2">CPA Alert:</span> No-lapse rule active. Node routed for manual review.
+    </p>
+</div>
+<div class="mt-3 p-4 bg-brandRed/5 border border-brandRed/10 rounded-2xl">
+    <p class="text-[10px] font-black text-brandRed uppercase tracking-widest mb-1">LTR THRESHOLD WARNING</p>
+    <p class="text-[11px] text-white/60 leading-relaxed">Year 6 LTR clock active. Deemed IRA distribution protocol (v4.1) triggered for forward-planning.</p>
+</div>
 </div>
 </div>
 </section>
@@ -694,7 +699,7 @@
 <div class="hidden md:block w-px h-6 bg-brandRed/20"></div>
 <div class="flex items-center space-x-3">
 <div class="w-2.5 h-2.5 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,1)] animate-pulse"></div>
-<span class="text-[13px] font-extrabold text-white tracking-widest uppercase">Form 67 due in &lt;14 days</span>
+<span class="text-[13px] font-extrabold text-white tracking-widest uppercase">Form 1116 (USA) due in &lt;14 days</span>
 </div>
 <div class="hidden md:block w-px h-6 bg-brandRed/20"></div>
 <div class="flex items-center space-x-3">
@@ -730,7 +735,7 @@
 <div class="pt-4 border-t border-white/10">
 <div class="flex items-center space-x-2">
 <span class="w-2 h-2 rounded-full bg-brandGreen"></span>
-<span class="text-[11px] font-bold text-white/60 uppercase tracking-wider">RNOR Status Active</span>
+<span class="text-[12px] font-bold text-white/70 uppercase tracking-wider">NR Status Active</span>
 </div>
 </div>
 </div>
@@ -741,13 +746,33 @@
 <div class="absolute -top-1 right-0 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_12px_#C5A059] animate-pulse"></div>
 </div>
 <!-- Central DTAA Bridge Card -->
-<div class="w-1/4 glass-card p-6 rounded-2xl z-10 border-white/20 text-center flex flex-col items-center justify-center space-y-3">
-<span class="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] heading-silver-shimmer">Bridge Protocol</span>
-<div class="py-2 px-4 bg-white/5 border border-white/10 rounded-lg">
-<p class="text-[12px] font-extrabold text-brandGold uppercase tracking-widest">DTAA BRIDGE</p>
-<p class="text-[10px] font-bold text-white/60 uppercase mt-1">FTC s.90 CREDIT ACTIVE</p>
-</div>
-<p class="text-[18px] font-black heading-silver-shimmer">₹35.36L</p>
+<div class="w-1/4 glass-card p-6 rounded-2xl z-10 border-white/20 text-center flex flex-col items-center justify-center space-y-3 group relative">
+    <span class="text-[12px] font-black text-white/60 uppercase tracking-[0.2em] heading-silver-shimmer flex items-center">
+        Bridge Protocol
+        <span class="ml-2 cursor-help text-brandGold/60 hover:text-brandGold transition-colors">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </span>
+    </span>
+    
+    <!-- Calculation Tooltip -->
+    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 p-4 bg-[#111] border border-white/10 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none shadow-2xl">
+        <p class="text-[10px] font-black text-brandGold uppercase tracking-widest mb-2 border-b border-white/5 pb-2 text-left">s.901 FTC CALCULATION</p>
+        <div class="space-y-2 text-[11px] text-white/70 text-left font-mono">
+            <p>Cap = US_Tax * (Foreign / Global)</p>
+            <p>Cap = ₹1.09Cr * (₹2.5Cr / ₹4Cr)</p>
+            <p>Cap = ₹1.09Cr * 0.625 = <span class="text-brandGold">₹68.64L</span></p>
+            <div class="h-px bg-white/5 my-1"></div>
+            <p>Claim = min(Net_India_Liab, Cap)</p>
+            <p>Claim = min(₹64.83L, <span class="text-brandGold font-bold">₹68.64L</span>)</p>
+            <p>Result = <span class="text-brandGreen font-bold">₹64.83L</span></p>
+        </div>
+    </div>
+
+    <div class="py-2 px-4 bg-white/5 border border-white/10 rounded-lg">
+        <p class="text-[12px] font-extrabold text-brandGold uppercase tracking-widest">DTAA BRIDGE</p>
+        <p class="text-[10px] font-bold text-white/60 uppercase mt-1">FTC s.901 CLAIM ACTIVE</p>
+    </div>
+    <p class="text-[18px] font-black heading-silver-shimmer">₹64.83L</p>
 </div>
 <!-- Connection Beam: Right -->
 <div class="flex-grow h-px relative min-w-[60px]">
@@ -758,16 +783,16 @@
 <div class="w-1/3 glass-card p-8 rounded-3xl z-10 border-white/20">
 <div class="flex flex-col space-y-6">
 <div class="flex items-center justify-between">
-<span class="px-3 py-1 bg-brandCyan/20 border border-brandCyan/40 rounded text-[10px] font-black text-brandCyan uppercase tracking-widest">UNITED STATES (RESIDENT)</span>
-<span class="text-[10px] font-bold text-white/40 uppercase">Assessment Node</span>
+<span class="px-3 py-1 bg-brandCyan/20 border border-brandCyan/40 rounded text-[11px] font-black text-brandCyan uppercase tracking-widest">UNITED STATES (RESIDENT)</span>
+<span class="text-[11px] font-bold text-white/50 uppercase">Assessment Node</span>
 </div>
 <div class="space-y-1 text-right">
-<p class="text-[11px] font-bold text-white/50 uppercase tracking-widest mb-2 heading-silver-shimmer">Total Tax Burden</p>
-<p class="text-5xl stat-hero text-white">₹35.28L</p>
+<p class="text-[11px] font-bold text-white/50 uppercase tracking-widest mb-2 heading-silver-shimmer">Gross US Liability</p>
+<p class="text-5xl stat-hero text-white">₹1.09 Cr</p>
 </div>
 <div class="pt-4 border-t border-white/10 flex justify-end">
 <div class="flex items-center space-x-2">
-<span class="text-[11px] font-bold text-white/60 uppercase tracking-wider">Form 67 Required</span>
+<span class="text-[11px] font-bold text-white/60 uppercase tracking-wider">Form 1116 (USA) Required</span>
 <span class="w-2 h-2 rounded-full bg-brandRed shadow-[0_0_8px_#EF4444]"></span>
 </div>
 </div>
@@ -857,45 +882,45 @@
 </div>
 </div>
 <div class="max-w-6xl mx-auto space-y-0">
-<!-- 1. India Gross Income Tax -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl">
+<!-- 1. US Gross Assessment -->
+<div class="waterfall-node flex items-center justify-between p-6 glass-card border-brandCyan/40 rounded-2xl">
 <div class="flex flex-col">
-<span class="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">Baseline</span>
-<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">India Gross Income Tax</h4>
-<p class="text-[10px] text-white/40 mt-1 italic font-medium">Slab + Surcharge + Cess (Node: <span class="text-brandGold">DOM_Tax_05</span>)</p>
+<span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Master Assessment</span>
+<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">US Gross Liability (Worldwide RA)</h4>
+<p class="text-[10px] text-white/40 mt-1 italic font-medium">Form 1040 — Global RA Assessment (Node: <span class="text-brandCyan">US_RA_SUM</span>)</p>
 </div>
 <div class="text-right">
-<span class="text-2xl font-black text-white stat-hero">₹77,28,000</span>
+<span class="text-2xl font-black text-white stat-hero">₹1,09,82,800</span>
 </div>
 </div>
 <!-- Connector -->
 <div class="waterfall-connector">
 <div class="flow-dot"></div>
 </div>
-<!-- 2. Chapter VIA Deductions -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-4 opacity-70">
+<!-- 2. FTC Section 901 Offset -->
+<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-4">
 <div class="flex flex-col">
-<span class="text-[9px] font-black text-brandRed uppercase tracking-[0.2em] mb-1">Minus: Deduction</span>
-<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">Chapter VIA Deductions</h4>
-<p class="text-[10px] text-brandRed/60 mt-1 italic font-medium">80C, 80D, 80CCD — <span class="font-bold">N/A in New Regime</span></p>
+<span class="text-[11px] font-black text-brandGreen uppercase tracking-[0.2em] mb-1">Minus: Credit</span>
+<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">FTC Section 901 Credit</h4>
+<p class="text-[11px] text-white/50 mt-1 italic font-medium">Claim for India taxes paid at source — <span class="text-brandGreen font-bold">Form 1116 (USA) linked</span></p>
 </div>
 <div class="text-right">
-<span class="text-2xl font-black text-brandRed/50">- ₹0</span>
+<span class="text-2xl font-black text-brandGreen">- ₹64,82,800</span>
 </div>
 </div>
 <!-- Connector -->
 <div class="waterfall-connector ml-4">
 <div class="flow-dot" style="animation-delay: -0.5s"></div>
 </div>
-<!-- 3. FTC Section 90 Bridge -->
+<!-- 3. Residual India Liability -->
 <div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-8">
 <div class="flex flex-col">
-<span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Minus: Foreign Tax Credit</span>
-<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">FTC Section 90 Bridge</h4>
-<p class="text-[10px] text-white/40 mt-1 italic font-medium">M4 Retirement + M3 Cap Gains — <span class="text-brandRed font-bold">Form 67 required</span></p>
+<span class="text-[9px] font-black text-brandGold uppercase tracking-[0.2em] mb-1">Plus: Source Tax</span>
+<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">India Net Assessment (NR)</h4>
+<p class="text-[10px] text-white/40 mt-1 italic font-medium">Taxes paid to India on source income (Node: <span class="text-brandGold">DOM_Tax_05</span>)</p>
 </div>
 <div class="text-right">
-<span class="text-2xl font-black text-brandGreen">- ₹35,36,000</span>
+<span class="text-2xl font-black text-brandRed">+ ₹77,28,000</span>
 </div>
 </div>
 <!-- Connector -->
@@ -905,8 +930,8 @@
 <!-- 4. TDS Deducted -->
 <div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-12">
 <div class="flex flex-col">
-<span class="text-[9px] font-black text-brandGreen uppercase tracking-[0.2em] mb-1">Minus: Tax Paid</span>
-<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">TDS Deducted</h4>
+<span class="text-[9px] font-black text-brandGreen uppercase tracking-[0.2em] mb-1">Minus: Paid At Source</span>
+<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">India TDS Deducted</h4>
 <p class="text-[10px] text-white/40 mt-1 italic font-medium">Form 16/26AS · Bank · Broker · Property</p>
 </div>
 <div class="text-right">
@@ -917,44 +942,29 @@
 <div class="waterfall-connector ml-12">
 <div class="flow-dot" style="animation-delay: -0.2s"></div>
 </div>
-<!-- 5. US Regular Income Tax -->
+<!-- 5. US NIIT Contribution -->
 <div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-16">
 <div class="flex flex-col">
 <span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Plus: US Liability</span>
-<h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">US Regular Income Tax</h4>
-<p class="text-[10px] text-white/40 mt-1 italic font-medium">Form 1040 — Global income allocation (Node: <span class="text-brandCyan">US_REG_M1</span>)</p>
-</div>
-<div class="text-right">
-<span class="text-2xl font-black text-brandRed">+ ₹35,28,000</span>
-</div>
-</div>
-<!-- Connector -->
-<div class="waterfall-connector ml-16">
-<div class="flow-dot" style="animation-delay: -0.8s"></div>
-</div>
-<!-- 6. US NIIT -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-20">
-<div class="flex flex-col">
-<span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Plus: US Liability</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">US NIIT @ 3.8%</h4>
-<p class="text-[10px] text-white/40 mt-1 italic font-medium">Net Investment Income Tax (Calculated against regular tax)</p>
+<p class="text-[10px] text-white/40 mt-1 italic font-medium">Net Investment Income Tax (Non-offsetable against FTC)</p>
 </div>
 <div class="text-right">
 <span class="text-2xl font-black text-brandRed">+ ₹1,34,064</span>
 </div>
 </div>
 <!-- Connector -->
-<div class="waterfall-connector ml-20 bg-transparent border-l border-dashed border-white/20 h-10 w-0"></div>
-<!-- Final Total -->
-<div class="waterfall-node flex items-center justify-between p-8 glass-card border-brandGold/40 rounded-2xl ml-24 relative overflow-hidden mt-4">
+<div class="waterfall-connector ml-16 bg-transparent border-l border-dashed border-white/20 h-10 w-0"></div>
+<!-- Final Global Total -->
+<div class="waterfall-node flex items-center justify-between p-8 glass-card border-brandGold/40 rounded-2xl ml-20 relative overflow-hidden mt-4">
 <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
 <div class="flex flex-col relative z-10">
-<span class="text-[11px] font-black text-brandGold uppercase tracking-[0.3em] mb-2 heading-silver-shimmer">FINAL ASSESSMENT</span>
-<h4 class="text-lg font-extrabold text-white uppercase tracking-widest heading-silver-shimmer">Total Balance Payable</h4>
-<p class="text-[11px] text-white/50 mt-1 font-medium italic">Net sum across all jurisdictions</p>
+<span class="text-[11px] font-black text-brandGold uppercase tracking-[0.3em] mb-2 heading-silver-shimmer">FINAL GLOBAL SETTLEMENT</span>
+<h4 class="text-lg font-extrabold text-white uppercase tracking-widest heading-silver-shimmer">Global Net Assessment</h4>
+<p class="text-[11px] text-white/50 mt-1 font-medium italic">Consolidated liability across US RA & India NR status</p>
 </div>
 <div class="text-right relative z-10">
-<span class="text-4xl font-black text-white stat-hero">₹66,08,864</span>
+<span class="text-4xl font-black text-white stat-hero">₹1,11,16,864</span>
 <div class="mt-4 inline-block px-4 py-1.5 bg-brandRed/20 border border-brandRed/40 rounded-full">
 <span class="text-[10px] font-black text-brandRed uppercase tracking-widest">Due in 23 Days</span>
 </div>
@@ -972,23 +982,54 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Card 1: Form 67 (Deadline - Red) -->
+    <!-- Card 1: Form 1116 (USA) (Deadline - Red) -->
     <div class="glass-card p-6 rounded-2xl flex flex-col justify-between border-brandRed/30 relative overflow-hidden group">
         <div class="absolute top-0 right-0 w-32 h-32 bg-brandRed/10 rounded-bl-full pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity"></div>
         <div>
             <div class="flex items-center justify-between mb-4 relative z-10">
                 <span class="px-3 py-1 bg-brandRed/20 align-middle text-[9px] font-black text-brandRed uppercase tracking-widest rounded shadow-[0_0_8px_rgba(239,68,68,0.3)] border border-brandRed/30">DEADLINE</span>
-                <span class="text-[10px] font-bold text-white/40 uppercase tracking-wider">13 Days · s.90(1)</span>
+                <span class="text-[10px] font-bold text-white/40 uppercase tracking-wider">13 Days · s.901</span>
             </div>
-            <h3 class="text-sm font-bold text-white mb-2 leading-relaxed heading-silver-shimmer">Form 67 deadline for claiming Foreign Tax Credit on US salary.</h3>
+            <h3 class="text-sm font-bold text-white mb-2 leading-relaxed heading-silver-shimmer">Form 1116 (USA) deadline for claiming Foreign Tax Credit on Indian income.</h3>
             <div class="flex items-center space-x-2 mt-4">
                 <div class="w-1.5 h-1.5 rounded-full bg-brandRed animate-pulse"></div>
-                <p class="text-[14px] font-black text-white tracking-wide"><span class="text-white/60 font-semibold text-xs tracking-normal mr-1">At Risk:</span> ₹35.36L FTC</p>
+                <p class="text-[14px] font-black text-white tracking-wide"><span class="text-white/60 font-semibold text-xs tracking-normal mr-1">At Risk:</span> ₹64.83L FTC credit in US</p>
+            </div>
+            <p class="text-[10px] text-white/40 mt-4 leading-relaxed italic">Requires Form 16, 26AS, and Final Indian Tax Computation to substantiate the credit claim and avoid AMT audits.</p>
+        </div>
+        <div class="flex items-center justify-between mt-8 relative z-10">
+            <button class="bg-brandRed text-white px-5 py-2 rounded text-[13px] font-black uppercase tracking-widest hover:bg-white hover:text-brandRed transition-colors shadow-[0_0_15px_rgba(239,68,68,0.4)]">File Form 1116 Now</button>
+            <span class="text-[11px] font-bold text-white/40 uppercase tracking-widest">Post-FTC Math</span>
+        </div>
+    </div>
+
+    <!-- Card 2: PFIC Remediation (Deadline - Red) [NEW] -->
+    <div class="glass-card p-6 rounded-2xl flex flex-col justify-between border-brandRed/30 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brandRed/5 rounded-bl-full pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity"></div>
+        <div>
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="px-3 py-1 bg-brandRed/20 align-middle text-[11px] font-black text-brandRed uppercase tracking-widest rounded shadow-[0_0_8px_rgba(239,68,68,0.3)] border border-brandRed/30">PFIC ALERT</span>
+                <span class="text-[12px] font-bold text-white/60 uppercase tracking-wider">Irreversible Election</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-4 leading-relaxed heading-silver-shimmer">Remediate Passive Foreign Investment Company (PFIC) exposure for Indian Mutual Funds.</h3>
+            
+            <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4">
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
+                    <div class="flex justify-between items-center"><span class="text-white/40">Axis Bluechip</span><span class="text-brandRed font-bold">§1291</span></div>
+                    <div class="flex justify-between items-center"><span class="text-white/40">SBI Small Cap</span><span class="text-brandRed font-bold">§1291</span></div>
+                </div>
+            </div>
+
+            <p class="text-[10px] font-bold text-white/40 uppercase mb-2">Regime Comparison (MTM/QEF)</p>
+            <div class="grid grid-cols-3 gap-2 text-center text-[9px] font-black uppercase">
+                <div class="p-2 bg-brandRed/10 border border-brandRed/20 rounded"><p class="text-brandRed">§1291</p><p class="text-white mt-1">₹4.2L Tax</p></div>
+                <div class="p-2 bg-white/5 border border-white/10 rounded"><p class="text-white/40">MTM</p><p class="text-white mt-1">₹1.8L Tax</p></div>
+                <div class="p-2 bg-white/5 border border-white/10 rounded"><p class="text-white/40">QEF</p><p class="text-white mt-1">N/A</p></div>
             </div>
         </div>
         <div class="flex items-center justify-between mt-8 relative z-10">
-            <button class="bg-brandRed text-white px-5 py-2 rounded text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-brandRed transition-colors shadow-[0_0_15px_rgba(239,68,68,0.4)]">File Form 67 Now</button>
-            <span class="text-[9px] font-bold text-white/20 uppercase tracking-widest">No Snooze</span>
+            <button class="bg-brandRed/10 border border-brandRed/50 text-brandRed hover:bg-brandRed hover:text-white px-5 py-2 rounded text-[11px] font-black uppercase tracking-widest transition-colors">Apply MTM Election</button>
+            <span class="text-[9px] font-bold text-white/20 uppercase tracking-widest">Excess Dist. Risk</span>
         </div>
     </div>
 
@@ -1065,10 +1106,123 @@
     </div>
 </div>
 
+<!-- BEGIN: TAX STRATEGY SANDBOX -->
+<section class="w-full pt-8 pb-4 no-print">
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-[14px] font-bold text-white/50 tracking-[0.3em] uppercase heading-silver-shimmer">Tax Strategy Sandbox</h2>
+        <div id="simBadge" class="hidden px-4 py-1.5 bg-brandRed/20 border border-brandRed/40 rounded-full text-[10px] font-black text-brandRed uppercase tracking-widest animate-pulse">Simulation Active</div>
+    </div>
+    
+    <div class="glass-card p-10 rounded-3xl border-brandGold/20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
+        <div class="relative z-10 grid grid-cols-12 gap-12">
+            <!-- Slider Controls -->
+            <div class="col-span-12 lg:col-span-5 space-y-8">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <label class="block text-[12px] font-bold text-white/60 uppercase tracking-widest">India Property Exit Simulation</label>
+                        <span id="sliderTooltip" class="px-2 py-1 bg-brandGold text-black text-[10px] font-black rounded shadow shadow-brandGold/50">₹0</span>
+                    </div>
+                    <div class="relative pt-2">
+                        <input type="range" id="propSlider" min="0" max="100000000" step="1000000" value="0" class="w-full mb-4 accent-brandGold">
+                    </div>
+                    <div class="flex justify-between text-[11px] font-black text-white px-1">
+                        <span>₹0</span>
+                        <span>₹5 Cr</span>
+                        <span>₹10 Cr</span>
+                    </div>
+                </div>
+                
+                <!-- Technical Disclosure Card [NEW] -->
+                <div class="p-6 bg-brandGold/5 border border-brandGold/20 rounded-2xl relative overflow-hidden">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-5 h-5 rounded-full border border-brandGold/50 flex items-center justify-center text-[10px] text-brandGold font-black">i</div>
+                        <p class="text-[11px] font-bold text-brandGold uppercase tracking-widest">Technical Math Disclosure</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-[10px] text-white/40 uppercase">India Model</span>
+                            <span class="text-[10px] text-white/80 font-bold uppercase">12.5% Flat LTCG (NRI)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[10px] text-white/40 uppercase">US Federal Model</span>
+                            <span class="text-[10px] text-white/80 font-bold uppercase">20% CG + 3.8% NIIT</span>
+                        </div>
+                        <div class="h-px bg-white/5 w-full"></div>
+                        <p class="text-[9px] text-white/40 leading-relaxed italic">
+                            *This model assumes a Resident Alien (RA) profile with global income >$250k. FTC calculation follows Section 901(a) efficiency caps. 
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                    <span class="text-[11px] font-bold text-white/40 uppercase">Scenario Engine</span>
+                    <button onclick="resetBaseline()" class="text-[10px] font-black text-white/40 hover:text-white uppercase tracking-widest transition-colors py-1 px-3 border border-white/10 rounded bg-white/5">Reset Baseline</button>
+                </div>
+            </div>
+
+            <!-- Simulation Outputs -->
+            <div class="col-span-12 lg:col-span-7 space-y-6">
+                <!-- Calculation Flow Visualization [NEW] -->
+                <div class="flex items-center justify-between space-x-2">
+                    <div class="flow-box flex-grow p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+                        <p class="text-[9px] font-bold text-white/30 uppercase mb-1">Source Gain</p>
+                        <p id="flowGainVal" class="text-[12px] font-black text-white">₹0</p>
+                    </div>
+                    <div class="text-white/20">→</div>
+                    <div class="flow-box flex-grow p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+                        <p class="text-[9px] font-bold text-brandGold/50 uppercase mb-1">India Tax</p>
+                        <p id="flowIndiaVal" class="text-[12px] font-black text-brandGold">₹0</p>
+                    </div>
+                    <div class="text-white/20">→</div>
+                    <div class="flow-box flex-grow p-4 bg-white/5 border border-brandGreen/20 rounded-xl text-center opacity-30">
+                        <p class="text-[9px] font-bold text-brandGreen/50 uppercase mb-1">US Fed Offset</p>
+                        <p id="flowUSOffset" class="text-[12px] font-black text-brandGreen">₹0</p>
+                    </div>
+                    <div class="text-white/20">=</div>
+                    <div class="flow-box flex-grow p-4 bg-brandRed/5 border border-brandRed/20 rounded-xl text-center opacity-30">
+                        <p class="text-[9px] font-bold text-brandRed/50 uppercase mb-1">Net Leakage</p>
+                        <p id="flowLeakage" class="text-[12px] font-black text-brandRed">₹0</p>
+                    </div>
+                </div>
+
+                <!-- Live Analyst Narrative [NEW] -->
+                <div class="p-6 bg-[#080808] border border-white/5 rounded-2xl italic leading-relaxed">
+                    <p id="analystNarrative" class="text-[13px] text-white/60 font-medium">Positioned at **Baseline**. Your current India taxes are fully absorbed by the US Federal Credit cap.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6 pt-4">
+                    <div class="p-4 border-l-2 border-white/10 relative">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-[10px] font-bold text-white/40 uppercase">India Delta</p>
+                            <span class="px-1.5 py-0.5 bg-brandGold/20 border border-brandGold/40 text-brandGold text-[8px] font-black rounded">s.112 (14%)</span>
+                        </div>
+                        <p id="indiaDelta" class="text-xl font-black text-white">+₹0</p>
+                    </div>
+                    <div class="p-4 border-l-2 border-white/10">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-[10px] font-bold text-white/40 uppercase">US Fed Delta</p>
+                            <span class="px-1.5 py-0.5 bg-brandCyan/20 border border-brandCyan/40 text-brandCyan text-[8px] font-black rounded">Passive (23.8%)</span>
+                        </div>
+                        <p id="usDelta" class="text-xl font-black text-white">+₹0</p>
+                    </div>
+                    <div class="p-4 border-l-2 border-brandGold/40 bg-brandGold/5 rounded-r">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-[10px] font-bold text-brandGold uppercase">Global Impact</p>
+                            <span class="px-1.5 py-0.5 bg-white/10 border border-white/20 text-white/60 text-[8px] font-black rounded">Net Outflow</span>
+                        </div>
+                        <p id="globalDelta" class="text-xl font-black text-white">₹0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Compact Items Divider -->
 <div class="mt-12 mb-8 flex items-center">
     <div class="h-px bg-white/10 flex-grow"></div>
-    <span class="px-4 text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Contextual Status Updates</span>
+    <span class="px-4 text-[12px] font-bold text-white/50 uppercase tracking-[0.2em]">Contextual Status Updates</span>
     <div class="h-px bg-white/10 flex-grow"></div>
 </div>
 
@@ -1109,7 +1263,10 @@
             <div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
                 <div class="h-full bg-white/40 w-[62%]"></div>
             </div>
-            <span class="text-[11px] font-black text-white uppercase tracking-widest w-24 text-right">62% Parsed</span>
+            <div class="flex flex-col">
+                <span class="text-[12px] font-black text-white uppercase tracking-widest w-24 text-right">62% Parsed</span>
+                <span class="text-[11px] text-brandRed/70 font-bold uppercase tracking-tighter mt-1">Missing: Reg. Deeds, Improvement Receipts</span>
+            </div>
         </div>
     </div>
 </div>
@@ -1119,9 +1276,9 @@
 <!-- BEGIN: PROFESSIONAL COLLABORATION PANEL -->
 <section class="w-full pt-4 pb-12">
 <div class="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-<h2 class="text-[12px] font-bold text-white/40 tracking-[0.3em] uppercase heading-silver-shimmer">Professional Collaboration</h2>
+<h2 class="text-[14px] font-bold text-white/50 tracking-[0.3em] uppercase heading-silver-shimmer">Professional Collaboration</h2>
 <div class="flex items-center space-x-4">
-<span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">CPA Link: Secured</span>
+<span class="text-[12px] font-bold text-white/50 uppercase tracking-[0.2em]">CPA Link: Secured</span>
 </div>
 </div>
 
@@ -1131,11 +1288,11 @@
         <div class="absolute inset-0 bg-brandCyan/5 pointer-events-none"></div>
         <div class="relative z-10 flex flex-col h-full">
             <div class="flex items-center justify-between mb-6">
-                <span class="px-3 py-1 bg-brandGreen/20 border border-brandGreen/40 rounded text-[10px] font-black text-brandGreen uppercase tracking-widest flex items-center space-x-2 shadow-[0_0_8px_rgba(16,185,129,0.2)]">
+                <span class="px-3 py-1 bg-brandGreen/20 border border-brandGreen/40 rounded text-[11px] font-black text-brandGreen uppercase tracking-widest flex items-center space-x-2 shadow-[0_0_8px_rgba(16,185,129,0.2)]">
                     <span class="w-1.5 h-1.5 rounded-full bg-brandGreen animate-pulse"></span>
                     <span>Active Sync</span>
                 </span>
-                <span class="text-[10px] font-bold text-white/40 uppercase tracking-wider">Synced: Just now</span>
+                <span class="text-[12px] font-bold text-white/50 uppercase tracking-wider">Synced: Just now</span>
             </div>
             
             <div class="flex items-center space-x-5 mb-8">
@@ -1152,10 +1309,10 @@
             
             <div class="space-y-4 mb-8">
                 <div class="flex justify-between items-center px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
-                    <span class="text-[11px] font-bold text-white/60 tracking-wider">M8 Dashboard Bridge</span>
-                    <span class="text-[11px] font-black text-brandGold uppercase tracking-widest">Connected</span>
+                    <span class="text-[12px] font-bold text-white/70 tracking-wider">M8 Dashboard Bridge</span>
+                    <span class="text-[12px] font-black text-brandGold uppercase tracking-widest">Connected</span>
                 </div>
-                <p class="text-[10px] text-white/30 uppercase tracking-[0.2em] leading-relaxed italic">
+                <p class="text-[12px] text-white/50 uppercase tracking-[0.2em] leading-relaxed italic">
                     All tax models, global footprints, and financial stakes are mirroring in real-time to your CPA's dashboard.
                 </p>
             </div>
@@ -1177,25 +1334,31 @@
             </div>
             
             <div class="space-y-3 mb-6">
-                <!-- CA Recommendation -->
-                <div class="bg-brandGold/10 border border-brandGold/30 p-4 rounded-xl flex flex-col items-start space-y-2 cursor-pointer hover:bg-brandGold/20 transition-all">
+                <!-- [NEW] PE Risk Flag -->
+                <div class="bg-brandRed/10 border border-brandRed/30 p-4 rounded-xl flex flex-col items-start space-y-2 cursor-pointer hover:bg-brandRed/20 transition-all">
                     <div class="flex justify-between w-full">
-                        <span class="text-[9px] font-black text-brandGold uppercase tracking-widest">CA Recommendation</span>
-                        <span class="text-[9px] font-black text-brandGold/50 uppercase">2H ago</span>
+                        <span class="text-[11px] font-black text-brandRed uppercase tracking-widest">PE Risk Alert (M2)</span>
+                        <span class="text-[11px] font-black text-brandRed/60 uppercase">DTAA Art 5</span>
                     </div>
-                    <p class="text-[12px] font-medium text-white/90 leading-relaxed">Please upload your revised UAE Golden Visa documents to finalize residency exemption.</p>
+                    <p class="text-[12px] font-medium text-white/90 leading-relaxed">Stay in India is approaching 90-day 'Service PE' threshold. Review remote work setup.</p>
                 </div>
-                
-                <!-- Flagged for Review -->
-                <div class="bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between hover:bg-white/10 cursor-pointer transition-colors">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-brandCyan animate-pulse"></div>
-                        <div class="flex flex-col">
-                            <span class="text-[12px] font-bold text-white/80">RSU Vesting Schedule</span>
-                            <span class="text-[10px] text-brandCyan/70 font-bold uppercase tracking-widest mt-1">Pending CA Review</span>
-                        </div>
+
+                <!-- [NEW] ISO AMT Flag -->
+                <div class="bg-brandRed/10 border border-brandRed/30 p-4 rounded-xl flex flex-col items-start space-y-2 cursor-pointer hover:bg-brandRed/20 transition-all">
+                    <div class="flex justify-between w-full">
+                        <span class="text-[11px] font-black text-brandRed uppercase tracking-widest">AMT Risk Firewall</span>
+                        <span class="text-[11px] font-black text-brandRed/60 uppercase">Critical</span>
                     </div>
-                    <button class="text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white transition-colors">View</button>
+                    <p class="text-[12px] font-medium text-white/90 leading-relaxed">High ISO spread detected in Section 6.3. Exercising now triggers AMT exposure.</p>
+                </div>
+
+                <!-- CA Recommendation -->
+                <div class="bg-brandGold/10 border border-brandGold/30 p-4 rounded-xl flex flex-col items-start space-y-2 cursor-pointer hover:bg-brandGold/20 transition-all opacity-40">
+                    <div class="flex justify-between w-full">
+                        <span class="text-[11px] font-black text-brandGold uppercase tracking-widest">CA Recommendation</span>
+                        <span class="text-[11px] font-black text-brandGold/60 uppercase">2H ago</span>
+                    </div>
+                    <p class="text-[12px] font-medium text-white/90 leading-relaxed">Please upload your Indian brokerage capital gains statements.</p>
                 </div>
             </div>
             
@@ -1215,5 +1378,145 @@
 </section>
 <!-- END: PROFESSIONAL COLLABORATION PANEL -->
 </main>
+</div> <!-- End dashboard-shell -->
+
+<script>
+    const INITIAL_DATA = {
+        indiaGrossIncome: 25000000,
+        globalGrossIncome: 40000000,
+        indiaGrossTax: 7728000,
+        usGrossTax: 10982800,
+        ftcCap: 7500000,
+        tds: 1245200,
+        niit: 134064,
+        globalNet: 11116864
+    };
+
+    // [BRIDGE] Persistence for Module 2 consistency
+    localStorage.setItem('wising_tax_data', JSON.stringify(INITIAL_DATA));
+    localStorage.setItem('wising_residency_config', JSON.stringify({
+        india_status: 'NRI',
+        us_status: 'Resident'
+    }));
+
+    const propSlider = document.getElementById('propSlider');
+    const indiaDeltaEl = document.getElementById('indiaDelta');
+    const usDeltaEl = document.getElementById('usDelta');
+    const globalDeltaEl = document.getElementById('globalDelta');
+    const simBadge = document.getElementById('simBadge');
+    
+    // Global Display Elements to update
+    const mainBannerTotal = document.querySelector('.decoration-brandGold\\/30');
+    const heroTotal = document.querySelector('.text-8xl.stat-hero');
+    const indiaNetLiab = document.querySelectorAll('.text-3xl.font-extrabold.text-white')[0];
+    const usNetLiab = document.querySelectorAll('.text-3xl.font-extrabold.text-white')[1];
+    const ftcBridgeCard = document.querySelector('.w-1\\/4 .heading-silver-shimmer');
+
+    // New UX Elements
+    const flowBoxes = document.querySelectorAll('.flow-box');
+    const analystNarrative = document.getElementById('analystNarrative');
+
+    // Report Elements
+    const rptSimGain = document.getElementById('rptSimGain');
+    const rptTotalIncome = document.getElementById('rptTotalIncome');
+    const rptIndBase = document.getElementById('rptIndBase');
+    const rptIndTax = document.getElementById('rptIndTax');
+    const rptIndNet = document.getElementById('rptIndNet');
+    const rptUSGross = document.getElementById('rptUSGross');
+    const rptUSFTC = document.getElementById('rptUSFTC');
+    const rptUSNet = document.getElementById('rptUSNet');
+    const rptGlobalTotal = document.getElementById('rptGlobalTotal');
+    const rptGlobalRate = document.getElementById('rptGlobalRate');
+    const rptLeakage = document.getElementById('rptLeakage');
+    const reportTimestamp = document.getElementById('reportTimestamp');
+
+    function formatINR(val, isCompact = false) {
+        if (val === 0) return "₹0";
+        if (isCompact) {
+            if (val >= 10000000) return `₹${(val/10000000).toFixed(2)} Cr`;
+            if (val >= 100000) return `₹${(val/100000).toFixed(2)} L`;
+        }
+        return "₹" + Math.round(val).toLocaleString('en-IN');
+    }
+
+    function updateSimulation(gain) {
+        // Update Tooltip Position & Text
+        sliderTooltip.textContent = formatINR(gain, true);
+        const sliderWidth = propSlider.offsetWidth;
+        const newPosition = (gain / propSlider.max) * sliderWidth;
+        sliderTooltip.style.left = `${newPosition}px`;
+
+        if (gain > 0) {
+            simBadge.classList.remove('hidden');
+            flowBoxes.forEach(box => box.classList.remove('opacity-30'));
+        } else {
+            simBadge.classList.add('hidden');
+            flowBoxes.forEach((box, i) => i > 0 && box.classList.add('opacity-30'));
+        }
+
+        const indiaDeltaValue = Math.round(gain * 0.14);
+        const usFedDeltaValue = Math.round(gain * 0.238);
+
+        const newIndiaIncomeStr = INITIAL_DATA.indiaGrossIncome + gain;
+        const newGlobalIncomeStr = INITIAL_DATA.globalGrossIncome + gain;
+        const newUSGrossValue = INITIAL_DATA.usGrossTax + usFedDeltaValue;
+        
+        // Corrected Logic: FTC capped by Net India Liability
+        const finalNetIndiaLiabValue = (INITIAL_DATA.indiaGrossTax + indiaDeltaValue) - INITIAL_DATA.tds;
+        const newFtcCapValue = Math.round(newUSGrossValue * (newIndiaIncomeStr / newGlobalIncomeStr));
+        const actualFtcClaimValue = Math.min(finalNetIndiaLiabValue, newFtcCapValue);
+        
+        const excessIndiaTaxValue = Math.max(0, finalNetIndiaLiabValue - newFtcCapValue);
+
+        const finalNetUSLiabValue = (newUSGrossValue - actualFtcClaimValue) + INITIAL_DATA.niit;
+        const finalNetGlobalValue = finalNetIndiaLiabValue + finalNetUSLiabValue;
+        const totalImpactValue = finalNetGlobalValue - INITIAL_DATA.globalNet;
+
+        document.getElementById('flowGainVal').textContent = formatINR(gain, true);
+        indiaDeltaEl.textContent = `+${formatINR(indiaDeltaValue, true)}`;
+        usDeltaEl.textContent = `+${formatINR(usFedDeltaValue, true)}`;
+        globalDeltaEl.textContent = formatINR(totalImpactValue, true);
+
+        document.getElementById('flowIndiaVal').textContent = formatINR(indiaDeltaValue, true);
+        document.getElementById('flowUSOffset').textContent = `-${formatINR(actualFtcClaimValue, true)}`;
+        document.getElementById('flowLeakage').textContent = formatINR(excessIndiaTaxValue, true);
+
+        if (gain === 0) {
+            analystNarrative.innerHTML = "Positioned at **Baseline**. Your current India taxes are fully absorbed by the US Federal Credit cap.";
+        } else if (excessIndiaTaxValue > 0) {
+            analystNarrative.innerHTML = `**Analyst Alert:** At a ₹${(gain/10000000).toFixed(1)} Cr gain, your Indian tax liability (${formatINR(INITIAL_DATA.indiaGrossTax+indiaDeltaValue, true)}) **exceeds** the US FTC cap of ${formatINR(newFtcCapValue, true)}. You are now experiencing **${formatINR(excessIndiaTaxValue, true)} in direct tax leakage**.`;
+        } else {
+            analystNarrative.innerHTML = `**Efficiency Optimized:** Your ₹${(gain/10000000).toFixed(1)} Cr gain is still well within the US Federal FTC cap. The additional Indian tax is **100% offset** against your US global liability.`;
+        }
+
+        const formattedTotalStr = (finalNetGlobalValue / 10000000).toFixed(2);
+        if (mainBannerTotal) mainBannerTotal.textContent = `INR ${formattedTotalStr} Crore`;
+        if (heroTotal) heroTotal.textContent = `₹${formattedTotalStr} Cr`;
+        if (indiaNetLiab) indiaNetLiab.textContent = formatINR(finalNetIndiaLiabValue, true);
+        if (usNetLiab) usNetLiab.textContent = formatINR(finalNetUSLiabValue, true);
+        if (ftcBridgeCard) ftcBridgeCard.textContent = formatINR(actualFtcClaimValue, true);
+
+        reportTimestamp.textContent = new Date().toLocaleString();
+        rptSimGain.textContent = formatINR(gain);
+        rptTotalIncome.textContent = formatINR(newGlobalIncomeStr);
+        rptIndBase.textContent = formatINR(gain);
+        rptIndTax.textContent = formatINR(indiaDeltaValue);
+        rptIndNet.textContent = formatINR(finalNetIndiaLiabValue);
+        rptUSGross.textContent = formatINR(newUSGrossValue);
+        rptUSFTC.textContent = `- ${formatINR(actualFtcClaimValue)}`;
+        rptUSNet.textContent = formatINR(finalNetUSLiabValue);
+        rptGlobalTotal.textContent = formatINR(finalNetGlobalValue);
+        const effRateStr = ((finalNetGlobalValue / newGlobalIncomeStr) * 100).toFixed(2);
+        rptGlobalRate.textContent = `${effRateStr}%`;
+        rptLeakage.textContent = `${((excessIndiaTaxValue / gain || 0) * 100).toFixed(2)}%`;
+    }
+
+    propSlider.addEventListener('input', (e) => updateSimulation(parseInt(e.target.value)));
+
+    function resetBaseline() {
+        propSlider.value = 0;
+        updateSimulation(0);
+    }
+</script>
 </body>
 </html>
