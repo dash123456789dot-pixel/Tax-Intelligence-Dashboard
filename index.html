@@ -4,6 +4,35 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>WISING Wealth Intelligence - Tax Dashboard</title>
+<meta name="description" content="Agentic AI Wealth Intelligence platform for cross-border tax optimization and residency tracking between US and India.">
+<link rel="alternate" type="text/plain" href="llms.txt" title="AI Roadmap">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "WISING Wealth Intelligence",
+  "description": "Agentic AI platform for cross-border wealth management, specialized for individuals with assets in the US and India.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "serviceType": "Tax Intelligence"
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "Wising",
+    "url": "https://www.wising.app"
+  },
+  "featureList": [
+    "Global Tax Liability Estimation",
+    "Residency Tracking (US/India)",
+    "PFIC Risk Monitoring",
+    "US-India DTAA Clause Analysis",
+    "CPA Audit Certification Export"
+  ]
+}
+</script>
+
 <!-- Tailwind CSS v3 with plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
@@ -314,8 +343,8 @@
 <div id="dashboard-shell"> <!-- Start Shell to hide on print -->
 <!-- BEGIN: Navigation -->
 <header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
-        <div class="flex items-center space-x-12">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
+        <div class="flex items-center space-x-4 lg:space-x-12">
             <div id="nav-trigger-zone" class="relative group py-6 -my-6 cursor-pointer">
                 <button class="text-white flex flex-col justify-center items-start gap-1.5 focus:outline-none">
                     <span class="w-6 h-[2px] bg-current rounded-full"></span>
@@ -327,20 +356,21 @@
                     <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 pt-6">
                         <a href="index.html" class="flex items-center px-10 py-5 bg-[#111] text-white border-l-4 border-white transition-colors">Tax Intelligence</a>
                         <a href="income.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Salaries & RSUs</a>
+                        <a href="router.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Jurisdiction Router</a>
                     </div>
                 </div>
             </div>
             <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                <div class="w-8 h-8 bg-brandGold rounded flex items-center justify-center text-black font-black text-lg">W</div>
-                <span class="text-xs font-black uppercase tracking-[0.4em] text-white">Wising Intelligence</span>
+                <div class="w-8 h-8 shrink-0 bg-brandGold rounded flex items-center justify-center text-black font-black text-lg">W</div>
+                <span class="hidden sm:inline text-xs font-black uppercase tracking-[0.4em] text-white">Wising Intelligence</span>
             </a>
         </div>
-        <div class="flex items-center space-x-8">
-            <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 lg:space-x-8">
+            <div class="hidden sm:flex items-center space-x-4">
                 <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
                 <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Global Node: Active</span>
             </div>
-            <div class="w-px h-6 bg-white/10"></div>
+            <div class="hidden sm:block w-px h-6 bg-white/10"></div>
             <!-- Export Icon (Dashboard Specific) -->
             <button onclick="window.print()" class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-[#080808] hover:bg-white/5 relative group">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -354,28 +384,28 @@
 </header>
 <!-- BEGIN: Secondary Header Alert Bar -->
 <div class="border-b border-white/5 bg-black/60">
-<div class="max-w-[1440px] mx-auto px-8 py-3 flex items-center justify-between text-xs tracking-wider uppercase font-semibold">
-<div class="flex items-center space-x-8">
+<div class="max-w-[1440px] mx-auto px-4 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-between text-[10px] sm:text-xs tracking-wider uppercase font-semibold gap-2 sm:gap-0 text-center sm:text-left">
+<div class="flex flex-col sm:flex-row items-center gap-2 sm:space-x-8">
 <div class="flex items-center space-x-3">
 <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
 <span class="text-white/60">Hold AAPL <span class="text-brandGold font-bold">12 more days — save INR 67,000</span></span>
 </div>
 <div class="flex items-center space-x-3">
-<span class="w-2 h-2 rounded-full bg-brandRed"></span>
+<span class="w-2 h-2 rounded-full bg-brandRed shrink-0"></span>
 <span class="text-white/60">Indian mutual funds: <span class="text-brandRed font-bold">permanent US tax risk</span></span>
 </div>
 </div>
-<div class="flex items-center space-x-2">
+<div class="hidden sm:flex items-center space-x-2">
 <span class="w-2 h-2 rounded-full bg-brandGold"></span>
 </div>
 </div>
 </div>
-<main class="max-w-[1440px] mx-auto px-8 py-12 space-y-12">
+<main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-8 lg:py-12 space-y-8 lg:space-y-12">
 <!-- BEGIN: Morning Greeting Banner -->
-<section class="glass-card rounded-2xl p-8 relative overflow-hidden">
+<section class="glass-card rounded-2xl p-6 lg:p-8 relative overflow-hidden">
 <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
 <div class="relative flex flex-col space-y-6">
-<p class="text-lg leading-relaxed text-white/95 max-w-5xl">
+<p class="text-base lg:text-lg leading-relaxed text-white/95 max-w-5xl">
 <span class="text-brandGold font-extrabold">Good morning Arjun.</span> You owe roughly <span class="text-brandGold font-extrabold underline decoration-brandGold/30 underline-offset-4">INR 1.11 Crore</span> in taxes this year across India and the US. Your most urgent risk: your Indian mutual funds may be creating a <span class="text-brandRed font-extrabold underline decoration-brandRed/50 underline-offset-4">permanent US tax problem that cannot be undone</span> — tap the red alert below. Your biggest immediate saving: <span class="text-brandGold font-extrabold">hold your Apple shares for 12 more days</span> and save INR 67,000 without selling anything. Most urgent deadline: <span class="text-brandRed font-extrabold">US tax payment in 23 days.</span>
 </p>
 <!-- BEGIN: Interactive Summary Chips -->
@@ -396,8 +426,8 @@
 <span class="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase mb-1">Deadline</span>
 <span class="text-lg font-bold heading-silver-shimmer">12 Days</span>
 </div>
-<div class="h-12 w-px bg-white/10 mx-2"></div>
-<div class="flex items-center space-x-3">
+<div class="hidden md:block h-12 w-px bg-white/10 mx-2"></div>
+<div class="flex flex-wrap md:flex-nowrap items-center gap-3">
 <div class="px-5 py-2 bg-brandRed/15 border border-brandRed/40 rounded-full flex items-center space-x-3 cursor-pointer glass-card-hover">
 <span class="w-2 h-2 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,0.8)]"></span>
 <span class="text-[11px] font-black text-white uppercase tracking-wider">PFIC ALERT</span>
@@ -423,7 +453,7 @@
 </div>
 </section>
 <!-- BEGIN: Context Filters Info -->
-<div class="grid grid-cols-4 gap-12 pb-6 border-b border-white/10">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-12 pb-6 border-b border-white/10">
     <div>
         <h4 class="text-[10px] font-black text-white/40 tracking-[0.3em] uppercase mb-2">Tax Year</h4>
         <p class="text-base font-black text-brandGold uppercase tracking-tight">FY 2025-2026</p>
@@ -447,20 +477,20 @@
 <!-- BEGIN: Top Stat Cards -->
 <div class="grid grid-cols-12 gap-8" id="statCardsSection">
     <!-- Total Owed Card (8 columns) -->
-    <div class="col-span-12 lg:col-span-8 glass-card p-12 rounded-3xl flex flex-col justify-between relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-12 opacity-5">
-            <span class="text-[120px] font-black leading-none">₹</span>
+    <div class="col-span-12 lg:col-span-8 glass-card p-6 lg:p-12 rounded-3xl flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-6 lg:p-12 opacity-5 pointer-events-none">
+            <span class="text-[80px] lg:text-[120px] font-black leading-none">₹</span>
         </div>
         <div>
-            <h3 class="text-[11px] font-black text-white/40 tracking-[0.4em] uppercase mb-12">Total Estimated Tax Liability</h3>
-<div class="flex flex-col items-center justify-center flex-grow py-8">
+            <h3 class="text-[11px] font-black text-white/40 tracking-[0.4em] uppercase mb-8 lg:mb-12">Total Estimated Tax Liability</h3>
+<div class="flex flex-col items-center justify-center flex-grow py-4 lg:py-8">
 <div class="text-center">
-<div class="stat-hero text-white mb-4 text-8xl">₹1.11 Cr</div>
-<p class="text-[13px] font-bold text-brandRed uppercase tracking-widest">+12.4% vs last year <span class="opacity-70 ml-2 font-medium">· Projection mismatch detected</span></p>
+<div class="stat-hero text-white mb-4 text-6xl lg:text-8xl">₹1.11 Cr</div>
+<p class="text-[11px] lg:text-[13px] font-bold text-brandRed uppercase tracking-widest">+12.4% vs last year <span class="opacity-70 ml-2 font-medium block sm:inline mt-2 sm:mt-0">· Projection mismatch detected</span></p>
 </div>
 </div>
 </div>
-<div class="grid grid-cols-2 gap-10 pt-10 border-t border-white/10">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-10 pt-8 lg:pt-10 border-t border-white/10">
 <div class="space-y-2">
 <div class="flex items-center space-x-3">
 <span class="w-2.5 h-2.5 rounded-full bg-brandGold shadow-[0_0_8px_rgba(197,160,89,0.5)]"></span>
@@ -469,7 +499,7 @@
 <div class="text-3xl font-extrabold text-white">₹64.83L</div>
 <div class="text-[13px] font-bold text-brandGreen uppercase tracking-wider bg-brandGreen/10 px-3 py-1 rounded inline-block">Post-TDS Credit (Form 26AS)</div>
 </div>
-<div class="space-y-2 border-l border-white/10 pl-10">
+<div class="space-y-2 border-t sm:border-t-0 sm:border-l border-white/10 pt-6 sm:pt-0 pl-0 sm:pl-10">
 <div class="flex items-center space-x-3">
 <span class="w-2.5 h-2.5 rounded-full bg-brandCyan shadow-[0_0_8px_rgba(6,182,212,0.5)]"></span>
 <span class="text-[13px] font-bold text-white/70 uppercase tracking-widest heading-silver-shimmer">Net US Liability</span>
@@ -480,8 +510,8 @@
 </div>
 </div>
 <!-- Tax Health Score (4 columns) -->
-<div class="col-span-12 lg:col-span-4 glass-card p-10 rounded-3xl flex flex-col">
-<h3 class="text-[11px] font-bold text-white/50 tracking-[0.3em] uppercase mb-10 heading-silver-shimmer">Tax Intelligence Health</h3>
+<div class="col-span-12 lg:col-span-4 glass-card p-6 lg:p-10 rounded-3xl flex flex-col">
+<h3 class="text-[11px] font-bold text-white/50 tracking-[0.3em] uppercase mb-8 lg:mb-10 heading-silver-shimmer">Tax Intelligence Health</h3>
 <div class="flex flex-col items-center space-y-10">
 <div class="relative w-40 h-40">
 <svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
@@ -538,9 +568,9 @@
 <span class="text-[10px] font-bold text-brandGold uppercase tracking-[0.2em] animate-pulse">Syncing logs...</span>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 <!-- India Status Zone -->
-<div class="glass-card p-8 rounded-3xl flex flex-col space-y-8">
+<div class="glass-card p-6 lg:p-8 rounded-3xl flex flex-col space-y-8">
 <div class="flex justify-between items-start">
 <span class="px-3 py-1.5 bg-brandGold/20 border border-brandGold/40 rounded text-[11px] font-black text-brandGold uppercase tracking-widest">NRI / NR Status</span>
 <span class="text-[10px] font-bold text-white/20 uppercase tracking-widest">WISING-v6.2</span>
@@ -592,7 +622,7 @@
 </div>
 </div>
 <!-- DTAA Bridge -->
-<div class="glass-card p-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-transparent flex flex-col justify-between">
+<div class="glass-card p-6 lg:p-8 rounded-3xl bg-gradient-to-b from-white/[0.05] to-transparent flex flex-col justify-between">
 <div class="space-y-8">
 <div class="flex justify-between items-start">
 <span class="px-3 py-1.5 bg-brandCyan/20 border border-brandCyan/40 rounded text-[11px] font-black text-brandCyan uppercase tracking-widest">DTAA FLOW ACTIVE</span>
@@ -624,7 +654,7 @@
 </div>
 </div>
 <!-- US Status Zone -->
-<div class="glass-card p-8 rounded-3xl flex flex-col space-y-8">
+<div class="glass-card p-6 lg:p-8 rounded-3xl flex flex-col space-y-8">
 <div class="flex justify-between items-start">
 <span class="px-3 py-1.5 bg-brandCyan/20 border border-brandCyan/40 rounded text-[11px] font-black text-brandCyan uppercase tracking-widest">RESIDENT ALIEN (SPT)</span>
 <span class="text-[10px] font-bold text-white/20 uppercase tracking-widest">US_SPEC_v2.0</span>
@@ -689,11 +719,11 @@
 </div>
 </section>
 <!-- BEGIN: Critical Alert Strip -->
-<div class="critical-red-strip w-full px-8 py-5 -mx-8 relative overflow-hidden">
-<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12">
-<div class="flex flex-col md:flex-row items-center gap-4 md:gap-12 w-full justify-around">
-<div class="flex items-center space-x-3 group">
-<div class="w-2.5 h-2.5 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,1)] animate-pulse"></div>
+<div class="critical-red-strip w-full px-4 lg:px-8 py-5 -mx-4 lg:-mx-8 relative overflow-hidden" style="width: calc(100% + 2rem); max-width: none;">
+<div class="max-w-[1440px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
+<div class="flex flex-col lg:flex-row items-center gap-4 lg:gap-12 w-full justify-around">
+<div class="flex items-center space-x-3 group text-center lg:text-left">
+<div class="w-2.5 h-2.5 rounded-full bg-brandRed shadow-[0_0_12px_rgba(239,68,68,1)] animate-pulse shrink-0"></div>
 <span class="text-[13px] font-extrabold text-white tracking-widest uppercase">PFIC unelected on Indian MFs</span>
 </div>
 <div class="hidden md:block w-px h-6 bg-brandRed/20"></div>
@@ -718,11 +748,11 @@
 <section class="w-full pt-8 pb-4">
 <div class="flex items-center justify-between mb-8">
 <h2 class="text-[12px] font-bold text-white/40 tracking-[0.3em] uppercase heading-silver-shimmer">Cross-Border Tax Map</h2>
-<span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Node-to-Node Transfer Active</span>
+<span class="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] text-right">Node-to-Node Transfer Active</span>
 </div>
-<div class="flex items-center justify-between w-full gap-0 relative">
+<div class="flex flex-col lg:flex-row items-center justify-between w-full gap-8 lg:gap-0 relative">
 <!-- India Jurisdiction Card -->
-<div class="w-1/3 glass-card p-8 rounded-3xl z-10 border-white/20">
+<div class="w-full lg:w-1/3 glass-card p-6 lg:p-8 rounded-3xl z-10 border-white/20">
 <div class="flex flex-col space-y-6">
 <div class="flex items-center justify-between">
 <span class="px-3 py-1 bg-brandGold/20 border border-brandGold/40 rounded text-[10px] font-black text-brandGold uppercase tracking-widest">INDIA (NRI)</span>
@@ -741,12 +771,12 @@
 </div>
 </div>
 <!-- Connection Beam: Left -->
-<div class="flex-grow h-px relative min-w-[60px]">
+<div class="hidden lg:block flex-grow h-px relative min-w-[60px]">
 <div class="absolute top-[-1px] left-0 w-full h-[3px] pulsating-beam opacity-80 animate-glow-pulse"></div>
 <div class="absolute -top-1 right-0 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_12px_#C5A059] animate-pulse"></div>
 </div>
 <!-- Central DTAA Bridge Card -->
-<div class="w-1/4 glass-card p-6 rounded-2xl z-10 border-white/20 text-center flex flex-col items-center justify-center space-y-3 group relative">
+<div class="w-full lg:w-1/4 glass-card p-6 rounded-2xl z-10 border-white/20 text-center flex flex-col items-center justify-center space-y-3 group relative">
     <span class="text-[12px] font-black text-white/60 uppercase tracking-[0.2em] heading-silver-shimmer flex items-center">
         Bridge Protocol
         <span class="ml-2 cursor-help text-brandGold/60 hover:text-brandGold transition-colors">
@@ -780,7 +810,7 @@
 <div class="absolute -top-1 left-0 w-2 h-2 rounded-full bg-brandCyan shadow-[0_0_12px_#06B6D4] animate-pulse"></div>
 </div>
 <!-- US Jurisdiction Card -->
-<div class="w-1/3 glass-card p-8 rounded-3xl z-10 border-white/20">
+<div class="w-full lg:w-1/3 glass-card p-6 lg:p-8 rounded-3xl z-10 border-white/20">
 <div class="flex flex-col space-y-6">
 <div class="flex items-center justify-between">
 <span class="px-3 py-1 bg-brandCyan/20 border border-brandCyan/40 rounded text-[11px] font-black text-brandCyan uppercase tracking-widest">UNITED STATES (RESIDENT)</span>
@@ -803,9 +833,9 @@
 <!-- BEGIN: TAX SOURCE ARCHITECTURE -->
 <section class="w-full pt-8">
 <h2 class="text-[12px] font-bold text-white/40 tracking-[0.3em] uppercase mb-8 heading-silver-shimmer">Tax Source Architecture</h2>
-<div class="glass-card rounded-3xl p-12 border-white/10 overflow-hidden relative">
+<div class="glass-card rounded-3xl p-6 lg:p-12 border-white/10 overflow-hidden relative">
 <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
-<div class="grid grid-cols-12 gap-16 items-center">
+<div class="grid grid-cols-12 gap-8 lg:gap-16 items-center">
 <!-- Donut Chart Column -->
 <div class="col-span-12 lg:col-span-5 flex flex-col items-center">
 <div class="relative w-80 h-80 group">
@@ -883,7 +913,7 @@
 </div>
 <div class="max-w-6xl mx-auto space-y-0">
 <!-- 1. US Gross Assessment -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-brandCyan/40 rounded-2xl">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 glass-card border-brandCyan/40 rounded-2xl">
 <div class="flex flex-col">
 <span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Master Assessment</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">US Gross Liability (Worldwide RA)</h4>
@@ -898,7 +928,7 @@
 <div class="flow-dot"></div>
 </div>
 <!-- 2. FTC Section 901 Offset -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-4">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 glass-card border-white/10 rounded-2xl ml-2 sm:ml-4">
 <div class="flex flex-col">
 <span class="text-[11px] font-black text-brandGreen uppercase tracking-[0.2em] mb-1">Minus: Credit</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">FTC Section 901 Credit</h4>
@@ -913,7 +943,7 @@
 <div class="flow-dot" style="animation-delay: -0.5s"></div>
 </div>
 <!-- 3. Residual India Liability -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-8">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 glass-card border-white/10 rounded-2xl ml-4 sm:ml-8">
 <div class="flex flex-col">
 <span class="text-[9px] font-black text-brandGold uppercase tracking-[0.2em] mb-1">Plus: Source Tax</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">India Net Assessment (NR)</h4>
@@ -928,7 +958,7 @@
 <div class="flow-dot" style="animation-delay: -1s"></div>
 </div>
 <!-- 4. TDS Deducted -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-12">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 glass-card border-white/10 rounded-2xl ml-6 sm:ml-12">
 <div class="flex flex-col">
 <span class="text-[9px] font-black text-brandGreen uppercase tracking-[0.2em] mb-1">Minus: Paid At Source</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">India TDS Deducted</h4>
@@ -943,7 +973,7 @@
 <div class="flow-dot" style="animation-delay: -0.2s"></div>
 </div>
 <!-- 5. US NIIT Contribution -->
-<div class="waterfall-node flex items-center justify-between p-6 glass-card border-white/10 rounded-2xl ml-16">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-4 sm:p-6 glass-card border-white/10 rounded-2xl ml-8 sm:ml-16">
 <div class="flex flex-col">
 <span class="text-[9px] font-black text-brandCyan uppercase tracking-[0.2em] mb-1">Plus: US Liability</span>
 <h4 class="text-sm font-bold text-white uppercase tracking-wider heading-silver-shimmer">US NIIT @ 3.8%</h4>
@@ -956,7 +986,7 @@
 <!-- Connector -->
 <div class="waterfall-connector ml-16 bg-transparent border-l border-dashed border-white/20 h-10 w-0"></div>
 <!-- Final Global Total -->
-<div class="waterfall-node flex items-center justify-between p-8 glass-card border-brandGold/40 rounded-2xl ml-20 relative overflow-hidden mt-4">
+<div class="waterfall-node flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 p-6 sm:p-8 glass-card border-brandGold/40 rounded-2xl ml-10 sm:ml-20 relative overflow-hidden mt-4">
 <div class="absolute inset-0 bg-brandGold/5 pointer-events-none"></div>
 <div class="flex flex-col relative z-10">
 <span class="text-[11px] font-black text-brandGold uppercase tracking-[0.3em] mb-2 heading-silver-shimmer">FINAL GLOBAL SETTLEMENT</span>

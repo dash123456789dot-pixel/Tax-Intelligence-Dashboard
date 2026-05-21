@@ -4,6 +4,34 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>WISING - Income & Employment Intelligence</title>
+<meta name="description" content="AI-driven analysis of global remuneration, RSUs, and cross-border compensation tax risks.">
+<link rel="alternate" type="text/plain" href="llms.txt" title="AI Roadmap">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "WISING Income Intelligence",
+  "description": "Cross-border remuneration and equity compensation analyzer for US and Indian tax jurisdictions.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "serviceType": "Income & Employment Intelligence"
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "Wising",
+    "url": "https://www.wising.app"
+  },
+  "featureList": [
+    "W-2 and Form 16 Auto-Sync",
+    "RSU & ISO Residency Mismatch Detection",
+    "Permanent Establishment (PE) Risk Monitoring",
+    "Global Net-to-Bank Projections"
+  ]
+}
+</script>
+
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
     tailwind.config = {
@@ -101,8 +129,8 @@
 <body class="bg-[#050505] min-h-screen text-white antialiased">
 
 <header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
-        <div class="flex items-center space-x-12">
+    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
+        <div class="flex items-center space-x-4 lg:space-x-12">
             <div id="nav-trigger-zone" class="relative group py-6 -my-6 cursor-pointer">
                 <button class="text-white flex flex-col justify-center items-start gap-1.5 focus:outline-none">
                     <span class="w-6 h-[2px] bg-current rounded-full"></span>
@@ -114,20 +142,21 @@
                     <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 pt-6">
                         <a href="index.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Tax Intelligence</a>
                         <a href="income.html" class="flex items-center px-10 py-5 bg-[#111] text-white border-l-4 border-white transition-colors">Salaries & RSUs</a>
+                        <a href="router.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Jurisdiction Router</a>
                     </div>
                 </div>
             </div>
             <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                <div class="w-8 h-8 bg-brandGold rounded flex items-center justify-center text-black font-black text-lg">W</div>
-                <span class="text-xs font-black uppercase tracking-[0.4em] text-white">Wising Intelligence</span>
+                <div class="w-8 h-8 shrink-0 bg-brandGold rounded flex items-center justify-center text-black font-black text-lg">W</div>
+                <span class="hidden sm:inline text-xs font-black uppercase tracking-[0.4em] text-white">Wising Intelligence</span>
             </a>
         </div>
-        <div class="flex items-center space-x-8">
-            <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 lg:space-x-8">
+            <div class="hidden sm:flex items-center space-x-4">
                 <span class="w-2 h-2 rounded-full bg-brandGreen animate-pulse"></span>
                 <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Global Node: Active</span>
             </div>
-            <div class="w-px h-6 bg-white/10"></div>
+            <div class="hidden sm:block w-px h-6 bg-white/10"></div>
             <!-- Export Icon for Consistency -->
             <button onclick="window.print()" class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors bg-[#080808] hover:bg-white/5 relative group">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -140,11 +169,11 @@
     </div>
 </header>
 
-<main class="max-w-[1440px] mx-auto px-8 py-10 space-y-12">
+<main class="max-w-[1440px] mx-auto px-4 lg:px-8 py-8 lg:py-10 space-y-8 lg:space-y-12">
     <!-- Remuneration Overview -->
     <section class="grid grid-cols-12 gap-8">
-        <div class="col-span-12 lg:col-span-8 glass-card p-10 flex flex-col justify-between relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-10 opacity-10">
+        <div class="col-span-12 lg:col-span-8 glass-card p-6 lg:p-10 flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 lg:p-10 opacity-10 pointer-events-none">
                 <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             </div>
             <div>
@@ -159,7 +188,7 @@
                     <div id="badgeIndia" class="px-2 py-1 rounded-md bg-brandCyan/20 border border-brandCyan/40 text-[9px] font-black text-brandCyan uppercase tracking-widest">IN: NRI</div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-8 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
                     <div class="group relative">
                         <p class="text-xs font-black text-white/40 uppercase mb-1 cursor-help underline decoration-white/10 decoration-dashed">Worldwide Gross (Est.)</p>
                         <p id="heroGrossINR" class="text-4xl font-black stat-hero tabular-nums">₹0.00 Cr</p>
@@ -169,7 +198,7 @@
                              Loading breakdown...
                         </div>
                     </div>
-                    <div class="border-l border-white/10 pl-8 group relative">
+                    <div class="border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 pl-0 md:pl-8 group relative">
                         <p class="text-xs font-black text-brandGreen uppercase mb-1 cursor-help underline decoration-brandGreen/20 decoration-dashed">Actual Net-to-Bank (Est.)</p>
                         <p id="heroNetINR" class="text-4xl font-black stat-hero tabular-nums text-brandGreen">₹0.00 Cr</p>
                         <p id="heroNetUSD" class="text-xl font-bold text-brandGreen/40 tabular-nums mt-1">$0</p>
@@ -235,7 +264,7 @@
                 <!-- Main Salary Logic Card [DOCUMENT-FIRST] -->
                 <div class="col-span-12 lg:col-span-7 glass-card p-0 border-white/5 overflow-hidden flex flex-col">
                     <!-- Dropzone Header -->
-                    <div id="form16Dropzone" onclick="simulateUpload()" class="p-10 border-b border-dashed border-white/10 hover:bg-brandCyan/5 cursor-pointer transition-all flex flex-col items-center justify-center space-y-4 group">
+                    <div id="form16Dropzone" onclick="simulateUpload()" class="p-6 lg:p-10 border-b border-dashed border-white/10 hover:bg-brandCyan/5 cursor-pointer transition-all flex flex-col items-center justify-center space-y-4 group">
                         <div class="w-16 h-16 rounded-3xl bg-brandCyan/10 border border-brandCyan/20 flex items-center justify-center text-brandCyan group-hover:scale-110 transition-transform relative">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             <div id="uploadBeam" class="absolute -inset-1 border border-brandCyan rounded-3xl opacity-0"></div>
@@ -251,7 +280,7 @@
                         </div>
                     </div>
 
-                    <div class="p-10 space-y-10 flex-grow">
+                    <div class="p-6 lg:p-10 space-y-8 lg:space-y-10 flex-grow">
                         <div class="flex items-center justify-between">
                             <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center">
                                 <span class="w-1.5 h-1.5 rounded-full bg-orange-500 mr-3"></span>
@@ -265,8 +294,8 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-8" id="indiaSalaryFields">
-                            <div class="col-span-2 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8" id="indiaSalaryFields">
+                            <div class="col-span-1 md:col-span-2 space-y-3">
                                 <div class="flex justify-between items-center px-1">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Annual Gross Income</label>
                                     <span id="syncBadge_gross" class="hidden text-[8px] font-black text-brandCyan uppercase bg-brandCyan/10 px-2 py-0.5 rounded border border-brandCyan/20">Synced from Document</span>
@@ -283,7 +312,7 @@
                                 </div>
                             </div>
 
-                        <div id="regimeDependentFields" class="grid grid-cols-2 gap-8 transition-opacity duration-300">
+                        <div id="regimeDependentFields" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 col-span-1 md:col-span-2 transition-opacity duration-300">
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center px-1">
                                     <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Basic</label>
@@ -361,7 +390,7 @@
                 <!-- Secondary Intelligence Column -->
                 <div class="col-span-12 lg:col-span-5 space-y-8">
                     <!-- HRA Intelligence Section -->
-                    <div id="hraIntelligenceSection" class="glass-card p-8 border-brandCyan/20 hidden">
+                    <div id="hraIntelligenceSection" class="glass-card p-6 lg:p-8 border-brandCyan/20 hidden">
                         <div class="flex items-center space-x-3 mb-6">
                             <div class="w-6 h-6 rounded bg-brandCyan/20 flex items-center justify-center text-brandCyan">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -378,7 +407,7 @@
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="p-4 bg-brandCyan/5 border border-brandCyan/10 rounded-xl">
                                     <p class="text-[9px] font-bold text-brandCyan uppercase mb-1">Max Exemption</p>
                                     <p id="hraExemptionVal" class="text-xs font-black text-white">₹20,00,000</p>
@@ -573,7 +602,7 @@
         <div class="col-span-12 glass-card p-10 flex flex-col border-white/5 relative">
 
             <div class="grid grid-cols-12 gap-8 mb-8">
-                <div class="col-span-12 p-6 bg-white/5 border border-white/10 rounded-2xl">
+                <div class="col-span-12 p-4 sm:p-6 bg-white/5 border border-white/10 rounded-2xl">
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-[10px] font-black text-white/50 uppercase tracking-widest">US Taxpayer Profile Setup</h4>
                         <div class="group relative flex items-center">
@@ -583,7 +612,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div>
                             <label class="flex items-center text-[9px] font-bold text-white/40 uppercase mb-2">Residency Status</label>
                             <div class="w-full bg-white/5 border border-white/5 rounded-lg px-3 py-2 text-xs font-bold text-white/50 cursor-not-allowed">
@@ -673,7 +702,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-12 gap-8 relative z-10 mb-8 items-stretch">
+            <div class="grid grid-cols-12 gap-6 lg:gap-8 relative z-10 mb-8 items-stretch">
                 <!-- Col 1: Employer Plans -->
                 <div class="col-span-12 lg:col-span-4 p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col h-full group transition-colors hover:bg-white/10">
                     <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
@@ -1057,14 +1086,14 @@
             
             <p class="text-[11px] text-white/40 uppercase mb-12 max-w-2xl">Please select your operational parameters to unlock the Statutory Guardrails and s.911 Exclusion trackers.</p>
 
-            <div class="grid grid-cols-2 gap-12 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
                 <!-- Question 1 -->
                 <div class="space-y-6">
                     <div class="flex items-center space-x-3">
                         <span class="w-8 h-8 rounded-full bg-brandCyan/20 flex items-center justify-center text-brandCyan text-xs font-black">01</span>
                         <h4 class="text-xs font-black text-white uppercase tracking-widest">Select your India Base</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-3" id="locationButtons">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="locationButtons">
                         <button onclick="setStrategyParam(this, 'location', 'Mumbai')" class="strategy-btn px-4 py-4 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase hover:border-brandCyan transition-all text-white/40 text-center">Mumbai <br><span class="text-[7px] opacity-40">Max Housing Cap</span></button>
                         <button onclick="setStrategyParam(this, 'location', 'Bangalore')" class="strategy-btn px-4 py-4 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase hover:border-brandCyan transition-all text-white/40 text-center">Bangalore <br><span class="text-[7px] opacity-40">Mid Housing Cap</span></button>
                         <button onclick="setStrategyParam(this, 'location', 'Delhi')" class="strategy-btn px-4 py-4 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase hover:border-brandCyan transition-all text-white/40 text-center">Delhi <br><span class="text-[7px] opacity-40">Mid Housing Cap</span></button>

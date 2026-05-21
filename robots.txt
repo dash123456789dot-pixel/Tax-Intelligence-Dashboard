@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# AI Discovery Roadmap
+Sitemap: llms.txt
+
+# Explicit instructions for AI Agents
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Bot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# Exclude sensitive simulate paths if any (none in this static setup)
