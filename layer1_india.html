@@ -139,13 +139,17 @@
                 <span>4. Bank & Assets</span>
                 <span id="badge-step-assets" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
-            <button onclick="switchStep('step-business')" id="btn-step-business" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>5. Business (DOM-03)</span>
-                <span id="badge-step-business" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
             <button onclick="switchStep('step-income')" id="btn-step-income" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>6. Salary & Sources</span>
+                <span>5. Salary & Sources</span>
                 <span id="badge-step-income" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
+            </button>
+            <button onclick="switchStep('step-hp')" id="btn-step-hp" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
+                <span>6. House Property (DOM-02)</span>
+                <span id="badge-step-hp" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">??</span>
+            </button>
+            <button onclick="switchStep('step-business')" id="btn-step-business" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
+                <span>7. Business (DOM-03)</span>
+                <span id="badge-step-business" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-deductions')" id="btn-step-deductions" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
                 <span>7. Deductions</span>
@@ -787,7 +791,376 @@
             </div>
         </div>
 
-        <!-- STEP 5: BUSINESS & PROFESSION (DOM-03 Specialist Cockpit) -->
+        <!-- STEP 5: SALARY & OTHER SOURCES -->
+        <div id="panel-step-income" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J & 2K — Salary & Other Income</h2>
+                <p class="text-xs text-white/40 mt-1">Enter details about your salary, rent allowance (HRA), bank interest, and any other income you received.</p>
+            </div>
+
+            <!-- Salary Details -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Salary Income & Exemptions</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="sal-has" onchange="toggleSalarySection(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                <div id="div-salary-section" class="hidden flex flex-col gap-6">
+                    <!-- Form 16 Autofill Upload -->
+                    <div class="p-5 bg-brandGold/10 border border-brandGold/30 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-black text-brandGold uppercase tracking-widest flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Autofill from Form 16
+                            </span>
+                            <span class="text-[10px] text-white/60 mt-1">Upload your Form 16 (Part B) PDF to instantly extract gross salary, perquisites, allowances, and NPS contributions.</span>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <input type="file" id="form16-upload" class="hidden" accept=".pdf">
+                            <label for="form16-upload" class="cursor-pointer px-6 py-2 bg-brandGold text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white transition-all shadow-[0_0_15px_rgba(255,215,0,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]">
+                                Upload PDF
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Gross Salary
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Find this in Form 16 Part B under 'Gross Salary as per provisions contained in section 17(1)'.
+                            </div></label>
+                            <input type="number" id="sal-gross" oninput="updateSalaryNum('gross_salary_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="sal-old-regime-field transition-all">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Basic Salary + DA
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Usually found in your monthly salary slips. DA (Dearness Allowance) is mostly applicable for government employees.
+                            </div></label>
+                            <input type="number" id="sal-basic" oninput="updateSalaryNum('basic_da_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Perquisites
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Find this in Form 16 Part B under 'Value of perquisites u/s 17(2)'.
+                            </div></label>
+                            <input type="number" id="sal-perq" oninput="updateSalaryNum('perquisites_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">ESOP Perquisite
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                This is the FMV at exercise minus the exercise price. Often included in perquisites in Form 16.
+                            </div></label>
+                            <input type="number" id="sal-esop" oninput="updateSalaryNum('esop_perquisite_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Professional Tax
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Found in Form 16 Part B under deductions 'Tax on employment u/s 16(iii)'.
+                            </div></label>
+                            <input type="number" id="sal-prof-tax" oninput="updateSalaryNum('professional_tax_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Employer NPS Contribution
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Found in Form 16 Part B deductions under Section 80CCD(2).
+                            </div></label>
+                            <input type="number" id="sal-nps-emp" oninput="updateSalaryNum('employer_nps_contribution_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Prior Employer Salary
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                If you switched jobs and didn't submit Form 12B to your new employer, enter the gross salary from your previous employer's Form 16.
+                            </div></label>
+                            <input type="number" id="sal-prior" oninput="updateSalaryNum('prior_employer_salary_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="sal-old-regime-field">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">LTA Claimed
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Leave Travel Allowance exemption. Found in Form 16 Part B under 'Allowances exempt u/s 10'.
+                            </div></label>
+                            <input type="number" id="sal-lta" oninput="updateSalaryNum('lta_claimed_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+
+                    <!-- HRA Exemption Section -->
+                    <div class="p-4 bg-[#161616] border border-white/10 rounded-xl flex flex-col gap-3 sal-old-regime-field">
+                        <span class="text-[10px] font-bold text-white/80 uppercase tracking-widest">House Rent Allowance (HRA) Exemption</span>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">HRA Received
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Your total House Rent Allowance received. Usually listed in your salary slips.
+                            </div></label>
+                                <input type="number" id="sal-hra" oninput="updateSalaryNum('hra_received_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Rent Paid on Accommodation
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                The total actual rent you paid in the financial year. Required to calculate your HRA exemption.
+                            </div></label>
+                                <input type="number" id="sal-rent" oninput="updateSalaryNum('rent_paid_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-[#121212] border border-white/10 rounded-lg">
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-white/80">Metro Accommodation?</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="sal-metro" onchange="updateSalaryBool('is_metro_city', this.checked)" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-brandGold after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Allowances Section -->
+                    <div class="p-4 bg-[#161616] border border-white/10 rounded-xl flex flex-col gap-4">
+                        <span class="text-[10px] font-bold text-white/80 uppercase tracking-widest">Special Allowances</span>
+                        
+                        <!-- PwD -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end border-b border-white/5 pb-4">
+                            <div class="flex items-center justify-between p-3 bg-[#121212] border border-white/10 rounded-lg">
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-white/80">Eligible PwD? (Blind/Deaf/Orthopedic)</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="sal-pwd-elig" onchange="togglePwdAllowance(this.checked)" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-brandGold after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold"></div>
+                                </label>
+                            </div>
+                            <div id="div-pwd-recv" class="opacity-30 transition-all">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">PwD Transport Allowance Received
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                The transport allowance provided by your employer. Exemption is capped at ₹3,200 per month.
+                            </div></label>
+                                <input type="number" id="sal-pwd-recv" disabled oninput="updateSalaryNestedNum('pwd_transport_allowance', 'allowance_received_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono disabled:cursor-not-allowed">
+                            </div>
+                        </div>
+
+                        <!-- Conveyance -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-white/5 pb-4">
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Conveyance Allowance Received
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Found in your salary slips. Also known as transport allowance for commuting from home to office.
+                            </div></label>
+                                <input type="number" id="sal-conv-recv" oninput="updateSalaryNestedNum('conveyance_allowance', 'allowance_received_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Conveyance Actual Expenditure
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                The actual amount you spent on commuting. Exemption is limited to the actual expenditure.
+                            </div></label>
+                                <input type="number" id="sal-conv-exp" oninput="updateSalaryNestedNum('conveyance_allowance', 'actual_expenditure_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- Tour -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-white/5 pb-4">
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Tour/Travel Allowance Received
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Allowance given for official tours or transfers.
+                            </div></label>
+                                <input type="number" id="sal-tour-recv" oninput="updateSalaryNestedNum('tour_travel_allowance', 'allowance_received_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Tour/Travel Actual Expenditure
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                The actual amount spent on travel, lodging, or boarding during the official tour.
+                            </div></label>
+                                <input type="number" id="sal-tour-exp" oninput="updateSalaryNestedNum('tour_travel_allowance', 'actual_expenditure_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- Daily -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Daily Allowance Received
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Per-diem allowance granted while on tour.
+                            </div></label>
+                                <input type="number" id="sal-daily-recv" oninput="updateSalaryNestedNum('daily_allowance', 'allowance_received_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Daily Actual Expenditure
+                            <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                <span class="font-bold text-[9px]">(i)</span>
+                            </span>
+                            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                Actual daily expenses incurred while on tour.
+                            </div></label>
+                                <input type="number" id="sal-daily-exp" oninput="updateSalaryNestedNum('daily_allowance', 'actual_expenditure_inr', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Sources -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Other Income (e.g. Interest, Dividends)</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest from Savings Bank Accounts</label>
+                        <input type="number" id="os-interest-savings" oninput="updateOSField('interest_savings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest from Fixed Deposits (FD) or Recurring Deposits (RD)</label>
+                        <input type="number" id="os-interest-fd" oninput="updateOSField('interest_fd_rd_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividends Received</label>
+                        <input type="number" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts Received (Only if total value > ₹50,000)</label>
+                        <input type="number" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Family Pension Inward</label>
+                        <input type="number" id="os-fam-pension" oninput="updateOSField('family_pension_gross_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Winnings from Online Games (Taxed at 30%)</label>
+                        <input type="number" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agricultural Income (s.10(1)) -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80">Agricultural Income (Tax Exempt)</span>
+                        <span class="text-[9px] text-white/30">This income is generally tax-free, but we need the amount for accurate tax calculation.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ag-has" onchange="toggleAgriSection(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                <div id="div-agri-section" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Agricultural Income Amount (₹)</label>
+                    <input type="number" id="ag-income" oninput="updateAgriIncome(this.value)" class="w-full max-w-sm bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                </div>
+            </div>
+
+            <!-- Additional Other Sources (bonds, IT refund, lottery) -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Additional Income Sources</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Bonds / Debentures (₹)</label>
+                        <input type="number" id="os-bonds" oninput="updateOSField('interest_bonds_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest received on Income Tax Refund (₹)</label>
+                        <input type="number" id="os-it-refund" oninput="updateOSField('interest_on_it_refund_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Winnings from Lotteries or Horse Races (Taxed at 30%, ₹)</label>
+                        <input type="number" id="os-lottery" oninput="updateOSField('winnings_lottery_gaming_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="switchStep('step-assets')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-hp')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+            </div>
+        </div>
+
+        
+        <!-- STEP 5.5: HOUSE PROPERTY (DOM-02) -->
+        <div id="panel-step-hp" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div class="flex items-center justify-between border-b border-white/5 pb-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white tracking-wide">House Property <span class="text-white/40 text-sm ml-2">(DOM-02)</span></h2>
+                    <p class="text-xs text-white/50 mt-1 uppercase tracking-widest font-bold">Rental Income & Home Loan Interest</p>
+                </div>
+            </div>
+
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80">Do you own any house property?</span>
+                        <span class="text-[10px] text-white/40 mt-1">Includes properties generating rent or properties with an active home loan.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="hp-gatekeeper" onchange="toggleHPSection(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-brandGold after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold"></div>
+                    </label>
+                </div>
+            </div>
+
+            <div id="div-hp-section" class="hidden flex flex-col gap-6">
+                <div id="hp-list" class="flex flex-col gap-6"></div>
+                
+                <button onclick="addHouseProperty()" class="w-full py-4 border border-dashed border-white/20 hover:border-brandGold hover:bg-brandGold/5 rounded-2xl flex items-center justify-center gap-2 text-white/60 hover:text-brandGold transition-all font-bold text-xs uppercase tracking-widest">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add Property
+                </button>
+            </div>
+            
+            <div class="flex justify-between mt-8 border-t border-white/10 pt-6">
+                <button onclick="switchStep('step-income')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">  Back</button>
+                <button onclick="switchStep('step-business')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+            </div>
+        </div>
+
+
+        <!-- STEP 6: BUSINESS & PROFESSION (DOM-03 Specialist Cockpit) -->
         <div id="panel-step-business" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J — Business, Profession & Trading Income</h2>
@@ -1097,131 +1470,7 @@
             </div>
 
             <div class="flex justify-between mt-4">
-                <button onclick="switchStep('step-assets')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
-                <button onclick="switchStep('step-income')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
-            </div>
-        </div>
-
-        <!-- STEP 6: SALARY & OTHER SOURCES -->
-        <div id="panel-step-income" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
-            <div>
-                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J & 2K — Salary & Other Income</h2>
-                <p class="text-xs text-white/40 mt-1">Enter details about your salary, rent allowance (HRA), bank interest, and any other income you received.</p>
-            </div>
-
-            <!-- Salary Details -->
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Salary Income & Exemptions</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="sal-has" onchange="toggleSalarySection(this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
-                    </label>
-                </div>
-                <div id="div-salary-section" class="grid grid-cols-1 md:grid-cols-3 gap-4 hidden">
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Salary</label>
-                        <input type="number" id="sal-gross" oninput="updateSalaryNum('gross_salary_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Basic Salary + Dearness Allowance (DA)</label>
-                        <input type="number" id="sal-basic" oninput="updateSalaryNum('basic_da_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">House Rent Allowance (HRA) Received</label>
-                        <input type="number" id="sal-hra" oninput="updateSalaryNum('hra_received_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Rent Paid on Accommodation</label>
-                        <input type="number" id="sal-rent" oninput="updateSalaryNum('rent_paid_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl">
-                        <div class="flex flex-col">
-                            <span class="text-xs font-bold text-white/80">Metro Accommodation?</span>
-                            <span class="text-[9px] text-white/30">HRA caps: Metro 50%, non-Metro 40%.</span>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="sal-metro" onchange="updateSalaryBool('is_metro_city', this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employer NPS Contribution (s.80CCD(2))</label>
-                        <input type="number" id="sal-nps-emp" oninput="updateSalaryNum('employer_nps_contribution_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Other Sources -->
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Other Income (e.g. Interest, Dividends)</span>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest from Savings Bank Accounts</label>
-                        <input type="number" id="os-interest-savings" oninput="updateOSField('interest_savings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest from Fixed Deposits (FD) or Recurring Deposits (RD)</label>
-                        <input type="number" id="os-interest-fd" oninput="updateOSField('interest_fd_rd_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividends Received</label>
-                        <input type="number" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts Received (Only if total value > ₹50,000)</label>
-                        <input type="number" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Family Pension Inward</label>
-                        <input type="number" id="os-fam-pension" oninput="updateOSField('family_pension_gross_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Winnings from Online Games (Taxed at 30%)</label>
-                        <input type="number" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Agricultural Income (s.10(1)) -->
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-white/80">Agricultural Income (Tax Exempt)</span>
-                        <span class="text-[9px] text-white/30">This income is generally tax-free, but we need the amount for accurate tax calculation.</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="ag-has" onchange="toggleAgriSection(this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
-                    </label>
-                </div>
-                <div id="div-agri-section" class="hidden">
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Agricultural Income Amount (₹)</label>
-                    <input type="number" id="ag-income" oninput="updateAgriIncome(this.value)" class="w-full max-w-sm bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                </div>
-            </div>
-
-            <!-- Additional Other Sources (bonds, IT refund, lottery) -->
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Additional Income Sources</span>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Bonds / Debentures (₹)</label>
-                        <input type="number" id="os-bonds" oninput="updateOSField('interest_bonds_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest received on Income Tax Refund (₹)</label>
-                        <input type="number" id="os-it-refund" oninput="updateOSField('interest_on_it_refund_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Winnings from Lotteries or Horse Races (Taxed at 30%, ₹)</label>
-                        <input type="number" id="os-lottery" oninput="updateOSField('winnings_lottery_gaming_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-4">
-                <button onclick="switchStep('step-business')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
                 <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
         </div>
@@ -1676,13 +1925,38 @@
             salary: {
                 has_salary_income: false,
                 gross_salary_inr: null,
-                exempt_allowances_inr: null,
+                pwd_transport_allowance: {
+                    is_eligible_pwd: false,
+                    allowance_received_inr: null
+                },
+                conveyance_allowance: {
+                    allowance_received_inr: null,
+                    actual_expenditure_inr: null
+                },
+                tour_travel_allowance: {
+                    allowance_received_inr: null,
+                    actual_expenditure_inr: null
+                },
+                daily_allowance: {
+                    allowance_received_inr: null,
+                    actual_expenditure_inr: null
+                },
                 hra_received_inr: null,
                 rent_paid_inr: null,
                 is_metro_city: false,
                 basic_da_inr: null,
-                employer_nps_contribution_inr: null
+                lta_claimed_inr: null,
+                perquisites_inr: null,
+                esop_perquisite_inr: null,
+                professional_tax_inr: null,
+                employer_nps_contribution_inr: null,
+                prior_employer_salary_inr: null
             },
+            house_property: {
+                has_house_property_income: false,
+                properties: []
+            },
+
             business_income: {
                 has_business_or_fo_income: false,
                 nr_ineligible_presumptive: false,
@@ -1834,7 +2108,7 @@
         const lock = state.residency_detail.final_india_residency_status;
         
         // Unlocks list based on calculated status
-        const allSteps = ['step-profile', 'step-dtaa', 'step-compliance', 'step-assets', 'step-business', 'step-income', 'step-deductions', 'step-credits', 'step-output'];
+        const allSteps = ['step-profile', 'step-dtaa', 'step-compliance', 'step-assets', 'step-income', 'step-hp', 'step-business', 'step-deductions', 'step-credits', 'step-output'];
         
         allSteps.forEach(step => {
             let isAllowed = true;
@@ -2068,6 +2342,11 @@
     function updateProfileField(field, val) {
         state.profile[field] = val;
         runResidencySolver();
+        if (field === 'tax_regime' && typeof evaluateSalaryRegimeLock === 'function') {
+            evaluateSalaryRegimeLock();
+        if (typeof renderHouseProperties === 'function') renderHouseProperties();
+    }
+        if (field === 'tax_regime' && typeof renderHouseProperties === 'function') { renderHouseProperties(); }
     }
 
     function syncResidencyUI() {
@@ -3914,6 +4193,33 @@
         evaluateSurchargeBuckets();
     }
 
+    function updateSalaryNested(objName, field, val) {
+        if (!state.domestic_income.salary[objName]) state.domestic_income.salary[objName] = {};
+        state.domestic_income.salary[objName][field] = val;
+        evaluateSurchargeBuckets();
+    }
+
+    function updateSalaryNestedNum(objName, field, val) {
+        if (!state.domestic_income.salary[objName]) state.domestic_income.salary[objName] = {};
+        state.domestic_income.salary[objName][field] = val === '' ? null : parseInt(val);
+        evaluateSurchargeBuckets();
+    }
+
+    function togglePwdAllowance(val) {
+        updateSalaryNested('pwd_transport_allowance', 'is_eligible_pwd', val);
+        const recvDiv = document.getElementById('div-pwd-recv');
+        const recvInput = document.getElementById('sal-pwd-recv');
+        if (val) {
+            recvDiv.classList.remove('opacity-30');
+            recvInput.disabled = false;
+        } else {
+            recvDiv.classList.add('opacity-30');
+            recvInput.disabled = true;
+            recvInput.value = '';
+            updateSalaryNestedNum('pwd_transport_allowance', 'allowance_received_inr', '');
+        }
+    }
+
     function updateOSField(field, val) {
         state.other_sources.has_other_sources_income = true;
         state.other_sources[field] = val === '' ? null : parseInt(val);
@@ -4469,7 +4775,198 @@
         // Initialize display
         runResidencySolver();
         renderDtaaElections();
+        
+        if (typeof evaluateSalaryRegimeLock === 'function') {
+            evaluateSalaryRegimeLock();
+        if (typeof renderHouseProperties === 'function') renderHouseProperties();
     }
+        if (field === 'tax_regime' && typeof renderHouseProperties === 'function') { renderHouseProperties(); }
+    }
+
+    function evaluateSalaryRegimeLock() {
+        const regime = state.profile.tax_regime;
+        const oldFields = document.querySelectorAll('.sal-old-regime-field');
+        
+        if (regime === 'NEW') {
+            oldFields.forEach(el => {
+                el.classList.add('hidden');
+                
+                const inputs = el.querySelectorAll('input');
+                inputs.forEach(inp => {
+                    if(inp.type === 'number') {
+                        inp.value = '';
+                        const id = inp.id;
+                        if(id === 'sal-basic') state.domestic_income.salary.basic_da_inr = null;
+                        if(id === 'sal-hra') state.domestic_income.salary.hra_received_inr = null;
+                        if(id === 'sal-rent') state.domestic_income.salary.rent_paid_inr = null;
+                        if(id === 'sal-lta') state.domestic_income.salary.lta_claimed_inr = null;
+                    } else if (inp.type === 'checkbox') {
+                        inp.checked = false;
+                        if(inp.id === 'sal-metro') state.domestic_income.salary.is_metro_city = false;
+                    }
+                });
+                
+                if(el.tagName === 'INPUT') {
+                    if(el.type === 'number') {
+                        el.value = '';
+                        const id = el.id;
+                        if(id === 'sal-basic') state.domestic_income.salary.basic_da_inr = null;
+                        if(id === 'sal-hra') state.domestic_income.salary.hra_received_inr = null;
+                        if(id === 'sal-rent') state.domestic_income.salary.rent_paid_inr = null;
+                        if(id === 'sal-lta') state.domestic_income.salary.lta_claimed_inr = null;
+                    } else if(el.type === 'checkbox') {
+                        el.checked = false;
+                        if(el.id === 'sal-metro') state.domestic_income.salary.is_metro_city = false;
+                    }
+                }
+            });
+        } else {
+            oldFields.forEach(el => {
+                el.classList.remove('hidden');
+            });
+        }
+    }
+
+    // --- HOUSE PROPERTY HANDLERS ---
+    function toggleHPSection(val) {
+        state.domestic_income.house_property.has_house_property_income = val;
+        const divHP = document.getElementById('div-hp-section');
+        if (val) {
+            divHP.classList.remove('hidden');
+            if(state.domestic_income.house_property.properties.length === 0) {
+                addHouseProperty();
+            }
+        } else {
+            divHP.classList.add('hidden');
+            state.domestic_income.house_property.properties = [];
+            renderHouseProperties();
+        }
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function addHouseProperty() {
+        state.domestic_income.house_property.properties.push({
+            property_use: 'SOP',
+            gross_annual_value_inr: null,
+            municipal_taxes_paid_inr: null,
+            interest_on_borrowed_capital_inr: null,
+            pre_construction_interest_inr: null,
+            is_self_occupied_with_loan: false,
+            co_owner_share_percent: 100,
+            financial_values_represent: 'TOTAL_PROPERTY'
+        });
+        renderHouseProperties();
+    }
+
+    function removeHouseProperty(idx) {
+        state.domestic_income.house_property.properties.splice(idx, 1);
+        renderHouseProperties();
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function updateHPField(idx, field, val) {
+        if(field === 'co_owner_share_percent' && val) val = Math.min(100, Math.max(1, parseInt(val)));
+        else if(val !== null && typeof val !== 'boolean' && field !== 'property_use' && field !== 'financial_values_represent') val = val === '' ? null : parseInt(val);
+        
+        state.domestic_income.house_property.properties[idx][field] = val;
+        
+        // Zero out GAV and Taxes if SOP
+        if (field === 'property_use' && val === 'SOP') {
+            state.domestic_income.house_property.properties[idx].gross_annual_value_inr = null;
+            state.domestic_income.house_property.properties[idx].municipal_taxes_paid_inr = null;
+            
+            // Also zero out interest if New Regime
+            if (state.profile.tax_regime === 'NEW') {
+                state.domestic_income.house_property.properties[idx].interest_on_borrowed_capital_inr = null;
+                state.domestic_income.house_property.properties[idx].pre_construction_interest_inr = null;
+            }
+        }
+        renderHouseProperties();
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function renderHouseProperties() {
+        const list = document.getElementById('hp-list');
+        if (!list) return;
+        list.innerHTML = '';
+        const regime = state.profile.tax_regime;
+
+        state.domestic_income.house_property.properties.forEach((prop, idx) => {
+            const isSOP = prop.property_use === 'SOP';
+            const hideInterest = isSOP && regime === 'NEW';
+            
+            const html = `
+                <div class="p-5 bg-[#121212] border border-white/10 rounded-2xl flex flex-col gap-5 relative group">
+                    <button onclick="removeHouseProperty(${idx})" class="absolute top-4 right-4 text-white/20 hover:text-brandRed transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                    
+                    <h3 class="text-sm font-black text-white/80 tracking-widest uppercase">Property ${idx + 1}</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Property Use</label>
+                            <select onchange="updateHPField(${idx}, 'property_use', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                                <option class="bg-[#1c1c1c] text-white" value="SOP" ${prop.property_use === 'SOP' ? 'selected' : ''}>Self-Occupied (SOP)</option>
+                                <option class="bg-[#1c1c1c] text-white" value="LOP" ${prop.property_use === 'LOP' ? 'selected' : ''}>Let-Out (LOP)</option>
+                                <option class="bg-[#1c1c1c] text-white" value="DLOP" ${prop.property_use === 'DLOP' ? 'selected' : ''}>Deemed Let-Out (DLOP)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Co-owner Share (%)</label>
+                            <input type="number" min="1" max="100" onblur="updateHPField(${idx}, 'co_owner_share_percent', this.value)" value="${prop.co_owner_share_percent || ''}" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+                    
+                    ${prop.co_owner_share_percent < 100 ? `
+                    <div class="bg-brandGold/10 border border-brandGold/30 p-3 rounded-xl">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">Financial Values Represent</label>
+                        <select onchange="updateHPField(${idx}, 'financial_values_represent', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <option class="bg-[#1c1c1c] text-white" value="TOTAL_PROPERTY" ${prop.financial_values_represent === 'TOTAL_PROPERTY' ? 'selected' : ''}>Total Property Value (Engine will compute your share)</option>
+                            <option class="bg-[#1c1c1c] text-white" value="MY_SHARE_ONLY" ${prop.financial_values_represent === 'MY_SHARE_ONLY' ? 'selected' : ''}>My Share Only</option>
+                        </select>
+                    </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="transition-all ${isSOP ? 'opacity-30 pointer-events-none hidden' : ''}">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Annual Value (GAV)</label>
+                            <input type="number" onblur="updateHPField(${idx}, 'gross_annual_value_inr', this.value)" value="${prop.gross_annual_value_inr || ''}" ${isSOP ? 'disabled' : ''} class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="transition-all ${isSOP ? 'opacity-30 pointer-events-none hidden' : ''}">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Municipal Taxes Paid</label>
+                            <input type="number" onblur="updateHPField(${idx}, 'municipal_taxes_paid_inr', this.value)" value="${prop.municipal_taxes_paid_inr || ''}" ${isSOP ? 'disabled' : ''} class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="transition-all ${hideInterest ? 'opacity-30 pointer-events-none hidden' : ''}">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Borrowed Capital</label>
+                            <input type="number" onblur="updateHPField(${idx}, 'interest_on_borrowed_capital_inr', this.value)" value="${prop.interest_on_borrowed_capital_inr || ''}" ${hideInterest ? 'disabled' : ''} class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="transition-all ${hideInterest ? 'opacity-30 pointer-events-none hidden' : ''}">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Pre-Construction Interest</label>
+                            <input type="number" onblur="updateHPField(${idx}, 'pre_construction_interest_inr', this.value)" value="${prop.pre_construction_interest_inr || ''}" ${hideInterest ? 'disabled' : ''} class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-lg transition-all ${regime === 'NEW' ? 'opacity-30 pointer-events-none hidden' : ''}">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Self-Occupied with active loan?</span>
+                            <span class="text-[9px] text-brandGold/70">Required to claim max ₹2L deduction under Section 24(b).</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" onchange="updateHPField(${idx}, 'is_self_occupied_with_loan', this.checked)" ${prop.is_self_occupied_with_loan ? 'checked' : ''} ${regime === 'NEW' ? 'disabled' : ''} class="sr-only peer">
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-brandGold after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold"></div>
+                        </label>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
 </script>
 </body>
 </html>
