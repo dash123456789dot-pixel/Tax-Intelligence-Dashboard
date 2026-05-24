@@ -1329,6 +1329,28 @@
                     </div>
                 </div>
 
+                <!-- s.44AE Goods Transport Vehicles -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-pres-s44ae">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Goods Transport Vehicles (s.44AE Scheme)</span>
+                        <span id="s44ae-count" class="text-[10px] text-white/50 font-mono bg-white/5 px-2 py-1 rounded">0 / 10 Vehicles</span>
+                    </div>
+                    
+                    <div id="warn-s44ae-limit" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-xs rounded-xl hidden items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <span>You cannot opt for s.44AE if you owned more than 10 goods vehicles at any time during the year.</span>
+                    </div>
+
+                    <div id="s44ae-vehicles-container" class="space-y-3">
+                        <!-- Vehicles will be injected here -->
+                    </div>
+
+                    <button id="btn-add-vehicle" onclick="addGoodsVehicle()" class="mt-2 w-full py-2.5 rounded-xl border border-white/10 hover:border-brandGold/50 hover:bg-white/5 text-xs text-white/70 hover:text-brandGold transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Add Vehicle
+                    </button>
+                </div>
+
                 <!-- General Gross Receipts (For non-s.44ADA professionals) -->
                 <div id="div-general-gross-receipts" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Professional Gross Receipts (Regular)</span>
@@ -3700,6 +3722,123 @@
         state.domestic_income.business_income.business_code = val || null;
     }
 
+    // s.44AE Logic
+    function renderGoodsVehicles() {
+        const container = document.getElementById('s44ae-vehicles-container');
+        const countSpan = document.getElementById('s44ae-count');
+        const btnAdd = document.getElementById('btn-add-vehicle');
+        if (!container) return;
+
+        const vehicles = state.domestic_income.business_income.goods_vehicles || [];
+        
+        if (countSpan) countSpan.textContent = `${vehicles.length} / 10 Vehicles`;
+        if (btnAdd) {
+            if (vehicles.length >= 10) {
+                btnAdd.classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                btnAdd.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        }
+
+        container.innerHTML = '';
+        
+        vehicles.forEach((v, i) => {
+            const isHeavy = v.vehicle_type === 'heavy';
+            const html = `
+                <div class="p-4 bg-white/5 border border-white/10 rounded-xl relative">
+                    <button onclick="removeGoodsVehicle(${i})" class="absolute top-3 right-3 text-white/30 hover:text-brandRed transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pr-6">
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Vehicle Type</label>
+                            <select onchange="updateGoodsVehicle(${i}, 'vehicle_type', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none">
+                                <option value="" ${!v.vehicle_type ? 'selected' : ''}>-- Select --</option>
+                                <option value="light" ${v.vehicle_type === 'light' ? 'selected' : ''}>Light (≤ 12 MT)</option>
+                                <option value="heavy" ${v.vehicle_type === 'heavy' ? 'selected' : ''}>Heavy (> 12 MT)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">GVW (Tonnes)</label>
+                            <input type="number" ${isHeavy ? '' : 'disabled'} oninput="updateGoodsVehicle(${i}, 'gvw_tonnes', this.value)" value="${v.gvw_tonnes || ''}" class="w-full bg-[#121212] ${isHeavy ? 'border-white/10 text-white' : 'border-transparent text-white/20'} border rounded-lg text-xs px-2 py-2 focus:border-brandGold focus:outline-none placeholder-white/20" placeholder="e.g. 15">
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Months Owned</label>
+                            <input type="number" min="1" max="12" oninput="updateGoodsVehicle(${i}, 'months_owned', this.value)" value="${v.months_owned || ''}" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none placeholder-white/20" placeholder="1-12">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    function addGoodsVehicle() {
+        if (!state.domestic_income.business_income.goods_vehicles) {
+            state.domestic_income.business_income.goods_vehicles = [];
+        }
+        if (state.domestic_income.business_income.goods_vehicles.length >= 10) return;
+        
+        state.domestic_income.business_income.goods_vehicles.push({
+            vehicle_type: null,
+            gvw_tonnes: null,
+            months_owned: null
+        });
+        renderGoodsVehicles();
+        validateS44AEEligibility();
+    }
+
+    function updateGoodsVehicle(index, field, value) {
+        if (field === 'vehicle_type') {
+            state.domestic_income.business_income.goods_vehicles[index].vehicle_type = value;
+            if (value !== 'heavy') {
+                state.domestic_income.business_income.goods_vehicles[index].gvw_tonnes = null;
+            }
+        } else if (field === 'gvw_tonnes') {
+            state.domestic_income.business_income.goods_vehicles[index].gvw_tonnes = value ? parseInt(value) : null;
+        } else if (field === 'months_owned') {
+            let m = parseInt(value);
+            if (m > 12) m = 12;
+            if (m < 1) m = 1;
+            state.domestic_income.business_income.goods_vehicles[index].months_owned = isNaN(m) ? null : m;
+        }
+        renderGoodsVehicles();
+    }
+
+    function removeGoodsVehicle(index) {
+        state.domestic_income.business_income.goods_vehicles.splice(index, 1);
+        renderGoodsVehicles();
+        validateS44AEEligibility();
+    }
+
+    function validateS44AEEligibility() {
+        const vehicles = state.domestic_income.business_income.goods_vehicles || [];
+        const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+        const warnBanner = document.getElementById('warn-s44ae-limit');
+        
+        if (hasS44AE && vehicles.length > 10) {
+            // Force uncheck
+            const cbAE = document.querySelector('input[value="s44AE"].biz-pres-chk');
+            if (cbAE) cbAE.checked = false;
+            
+            const index = state.domestic_income.business_income.presumptive_scheme.indexOf('s44AE');
+            if (index > -1) {
+                state.domestic_income.business_income.presumptive_scheme.splice(index, 1);
+            }
+            
+            if (warnBanner) {
+                warnBanner.style.display = 'flex';
+                warnBanner.classList.remove('hidden');
+            }
+            toggleReceiptsVisibility();
+        } else {
+            if (warnBanner) {
+                warnBanner.style.display = 'none';
+                warnBanner.classList.add('hidden');
+            }
+        }
+    }
+
     function toggleProfessionDropdown() {
         const isProfessional = state.domestic_income.business_income.nature_of_business.includes('professional');
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
@@ -3834,6 +3973,7 @@
         const isProfessional = natures.includes('professional');
         const hasS44AD = state.domestic_income.business_income.presumptive_scheme.includes('s44AD');
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
+        const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
         
         // General Turnover
         const divGenTurnover = document.getElementById('div-general-turnover');
@@ -3862,6 +4002,15 @@
             divS44ADA.classList.remove('hidden');
         } else {
             divS44ADA.classList.add('hidden');
+        }
+
+        // s44AE breakdown
+        const divS44AE = document.getElementById('div-pres-s44ae');
+        if (hasS44AE) {
+            if (divS44AE) divS44AE.classList.remove('hidden');
+            renderGoodsVehicles();
+        } else {
+            if (divS44AE) divS44AE.classList.add('hidden');
         }
         
         // Business Code Dropdown
@@ -3933,6 +4082,7 @@
         validateEntityPresumptiveEligibility();
         validateS44ADEligibility();
         validateS44ADAEligibility();
+        validateS44AEEligibility();
         toggleProfessionDropdown();
         toggleReceiptsVisibility();
 
