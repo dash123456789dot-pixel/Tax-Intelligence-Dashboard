@@ -1245,6 +1245,16 @@
                     </p>
                 </div>
 
+                <!-- s.44AD Eligibility Warning (Turnover / 5-Year Lock-in) -->
+                <div id="warn-pres-s44ad-ineligible" class="p-4 bg-brandRed/10 border border-brandRed/30 rounded-2xl hidden flex flex-col gap-2 transition-all mt-4">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandRed flex items-center space-x-2">
+                        <span>❌ NOT ELIGIBLE FOR s.44AD</span>
+                    </span>
+                    <p id="warn-pres-s44ad-text" class="text-[10px] text-white/70 leading-relaxed">
+                        Reason for ineligibility goes here.
+                    </p>
+                </div>
+
                 <!-- Presumptive schemes forms -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-pres-s44ad">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Small Business Details (Simplified Scheme)</span>
@@ -3494,6 +3504,62 @@
         evaluateSurchargeBuckets();
     }
 
+
+    function validateS44ADEligibility() {
+        const scheme = state.domestic_income.business_income.presumptive_scheme;
+        if (!scheme.includes('s44AD')) return;
+
+        const dig = state.domestic_income.business_income.digital_receipts_inr || 0;
+        const csh = state.domestic_income.business_income.cash_receipts_inr || 0;
+        const total = dig + csh;
+        const lastExitAY = state.domestic_income.business_income.s44AD_last_exit_ay;
+
+        let ineligibleReason = null;
+
+        // 1. Turnover Check
+        if (total > 30000000) {
+            ineligibleReason = "Total turnover exceeds ₹3 Crores. s.44AD cannot be opted.";
+        } else if (total > 20000000 && total <= 30000000) {
+            // Need 95% digital
+            if (dig < 0.95 * total) {
+                ineligibleReason = "For turnover between ₹2Cr and ₹3Cr, digital receipts must be ≥ 95%. Your cash proportion is too high.";
+            }
+        }
+
+        // 2. 5-Year Lock-in Check
+        // Simplified check: If they typed anything like "AY" in the last exit box, assume they are locked out.
+        if (lastExitAY && lastExitAY.trim().length >= 4) {
+            ineligibleReason = "You have opted out of s.44AD in a previous year and the 5-year cooling-off period has not expired.";
+        }
+
+        const warnBanner = document.getElementById('warn-pres-s44ad-ineligible');
+        const warnText = document.getElementById('warn-pres-s44ad-text');
+        
+        if (ineligibleReason) {
+            // Force uncheck
+            const adCheckbox = document.querySelector('input.biz-pres-chk[value="s44AD"]');
+            if (adCheckbox) adCheckbox.checked = false;
+            
+            // Remove from state
+            const index = scheme.indexOf('s44AD');
+            if (index > -1) {
+                scheme.splice(index, 1);
+            }
+            
+            // Hide the subform
+            const formAD = document.getElementById('div-pres-s44ad');
+            if (formAD) formAD.classList.add('hidden');
+
+            // Show warning
+            if (warnBanner && warnText) {
+                warnText.innerText = ineligibleReason;
+                warnBanner.classList.remove('hidden');
+            }
+        } else {
+            if (warnBanner) warnBanner.classList.add('hidden');
+        }
+    }
+
     function updateBizNature() {
         const checked = [];
         document.querySelectorAll('.biz-nature-chk:checked').forEach(cb => {
@@ -3509,7 +3575,9 @@
         });
         state.domestic_income.business_income.presumptive_scheme = checked;
 
-        // Eligibility Check (NR_INELIGIBLE_PRESUMPTIVE)
+        validateS44ADEligibility();
+
+        // Eligibility Check
         const isNR = state.residency_detail.final_india_residency_status === 'NR';
         const hasADorADA = checked.includes('s44AD') || checked.includes('s44ADA');
         const warnBanner = document.getElementById('warn-pres-nri');
@@ -3593,11 +3661,17 @@
 
     function updateBizNum(field, val) {
         state.domestic_income.business_income[field] = val === '' ? null : parseInt(val);
+        if (field === 'digital_receipts_inr' || field === 'cash_receipts_inr') {
+            validateS44ADEligibility();
+        }
         evaluateSurchargeBuckets();
     }
 
     function updateBizField(field, val) {
         state.domestic_income.business_income[field] = val;
+        if (field === 's44AD_last_exit_ay') {
+            validateS44ADEligibility();
+        }
     }
 
     function updateBizExpense(field, val) {
