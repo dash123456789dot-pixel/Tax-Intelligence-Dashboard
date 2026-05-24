@@ -1578,13 +1578,10 @@
                             <input type="text" inputmode="numeric" id="biz-tds-res" oninput="updateBizExpense('payments_to_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cash payments over ₹10,000 in a single day (Fully disallowed)</label>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cash payments over ₹10,000 (₹35,000 for transporters) in a single day (Fully disallowed)</label>
                             <input type="text" inputmode="numeric" id="biz-cash-exceed" oninput="updateBizExpense('total_cash_payments_exceeding_limit_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Securities Transaction Tax (STT) Paid (Not tax deductible)</label>
-                            <input type="text" inputmode="numeric" id="biz-stt-paid" oninput="updateBizExpense('stt_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
+
 
 
                         <!-- s.35 Scientific Research, s.35D Preliminary, s.35DDA VRS -->
@@ -2275,8 +2272,6 @@
                     s35D_year_of_commencement: null,
                     s35DDA_vrs_payments_inr: null,
                     s35DDA_first_year_of_payment: null,
-                    stt_paid_inr: null,
-                    ctt_paid_inr: null,
                     brokerage_on_fno_inr: null,
                     exchange_charges_inr: null,
                     advisory_and_data_subscriptions_inr: null,
