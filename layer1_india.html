@@ -1242,6 +1242,18 @@
             </div>
 
             <div id="div-business-container" class="hidden flex flex-col gap-6">
+                <!-- s.115BAC Opt-Out History -->
+                <div class="p-5 bg-brandRed/10 border border-brandRed/30 rounded-2xl flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-brandRed">Previously Opted Out of s.115BAC New Regime?</span>
+                        <span class="text-[10px] text-brandRed/80">Business income taxpayers have a one-time opt-out right. Checking this permanently locks you to the Old Regime.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="biz-115bac-out" onchange="update115BACOptOut(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandRed peer-checked:after:bg-white"></div>
+                    </label>
+                </div>
+
                 <!-- Classifications and Presumptive Schemes (Array of enums v5.1 changes) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2">
@@ -1523,16 +1535,7 @@
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Collected (Output Tax, ₹)</label>
                             <input type="text" inputmode="numeric" id="biz-gst-collected" oninput="updateBizNum('gst_collected_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl">
-                            <div class="flex flex-col">
-                                <span class="text-xs font-bold text-white/80">Previously Opted Out of s.115BAC New Regime?</span>
-                                <span class="text-[9px] text-white/30">Business income taxpayers have a one-time opt-out right.</span>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="biz-115bac-out" onchange="update115BACOptOut(this.checked)" class="sr-only peer">
-                                <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
-                            </label>
-                        </div>
+
                     </div>
                 </div>
 
@@ -3646,20 +3649,22 @@
     function validateS44ADAEligibility() {
         const profType = state.domestic_income.business_income.profession_type;
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
+        const warnBanner = document.getElementById('warn-pres-s44ada-ineligible');
         
-        if (hasS44ADA && profType === 'other') {
-            const cb = document.querySelector('.biz-pres-chk[value="s44ADA"]');
-            if (cb) cb.checked = false;
+        if (profType === 'other') {
+            warnBanner.classList.remove('hidden');
+            warnBanner.style.display = 'flex';
             
-            const scheme = state.domestic_income.business_income.presumptive_scheme;
-            const idx = scheme.indexOf('s44ADA');
-            if (idx > -1) scheme.splice(idx, 1);
-            
-            document.getElementById('warn-pres-s44ada-ineligible').classList.remove('hidden');
-            document.getElementById('warn-pres-s44ada-ineligible').style.display = 'flex';
+            if (hasS44ADA) {
+                const cb = document.querySelector('.biz-pres-chk[value="s44ADA"]');
+                if (cb) cb.checked = false;
+                const scheme = state.domestic_income.business_income.presumptive_scheme;
+                const idx = scheme.indexOf('s44ADA');
+                if (idx > -1) scheme.splice(idx, 1);
+            }
         } else {
-            document.getElementById('warn-pres-s44ada-ineligible').classList.add('hidden');
-            document.getElementById('warn-pres-s44ada-ineligible').style.display = '';
+            warnBanner.classList.add('hidden');
+            warnBanner.style.display = '';
         }
     }
 
