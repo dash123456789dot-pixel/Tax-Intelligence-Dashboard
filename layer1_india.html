@@ -2283,6 +2283,11 @@
             }
         });
 
+        // Re-validate business presumptive schemes in case residency changed
+        if (typeof updateBizPresumptive === 'function') {
+            updateBizPresumptive();
+        }
+
         // Enforce PPF warning if NR
         const ppfWarn = document.getElementById('warn-ppf');
         if (ppfWarn) {
