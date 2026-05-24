@@ -1242,6 +1242,22 @@
             </div>
 
             <div id="div-business-container" class="hidden flex flex-col gap-6">
+                <!-- Tax Entity Type -->
+                <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2 transition-all">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">Your Tax Entity Type</label>
+                    <select id="biz-entity-type" onchange="updateBizEntityType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="individual" selected>Individual</option>
+                        <option value="huf">Hindu Undivided Family (HUF)</option>
+                        <option value="firm">Partnership Firm (Ordinary)</option>
+                        <option value="llp">Limited Liability Partnership (LLP)</option>
+                        <option value="company">Company</option>
+                    </select>
+                    <div id="warn-entity-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-xs rounded-xl hidden items-center gap-2 mt-2 transition-all">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <span>LLPs and Companies are NOT eligible for s.44AD or s.44ADA presumptive taxation.</span>
+                    </div>
+                </div>
+
                 <!-- s.115BAC Opt-Out History -->
                 <div id="div-115bac-box" class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between transition-all">
                     <div class="flex flex-col">
@@ -2088,6 +2104,7 @@
 
             business_income: {
                 has_business_or_fo_income: false,
+                entity_type: 'individual',
                 nr_ineligible_presumptive: false,
                 nature_of_business: [],
                 presumptive_scheme: [],
@@ -3825,6 +3842,48 @@
         }
     }
 
+        function updateBizEntityType(val) {
+        state.domestic_income.business_income.entity_type = val;
+        validateEntityPresumptiveEligibility();
+    }
+
+    function validateEntityPresumptiveEligibility() {
+        const entity = state.domestic_income.business_income.entity_type;
+        const checked = state.domestic_income.business_income.presumptive_scheme;
+        const hasADorADA = checked.includes('s44AD') || checked.includes('s44ADA');
+        const warnBanner = document.getElementById('warn-entity-presumptive');
+        
+        if ((entity === 'llp' || entity === 'company') && hasADorADA) {
+            if (warnBanner) {
+                warnBanner.classList.remove('hidden');
+                warnBanner.style.display = 'flex';
+            }
+            
+            const cbAD = document.querySelector('.biz-pres-chk[value="s44AD"]');
+            if (cbAD) cbAD.checked = false;
+            
+            const cbADA = document.querySelector('.biz-pres-chk[value="s44ADA"]');
+            if (cbADA) cbADA.checked = false;
+            
+            const idxAD = checked.indexOf('s44AD');
+            if (idxAD > -1) checked.splice(idxAD, 1);
+            
+            const idxADA = checked.indexOf('s44ADA');
+            if (idxADA > -1) checked.splice(idxADA, 1);
+            
+            toggleProfessionDropdown();
+            toggleReceiptsVisibility();
+            
+            const formAD = document.getElementById('div-pres-s44ad');
+            if (formAD) formAD.classList.add('hidden');
+        } else {
+            if (warnBanner) {
+                warnBanner.classList.add('hidden');
+                warnBanner.style.display = '';
+            }
+        }
+    }
+
     function updateBizPresumptive() {
         const checked = [];
         document.querySelectorAll('.biz-pres-chk:checked').forEach(cb => {
@@ -3866,6 +3925,7 @@
             // We just unchecked them, so we need to run these validations again
             validateS44ADEligibility();
             validateS44ADAEligibility();
+            validateEntityPresumptiveEligibility();
             toggleProfessionDropdown();
             toggleReceiptsVisibility();
         } else {
