@@ -1283,7 +1283,7 @@
                             <label class="flex items-center space-x-2"><input type="checkbox" value="regular_business" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Regular Business (Detailed Books)</span></label>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="partner_in_firm" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Partner in a Firm (Remuneration/Interest)</span></label>
                         </div>
-                        <div class="mt-4 border-t border-white/5 pt-4">
+                        <div id="div-biz-code-container" class="mt-4 border-t border-white/5 pt-4 hidden transition-all">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Primary Business Code</label>
                             <select id="biz-code" onchange="updateBizCode(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                                 <option value="">-- Select --</option>
@@ -1293,19 +1293,7 @@
                                     <option value="04000">Construction Business</option>
                                     <option value="05000">Service Sector (Non-Professional)</option>
                                 </optgroup>
-                                <optgroup label="Prohibited for s.44AD">
-                                    <option value="06008">Real Estate Agent / Broker (Commission)</option>
-                                    <option value="07011">Travel Agent / Tour Operator (Agency)</option>
-                                    <option value="07013">Clearing and Forwarding Agents (Agency)</option>
-                                    <option value="08001">Plying, hiring or leasing goods carriages</option>
-                                    <option value="09000">Other Commission or Brokerage</option>
-                                    <option value="10000">Other Agency Business</option>
-                                </optgroup>
                             </select>
-                            <div id="warn-code-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-xs rounded-xl hidden items-center gap-2 mt-2">
-                                <svg class="w-4 h-4 flex-shrink-0 text-brandRed" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                <span id="warn-code-text" class="text-brandRed">Agency, Commission, and Brokerage businesses are NOT eligible for s.44AD.</span>
-                            </div>
                         </div>
                     </div>
 
@@ -3710,49 +3698,6 @@
 
     function updateBizCode(val) {
         state.domestic_income.business_income.business_code = val || null;
-        validateCodePresumptiveEligibility();
-    }
-
-    function validateCodePresumptiveEligibility() {
-        const code = state.domestic_income.business_income.business_code;
-        const hasS44AD = state.domestic_income.business_income.presumptive_scheme.includes('s44AD');
-        const warnBanner = document.getElementById('warn-code-presumptive');
-        const warnText = document.getElementById('warn-code-text');
-        
-        const prohibitedCodes = ['06008', '07011', '07013', '08001', '09000', '10000'];
-
-        if (code && prohibitedCodes.includes(code)) {
-            if (hasS44AD) {
-                // Determine specific error message
-                if (code === '08001') {
-                    warnText.textContent = "Plying, hiring or leasing goods carriages is not eligible for s.44AD. Please use the s.44AE scheme instead.";
-                } else {
-                    warnText.textContent = "Agency, Commission, and Brokerage businesses are NOT eligible for s.44AD.";
-                }
-                
-                if (warnBanner) {
-                    warnBanner.style.display = 'flex';
-                    warnBanner.classList.remove('hidden');
-                }
-
-                // Force uncheck
-                const cbAD = document.querySelector('input[value="s44AD"].biz-pres-chk');
-                if (cbAD) {
-                    cbAD.checked = false;
-                    const index = state.domestic_income.business_income.presumptive_scheme.indexOf('s44AD');
-                    if (index > -1) {
-                        state.domestic_income.business_income.presumptive_scheme.splice(index, 1);
-                    }
-                }
-                
-                // Re-validate UI
-                toggleReceiptsVisibility();
-            } else {
-                if (warnBanner) warnBanner.style.display = 'none';
-            }
-        } else {
-            if (warnBanner) warnBanner.style.display = 'none';
-        }
     }
 
     function toggleProfessionDropdown() {
@@ -3919,6 +3864,14 @@
             divS44ADA.classList.add('hidden');
         }
         
+        // Business Code Dropdown
+        const divBizCodeContainer = document.getElementById('div-biz-code-container');
+        if (hasS44AD) {
+            if (divBizCodeContainer) divBizCodeContainer.classList.remove('hidden');
+        } else {
+            if (divBizCodeContainer) divBizCodeContainer.classList.add('hidden');
+        }
+        
         // General Gross Receipts
         const divGenGross = document.getElementById('div-general-gross-receipts');
         if (isProfessional && !hasS44ADA) {
@@ -3978,7 +3931,6 @@
         state.domestic_income.business_income.presumptive_scheme = checked;
 
         validateEntityPresumptiveEligibility();
-        validateCodePresumptiveEligibility();
         validateS44ADEligibility();
         validateS44ADAEligibility();
         toggleProfessionDropdown();
