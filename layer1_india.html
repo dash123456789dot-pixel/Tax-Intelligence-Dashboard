@@ -1452,16 +1452,18 @@
                 </div>
 
                 <!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-regular-biz">
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (If not using Simplified Scheme)</span>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Opening Stock (1 April)</label>
-                            <input type="text" inputmode="numeric" id="biz-open-stock" oninput="updateBizNum('opening_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Closing Stock (31 March)</label>
-                            <input type="text" inputmode="numeric" id="biz-close-stock" oninput="updateBizNum('closing_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <div id="div-regular-biz" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Opening Stock (1 April)</label>
+                                <input type="text" inputmode="numeric" id="biz-open-stock" oninput="updateBizNum('opening_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Closing Stock (31 March)</label>
+                                <input type="text" inputmode="numeric" id="biz-close-stock" oninput="updateBizNum('closing_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Rent for Business Premises</label>
