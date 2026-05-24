@@ -1242,7 +1242,20 @@
             </div>
 
             <div id="div-business-container" class="hidden flex flex-col gap-6">
-                <!-- Tax Entity Type -->
+                
+                <!-- ACCORDION: Business Profile & Setup -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" open>
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🏢</span>
+                            <span>Business Profile & Setup</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-5 border-t border-white/10 flex flex-col gap-4 bg-black/20">
+<!-- Tax Entity Type -->
                 <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2 transition-all">
                     <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">Your Tax Entity Type</label>
                     <select id="biz-entity-type" onchange="updateBizEntityType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
@@ -1307,7 +1320,23 @@
                     </div>
                 </div>
 
-                <!-- General Turnover (For non-s.44AD) -->
+                
+                <!-- ACCORDION: Revenue & Receipts -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">💰</span>
+                            <span>Revenue & Receipts</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-5 border-t border-white/10 flex flex-col gap-4 bg-black/20">
+
+                    </div>
+                </details>
+<!-- General Turnover (For non-s.44AD) -->
                 <div id="div-general-turnover" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
                     <span id="title-general-turnover" class="text-xs font-black uppercase tracking-widest text-brandGold">Total Gross Turnover</span>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Turnover / Receipts (₹)</label>
@@ -1451,7 +1480,23 @@
                     </div>
                 </div>
 
-                <!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
+                
+                <!-- ACCORDION: Expenses & Deductions -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">💸</span>
+                            <span>Expenses & Deductions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-5 border-t border-white/10 flex flex-col gap-4 bg-black/20">
+
+                    </div>
+                </details>
+<!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-expense-section">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (Non-Presumptive Only)</span>
                     <!-- Opening / Closing Stock — own row, conditional on regular_business + no presumptive -->
@@ -1660,7 +1705,23 @@
                     </div>
                 </div>
 
-                <!-- Speculative & F&O Derivative Turnover -->
+                
+                <!-- ACCORDION: Special Business Incomes (Trading & Firm) -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">📈</span>
+                            <span>Special Business Incomes (Trading & Firm)</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-5 border-t border-white/10 flex flex-col gap-4 bg-black/20">
+
+                    </div>
+                </details>
+<!-- Speculative & F&O Derivative Turnover -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Day Trading and Options (F&O)</span>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1756,7 +1817,10 @@
                 </div>
             </div>
 
-            <div class="flex justify-between mt-4">
+            
+                    </div>
+                </details>
+<div class="flex justify-between mt-4">
                 <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
                 <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
