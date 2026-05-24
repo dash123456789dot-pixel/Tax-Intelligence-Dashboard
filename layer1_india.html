@@ -1519,33 +1519,35 @@
                             <input type="text" inputmode="numeric" id="biz-bad-debts" oninput="updateBizExpense('bad_debts_written_off_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
 
-                        <!-- Trading-Specific Expenses -->
-                        <div class="md:col-span-3 border-t border-white/5 pt-2">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Trading / F&O Specific Expenses</span>
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brokerage on F&O Trades</label>
-                            <input type="text" inputmode="numeric" id="biz-brokerage-fno" oninput="updateBizExpense('brokerage_on_fno_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exchange / Clearing Charges</label>
-                            <input type="text" inputmode="numeric" id="biz-exchange-chg" oninput="updateBizExpense('exchange_charges_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advisory & Data Subscriptions</label>
-                            <input type="text" inputmode="numeric" id="biz-advisory" oninput="updateBizExpense('advisory_and_data_subscriptions_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Internet (Business Proportion)</label>
-                            <input type="text" inputmode="numeric" id="biz-internet" oninput="updateBizExpense('internet_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office (Business Proportion)</label>
-                            <input type="text" inputmode="numeric" id="biz-home-office" oninput="updateBizExpense('home_office_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CA / Professional Fees for Tax Filing</label>
-                            <input type="text" inputmode="numeric" id="biz-ca-fees" oninput="updateBizExpense('ca_professional_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <!-- Trading-Specific Expenses — ENABLED IF intraday_trader OR fno_trader -->
+                        <div id="div-trading-expenses" class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 hidden transition-all">
+                            <div class="md:col-span-3 border-t border-white/5 pt-2">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Trading / F&O Specific Expenses</span>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brokerage on F&O Trades</label>
+                                <input type="text" inputmode="numeric" id="biz-brokerage-fno" oninput="updateBizExpense('brokerage_on_fno_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exchange / Clearing Charges</label>
+                                <input type="text" inputmode="numeric" id="biz-exchange-chg" oninput="updateBizExpense('exchange_charges_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advisory & Data Subscriptions</label>
+                                <input type="text" inputmode="numeric" id="biz-advisory" oninput="updateBizExpense('advisory_and_data_subscriptions_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Internet (Business Proportion)</label>
+                                <input type="text" inputmode="numeric" id="biz-internet" oninput="updateBizExpense('internet_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office (Business Proportion)</label>
+                                <input type="text" inputmode="numeric" id="biz-home-office" oninput="updateBizExpense('home_office_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CA / Professional Fees for Tax Filing</label>
+                                <input type="text" inputmode="numeric" id="biz-ca-fees" oninput="updateBizExpense('ca_professional_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
                         </div>
 
                         <!-- Catch-all & Related Party -->
@@ -4156,8 +4158,16 @@
             }
         }
 
-        // MSME Payables — also only for non-presumptive
-        const divMsme = document.getElementById('div-expense-section')?.parentElement?.querySelector('[class*="rounded-2xl"]:has(#msme-table)');
+        // Trading / F&O Specific Expenses — ENABLED IF intraday_trader OR fno_trader
+        const hasTrading = natures.includes('intraday_trader') || natures.includes('fno_trader');
+        const divTradingExp = document.getElementById('div-trading-expenses');
+        if (divTradingExp) {
+            if (hasTrading && noPresumptive) {
+                divTradingExp.classList.remove('hidden');
+            } else {
+                divTradingExp.classList.add('hidden');
+            }
+        }
     }
 
     function togglePfEsiPaidField() {
