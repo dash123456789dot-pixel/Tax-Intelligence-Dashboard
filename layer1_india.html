@@ -1336,7 +1336,38 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
-<!-- General Turnover (For non-s.44AD) -->
+<!-- F&O Turnover -->
+                <div id="div-fno-income" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Options & Derivatives (F&O)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&O Net Profit/Loss</label>
+                            <input type="text" inputmode="numeric" id="biz-fno-profit" oninput="updateBizNum('non_speculative_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&O Absolute Turnover</label>
+                            <input type="text" inputmode="numeric" id="biz-fno-turnover" oninput="updateBizNum('fno_turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intraday Turnover -->
+                <div id="div-intraday-income" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Day Trading (Speculative)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Net Profit/Loss</label>
+                            <input type="text" inputmode="numeric" id="biz-intra-profit" oninput="updateBizNum('speculative_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Absolute Turnover</label>
+                            <input type="text" inputmode="numeric" id="biz-intra-turnover" oninput="updateBizNum('speculative_turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- General Turnover (For non-s.44AD) -->
                 <div id="div-general-turnover" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
                     <span id="title-general-turnover" class="text-xs font-black uppercase tracking-widest text-brandGold">Total Gross Turnover</span>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Turnover / Receipts (₹)</label>
@@ -1644,43 +1675,69 @@
 
 
 
-                        <!-- s.35 Scientific Research, s.35D Preliminary, s.35DDA VRS -->
-                        <div class="md:col-span-3 border-t border-white/5 pt-2">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Special Deductions for Research & Business Setup</span>
+                        <!-- ── SCIENTIFIC RESEARCH (s.35) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Scientific Research (s.35)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Scientific Research - Regular Expenses</label>
-                            <input type="text" inputmode="numeric" id="biz-s35-own-rev" oninput="updateBizExpense('s35_own_revenue_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <div id="grid-s35" class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Revenue Expenses</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-own-rev" oninput="updateBizExpense('s35_own_revenue_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Capital Expenses</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-own-cap" oninput="updateBizExpense('s35_own_capital_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation to Approved Body</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-donation" oninput="updateBizExpense('s35_donation_to_approved_body_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Scientific Research - Capital Expenses (e.g. Equipment)</label>
-                            <input type="text" inputmode="numeric" id="biz-s35-own-cap" oninput="updateBizExpense('s35_own_capital_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+
+                        <!-- ── PRELIMINARY EXPENSES (s.35D) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Preliminary Expenses (s.35D)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35d').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation to Approved Scientific Research Body</label>
-                            <input type="text" inputmode="numeric" id="biz-s35-donation" oninput="updateBizExpense('s35_donation_to_approved_body_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <div id="grid-s35d" class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Expenses (Claimed over 5 yrs)</label>
+                                <input type="text" inputmode="numeric" id="biz-s35d-total" oninput="updateBizExpense('s35D_total_preliminary_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Year of commencement (e.g. FY2023-24)</label>
+                                <input type="text" id="biz-s35d-year" oninput="updateBizStringExpense('s35D_year_of_commencement', this.value)" placeholder="FY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Preliminary/Startup Expenses (Claimed over 5 years)</label>
-                            <input type="text" inputmode="numeric" id="biz-s35d-total" oninput="updateBizExpense('s35D_total_preliminary_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+
+                        <!-- ── VRS AMORTISATION (s.35DDA) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">VRS Amortisation (s.35DDA)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35dda').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Year you started claiming startup expenses</label>
-                            <input type="text" id="biz-s35d-year" oninput="updateBizStringExpense('s35D_year_of_commencement', this.value)" placeholder="AY2025-26" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <div id="grid-s35dda" class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total VRS Payments (Claimed over 5 yrs)</label>
+                                <input type="text" inputmode="numeric" id="biz-s35dda-total" oninput="updateBizExpense('s35DDA_vrs_payments_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">First year of payment (e.g. FY2023-24)</label>
+                                <input type="text" id="biz-s35dda-year" oninput="updateBizStringExpense('s35DDA_first_year_of_payment', this.value)" placeholder="FY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
                         </div>
-                        <div></div> <!-- spacing spacer -->
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Voluntary Retirement (VRS) Payments (Claimed over 5 years)</label>
-                            <input type="text" inputmode="numeric" id="biz-s35dda-total" oninput="updateBizExpense('s35DDA_vrs_payments_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">First year you made the VRS payment</label>
-                            <input type="text" id="biz-s35dda-year" oninput="updateBizStringExpense('s35DDA_first_year_of_payment', this.value)" placeholder="AY2025-26" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div></div> <!-- spacing spacer -->
                     </div>
                 </div>
-
+                
                 <!-- MSME Payables s.43B(h) dynamic ledger -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                     <div class="flex items-center justify-between">
@@ -1708,6 +1765,33 @@
                     </div>
                 </details>
 
+                <!-- ACCORDION: Assets & Depreciation (s.32) -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" id="acc-assets-depreciation">
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🏗️</span>
+                            <span>Assets & Depreciation (s.32)</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                        <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Depreciable Asset Blocks</span>
+                                <button onclick="addAssetBlock()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Asset Block</button>
+                            </div>
+                            <div class="bg-brandGold/10 border border-brandGold/20 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                                <strong class="text-brandGold">💡 Note on Asset Additions:</strong> The Income Tax Act mandates depreciation on a <strong>"Block of Assets"</strong> basis. You do not need to list individual items. If you buy a new asset for an existing class (e.g. a second computer), simply add its cost to the <strong>Additions During Year</strong> field of your existing Computer block. For a completely new class, add a new block with a ₹0 Opening WDV.
+                            </div>
+                            <div id="asset-blocks-container" class="flex flex-col gap-4">
+                                <!-- Cards injected here by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
                 <!-- ACCORDION: Special Business Incomes (Trading & Firm) -->
                 <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
                     <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
@@ -1720,29 +1804,6 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
-<!-- Speculative & F&O Derivative Turnover -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Day Trading and Options (F&O)</span>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&O Net Profit/Loss</label>
-                            <input type="text" inputmode="numeric" id="biz-fno-profit" oninput="updateBizNum('non_speculative_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&O Absolute Turnover</label>
-                            <input type="text" inputmode="numeric" id="biz-fno-turnover" oninput="updateBizNum('fno_turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Net Profit/Loss</label>
-                            <input type="text" inputmode="numeric" id="biz-intra-profit" oninput="updateBizNum('speculative_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Absolute Turnover</label>
-                            <input type="text" inputmode="numeric" id="biz-intra-turnover" oninput="updateBizNum('speculative_turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                    </div>
-                </div>
-
                 <!-- AMT Brought Forward and s.41 bad debt recoveries -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Tax Credits & Recovered Bad Debts</span>
@@ -4150,7 +4211,7 @@
     
     function toggleReceiptsVisibility() {
         const natures = state.domestic_income.business_income.nature_of_business;
-        const hasGeneralBusiness = natures.some(n => n !== 'professional' && n !== 'partner_in_firm');
+        const hasGeneralBusiness = natures.some(n => n !== 'professional' && n !== 'partner_in_firm' && n !== 'fno_trader' && n !== 'intraday_trader');
         const isProfessional = natures.includes('professional');
         const hasS44AD = state.domestic_income.business_income.presumptive_scheme.includes('s44AD');
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
@@ -4235,6 +4296,20 @@
 
         // Trading / F&O Specific Expenses — ENABLED IF intraday_trader OR fno_trader
         const hasTrading = natures.includes('intraday_trader') || natures.includes('fno_trader');
+
+        // Speculative & F&O Income sections
+        const divFnoIncome = document.getElementById('div-fno-income');
+        const divIntraIncome = document.getElementById('div-intraday-income');
+        
+        if (divFnoIncome) {
+            if (natures.includes('fno_trader')) divFnoIncome.classList.remove('hidden');
+            else divFnoIncome.classList.add('hidden');
+        }
+        if (divIntraIncome) {
+            if (natures.includes('intraday_trader')) divIntraIncome.classList.remove('hidden');
+            else divIntraIncome.classList.add('hidden');
+        }
+
         const divTradingExp = document.getElementById('div-trading-expenses');
         if (divTradingExp) {
             if (hasTrading && noPresumptive) {
@@ -4452,6 +4527,166 @@
     }
 
     // s.43B(h) MSME payables table
+    function addAssetBlock() {
+        state.domestic_income.business_income.asset_blocks.push({
+            asset_class: 'plant_machinery_general',
+            opening_wdv_inr: null,
+            additions_during_year_inr: null,
+            addition_date: null,
+            sale_consideration_inr: null,
+            is_new_manufacturing_asset: false,
+            is_in_notified_backward_area: false
+        });
+        renderAssetBlocks();
+    }
+
+    function removeAssetBlock(index) {
+        state.domestic_income.business_income.asset_blocks.splice(index, 1);
+        renderAssetBlocks();
+    }
+
+    function updateAssetBlock(index, field, value) {
+        state.domestic_income.business_income.asset_blocks[index][field] = value;
+        
+        if (field === 'additions_during_year_inr') {
+            const addVal = value || 0;
+            const disableAddFields = addVal <= 0;
+            
+            const dateInput = document.getElementById('asset-date-' + index);
+            if (dateInput) {
+                dateInput.disabled = disableAddFields;
+                if (disableAddFields) {
+                    dateInput.classList.add('text-white/20');
+                    dateInput.classList.remove('text-white');
+                    dateInput.parentElement.querySelector('label').innerText = 'Addition Date (Require Additions)';
+                } else {
+                    dateInput.classList.remove('text-white/20');
+                    dateInput.classList.add('text-white');
+                    dateInput.parentElement.querySelector('label').innerText = 'Addition Date';
+                }
+            }
+            
+            const mfgCheck = document.getElementById('asset-mfg-' + index);
+            if (mfgCheck) {
+                mfgCheck.disabled = disableAddFields;
+                if (disableAddFields) mfgCheck.closest('label').classList.add('opacity-30');
+                else mfgCheck.closest('label').classList.remove('opacity-30');
+            }
+            
+            const bwdCheck = document.getElementById('asset-bwd-' + index);
+            if (bwdCheck) {
+                bwdCheck.disabled = disableAddFields;
+                if (disableAddFields) bwdCheck.closest('label').classList.add('opacity-30');
+                else bwdCheck.closest('label').classList.remove('opacity-30');
+            }
+        }
+        
+        const activeEl = document.activeElement;
+        if (activeEl && activeEl.tagName === 'INPUT' && activeEl.classList.contains('inr-input')) {
+            let cursor = activeEl.selectionStart;
+            let oldLen = activeEl.value.length;
+            let val = activeEl.value.replace(/[^0-9]/g, '');
+            if(val) {
+                activeEl.value = parseInt(val).toLocaleString('en-IN');
+            } else {
+                activeEl.value = '';
+            }
+            let newLen = activeEl.value.length;
+            cursor += (newLen - oldLen);
+            try { activeEl.setSelectionRange(cursor, cursor); } catch(e){}
+        }
+    }
+
+    function renderAssetBlocks() {
+        const container = document.getElementById('asset-blocks-container');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const blocks = state.domestic_income.business_income.asset_blocks;
+        if (!blocks || blocks.length === 0) {
+            container.innerHTML = '<div class="text-center p-6 border border-dashed border-white/10 rounded-xl text-white/40 text-xs">No asset blocks added. Click "+ Add Asset Block" to begin.</div>';
+            return;
+        }
+
+        blocks.forEach((block, idx) => {
+            const addVal = block.additions_during_year_inr || 0;
+            const disableAddFields = addVal <= 0;
+            
+            const card = document.createElement('div');
+            card.className = "p-4 border border-white/10 rounded-xl bg-black/20 flex flex-col gap-4 relative";
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-white/60">Asset Block #${idx + 1}</span>
+                    <button onclick="removeAssetBlock(${idx})" class="text-brandRed hover:text-red-400 text-xs transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col justify-end h-full">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Asset Class</label>
+                        <select onchange="updateAssetBlock(${idx}, 'asset_class', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all">
+                            <option value="building_residential" ${block.asset_class === 'building_residential' ? 'selected' : ''}>Residential Building (5%)</option>
+                            <option value="building_commercial" ${block.asset_class === 'building_commercial' ? 'selected' : ''}>Commercial Building (10%)</option>
+                            <option value="building_temporary" ${block.asset_class === 'building_temporary' ? 'selected' : ''}>Temporary Building (40%)</option>
+                            <option value="plant_machinery_general" ${block.asset_class === 'plant_machinery_general' ? 'selected' : ''}>General Plant & Machinery (15%)</option>
+                            <option value="computers_peripherals" ${block.asset_class === 'computers_peripherals' ? 'selected' : ''}>Computers & Peripherals (40%)</option>
+                            <option value="motor_vehicles" ${block.asset_class === 'motor_vehicles' ? 'selected' : ''}>Motor Vehicles (15%)</option>
+                            <option value="heavy_vehicles" ${block.asset_class === 'heavy_vehicles' ? 'selected' : ''}>Heavy Vehicles (30%)</option>
+                            <option value="furniture_fittings" ${block.asset_class === 'furniture_fittings' ? 'selected' : ''}>Furniture & Fittings (10%)</option>
+                            <option value="intangible_assets" ${block.asset_class === 'intangible_assets' ? 'selected' : ''}>Intangible Assets (25%)</option>
+                            <option value="books_annual" ${block.asset_class === 'books_annual' ? 'selected' : ''}>Books - Annual (100%)</option>
+                            <option value="books_other" ${block.asset_class === 'books_other' ? 'selected' : ''}>Books - Other (60%)</option>
+                            <option value="solar_energy" ${block.asset_class === 'solar_energy' ? 'selected' : ''}>Solar Energy (40%)</option>
+                            <option value="wind_energy" ${block.asset_class === 'wind_energy' ? 'selected' : ''}>Wind Energy (40%)</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col justify-end h-full">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Opening WDV (₹)</label>
+                        <input type="text" inputmode="numeric" value="${block.opening_wdv_inr !== null ? block.opening_wdv_inr : ''}" oninput="updateAssetBlock(${idx}, 'opening_wdv_inr', this.value === '' ? null : parseInt(this.value.replace(/\\D/g, '')))" class="inr-input w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none font-mono">
+                    </div>
+                    <div class="flex flex-col justify-end h-full">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Additions During Year (₹)</label>
+                        <input type="text" inputmode="numeric" value="${block.additions_during_year_inr !== null ? block.additions_during_year_inr : ''}" oninput="updateAssetBlock(${idx}, 'additions_during_year_inr', this.value === '' ? null : parseInt(this.value.replace(/\\D/g, '')))" class="inr-input w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none font-mono">
+                    </div>
+                    <div class="flex flex-col justify-end h-full">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Addition Date ${disableAddFields ? '(Require Additions)' : ''}</label>
+                        <input type="date" value="${block.addition_date || ''}" onchange="updateAssetBlock(${idx}, 'addition_date', this.value)" ${disableAddFields ? 'disabled' : ''} class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs ${disableAddFields ? 'text-white/20' : 'text-white'} px-3 py-2.5 focus:border-brandGold focus:outline-none font-mono">
+                    </div>
+                    <div class="flex flex-col justify-end h-full">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Sale Consideration (₹)</label>
+                        <input type="text" inputmode="numeric" value="${block.sale_consideration_inr !== null ? block.sale_consideration_inr : ''}" oninput="updateAssetBlock(${idx}, 'sale_consideration_inr', this.value === '' ? null : parseInt(this.value.replace(/\\D/g, '')))" class="inr-input w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <label class="flex items-center gap-3 cursor-pointer ${disableAddFields ? 'opacity-30' : ''}">
+                        <div class="relative flex items-center">
+                            <input type="checkbox" ${disableAddFields ? 'disabled' : ''} onchange="updateAssetBlock(${idx}, 'is_new_manufacturing_asset', this.checked)" ${block.is_new_manufacturing_asset ? 'checked' : ''} class="peer sr-only">
+                            <div class="w-5 h-5 rounded border border-white/20 bg-black/20 peer-checked:bg-brandGold peer-checked:border-brandGold transition-all flex items-center justify-center">
+                                <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-white/60">New Manufacturing Asset? (s.32(1)(iia))</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer ${disableAddFields ? 'opacity-30' : ''}">
+                        <div class="relative flex items-center">
+                            <input type="checkbox" ${disableAddFields ? 'disabled' : ''} onchange="updateAssetBlock(${idx}, 'is_in_notified_backward_area', this.checked)" ${block.is_in_notified_backward_area ? 'checked' : ''} class="peer sr-only">
+                            <div class="w-5 h-5 rounded border border-white/20 bg-black/20 peer-checked:bg-brandGold peer-checked:border-brandGold transition-all flex items-center justify-center">
+                                <svg class="w-3 h-3 text-black opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-white/60">Notified Backward Area? (s.32AD)</span>
+                    </label>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+        
+
+    }
+
     function addMsmeRow() {
         const rowId = 'msme-' + Date.now();
         const tbody = document.querySelector('#msme-table tbody');
