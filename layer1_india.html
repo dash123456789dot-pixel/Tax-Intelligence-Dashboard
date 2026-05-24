@@ -3526,10 +3526,19 @@
             }
         }
 
-        // 2. 5-Year Lock-in Check
-        // Simplified check: If they typed anything like "AY" in the last exit box, assume they are locked out.
-        if (lastExitAY && lastExitAY.trim().length >= 4) {
-            ineligibleReason = "You have opted out of s.44AD in a previous year and the 5-year cooling-off period has not expired.";
+        // 2. 5-Year Lock-in Check (Regex Parser)
+        if (lastExitAY) {
+            const match = lastExitAY.match(/(?:AY\s*)?(\d{4})(?:-\d{2,4})?/i);
+            if (match) {
+                const exitYear = parseInt(match[1], 10);
+                const CURRENT_AY_START = 2024; // Assuming current AY is 2024-25
+                if (CURRENT_AY_START - exitYear < 5 && CURRENT_AY_START - exitYear > 0) {
+                    ineligibleReason = "You opted out of s.44AD in AY " + exitYear + "-" + (exitYear + 1).toString().slice(-2) + ". The mandatory 5-year cooling-off period has not expired.";
+                }
+            } else if (lastExitAY.trim().length >= 4) {
+                // Fallback if they typed something unrecognizable
+                ineligibleReason = "Invalid AY format. Please enter as AY2023-24.";
+            }
         }
 
         const warnBanner = document.getElementById('warn-pres-s44ad-ineligible');
