@@ -1456,25 +1456,25 @@
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (Non-Presumptive Only)</span>
                     <!-- Opening / Closing Stock — own row, conditional on regular_business + no presumptive -->
                     <div id="div-regular-biz" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Opening Stock (1 April)</label>
                             <input type="text" inputmode="numeric" id="biz-open-stock" oninput="updateBizNum('opening_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Closing Stock (31 March)</label>
                             <input type="text" inputmode="numeric" id="biz-close-stock" oninput="updateBizNum('closing_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Rent for Business Premises</label>
                             <input type="text" inputmode="numeric" id="biz-rent-prem" oninput="updateBizExpense('rent_for_business_premises_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Repairs & Maintenance (s.30/31)</label>
                             <input type="text" inputmode="numeric" id="biz-repairs" oninput="updateBizExpense('repairs_maintenance_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Insurance Premium (s.36(1)(i))</label>
                             <input type="text" inputmode="numeric" id="biz-insurance" oninput="updateBizExpense('insurance_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
@@ -1483,15 +1483,15 @@
                         <div class="md:col-span-3 border-t border-white/5 pt-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Employee & Labour Costs</span>
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employee Salary & Wages (s.36(1)(ii))</label>
                             <input type="text" inputmode="numeric" id="biz-salary" oninput="updateBizExpense('employee_salary_wages_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employee Bonus / Commission (s.36(1)(ii))</label>
                             <input type="text" inputmode="numeric" id="biz-bonus" oninput="updateBizExpense('employee_bonus_commission_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employer PF / ESI Contribution (s.43B)</label>
                             <input type="text" inputmode="numeric" id="biz-pf-esi" oninput="updateBizExpense('employer_pf_esi_contribution_inr', this.value); togglePfEsiPaidField();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
@@ -1506,11 +1506,11 @@
                         <div class="md:col-span-3 border-t border-white/5 pt-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Finance & Interest Costs</span>
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Borrowed Capital (s.36(1)(iii))</label>
                             <input type="text" inputmode="numeric" id="biz-interest-cap" oninput="updateBizExpense('interest_on_borrowed_capital_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Bad Debts Written Off (s.36(1)(vii))</label>
                             <input type="text" inputmode="numeric" id="biz-bad-debts" oninput="updateBizExpense('bad_debts_written_off_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
@@ -1520,40 +1520,40 @@
                             <div class="md:col-span-3 border-t border-white/5 pt-2">
                                 <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Trading / F&O Specific Expenses</span>
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brokerage on F&O Trades</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brokerage on F&O Trades</label>
                                 <input type="text" inputmode="numeric" id="biz-brokerage-fno" oninput="updateBizExpense('brokerage_on_fno_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Margin Interest / Pledge Facility</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Margin Interest / Pledge Facility</label>
                                 <input type="text" inputmode="numeric" id="biz-margin-int" oninput="updateBizExpense('margin_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exchange / Clearing Charges</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exchange / Clearing Charges</label>
                                 <input type="text" inputmode="numeric" id="biz-exchange-chg" oninput="updateBizExpense('exchange_charges_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advisory & Data Subscriptions</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advisory & Data Subscriptions</label>
                                 <input type="text" inputmode="numeric" id="biz-advisory" oninput="updateBizExpense('advisory_and_data_subscriptions_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Internet (Business Proportion)</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Internet (Business Proportion)</label>
                                 <input type="text" inputmode="numeric" id="biz-internet" oninput="updateBizExpense('internet_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office (Business Proportion)</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office (Business Proportion)</label>
                                 <input type="text" inputmode="numeric" id="biz-home-office" oninput="updateBizExpense('home_office_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CA / Professional Fees for Tax Filing</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CA / Professional Fees for Tax Filing</label>
                                 <input type="text" inputmode="numeric" id="biz-ca-fees" oninput="updateBizExpense('ca_professional_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">STT Paid (Deductible for Trading)</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">STT Paid (Deductible for Trading)</label>
                                 <input type="text" inputmode="numeric" id="biz-stt-paid" oninput="updateBizExpense('stt_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CTT Paid (Deductible for Trading)</label>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CTT Paid (Deductible for Trading)</label>
                                 <input type="text" inputmode="numeric" id="biz-ctt-paid" oninput="updateBizExpense('ctt_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                             </div>
                         </div>
@@ -1562,7 +1562,7 @@
                         <div class="md:col-span-3 border-t border-white/5 pt-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Other Expenses & Flags</span>
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Other Business Expenses (s.37(1) residual)</label>
                             <input type="text" inputmode="numeric" id="biz-other-exp" oninput="updateBizExpense('other_business_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
@@ -1577,11 +1577,11 @@
                         <div class="md:col-span-3 border-t border-white/5 pt-2">
                             <span class="text-[10px] font-black uppercase tracking-widest text-white/40">TDS Defaults & Stock Trading Taxes</span>
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Payments made abroad without deducting TDS (Fully disallowed)</label>
                             <input type="text" inputmode="numeric" id="biz-tds-nonres" oninput="updateBizExpense('payments_to_non_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div>
+                        <div class="flex flex-col justify-end h-full">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Payments made in India without deducting TDS (30% disallowed)</label>
                             <input type="text" inputmode="numeric" id="biz-tds-res" oninput="updateBizExpense('payments_to_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
