@@ -3567,9 +3567,6 @@
                 if (CURRENT_AY_START - exitYear < 5 && CURRENT_AY_START - exitYear > 0) {
                     ineligibleReason = "You opted out of s.44AD in AY " + exitYear + "-" + (exitYear + 1).toString().slice(-2) + ". The mandatory 5-year cooling-off period has not expired.";
                 }
-            } else if (lastExitAY.trim().length >= 4) {
-                // Fallback if they typed something unrecognizable
-                ineligibleReason = "Invalid AY format. Please enter as AY2023-24.";
             }
         }
 
