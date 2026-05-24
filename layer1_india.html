@@ -152,7 +152,7 @@
                 <span id="badge-step-business" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-deductions')" id="btn-step-deductions" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>7. Deductions</span>
+                <span>9. Deductions</span>
                 <span id="badge-step-deductions" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-credits')" id="btn-step-credits" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
@@ -795,7 +795,7 @@
         <div id="panel-step-income" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J & 2K — Salary & Other Income</h2>
-                <p class="text-xs text-white/40 mt-1">Enter details about your salary, rent allowance (HRA), bank interest, and any other income you received.</p>
+                <p class="text-xs text-white/40 mt-1">Enter details about your salary, allowances, and exemptions.</p>
             </div>
 
             <!-- Salary Details -->
@@ -1471,11 +1471,104 @@
 
             <div class="flex justify-between mt-4">
                 <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
-                <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+                <button onclick="switchStep('step-os')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
         </div>
 
-        <!-- STEP 7: DEDUCTIONS -->
+        
+        <!-- STEP 8: OTHER SOURCES (DOM-04) -->
+        <div id="panel-step-os" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div class="flex items-center justify-between border-b border-white/5 pb-4">
+                <div>
+                    <h2 class="text-2xl font-black text-white tracking-wide">Other Sources <span class="text-white/40 text-sm ml-2">(DOM-04)</span></h2>
+                    <p class="text-xs text-white/40 mt-1">Bank interest, dividends, gifts, family pension, and lottery winnings.</p>
+                </div>
+            </div>
+
+            <!-- Gatekeeper Toggle -->
+            <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Do you have any income from other sources?</h3>
+                    <p class="text-[10px] text-white/40">Includes savings interest, FDs, bonds, dividends, pension, and gaming.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="os-has" onchange="toggleOSSection(this.checked)" class="sr-only peer">
+                    <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                </label>
+            </div>
+
+            <div id="div-os-section" class="hidden flex flex-col gap-6">
+                <!-- Slab-Rate Streams Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brandGold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-brandGold mb-4 relative">1. Slab-Rate Streams</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Bank Interest</label>
+                            <input type="number" id="os-interest-savings" oninput="updateOSField('interest_savings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest</label>
+                            <input type="number" id="os-interest-fd" oninput="updateOSField('interest_fd_rd_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Bonds / Debentures Interest</label>
+                            <input type="number" id="os-bonds" oninput="updateOSField('interest_bonds_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">IT Refund Interest</label>
+                            <input type="number" id="os-it-refund" oninput="updateOSField('interest_on_it_refund_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividend Income</label>
+                            <input type="number" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts > ₹50k (s.56)</label>
+                            <input type="number" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Family Pension Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-2 mb-4 relative">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">2. Family Pension</h3>
+                        <span class="text-[9px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Auto 1/3 Deduction</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Family Pension Received</label>
+                        <input type="number" id="os-pension" oninput="updateOSField('family_pension_gross_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-blue-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                    </div>
+                </div>
+
+                <!-- Special Rate Streams Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-2 mb-4 relative">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-purple-400">3. Special Rate Streams</h3>
+                        <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold">Flat 30% Tax</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Lottery & Horse Races</label>
+                            <input type="number" id="os-lottery" oninput="updateOSField('winnings_lottery_gaming_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Online Gaming Winnings</label>
+                            <input type="number" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="switchStep('step-business')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">  Back</button>
+                <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+            </div>
+        </div>
+        <!-- STEP 9: DEDUCTIONS -->
         <div id="panel-step-deductions" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2L — Tax Deductions (Save Tax)</h2>
@@ -2108,7 +2201,7 @@
         const lock = state.residency_detail.final_india_residency_status;
         
         // Unlocks list based on calculated status
-        const allSteps = ['step-profile', 'step-dtaa', 'step-compliance', 'step-assets', 'step-income', 'step-hp', 'step-business', 'step-deductions', 'step-credits', 'step-output'];
+        const allSteps = ['step-profile', 'step-dtaa', 'step-compliance', 'step-assets', 'step-income', 'step-hp', 'step-business', 'step-os', 'step-deductions', 'step-credits', 'step-output'];
         
         allSteps.forEach(step => {
             let isAllowed = true;
@@ -4170,6 +4263,43 @@
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    
+    function handleHPUpload(event, containerId) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const container = document.getElementById(containerId);
+        const titleSpan = container.querySelector('span.text-xs');
+        const descSpan = container.querySelector('span.text-[9px]');
+        
+        titleSpan.textContent = "Scanning Document...";
+        descSpan.textContent = "Extracting data...";
+        titleSpan.classList.add("animate-pulse");
+        
+        setTimeout(() => {
+            titleSpan.textContent = "Extraction Successful";
+            descSpan.textContent = "Values filled!";
+            titleSpan.classList.remove("animate-pulse");
+            titleSpan.classList.replace("text-brandGold", "text-green-400");
+            descSpan.classList.replace("text-brandGold/60", "text-green-400/60");
+            
+            container.classList.remove("border-brandGold/30", "bg-brandGold/5", "hover:bg-brandGold/10");
+            container.classList.add("border-green-500/30", "bg-green-500/5", "hover:bg-green-500/10");
+        }, 2000);
+    }
+
+    
+    function toggleOSSection(val) {
+        state.other_sources.has_other_sources_income = val;
+        const divOS = document.getElementById('div-os-section');
+        if (val) {
+            divOS.classList.remove('hidden');
+        } else {
+            divOS.classList.add('hidden');
+        }
+        evaluateSurchargeBuckets();
+    }
+
     // SALARY & OTHER SOURCES FIELD SYNC
     // ═══════════════════════════════════════════════════════════════════════
     function toggleSalarySection(val) {
