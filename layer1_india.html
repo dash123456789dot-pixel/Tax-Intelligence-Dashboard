@@ -1586,12 +1586,15 @@
                             <input type="text" inputmode="numeric" id="biz-tds-res" oninput="updateBizExpense('payments_to_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cash payments to transporters over ₹35,000 in a single day (Fully disallowed)</label>
-                            <input type="text" inputmode="numeric" id="biz-cash-transporter" oninput="updateBizExpense('cash_payments_transporter_exceeding_35k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Other cash payments over ₹10,000 in a single day (Fully disallowed)</label>
-                            <input type="text" inputmode="numeric" id="biz-cash-other" oninput="updateBizExpense('cash_payments_other_exceeding_10k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <div class="flex items-center justify-between mb-1">
+                                <label id="label-cash-limit" class="block text-[9px] font-black uppercase tracking-widest text-white/40">Cash payments over ₹10,000 in a single day (Fully disallowed)</label>
+                                <select id="select-cash-type" onchange="document.getElementById('label-cash-limit').innerText = this.value === 'transporter' ? 'Cash payments over ₹35,000 in a single day (Fully disallowed)' : (this.value === 'both' ? 'Aggregate of cash payments over their respective limits (Fully disallowed)' : 'Cash payments over ₹10,000 in a single day (Fully disallowed)')" class="bg-transparent border-none text-[9px] font-bold text-brandGold focus:ring-0 cursor-pointer p-0">
+                                    <option value="other" class="bg-[#121212]">General Limit (₹10k)</option>
+                                    <option value="transporter" class="bg-[#121212]">Transporter Limit (₹35k)</option>
+                                    <option value="both" class="bg-[#121212]">Both Types</option>
+                                </select>
+                            </div>
+                            <input type="text" inputmode="numeric" id="biz-cash-exceed" oninput="updateBizExpense('total_cash_payments_exceeding_limit_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
 
 
@@ -2273,8 +2276,7 @@
                     insurance_premium_inr: null,
                     bad_debts_written_off_inr: null,
                     other_business_expenses_inr: null,
-                    cash_payments_transporter_exceeding_35k_inr: null,
-                    cash_payments_other_exceeding_10k_inr: null,
+                    total_cash_payments_exceeding_limit_inr: null,
                     has_related_party_payments: false,
                     payments_to_non_residents_no_tds_inr: null,
                     payments_to_residents_no_tds_inr: null,
