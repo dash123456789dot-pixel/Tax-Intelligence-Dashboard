@@ -1243,10 +1243,10 @@
 
             <div id="div-business-container" class="hidden flex flex-col gap-6">
                 <!-- s.115BAC Opt-Out History -->
-                <div class="p-5 bg-brandRed/10 border border-brandRed/30 rounded-2xl flex items-center justify-between">
+                <div id="div-115bac-box" class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between transition-all">
                     <div class="flex flex-col">
-                        <span class="text-xs font-bold text-brandRed">Previously Opted Out of s.115BAC New Regime?</span>
-                        <span class="text-[10px] text-brandRed/80">Business income taxpayers have a one-time opt-out right. Checking this permanently locks you to the Old Regime.</span>
+                        <span id="text-115bac-title" class="text-xs font-bold text-white/80">Previously Opted Out of s.115BAC New Regime?</span>
+                        <span id="text-115bac-desc" class="text-[10px] text-white/40">Business income taxpayers have a one-time opt-out right. Checking this permanently locks you to the Old Regime.</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="biz-115bac-out" onchange="update115BACOptOut(this.checked)" class="sr-only peer">
@@ -3676,6 +3676,9 @@
     function evaluate115BACLock() {
         const isLocked = state.domestic_income.business_income.s115BAC_optout_history;
         const regimeSelect = document.getElementById('prof-regime');
+        const box = document.getElementById('div-115bac-box');
+        const title = document.getElementById('text-115bac-title');
+        const desc = document.getElementById('text-115bac-desc');
         
         let lockWarn = document.getElementById('warn-115bac-lock');
         if (!lockWarn) {
@@ -3687,6 +3690,10 @@
         }
         
         if (isLocked) {
+            if(box) box.className = 'p-5 bg-brandRed/10 border border-brandRed/30 rounded-2xl flex items-center justify-between transition-all';
+            if(title) title.className = 'text-xs font-bold text-brandRed';
+            if(desc) desc.className = 'text-[10px] text-brandRed/80';
+            
             state.profile.tax_regime = 'OLD';
             regimeSelect.value = 'OLD';
             regimeSelect.disabled = true;
@@ -3695,6 +3702,10 @@
             
             updateProfileField('tax_regime', 'OLD');
         } else {
+            if(box) box.className = 'p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between transition-all';
+            if(title) title.className = 'text-xs font-bold text-white/80';
+            if(desc) desc.className = 'text-[10px] text-white/40';
+            
             regimeSelect.disabled = false;
             regimeSelect.classList.remove('opacity-50', 'cursor-not-allowed');
             lockWarn.classList.add('hidden');
