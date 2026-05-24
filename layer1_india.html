@@ -3812,14 +3812,15 @@
 
     
     function toggleReceiptsVisibility() {
-        const hasBusiness = state.domestic_income.business_income.nature_of_business.length > 0;
-        const isProfessional = state.domestic_income.business_income.nature_of_business.includes('professional');
+        const natures = state.domestic_income.business_income.nature_of_business;
+        const hasGeneralBusiness = natures.some(n => n !== 'professional' && n !== 'partner_in_firm');
+        const isProfessional = natures.includes('professional');
         const hasS44AD = state.domestic_income.business_income.presumptive_scheme.includes('s44AD');
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
         
         // General Turnover
         const divGenTurnover = document.getElementById('div-general-turnover');
-        if (hasBusiness && !hasS44AD) {
+        if (hasGeneralBusiness && !hasS44AD) {
             divGenTurnover.classList.remove('hidden');
         } else {
             divGenTurnover.classList.add('hidden');
