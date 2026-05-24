@@ -144,162 +144,12 @@
                 <span id="badge-step-income" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-hp')" id="btn-step-hp" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>WISING Wealth Intelligence - India Specialist (Layer 1)</title>
-<meta name="description" content="Layer 1 specialist onboarding for Indian residency classification, domestic earnings, and cross-border compliance.">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Outfit', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            brandDark: '#0c0c0c',
-            brandGray: '#1c1c1c',
-            brandGold: '#D4AF37',
-            brandRed: '#991B1B',
-            brandGreen: '#10B981',
-            brandCyan: '#06B6D4'
-          },
-          letterSpacing: { widest: '0.25em', header: '0.5em' }
-        }
-      }
-    }
-</script>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
-    
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #050505; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #050505;
-        color: #A1A1AA;
-        background-image: 
-            radial-gradient(circle at top right, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
-            radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.02) 0%, transparent 40%);
-        background-attachment: fixed;
-    }
-
-    .glass-card {
-        background-color: rgba(18, 18, 18, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        backdrop-filter: blur(12px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .glass-card:hover {
-        border-color: rgba(212, 175, 55, 0.2);
-        box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
-    }
-
-    .heading-silver-shimmer {
-        background: linear-gradient(90deg, #94A3B8 0%, #F1F5F9 45%, #FFFFFF 50%, #F1F5F9 55%, #94A3B8 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shimmer-text 5s linear infinite;
-        font-weight: 800;
-        text-shadow: 0 0 20px rgba(255,255,255,0.05);
-    }
-    @keyframes shimmer-text { 
-        0% { background-position: -200% center; }
-        100% { background-position: 200% center; }
-    }
-
-    .step-btn.active {
-        background-color: rgba(212, 175, 55, 0.1);
-        border-left: 4px solid #D4AF37;
-        color: #FFFFFF;
-    }
-
-    .step-btn.locked {
-        opacity: 0.35;
-        cursor: not-allowed;
-    }
-</style>
-</head>
-<body class="min-h-screen flex flex-col">
-
-<!-- HEADER -->
-<header class="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-[1440px] mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
-        <div class="flex items-center space-x-12">
-            <div id="nav-trigger-zone" class="relative group py-6 -my-6 cursor-pointer">
-                <button class="text-white flex flex-col justify-center items-start gap-1.5 focus:outline-none">
-                    <span class="w-6 h-[2px] bg-current rounded-full"></span>
-                    <span class="w-4 h-[2px] bg-current rounded-full transition-all group-hover:w-6"></span>
-                    <span class="w-6 h-[2px] bg-current rounded-full"></span>
-                </button>
-                <div id="sidebar-menu" class="fixed left-0 top-20 bottom-0 w-80 bg-black opacity-0 invisible transition-all duration-300 z-50 border-r border-white/5 pointer-events-none">
-                    <div class="flex flex-col text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 pt-6">
-                        <a href="index.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Tax Intelligence</a>
-                        <a href="income.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Salaries & RSUs</a>
-                        <a href="router.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Jurisdiction Router</a>
-                    </div>
-                </div>
-            </div>
-            <a href="layer1_india.html" class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-brandGold rounded flex items-center justify-center text-black font-black text-xs tracking-wider">L1</div>
-                <span class="text-xs font-black uppercase tracking-[0.4em] text-white">India Specialist</span>
-            </a>
-        </div>
-        <div class="flex items-center space-x-4">
-            <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
-            <span class="text-[9px] font-black tracking-widest text-brandGold uppercase">Layer 1 active</span>
-        </div>
-    </div>
-</header>
-
-<main class="max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-8 flex-1 flex flex-col lg:flex-row gap-8">
-    
-    <!-- LEFT SIDEBAR: STEP PROGRESS -->
-    <aside class="w-full lg:w-72 shrink-0 flex flex-col gap-2">
-        <div class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3 px-3">Compliance Steps</div>
-        <nav class="flex flex-col space-y-1" id="sidebar-steps">
-            <button onclick="switchStep('step-profile')" id="btn-step-profile" class="step-btn active text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>1. Profile & Residency</span>
-                <span class="text-[9px] px-1.5 py-0.5 rounded bg-brandGold/20 border border-brandGold/30 text-brandGold font-black uppercase font-sans">Lock</span>
-            </button>
-            <button onclick="switchStep('step-dtaa')" id="btn-step-dtaa" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>2. DTAA Treaty</span>
-                <span id="badge-step-dtaa" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
-            <button onclick="switchStep('step-compliance')" id="btn-step-compliance" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>3. Certificates</span>
-                <span id="badge-step-compliance" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
-            <button onclick="switchStep('step-assets')" id="btn-step-assets" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>4. Bank & Assets</span>
-                <span id="badge-step-assets" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
-            <button onclick="switchStep('step-income')" id="btn-step-income" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>5. Salary & Sources</span>
-                <span id="badge-step-income" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
-            <button onclick="switchStep('step-hp')" id="btn-step-hp" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
                 <span>6. House Property (DOM-02)</span>
                 <span id="badge-step-hp" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">??</span>
             </button>
             <button onclick="switchStep('step-business')" id="btn-step-business" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
                 <span>7. Business (DOM-03)</span>
                 <span id="badge-step-business" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
-            </button>
-            <button onclick="switchStep('step-os')" id="btn-step-os" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>8. Other Sources (DOM-04)</span>
-                <span id="badge-step-os" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-deductions')" id="btn-step-deductions" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
                 <span>9. Deductions</span>
@@ -944,7 +794,7 @@
         <!-- STEP 5: SALARY (DOM-01) -->
         <div id="panel-step-income" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
-                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J & 2K — Salary & Other Income</h2>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2J & 2K — Salary & Other Income & Other Income</h2>
                 <p class="text-xs text-white/40 mt-1">Enter details about your salary, allowances, and exemptions.</p>
             </div>
 
@@ -1197,6 +1047,86 @@
                 </div>
             </div>
 
+            <!-- Other Sources (DOM-04) -->
+            <!-- Gatekeeper Toggle -->
+            <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Do you have any income from other sources?</h3>
+                    <p class="text-[10px] text-white/40">Includes savings interest, FDs, bonds, dividends, pension, and gaming.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="os-has" onchange="toggleOSSection(this.checked)" class="sr-only peer">
+                    <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                </label>
+            </div>
+
+            <div id="div-os-section" class="hidden flex flex-col gap-6">
+                <!-- Slab-Rate Streams Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brandGold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-brandGold mb-4 relative">1. Slab-Rate Streams</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Bank Interest</label>
+                            <input type="number" id="os-interest-savings" oninput="updateOSField('interest_savings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest</label>
+                            <input type="number" id="os-interest-fd" oninput="updateOSField('interest_fd_rd_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Bonds / Debentures Interest</label>
+                            <input type="number" id="os-bonds" oninput="updateOSField('interest_bonds_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">IT Refund Interest</label>
+                            <input type="number" id="os-it-refund" oninput="updateOSField('interest_on_it_refund_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividend Income</label>
+                            <input type="number" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts > ₹50k (s.56)</label>
+                            <input type="number" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Family Pension Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-2 mb-4 relative">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">2. Family Pension</h3>
+                        <span class="text-[9px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Auto 1/3 Deduction</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Family Pension Received</label>
+                        <input type="number" id="os-pension" oninput="updateOSField('family_pension_gross_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-blue-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                    </div>
+                </div>
+
+                <!-- Special Rate Streams Card -->
+                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-2 mb-4 relative">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-purple-400">3. Special Rate Streams</h3>
+                        <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold">Flat 30% Tax</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Lottery & Horse Races</label>
+                            <input type="number" id="os-lottery" oninput="updateOSField('winnings_lottery_gaming_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Online Gaming Winnings</label>
+                            <input type="number" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <!-- Agricultural Income (s.10(1)) -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <div class="flex items-center justify-between">
@@ -1422,7 +1352,7 @@
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">First year you made the VRS payment</label>
                             <input type="text" id="biz-s35dda-year" oninput="updateBizStringExpense('s35DDA_first_year_of_payment', this.value)" placeholder="AY2025-26" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
-                        <div></div> <!-- spacing spacer -->
+                        <div></div> <!-- spacing spacer -->us:border-brandGold focus:ring-0 font-mono">
                         </div>
                     </div>
                 </div>
@@ -1570,104 +1500,242 @@
             </div>
 
             <div class="flex justify-between mt-4">
-                <button onclick="switchStep('step-hp')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
-                <button onclick="switchStep('step-os')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+                <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
         </div>
 
         
-        <!-- STEP 8: OTHER SOURCES (DOM-04) -->
-        <div id="panel-step-os" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
-            <div class="flex items-center justify-between border-b border-white/5 pb-4">
-                <div>
-                    <h2 class="text-2xl font-black text-white tracking-wide">Other Sources <span class="text-white/40 text-sm ml-2">(DOM-04)</span></h2>
-                    <p class="text-xs text-white/40 mt-1">Bank interest, dividends, gifts, family pension, and lottery winnings.</p>
-                </div>
+        <!-- STEP 9: DEDUCTIONS -->
+        <div id="panel-step-deductions" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2L — Tax Deductions (Save Tax)</h2>
+                <p class="text-xs text-white/40 mt-1">Enter the investments you made to save tax (like PPF, ELSS, Health Insurance).</p>
             </div>
 
-            <!-- Gatekeeper Toggle -->
-            <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-bold text-white mb-1">Do you have any income from other sources?</h3>
-                    <p class="text-[10px] text-white/40">Includes savings interest, FDs, bonds, dividends, pension, and gaming.</p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="os-has" onchange="toggleOSSection(this.checked)" class="sr-only peer">
-                    <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
-                </label>
-            </div>
-
-            <div id="div-os-section" class="hidden flex flex-col gap-6">
-                <!-- Slab-Rate Streams Card -->
-                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-br from-brandGold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h3 class="text-xs font-black uppercase tracking-widest text-brandGold mb-4 relative">1. Slab-Rate Streams</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Bank Interest</label>
-                            <input type="number" id="os-interest-savings" oninput="updateOSField('interest_savings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest</label>
-                            <input type="number" id="os-interest-fd" oninput="updateOSField('interest_fd_rd_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Bonds / Debentures Interest</label>
-                            <input type="number" id="os-bonds" oninput="updateOSField('interest_bonds_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">IT Refund Interest</label>
-                            <input type="number" id="os-it-refund" oninput="updateOSField('interest_on_it_refund_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividend Income</label>
-                            <input type="number" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts > ₹50k (s.56)</label>
-                            <input type="number" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Family Pension Card -->
-                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex items-center gap-2 mb-4 relative">
-                        <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">2. Family Pension</h3>
-                        <span class="text-[9px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Auto 1/3 Deduction</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 80C block -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Standard Tax-Saving Investments (Max ₹1.5 Lakhs)</span>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax-Saving Mutual Funds (ELSS)</label>
+                        <input type="number" id="ded-elss" oninput="update80C('elss_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                     </div>
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Family Pension Received</label>
-                        <input type="number" id="os-pension" oninput="updateOSField('family_pension_gross_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-blue-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1" id="label-ppf">Public Provident Fund (PPF)</label>
+                        <input type="number" id="ded-ppf" oninput="update80C('ppf_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <span id="warn-ppf" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase">⚠️ Non-Residents cannot make fresh PPF contributions</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Loan Principal Repayment</label>
+                        <input type="number" id="ded-home-loan" oninput="update80C('principal_home_loan_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                     </div>
                 </div>
 
-                <!-- Special Rate Streams Card -->
-                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="flex items-center gap-2 mb-4 relative">
-                        <h3 class="text-xs font-black uppercase tracking-widest text-purple-400">3. Special Rate Streams</h3>
-                        <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold">Flat 30% Tax</span>
+                <!-- 80D and NPS -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Health Insurance & Extra NPS Contributions</span>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Health Insurance Premium (For yourself, spouse & children)</label>
+                        <input type="number" id="ded-80d-self" oninput="update80D('self_family_premium_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Lottery & Horse Races</label>
-                            <input type="number" id="os-lottery" oninput="updateOSField('winnings_lottery_gaming_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Health Insurance Premium (For your parents)</label>
+                        <input type="number" id="ded-80d-parents" oninput="update80D('parents_premium_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Are Parents Senior Citizens?</span>
+                            <span class="text-[9px] text-white/30">Increases parent health cap from ₹25K to ₹50K.</span>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Online Gaming Winnings</label>
-                            <input type="number" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
-                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="ded-80d-senior" onchange="update80DBool('parents_are_senior', this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Extra National Pension System (NPS) Contribution (Max ₹50,000)</label>
+                        <input type="number" id="ded-nps-add" oninput="updateNpsAdd('nps_additional_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 80G Donations dynamic array -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Donations to Charity</span>
+                    <button onclick="add80GRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Donation</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-white/80" id="s80g-table">
+                        <thead>
+                            <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                <th class="p-3">Donee Name</th>
+                                <th class="p-3">PAN of Donee</th>
+                                <th class="p-3">Amount</th>
+                                <th class="p-3">Deduction %</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- s.80TTA / s.80TTB Savings Interest Deduction -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Deduction for Interest Earned on Savings Accounts</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Account Interest to Claim (₹, max ₹10K / ₹50K for seniors)</label>
+                        <input type="number" id="ded-80tta-savings" oninput="update80TTA('savings_interest_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Select your Age Category</label>
+                        <select id="ded-80tta-section" onchange="update80TTA('applicable_section', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <option value="80TTA">Non-Senior Citizen (Max deduction ₹10,000)</option>
+                            <option value="80TTB">Senior Citizen (Max deduction ₹50,000)</option>
+                            <option value="none">N/A — Non-Resident (Not Eligible)</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
             <div class="flex justify-between mt-4">
-                <button onclick="switchStep('step-business')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
-                <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+                <button onclick="switchStep('step-income')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-credits')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
         </div>
+
+        <!-- STEP 8: LOSSES & TAX CREDITS -->
+        <div id="panel-step-credits" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2M, 2N, 2O — Past Losses, Foreign Assets & Tax Credits</h2>
+                <p class="text-xs text-white/40 mt-1">Enter details about past losses you want to carry forward, your foreign assets, and taxes you have already paid.</p>
+            </div>
+
+            <!-- Brought forward losses -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Past Years' Losses to Carry Forward</span>
+                    <button onclick="addLossRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Loss</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-white/80" id="loss-table">
+                        <thead>
+                            <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                <th class="p-3">Loss Category</th>
+                                <th class="p-3">Origin FY</th>
+                                <th class="p-3">Amount</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Unabsorbed Depreciation (carry_forward_losses.unabsorbed_depreciation_cf) -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Past Unused Business Depreciation</span>
+                <div class="max-w-xs">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brought-Forward Unabsorbed Depreciation (₹)</label>
+                    <input type="number" id="loss-unadep" oninput="state.carry_forward_losses.unabsorbed_depreciation_cf = (this.value === '' ? null : parseInt(this.value)); evaluateSurchargeBuckets()" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    <span class="text-[8px] text-white/30 mt-1 block">This can be adjusted against most types of income, without the usual 8-year limit.</span>
+                </div>
+            </div>
+
+            <!-- Schedule FA (LRS Outbound) -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-lrs-section">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Foreign Assets (Only for Residents)</span>
+                    <button onclick="addLrsRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Foreign Asset</button>
+                </div>
+                <!-- LRS aggregate fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total money sent abroad this year (₹) — for TCS tracking</label>
+                        <input type="number" id="lrs-total" oninput="state.lrs_outbound.total_lrs_remitted_this_fy_inr = (this.value === '' ? null : parseInt(this.value))" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Purpose of LRS Remittance</label>
+                        <select id="lrs-purpose" onchange="state.lrs_outbound.lrs_purpose = this.value" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <option value="">-- Select Purpose --</option>
+                            <option value="education">Overseas Education</option>
+                            <option value="investment">Investment (Equity / Bonds)</option>
+                            <option value="property">Immovable Property Purchase</option>
+                            <option value="gift">Gift to Non-Resident</option>
+                            <option value="travel">International Travel</option>
+                            <option value="medical">Medical Treatment Abroad</option>
+                            <option value="maintenance">Maintenance of Close Relative</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-white/80" id="lrs-table">
+                        <thead>
+                            <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                <th class="p-3">Country</th>
+                                <th class="p-3">Asset Nature</th>
+                                <th class="p-3">Peak Balance</th>
+                                <th class="p-3">Closing Balance</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tax credits scheduler -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Taxes Already Paid (TDS & Advance Tax)</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">TDS Already Deducted (See Form 26AS / AIS)</label>
+                        <input type="number" id="crd-tds" oninput="updateCreditNum('tds_already_deducted_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advance Tax Paid by 15 Sept</label>
+                        <input type="number" id="crd-q2" oninput="updateCreditNum('advance_tax_q2_15sep_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advance Tax Paid by 15 March</label>
+                        <input type="number" id="crd-q4" oninput="updateCreditNum('advance_tax_q4_15mar_inr', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                </div>
+
+                <!-- Foreign Tax Credit (FTC) Form 67 scheduler -->
+                <div class="border-t border-white/5 pt-4">
+                    <div class="flex items-center justify-between pb-2">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Foreign Tax Credits (Taxes paid abroad on your foreign income)</span>
+                        <button onclick="addFtcRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add FTC Claim</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-white/80" id="ftc-table">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                    <th class="p-3">Country</th>
+                                    <th class="p-3">Income Type</th>
+                                    <th class="p-3">Foreign Income & Tax</th>
+                                    <th class="p-3">Currency Exchange Rate (SBI TT Buying)</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-output')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all font-display">Generate final tax profile</button>
+            </div>
+        </div>
+
+        <!-- STEP 9: SCHEMA JSON OUTPUT (Overhauled to Visual Compliance Certification) -->
+        <div id="panel-step-output" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Step 9 — Final Review & Certification</h2>
                 <p class="text-xs text-white/40 mt-1">Review your calculated residency status, total income, and taxes paid before continuing.</p>
