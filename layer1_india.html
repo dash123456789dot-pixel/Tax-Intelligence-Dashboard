@@ -1452,7 +1452,7 @@
                 </div>
 
                 <!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-regular-biz">
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-regular-biz">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (If not using Simplified Scheme)</span>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
@@ -4027,6 +4027,18 @@
             divGenGross.classList.remove('hidden');
         } else {
             divGenGross.classList.add('hidden');
+        }
+
+        // Regular Business Inputs (Stock, Rent, etc.)
+        const showRegularBiz = state.domestic_income.business_income.presumptive_scheme.length === 0 &&
+                               state.domestic_income.business_income.nature_of_business.includes('regular_business');
+        const divRegularBiz = document.getElementById('div-regular-biz');
+        if (divRegularBiz) {
+            if (showRegularBiz) {
+                divRegularBiz.classList.remove('hidden');
+            } else {
+                divRegularBiz.classList.add('hidden');
+            }
         }
     }
 
