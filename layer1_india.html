@@ -1294,7 +1294,8 @@
                             <label class="flex items-center space-x-2"><input type="checkbox" value="intraday_trader" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Intraday Day Trading</span></label>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="partner_in_firm" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Partner in a Firm (Remuneration/Interest)</span></label>
                         </div>
-                        <div id="div-biz-code-container" class="mt-4 border-t border-white/5 pt-4 hidden transition-all">
+                        <!-- Global business code container (deprecated in multi-business view) -->
+<div id="div-biz-code-container" style="display:none;" class="mt-4 border-t border-white/5 pt-4 hidden transition-all">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Primary Business Code</label>
                             <select id="biz-code" onchange="updateBizCode(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                                 <option value="">-- Select --</option>
@@ -3896,8 +3897,14 @@
                 const dig = entry.digital_receipts_inr || 0;
                 const csh = entry.cash_receipts_inr || 0;
                 const total = dig + csh;
+                const code = entry.business_code;
 
-                if (lockInActive) {
+                const ineligibleCodes = ['agency', 'brokerage', 'profession', 'goods_carriage'];
+
+                if (ineligibleCodes.includes(code)) {
+                    ineligibleReason = `The selected business code (${code}) is strictly prohibited from claiming s.44AD. You must use Regular Books.`;
+                    forceRevert = true;
+                } else if (lockInActive) {
                     ineligibleReason = "The mandatory 5-year cooling-off period has not expired. s.44AD cannot be opted for any business.";
                     forceRevert = true;
                 } else if (total > 30000000) {
@@ -5287,7 +5294,12 @@
         if (!entry) return;
         const numFields = ['turnover_inr','digital_receipts_inr','cash_receipts_inr','ada_digital_receipts_inr','ada_cash_receipts_inr','gross_receipts_inr'];
         entry[field] = numFields.includes(field) ? (val === '' ? null : parseINRCurrency(val)) : (val || null);
-        if (field === 'nature') renderBusinessEntries(); // re-render to show right fields
+        
+        // Re-render immediately on dropdown changes to update dependent UI
+        if (['nature', 'presumptive_scheme', 'business_code'].includes(field)) {
+            renderBusinessEntries();
+        }
+        
         validateS44ADEligibility();
         validateS44ADAEligibility();
         evaluateSurchargeBuckets();
@@ -5328,6 +5340,23 @@
                        <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
                     : `<option value="">Regular Books (Mandatory)</option>`;
             }
+
+            // Business Code Options
+            const bCode = entry.business_code || '';
+            const codeOptions = `
+                <option value="">-- Select Business Code --</option>
+                <optgroup label="Eligible for s.44AD">
+                    <option value="01000" ${bCode === '01000' ? 'selected' : ''}>Manufacturing Industry</option>
+                    <option value="02000" ${bCode === '02000' ? 'selected' : ''}>Retail & Wholesale Trade</option>
+                    <option value="04000" ${bCode === '04000' ? 'selected' : ''}>Construction Business</option>
+                    <option value="05000" ${bCode === '05000' ? 'selected' : ''}>Service Sector (Non-Professional)</option>
+                </optgroup>
+                <optgroup label="Ineligible for s.44AD">
+                    <option value="agency" ${bCode === 'agency' ? 'selected' : ''}>Agency / Clearing & Forwarding</option>
+                    <option value="brokerage" ${bCode === 'brokerage' ? 'selected' : ''}>Commission / Brokerage / Real Estate</option>
+                    <option value="profession" ${bCode === 'profession' ? 'selected' : ''}>Profession (Legal, Medical, IT, etc.)</option>
+                    <option value="goods_carriage" ${bCode === 'goods_carriage' ? 'selected' : ''}>Goods Carriage / Transport</option>
+                </optgroup>`;
 
             const receiptsHTML = isSmall && scheme === 's44AD'
                 ? `<div>
@@ -5371,8 +5400,16 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                    <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business / Practice Name</label>
                         <input type="text" value="${entry.business_name || ''}" oninput="updateBusinessEntry(${idx}, 'business_name', this.value)" placeholder="e.g. Saarthak Traders" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Business Code</label>
+                        <select onchange="updateBusinessEntry(${idx}, 'business_code', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none">
+                            ${codeOptions}
+                        </select>
+                    </div>
                     </div>
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Nature of Business</label>
