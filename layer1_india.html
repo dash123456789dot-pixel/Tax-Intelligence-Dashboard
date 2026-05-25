@@ -1313,8 +1313,9 @@
                     <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2">
                         <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Choose Simplified "Presumptive" Tax Schemes</label>
                         <div class="space-y-2 text-xs">
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="s44AD" onchange="updateBizPresumptive()" class="biz-pres-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Opt for Small Business Simplified Tax (Turnover &lt;= ₹3 Cr)</span></label>
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="s44ADA" onchange="updateBizPresumptive()" class="biz-pres-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Opt for Professional Simplified Tax (Receipts &lt;= ₹75 Lakhs)</span></label>
+                            <div class="p-2 mb-2 bg-brandGold/10 border border-brandGold/20 rounded-lg text-[10px] text-white/70">
+                                💡 Note: Small Business (s.44AD) and Professional (s.44ADA) schemes are now selected individually for each business in the <strong>Revenue & Receipts</strong> section below.
+                            </div>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="s44AE" onchange="updateBizPresumptive()" class="biz-pres-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Opt for Transporter Simplified Tax (Max 10 vehicles)</span></label>
                         </div>
                     </div>
@@ -1381,27 +1382,21 @@
                     </div>
                 </div>
 
-                <!-- General Turnover (For non-s.44AD) -->
-                <div id="div-general-turnover" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
-                    <span id="title-general-turnover" class="text-xs font-black uppercase tracking-widest text-brandGold">Total Gross Turnover</span>
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Turnover / Receipts (₹)</label>
-                    <input type="text" inputmode="numeric" id="biz-general-turnover" oninput="updateBizNum('turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                </div>
-
-                <!-- s.44ADA Professional Scheme -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-pres-s44ada">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Professional Details (s.44ADA Scheme)</span>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels</label>
-                            <input type="text" inputmode="numeric" id="biz-s44ada-digital" oninput="updateBizNum('ada_digital_receipts_inr', this.value); validateS44ADAEligibility()" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in Cash</label>
-                            <input type="text" inputmode="numeric" id="biz-s44ada-cash" oninput="updateBizNum('ada_cash_receipts_inr', this.value); validateS44ADAEligibility()" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
+                <!-- Business Entries — Dynamic List -->
+                <div id="div-business-entries" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Your Businesses</span>
+                        <button onclick="addBusinessEntry()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Business</button>
+                    </div>
+                    <div class="bg-brandGold/10 border border-brandGold/20 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                        <strong class="text-brandGold">💡 Multiple businesses?</strong> Add one entry per business. Each business can independently use a simplified tax scheme (s.44AD or s.44ADA) or regular books of accounts. All entries are aggregated into your PGBP head.
+                    </div>
+                    <div id="business-entries-container" class="flex flex-col gap-4">
+                        <p class="text-[10px] text-white/30 text-center py-2">No businesses added yet. Click "+ Add Business" above.</p>
                     </div>
                 </div>
+
+                <!-- s.44ADA inputs moved into Business Entries cards -->
 
                 <!-- s.44AE Goods Transport Vehicles -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-pres-s44ae">
@@ -1476,17 +1471,10 @@
                 </div>
 
                 <!-- Presumptive schemes forms -->
+                <!-- s.44AD 5-Year Lock-in details -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-pres-s44ad">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Small Business Details (Simplified Scheme)</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">s.44AD 5-Year Lock-in Details</span>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels (6% Rate)</label>
-                            <input type="text" inputmode="numeric" id="biz-s44ad-digital" oninput="updateBizNum('digital_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in Cash (8% Rate)</label>
-                            <input type="text" inputmode="numeric" id="biz-s44ad-cash" oninput="updateBizNum('cash_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">s.44AD Last Exit AY (if opted out)</label>
                             <input type="text" id="biz-s44ad-exit" oninput="updateBizField('s44AD_last_exit_ay', this.value)" placeholder="AY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
@@ -1541,6 +1529,9 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                <!-- Presumptive Expenses Warning -->
+                <div id="note-presumptive-expenses" class="hidden bg-amber-400/10 border border-amber-400/25 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed"></div>
+
                 <!-- Partner + Other Business Warning -->
                 <div id="note-partner-expenses" class="hidden bg-brandGold/10 border border-brandGold/25 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
                     <strong class="text-brandGold">⚠️ Partnership Income Excluded:</strong> You are a partner in a firm/LLP. The firm handles its own expenses — do <strong>not</strong> enter those here. Only enter expenses relating to your <strong>other businesses</strong> in this section.
@@ -2377,12 +2368,7 @@
                 presumptive_scheme: [],
                 profession_type: null,
                 s115BAC_optout_history: false,
-                turnover_inr: null,
-                digital_receipts_inr: null,
-                cash_receipts_inr: null,
-                gross_receipts_inr: null,
-                ada_digital_receipts_inr: null,
-                ada_cash_receipts_inr: null,
+                business_entries: [],
                 s44AD_last_exit_ay: null,
                 s44AD_opted_current_year: false,
                 goods_vehicles: [],
@@ -3888,63 +3874,66 @@
 
 
     function validateS44ADEligibility() {
-        const scheme = state.domestic_income.business_income.presumptive_scheme;
-        if (!scheme.includes('s44AD')) return;
-
-        const dig = state.domestic_income.business_income.digital_receipts_inr || 0;
-        const csh = state.domestic_income.business_income.cash_receipts_inr || 0;
-        const total = dig + csh;
-        const lastExitAY = state.domestic_income.business_income.s44AD_last_exit_ay;
-
+        const entries = state.domestic_income.business_income.business_entries || [];
         let ineligibleReason = null;
+        let forceRevert = false;
 
-        // 1. Turnover Check
-        if (total > 30000000) {
-            ineligibleReason = "Total turnover exceeds ₹3 Crores. s.44AD cannot be opted.";
-        } else if (total > 20000000 && total <= 30000000) {
-            // Need 95% digital
-            if (dig < 0.95 * total) {
-                ineligibleReason = "For turnover between ₹2Cr and ₹3Cr, digital receipts must be ≥ 95%. Your cash proportion is too high.";
-            }
-        }
-
-        // 2. 5-Year Lock-in Check (Regex Parser)
+        // 5-Year Lock-in Check (Regex Parser) applies to taxpayer globally
+        const lastExitAY = state.domestic_income.business_income.s44AD_last_exit_ay;
+        let lockInActive = false;
         if (lastExitAY) {
             const match = lastExitAY.match(/(?:AY\s*)?(\d{4})(?:-\d{2,4})?/i);
             if (match) {
                 const exitYear = parseInt(match[1], 10);
                 const CURRENT_AY_START = 2024; // Assuming current AY is 2024-25
                 if (CURRENT_AY_START - exitYear < 5 && CURRENT_AY_START - exitYear > 0) {
-                    ineligibleReason = "You opted out of s.44AD in AY " + exitYear + "-" + (exitYear + 1).toString().slice(-2) + ". The mandatory 5-year cooling-off period has not expired.";
+                    lockInActive = true;
                 }
             }
         }
+
+        // Check each business with s44AD
+        entries.forEach((entry, idx) => {
+            if (entry.presumptive_scheme === 's44AD') {
+                const dig = entry.digital_receipts_inr || 0;
+                const csh = entry.cash_receipts_inr || 0;
+                const total = dig + csh;
+
+                if (lockInActive) {
+                    ineligibleReason = "The mandatory 5-year cooling-off period has not expired. s.44AD cannot be opted for any business.";
+                    forceRevert = true;
+                } else if (total > 30000000) {
+                    ineligibleReason = "Total turnover exceeds ₹3 Crores. s.44AD cannot be opted.";
+                    forceRevert = true;
+                } else if (total > 20000000 && total <= 30000000) {
+                    if (dig < 0.95 * total) {
+                        ineligibleReason = "For turnover between ₹2Cr and ₹3Cr, digital receipts must be ≥ 95%. Your cash proportion is too high.";
+                        forceRevert = true;
+                    }
+                }
+                
+                if (forceRevert) {
+                    entry.presumptive_scheme = null;
+                }
+            }
+        });
 
         const warnBanner = document.getElementById('warn-pres-s44ad-ineligible');
         const warnText = document.getElementById('warn-pres-s44ad-text');
         
         if (ineligibleReason) {
-            // Force uncheck
-            const adCheckbox = document.querySelector('input.biz-pres-chk[value="s44AD"]');
-            if (adCheckbox) adCheckbox.checked = false;
-            
-            // Remove from state
-            const index = scheme.indexOf('s44AD');
-            if (index > -1) {
-                scheme.splice(index, 1);
-            }
-            
-            // Hide the subform
-            const formAD = document.getElementById('div-pres-s44ad');
-            if (formAD) formAD.classList.add('hidden');
-
-            // Show warning
             if (warnBanner && warnText) {
-                warnText.innerText = ineligibleReason;
                 warnBanner.classList.remove('hidden');
+                warnBanner.style.display = 'flex';
+                warnText.innerText = ineligibleReason;
             }
+            if (forceRevert) renderBusinessEntries();
         } else {
-            if (warnBanner) warnBanner.classList.add('hidden');
+            if (warnBanner && warnText) {
+                warnBanner.classList.add('hidden');
+                warnBanner.style.display = 'none';
+                warnText.innerText = '';
+            }
         }
     }
 
@@ -4093,24 +4082,18 @@
 
     function validateS44ADAEligibility() {
         const profType = state.domestic_income.business_income.profession_type;
-        const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
+        const entries = state.domestic_income.business_income.business_entries || [];
         const warnBanner = document.getElementById('warn-pres-s44ada-ineligible');
-        
+        let ineligibleReason = null;
+        let forceRevert = false;
+
         // 1. Profession "other" check
         if (profType === 'other') {
-            warnBanner.classList.remove('hidden');
-            warnBanner.style.display = 'flex';
-            warnBanner.querySelector('span:last-child').innerText = 's.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.';
-            
+            const hasS44ADA = entries.some(e => e.presumptive_scheme === 's44ADA');
             if (hasS44ADA) {
-                const cb = document.querySelector('.biz-pres-chk[value="s44ADA"]');
-                if (cb) cb.checked = false;
-                const scheme = state.domestic_income.business_income.presumptive_scheme;
-                const idx = scheme.indexOf('s44ADA');
-                if (idx > -1) scheme.splice(idx, 1);
-                if (typeof toggleReceiptsVisibility === 'function') toggleReceiptsVisibility();
+                ineligibleReason = 's.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.';
+                forceRevert = true;
             }
-            return;
         }
         
         // 2. Threshold Check
@@ -4211,32 +4194,18 @@
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
         const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
         
-        // General Turnover
-        const divGenTurnover = document.getElementById('div-general-turnover');
-        const titleTurnover = document.getElementById('title-general-turnover');
-        
-        if (titleTurnover) {
-            if (natures.includes('regular_business')) {
-                titleTurnover.textContent = 'TOTAL GROSS TURNOVER (REGULAR BUSINESS)';
-            } else if (natures.includes('small_business') && !hasS44AD) {
-                titleTurnover.textContent = 'TOTAL GROSS TURNOVER (NON-PRESUMPTIVE)';
-            } else if (natures.includes('fno_trader') || natures.includes('intraday_trader')) {
-                titleTurnover.textContent = 'TOTAL GROSS TURNOVER (TRADING)';
-            } else {
-                titleTurnover.textContent = 'TOTAL GROSS TURNOVER';
-            }
+        // Business Entries — show if any non-trading, non-partner business nature selected
+        const hasOwnBusiness = natures.some(n => ['regular_business','small_business','professional'].includes(n));
+        const divBizEntries = document.getElementById('div-business-entries');
+        if (divBizEntries) {
+            if (hasOwnBusiness) divBizEntries.classList.remove('hidden');
+            else divBizEntries.classList.add('hidden');
         }
-        if (hasGeneralBusiness && !hasS44AD) {
-            divGenTurnover.classList.remove('hidden');
-        } else {
-            divGenTurnover.classList.add('hidden');
-        }
-        
-        // s44ADA breakdown
+
+        // s44ADA breakdown (kept for legacy validation warnings; inputs now in business_entries)
         const divS44ADA = document.getElementById('div-pres-s44ada');
-        if (hasS44ADA) {
-            divS44ADA.classList.remove('hidden');
-        } else {
+        if (divS44ADA) {
+            // keep hidden — replaced by business_entries
             divS44ADA.classList.add('hidden');
         }
 
@@ -5287,6 +5256,169 @@
         state.domestic_income.agricultural_income_inr = val === '' ? null : parseINRCurrency(val);
     }
 
+    // ── BUSINESS ENTRIES — Dynamic Array Helpers ────────────────────────────────
+    function addBusinessEntry() {
+        state.domestic_income.business_income.business_entries.push({
+            business_name: '',
+            nature: 'small_business',
+            presumptive_scheme: null,
+            turnover_inr: null,
+            digital_receipts_inr: null,
+            cash_receipts_inr: null,
+            ada_digital_receipts_inr: null,
+            ada_cash_receipts_inr: null,
+            gross_receipts_inr: null
+        });
+        renderBusinessEntries();
+        syncExpensesWarning();
+    }
+
+    function removeBusinessEntry(idx) {
+        state.domestic_income.business_income.business_entries.splice(idx, 1);
+        renderBusinessEntries();
+        evaluateSurchargeBuckets();
+        syncExpensesWarning();
+    }
+
+    function updateBusinessEntry(idx, field, val) {
+        const entry = state.domestic_income.business_income.business_entries[idx];
+        if (!entry) return;
+        const numFields = ['turnover_inr','digital_receipts_inr','cash_receipts_inr','ada_digital_receipts_inr','ada_cash_receipts_inr','gross_receipts_inr'];
+        entry[field] = numFields.includes(field) ? (val === '' ? null : parseINRCurrency(val)) : (val || null);
+        if (field === 'nature') renderBusinessEntries(); // re-render to show right fields
+        validateS44ADEligibility();
+        validateS44ADAEligibility();
+        evaluateSurchargeBuckets();
+        syncExpensesWarning();
+        if (typeof toggleReceiptsVisibility === 'function') toggleReceiptsVisibility();
+    }
+
+    function renderBusinessEntries() {
+        const container = document.getElementById('business-entries-container');
+        if (!container) return;
+        const entries = state.domestic_income.business_income.business_entries;
+
+        if (entries.length === 0) {
+            container.innerHTML = '<p class="text-[10px] text-white/30 text-center py-2">No businesses added yet. Click "+ Add Business" above.</p>';
+            return;
+        }
+
+        container.innerHTML = entries.map((entry, idx) => {
+            const isSmall = entry.nature === 'small_business';
+            const isProf = entry.nature === 'professional';
+            const isRegular = entry.nature === 'regular_business';
+            const scheme = entry.presumptive_scheme;
+
+            const schemeOptions = isSmall
+                ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                   <option value="s44AD" ${scheme === 's44AD' ? 'selected' : ''}>s.44AD — Presumptive (6% digital / 8% cash)</option>`
+                : isProf
+                ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                   <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
+                : `<option value="">Regular Books (Mandatory)</option>`;
+
+            const receiptsHTML = isSmall && scheme === 's44AD'
+                ? `<div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.digital_receipts_inr != null ? entry.digital_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'digital_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in Cash (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.cash_receipts_inr != null ? entry.cash_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'cash_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>`
+                : isProf && scheme === 's44ADA'
+                ? `<div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.ada_digital_receipts_inr != null ? entry.ada_digital_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'ada_digital_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in Cash (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.ada_cash_receipts_inr != null ? entry.ada_cash_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'ada_cash_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>`
+                : isProf && !scheme
+                ? `<div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Gross Receipts (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.gross_receipts_inr != null ? entry.gross_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'gross_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>`
+                : `<div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Gross Turnover (₹)</label>
+                        <input type="text" inputmode="numeric" value="${entry.turnover_inr != null ? entry.turnover_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>`;
+
+            const schemeLabel = scheme === 's44AD' 
+                ? '<span class="text-[9px] text-green-400 font-bold ml-2">Presumptive</span>'
+                : scheme === 's44ADA'
+                ? '<span class="text-[9px] text-green-400 font-bold ml-2">Presumptive</span>'
+                : '<span class="text-[9px] text-white/30 font-bold ml-2">Regular Books</span>';
+
+            return `
+            <div class="bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Business #${idx + 1}${schemeLabel}</span>
+                    <button onclick="removeBusinessEntry(${idx})" class="text-brandRed/60 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business / Practice Name</label>
+                        <input type="text" value="${entry.business_name || ''}" oninput="updateBusinessEntry(${idx}, 'business_name', this.value)" placeholder="e.g. Saarthak Traders" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Nature of Business</label>
+                        <select onchange="updateBusinessEntry(${idx}, 'nature', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <option value="small_business" ${entry.nature === 'small_business' ? 'selected' : ''}>Small Business (Turnover ≤ ₹3 Cr)</option>
+                            <option value="regular_business" ${entry.nature === 'regular_business' ? 'selected' : ''}>Regular Business (Full Books)</option>
+                            <option value="professional" ${entry.nature === 'professional' ? 'selected' : ''}>Professional Practice</option>
+                        </select>
+                    </div>
+                    <div class="${isRegular ? 'hidden' : ''}">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax Scheme</label>
+                        <select onchange="updateBusinessEntry(${idx}, 'presumptive_scheme', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            ${schemeOptions}
+                        </select>
+                    </div>
+                    ${receiptsHTML}
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function syncExpensesWarning() {
+        const entries = state.domestic_income.business_income.business_entries;
+        const natures = state.domestic_income.business_income.nature_of_business;
+        const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
+        const allPresumptive = entries.length > 0 && entries.every(e => e.presumptive_scheme !== null && e.presumptive_scheme !== '');
+        const anyPresumptive = entries.some(e => e.presumptive_scheme !== null && e.presumptive_scheme !== '');
+        const accExpenses = document.getElementById('acc-expenses-deductions');
+        const divExpenseSection = document.getElementById('div-expense-section');
+        const notePartner = document.getElementById('note-partner-expenses');
+        const notePresumptive = document.getElementById('note-presumptive-expenses');
+
+        if (isOnlyPartner) {
+            if (accExpenses) { accExpenses.style.opacity = '0.35'; accExpenses.style.pointerEvents = 'none'; accExpenses.removeAttribute('open'); }
+            return;
+        } else {
+            if (accExpenses) { accExpenses.style.opacity = ''; accExpenses.style.pointerEvents = ''; }
+        }
+
+        // All businesses are presumptive → disable expense section
+        if (allPresumptive && entries.length > 0) {
+            if (divExpenseSection) divExpenseSection.classList.add('hidden');
+            if (notePresumptive) { notePresumptive.classList.remove('hidden'); notePresumptive.innerHTML = '<strong class="text-amber-400">⚠️ Expenses Locked:</strong> All your businesses are on presumptive schemes. Under presumptive taxation, expenses are deemed by law — you cannot claim additional deductions here.'; }
+        } else {
+            if (divExpenseSection) divExpenseSection.classList.remove('hidden');
+            if (notePresumptive) {
+                if (anyPresumptive) {
+                    const presumptiveNames = entries.filter(e => e.presumptive_scheme).map(e => e.business_name || 'Unnamed Business').join(', ');
+                    notePresumptive.classList.remove('hidden');
+                    notePresumptive.innerHTML = `<strong class="text-amber-400">⚠️ Partial Presumptive Warning:</strong> Do <strong>not</strong> enter expenses for: <em>${presumptiveNames}</em> — those businesses are on a presumptive scheme. Only enter expenses for your other businesses here.`;
+                } else {
+                    notePresumptive.classList.add('hidden');
+                }
+            }
+        }
+    }
+
     // ── PARTNER FIRMS — Dynamic Array Helpers ──────────────────────────────────
     function addPartnerFirm() {
         state.domestic_income.business_income.partner_firms.push({
@@ -5714,13 +5846,22 @@
         
         let business = 0;
         if (state.domestic_income.business_income.has_business_or_fo_income) {
-            // Check for presumptive s44AD
-            if (state.domestic_income.business_income.presumptive_scheme.includes('s44AD')) {
-                const dig = state.domestic_income.business_income.digital_receipts_inr || 0;
-                const csh = state.domestic_income.business_income.cash_receipts_inr || 0;
-                business += Math.round(dig * 0.06 + csh * 0.08);
-            }
-            
+            // Aggregate all business_entries into PGBP
+            (state.domestic_income.business_income.business_entries || []).forEach(entry => {
+                if (entry.presumptive_scheme === 's44AD') {
+                    const dig = entry.digital_receipts_inr || 0;
+                    const csh = entry.cash_receipts_inr || 0;
+                    business += Math.round(dig * 0.06 + csh * 0.08);
+                } else if (entry.presumptive_scheme === 's44ADA') {
+                    const dig = entry.ada_digital_receipts_inr || 0;
+                    const csh = entry.ada_cash_receipts_inr || 0;
+                    business += Math.round((dig + csh) * 0.5);
+                } else {
+                    // Regular books — use turnover as proxy (gross; expenses deducted at assessment)
+                    business += (entry.turnover_inr || entry.gross_receipts_inr || 0);
+                }
+            });
+
             // Check F&O and regular business
             business += (state.domestic_income.business_income.non_speculative_income_inr || 0);
             business += (state.domestic_income.business_income.s41_remission_income_inr || 0);
