@@ -2402,18 +2402,45 @@
                         <!-- Tax credits scheduler -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <span class="text-xs font-black uppercase tracking-widest text-brandGold">Taxes Already Paid (TDS & Advance Tax)</span>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <!-- TDS & 26AS Upload Toggle -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-white/5 pb-4">
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">TDS Already Deducted (See Form 26AS / AIS)</label>
                         <input type="text" inputmode="numeric" id="crd-tds" oninput="updateCreditNum('tds_already_deducted_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advance Tax Paid by 15 Sept</label>
-                        <input type="text" inputmode="numeric" id="crd-q2" oninput="updateCreditNum('advance_tax_q2_15sep_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80 font-display">Form 26AS / AIS Reconciled / Uploaded?</span>
+                            <span class="text-[9px] text-white/30 font-sans">Toggle to indicate if tax credit records match portal data.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="crd-26as-uploaded" onchange="state.tax_credits.form_26as_uploaded = this.checked" class="sr-only peer">
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advance Tax Paid by 15 March</label>
-                        <input type="text" inputmode="numeric" id="crd-q4" oninput="updateCreditNum('advance_tax_q4_15mar_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                </div>
+
+                <!-- Advance Tax Quarters -->
+                <div class="flex flex-col gap-2">
+                    <span class="block text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Quarterly Advance Tax Payments (u/s 234C)</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Q1 (By 15 June) — 15%</label>
+                            <input type="text" inputmode="numeric" id="crd-q1" oninput="updateCreditNum('advance_tax_q1_15jun_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Q2 (By 15 Sept) — 45%</label>
+                            <input type="text" inputmode="numeric" id="crd-q2" oninput="updateCreditNum('advance_tax_q2_15sep_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Q3 (By 15 Dec) — 75%</label>
+                            <input type="text" inputmode="numeric" id="crd-q3" oninput="updateCreditNum('advance_tax_q3_15dec_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Q4 (By 15 Mar) — 100%</label>
+                            <input type="text" inputmode="numeric" id="crd-q4" oninput="updateCreditNum('advance_tax_q4_15mar_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
                     </div>
                 </div>
 
@@ -2429,6 +2456,7 @@
                                 <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
                                     <th class="p-3">Country</th>
                                     <th class="p-3">Income Type</th>
+                                    <th class="p-3">Currency</th>
                                     <th class="p-3">Foreign Income & Tax</th>
                                     <th class="p-3">Currency Exchange Rate (SBI TT Buying)</th>
                                     <th class="p-3 text-right">Action</th>
@@ -2859,9 +2887,12 @@
             has_received_foreign_income: null
         },
         tax_credits: {
+            advance_tax_q1_15jun_inr: null,
             advance_tax_q2_15sep_inr: null,
+            advance_tax_q3_15dec_inr: null,
             advance_tax_q4_15mar_inr: null,
             tds_already_deducted_inr: null,
+            form_26as_uploaded: null,
             foreign_tax_credit: []
         },
         surcharge_buckets: {
@@ -7280,35 +7311,54 @@
 
     // FTC Form 67 claimed
     function addFtcRow() {
-        const rowId = 'ftc-' + Date.now();
+        const rowId = 'ftc-' + Date.now() + Math.random().toString(36).substring(2, 5);
         const tbody = document.querySelector('#ftc-table tbody');
+        if (!tbody) return;
         const tr = document.createElement('tr');
         tr.id = rowId;
         tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
         tr.innerHTML = `
-            <td class="p-3"><input type="text" placeholder="US" class="ftc-country bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
+            <td class="p-3"><input type="text" placeholder="US" maxlength="2" class="ftc-country bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono uppercase text-center"></td>
             <td class="p-3">
                 <select class="ftc-type bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
                     <option value="salary">Foreign Salary</option>
-                    <option value="dividend">Dividends</option>
                     <option value="interest">Interest</option>
+                    <option value="dividend">Dividends</option>
                     <option value="cg">Capital Gains</option>
+                    <option value="business">Business Income</option>
+                    <option value="other">Other Income</option>
+                </select>
+            </td>
+            <td class="p-3">
+                <select class="ftc-currency bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="CAD">CAD (C$)</option>
+                    <option value="SGD">SGD (S$)</option>
+                    <option value="AED">AED (Dh)</option>
+                    <option value="AUD">AUD (A$)</option>
+                    <option value="JPY">JPY (¥)</option>
+                    <option value="OTH">Other</option>
                 </select>
             </td>
             <td class="p-3">
                 <div class="flex gap-2">
-                    <input type="text" inputmode="numeric" placeholder="Income USD" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono">
-                    <input type="text" inputmode="numeric" placeholder="Tax Paid USD" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono">
+                    <input type="text" inputmode="numeric" placeholder="Income" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
+                    <input type="text" inputmode="numeric" placeholder="Tax Paid" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
                 </div>
             </td>
-            <td class="p-3"><input type="text" inputmode="numeric" step="0.01" placeholder="83.45" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-[100px] text-white font-mono"></td>
-            <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans">Remove</button></td>
+            <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-[100px] text-white font-mono text-right"></td>
+            <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans px-2 py-1">Remove</button></td>
         `;
         tbody.appendChild(tr);
 
         tr.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', syncFtcState);
+            el.addEventListener('change', syncFtcState);
         });
+
+        if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
 
         syncFtcState();
     }
@@ -7321,23 +7371,89 @@
 
     function syncFtcState() {
         const items = [];
+        const parseFtcFloat = (val) => {
+            if (val === null || val === undefined || val.trim() === '') return null;
+            const parsed = parseFloat(val.replace(/,/g, ''));
+            return isNaN(parsed) ? null : parsed;
+        };
+
         document.querySelectorAll('#ftc-table tbody tr').forEach(tr => {
-            const incVal = parseFloat(tr.querySelector('.ftc-inc').value) || 0;
-            const taxVal = parseFloat(tr.querySelector('.ftc-tax').value) || 0;
-            const conv = parseFloat(tr.querySelector('.ftc-rate').value) || 83.0;
+            const incVal = parseFtcFloat(tr.querySelector('.ftc-inc').value);
+            const taxVal = parseFtcFloat(tr.querySelector('.ftc-tax').value);
+            const conv = parseFtcFloat(tr.querySelector('.ftc-rate').value);
+            const ccy = tr.querySelector('.ftc-currency').value || null;
+            
+            const derivedInc = (incVal !== null && conv !== null) ? Math.round(incVal * conv) : null;
+            const derivedTax = (taxVal !== null && conv !== null) ? Math.round(taxVal * conv) : null;
 
             items.push({
-                country: tr.querySelector('.ftc-country').value || 'US',
-                income_type: tr.querySelector('.ftc-type').value,
+                country: (tr.querySelector('.ftc-country').value || '').toUpperCase() || null,
+                income_type: tr.querySelector('.ftc-type').value || null,
                 foreign_income_in_foreign_ccy: incVal,
                 foreign_tax_in_foreign_ccy: taxVal,
-                foreign_currency: "USD",
+                foreign_currency: ccy,
                 conversion_rate: conv,
-                foreign_income_inr: Math.round(incVal * conv),
-                foreign_tax_inr: Math.round(taxVal * conv)
+                foreign_income_inr: derivedInc,
+                foreign_tax_inr: derivedTax
             });
         });
         state.tax_credits.foreign_tax_credit = items;
+    }
+
+    function renderFtcRows() {
+        const tbody = document.querySelector('#ftc-table tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        const list = state.tax_credits.foreign_tax_credit || [];
+        list.forEach(item => {
+            const rowId = 'ftc-' + Date.now() + Math.random().toString(36).substring(2, 7);
+            const tr = document.createElement('tr');
+            tr.id = rowId;
+            tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
+            tr.innerHTML = `
+                <td class="p-3"><input type="text" placeholder="US" maxlength="2" value="${item.country || ''}" class="ftc-country bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono uppercase text-center"></td>
+                <td class="p-3">
+                    <select class="ftc-type bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                        <option value="salary" ${item.income_type === 'salary' ? 'selected' : ''}>Foreign Salary</option>
+                        <option value="interest" ${item.income_type === 'interest' ? 'selected' : ''}>Interest</option>
+                        <option value="dividend" ${item.income_type === 'dividend' ? 'selected' : ''}>Dividends</option>
+                        <option value="cg" ${item.income_type === 'cg' ? 'selected' : ''}>Capital Gains</option>
+                        <option value="business" ${item.income_type === 'business' ? 'selected' : ''}>Business Income</option>
+                        <option value="other" ${item.income_type === 'other' ? 'selected' : ''}>Other Income</option>
+                    </select>
+                </td>
+                <td class="p-3">
+                    <select class="ftc-currency bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                        <option value="USD" ${item.foreign_currency === 'USD' ? 'selected' : ''}>USD ($)</option>
+                        <option value="EUR" ${item.foreign_currency === 'EUR' ? 'selected' : ''}>EUR (€)</option>
+                        <option value="GBP" ${item.foreign_currency === 'GBP' ? 'selected' : ''}>GBP (£)</option>
+                        <option value="CAD" ${item.foreign_currency === 'CAD' ? 'selected' : ''}>CAD (C$)</option>
+                        <option value="SGD" ${item.foreign_currency === 'SGD' ? 'selected' : ''}>SGD (S$)</option>
+                        <option value="AED" ${item.foreign_currency === 'AED' ? 'selected' : ''}>AED (Dh)</option>
+                        <option value="AUD" ${item.foreign_currency === 'AUD' ? 'selected' : ''}>AUD (A$)</option>
+                        <option value="JPY" ${item.foreign_currency === 'JPY' ? 'selected' : ''}>JPY (¥)</option>
+                        <option value="OTH" ${item.foreign_currency === 'OTH' ? 'selected' : ''}>Other</option>
+                    </select>
+                </td>
+                <td class="p-3">
+                    <div class="flex gap-2">
+                        <input type="text" inputmode="numeric" placeholder="Income" value="${item.foreign_income_in_foreign_ccy ? item.foreign_income_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
+                        <input type="text" inputmode="numeric" placeholder="Tax Paid" value="${item.foreign_tax_in_foreign_ccy ? item.foreign_tax_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
+                    </div>
+                </td>
+                <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" value="${item.conversion_rate || ''}" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-[100px] text-white font-mono text-right"></td>
+                <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans px-2 py-1">Remove</button></td>
+            `;
+            tbody.appendChild(tr);
+
+            tr.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('input', syncFtcState);
+                el.addEventListener('change', syncFtcState);
+            });
+        });
+
+        if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -7699,6 +7815,33 @@
         }
         if (typeof renderHouseProperties === 'function') {
             renderHouseProperties();
+        }
+        if (typeof renderFtcRows === 'function') {
+            renderFtcRows();
+        }
+        if (state.tax_credits.tds_already_deducted_inr !== null) {
+            const input = document.getElementById('crd-tds');
+            if (input) input.value = state.tax_credits.tds_already_deducted_inr.toLocaleString('en-IN');
+        }
+        if (state.tax_credits.advance_tax_q1_15jun_inr !== null) {
+            const input = document.getElementById('crd-q1');
+            if (input) input.value = state.tax_credits.advance_tax_q1_15jun_inr.toLocaleString('en-IN');
+        }
+        if (state.tax_credits.advance_tax_q2_15sep_inr !== null) {
+            const input = document.getElementById('crd-q2');
+            if (input) input.value = state.tax_credits.advance_tax_q2_15sep_inr.toLocaleString('en-IN');
+        }
+        if (state.tax_credits.advance_tax_q3_15dec_inr !== null) {
+            const input = document.getElementById('crd-q3');
+            if (input) input.value = state.tax_credits.advance_tax_q3_15dec_inr.toLocaleString('en-IN');
+        }
+        if (state.tax_credits.advance_tax_q4_15mar_inr !== null) {
+            const input = document.getElementById('crd-q4');
+            if (input) input.value = state.tax_credits.advance_tax_q4_15mar_inr.toLocaleString('en-IN');
+        }
+        if (state.tax_credits.form_26as_uploaded !== null) {
+            const checkbox = document.getElementById('crd-26as-uploaded');
+            if (checkbox) checkbox.checked = state.tax_credits.form_26as_uploaded;
         }
     }
 
