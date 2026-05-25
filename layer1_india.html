@@ -1285,7 +1285,7 @@
 
                 <!-- Classifications and Presumptive Schemes (Array of enums v5.1 changes) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2">
+                    <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2 md:col-span-2">
                         <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">What type of business do you run? (Select all that apply)</label>
                         <div class="space-y-2 text-xs">
                             <label class="flex items-center space-x-2"><input type="checkbox" value="own_business" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Proprietorship / Profession / Regular Business / Freelancing</span></label>
@@ -1739,25 +1739,59 @@
                 </div>
                 
                 <!-- MSME Payables s.43B(h) dynamic ledger -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-msme-section">
+
+                    <!-- Header -->
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Overdue Payments to Small Suppliers (MSME)</span>
-                        <button onclick="addMsmeRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add MSME Invoice</button>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-black uppercase tracking-widest text-brandGold">MSME Payables — s.43B(h)</span>
+                            <span class="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-400 font-black uppercase tracking-wider">Finance Act 2023</span>
+                        </div>
+                        <button onclick="addMsmeRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Invoice</button>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-white/80" id="msme-table">
-                            <thead>
-                                <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
-                                    <th class="p-3">Supplier Name</th>
-                                    <th class="p-3">Invoice Date</th>
-                                    <th class="p-3">Agreement?</th>
-                                    <th class="p-3">Amount</th>
-                                    <th class="p-3">Payment Date</th>
-                                    <th class="p-3 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+
+                    <!-- Explainer -->
+                    <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[10px] text-white/70 leading-relaxed">
+                        <strong class="text-amber-400">⚠️ Section 43B(h) — Mandatory Timely Payment to MSMEs:</strong>
+                        Amounts payable to <strong>Micro &amp; Small enterprises</strong> registered under Udyam must be paid within:
+                        <ul class="mt-1.5 ml-3 space-y-0.5 list-disc text-white/60">
+                            <li><strong class="text-white/80">15 days</strong> — if no written agreement exists</li>
+                            <li><strong class="text-white/80">45 days max</strong> — if a written agreement specifies a date</li>
+                        </ul>
+                        <p class="mt-1.5">Any overdue amount is <strong class="text-brandRed">disallowed</strong> in the year of accrual and deferred to the year of actual payment. Additionally, compound interest at <strong>3× RBI bank rate</strong> (monthly rests) is payable to the supplier — but this interest is <strong class="text-brandRed">not tax-deductible</strong>. Medium enterprises, wholesale/retail traders, and presumptive taxpayers (s.44AD/ADA/AE) are <strong>exempt</strong>.</p>
+                    </div>
+
+                    <!-- Summary banner (shown when overdue invoices exist) -->
+                    <div id="msme-overdue-banner" class="hidden p-3 bg-brandRed/10 border border-brandRed/30 rounded-xl flex items-start gap-3">
+                        <span class="text-xl mt-0.5">🚨</span>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs font-black text-brandRed uppercase tracking-widest">Overdue MSME Payments Detected</span>
+                            <p id="msme-overdue-summary" class="text-[10px] text-white/70"></p>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Cards -->
+                    <div id="msme-cards-container" class="flex flex-col gap-3"></div>
+
+                    <!-- Totals row -->
+                    <div id="msme-totals" class="hidden grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-white/10 text-[10px]">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Total Payable</span>
+                            <span id="msme-total-amt" class="font-mono text-white font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Amount Disallowed</span>
+                            <span id="msme-total-disallowed" class="font-mono text-brandRed font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Amount Allowed</span>
+                            <span id="msme-total-allowed" class="font-mono text-green-400 font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Est. Interest Payable</span>
+                            <span id="msme-total-interest" class="font-mono text-amber-400 font-bold">₹0</span>
+                            <span class="text-[8px] text-white/30">3× RBI rate — not deductible</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1819,39 +1853,75 @@
                     </div>
                 </div>
 
-                <!-- Special Tax Credits -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Tax Credits</span>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Special Tax Credits — AMT s.115JC -->
+                <div class="hidden p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-amt-credit-section">
+
+                    <!-- Header -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">AMT Credit Brought Forward — s.115JC</span>
+                        <span class="text-[8px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-white/50 font-black uppercase tracking-wider">Old Regime Only</span>
+                    </div>
+
+                    <!-- New Regime Lock Banner -->
+                    <div id="amt-regime-lock" class="hidden p-3 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3">
+                        <svg class="w-4 h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span class="text-[10px] text-white/40">AMT credit is <strong class="text-white/60">not applicable</strong> under the New Regime (s.115BAC). Switch to Old Regime to enter AMT credit carried forward.</span>
+                    </div>
+
+                    <!-- Explainer -->
+                    <div class="p-3 bg-white/5 border border-white/10 rounded-xl text-[10px] text-white/60 leading-relaxed">
+                        <strong class="text-white/80">What is AMT Credit?</strong> If in a prior year your Alternate Minimum Tax (18.5% of Adjusted Total Income) exceeded your normal income tax, you paid the higher AMT. The excess paid over normal tax is accumulated as <em>AMT credit</em> under s.115JD. This credit can be carried forward for <strong class="text-white/80">up to 15 assessment years</strong> and set off in any future year where your normal tax exceeds AMT. Unused credit that exceeds the 15-year window <strong class="text-brandRed">lapses permanently</strong>.
+                    </div>
+
+                    <!-- Expiry Warning (shown dynamically) -->
+                    <div id="amt-expiry-warning" class="hidden p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-3">
+                        <span class="text-lg mt-0.5">⏳</span>
                         <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Alternate Minimum Tax (AMT) Credit from past years</label>
-                            <input type="text" inputmode="numeric" id="biz-amt-bf" oninput="updateBizNum('amt_credit_bf_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest">AMT Credit Expiring Soon</p>
+                            <p id="amt-expiry-text" class="text-[10px] text-white/60 mt-0.5"></p>
+                        </div>
+                    </div>
+
+                    <!-- Inputs (locked when New Regime) -->
+                    <div id="amt-inputs-wrap" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">AMT Credit Carried Forward (₹)</label>
+                            <input type="text" inputmode="numeric" id="biz-amt-bf" oninput="updateBizNum('amt_credit_bf_inr', this.value); evaluateAmtCreditExpiry();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                            <p class="text-[9px] text-white/30 mt-1">Aggregate credit across all eligible prior AYs still within the 15-year window.</p>
                         </div>
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Oldest AMT Credit Origin AY</label>
-                            <input type="text" id="biz-amt-ay" oninput="updateBizField('amt_credit_bf_origin_ay', this.value)" placeholder="AY2021-22" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <input type="text" id="biz-amt-ay" oninput="updateBizField('amt_credit_bf_origin_ay', this.value); evaluateAmtCreditExpiry();" placeholder="e.g. AY2015-16" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <p class="text-[9px] text-white/30 mt-1">Enter the AY in which the <em>oldest</em> portion of your unabsorbed AMT credit was generated. Format: AY2015-16</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- GST Registration Status -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-gst-section">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">GST Registration Status</span>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                        <div class="md:col-span-2">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Registration Status</label>
-                            <select id="biz-gst-status" onchange="updateBizField('gst_registration_status', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <select id="biz-gst-status" onchange="syncGstSection(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                                 <option value="unregistered">Unregistered</option>
-                                <option value="regular">Regular Taxpayer</option>
-                                <option value="composition">Composition Scheme</option>
-                                <option value="exempt">GST Exempt Supply</option>
+                                <option value="regular">Regular Taxpayer (GSTIN issued)</option>
+                                <option value="composition">Composition Scheme (s.10 CGST)</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Collected (Output Tax, ₹)</label>
-                            <input type="text" inputmode="numeric" id="biz-gst-collected" oninput="updateBizNum('gst_collected_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+
+                        <!-- Context note — changes based on selection -->
+                        <div class="md:col-span-2 p-3 bg-white/5 border border-white/10 rounded-xl text-[10px] text-white/60 leading-relaxed" id="gst-context-note">
+                            <!-- filled by syncGstSection() -->
                         </div>
 
+                        <!-- GST Collected — only shown for Regular -->
+                        <div id="div-gst-collected" class="hidden md:col-span-2">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Collected from Customers — Output Tax (₹)</label>
+                            <input type="text" inputmode="numeric" id="biz-gst-collected" oninput="updateBizNum('gst_collected_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                            <p class="text-[9px] text-white/30 mt-1">This is a liability, not income. It will be subtracted from gross receipts to arrive at taxable turnover.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -2743,6 +2813,7 @@
     function updateProfileField(field, val) {
         state.profile[field] = val;
         runResidencySolver();
+        if (field === 'tax_regime' && typeof syncAmtCreditRegimeLock === 'function') { syncAmtCreditRegimeLock(); }
         if (field === 'tax_regime' && typeof evaluateSalaryRegimeLock === 'function') {
             evaluateSalaryRegimeLock();
         if (typeof renderHouseProperties === 'function') renderHouseProperties();
@@ -4675,54 +4746,260 @@
 
     function addMsmeRow() {
         const rowId = 'msme-' + Date.now();
-        const tbody = document.querySelector('#msme-table tbody');
-        const tr = document.createElement('tr');
-        tr.id = rowId;
-        tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
-        tr.innerHTML = `
-            <td class="p-3"><input type="text" placeholder="Micro Corp" class="msme-sup bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white"></td>
-            <td class="p-3"><input type="date" class="msme-inv-date bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white font-mono"></td>
-            <td class="p-3">
-                <select class="msme-agree bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
-                    <option value="false">No (15 days)</option>
-                    <option value="true">Yes (Max 45 days)</option>
-                </select>
-            </td>
-            <td class="p-3"><input type="text" inputmode="numeric" placeholder="Outstanding" class="inr-input msme-amt bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
-            <td class="p-3"><input type="date" class="msme-pay-date bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white font-mono"></td>
-            <td class="p-3 text-right"><button onclick="removeMsmeRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans">Remove</button></td>
+        const container = document.getElementById('msme-cards-container');
+        const card = document.createElement('div');
+        card.id = rowId;
+        card.className = 'msme-card bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3';
+        card.innerHTML = `
+            <div class="flex items-center justify-between">
+                <span class="msme-status-badge text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-white/10 text-white/40">—</span>
+                <button onclick="removeMsmeRow('${rowId}')" class="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Supplier Name</label>
+                    <input type="text" placeholder="e.g. Micro Corp Pvt Ltd" class="msme-sup w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Amount Payable (₹)</label>
+                    <input type="text" inputmode="numeric" placeholder="0" class="inr-input msme-amt w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Invoice / Acceptance Date</label>
+                    <input type="date" class="msme-inv-date w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Written Agreement Exists?</label>
+                    <select class="msme-agree w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                        <option value="false">No — 15-day prescribed period applies</option>
+                        <option value="true">Yes — max 45-day period applies</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Date of Actual Payment <span class="text-white/25 normal-case font-normal">(leave blank if still unpaid)</span></label>
+                    <input type="date" class="msme-pay-date w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+            </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(card);
 
-        tr.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', () => {
-                syncMsmeState();
-                evaluateSurchargeBuckets();
-            });
+        card.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', () => { syncAmtCreditRegimeLock();
+        syncGstSection(state.domestic_income.business_income.gst_registration_status || 'unregistered');
+        syncMsmeState(); evaluateSurchargeBuckets(); });
+            el.addEventListener('change', () => { syncMsmeState(); evaluateSurchargeBuckets(); });
         });
 
         syncMsmeState();
     }
 
     function removeMsmeRow(id) {
-        const row = document.getElementById(id);
-        if (row) row.remove();
+        const card = document.getElementById(id);
+        if (card) card.remove();
         syncMsmeState();
         evaluateSurchargeBuckets();
     }
 
+    function syncGstSection(status) {
+        // Update state
+        updateBizField('gst_registration_status', status);
+
+        const collectedWrap = document.getElementById('div-gst-collected');
+        const collectedInput = document.getElementById('biz-gst-collected');
+        const contextNote = document.getElementById('gst-context-note');
+
+        const contextMap = {
+            unregistered: `<strong class="text-white/80">Unregistered:</strong> Your business turnover equals gross receipts directly. No GST component to deduct. Note: if your aggregate turnover exceeds ₹20L (₹10L for special-category states), GST registration is mandatory.`,
+            regular: `<strong class="text-white/80">Regular Taxpayer:</strong> GST collected from customers is a <em>pass-through liability</em>, not your income. Your taxable business turnover = Gross Receipts <span class="text-brandRed">minus</span> GST Collected. Enter the total output GST collected below.`,
+            composition: `<strong class="text-white/80">Composition Scheme:</strong> GST is embedded in your turnover at a flat rate (0.5%–6% of turnover). Your business turnover = gross receipts as declared. No separate GST collected figure is needed — the composition levy is an allowable expense.`
+        };
+
+        if (contextNote) {
+            contextNote.innerHTML = contextMap[status] || contextMap['unregistered'];
+        }
+
+        if (status === 'regular') {
+            collectedWrap && collectedWrap.classList.remove('hidden');
+        } else {
+            collectedWrap && collectedWrap.classList.add('hidden');
+            // Clear the value and state when not applicable
+            if (collectedInput) collectedInput.value = '';
+            state.domestic_income.business_income.gst_collected_inr = null;
+        }
+    }
+
+    function evaluateAmtCreditExpiry() {
+        const amtInput  = document.getElementById('biz-amt-bf');
+        const ayInput   = document.getElementById('biz-amt-ay');
+        const warning   = document.getElementById('amt-expiry-warning');
+        const warnText  = document.getElementById('amt-expiry-text');
+        if (!warning || !warnText || !amtInput || !ayInput) return;
+
+        const amtVal = parseINRCurrency(amtInput.value) || 0;
+        const ayStr  = (ayInput.value || '').trim();
+
+        // Hide warning if no credit or no origin AY
+        if (amtVal <= 0 || !ayStr) {
+            warning.classList.add('hidden');
+            return;
+        }
+
+        // Parse origin AY — accept formats: AY2015-16, 2015-16, 2015
+        const match = ayStr.match(/(d{4})/);
+        if (!match) {
+            warning.classList.add('hidden');
+            return;
+        }
+        const originYear = parseInt(match[1]); // e.g. 2015 from AY2015-16
+        const currentAY  = new Date().getFullYear() + (new Date().getMonth() >= 3 ? 1 : 0); // AY = FY+1
+        // e.g. if today is May 2025, currentAY = 2025-26 → year 2025
+        const expiryYear = originYear + 15; // credit from AY2015-16 expires in AY2030-31
+        const yearsToExpiry = expiryYear - currentAY;
+
+        if (yearsToExpiry <= 0) {
+            // Already lapsed
+            warning.classList.remove('hidden');
+            warnText.textContent = `⚠ The AMT credit originating in AY${originYear}-${String(originYear+1).slice(-2)} has LAPSED — the 15-year carry-forward window ended in AY${expiryYear}-${String(expiryYear+1).slice(-2)}. This amount cannot be utilised.`;
+        } else if (yearsToExpiry <= 2) {
+            // Expiring within 2 AYs — AMT_CREDIT_EXPIRING flag
+            warning.classList.remove('hidden');
+            warnText.textContent = `The oldest AMT credit (from AY${originYear}-${String(originYear+1).slice(-2)}) expires in AY${expiryYear}-${String(expiryYear+1).slice(-2)} — only ${yearsToExpiry} assessment year${yearsToExpiry === 1 ? '' : 's'} remaining. Ensure this credit is fully utilised before it lapses.`;
+        } else {
+            warning.classList.add('hidden');
+        }
+    }
+
+    function syncAmtCreditRegimeLock() {
+        const isNewRegime = (state.profile.tax_regime || 'NEW') === 'NEW';
+        const section = document.getElementById('div-amt-credit-section');
+        if (!section) return;
+
+        if (isNewRegime) {
+            section.classList.add('hidden');
+        } else {
+            section.classList.remove('hidden');
+            evaluateAmtCreditExpiry();
+        }
+    }
+
     function syncMsmeState() {
+        // RBI Bank Rate approximation (current: 6.5%). Interest = 3x = 19.5% p.a. compounded monthly
+        const RBI_RATE = 0.065;
+        const INTEREST_RATE_PA = RBI_RATE * 3; // 3× RBI rate per s.16 of MSMED Act
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         const items = [];
-        document.querySelectorAll('#msme-table tbody tr').forEach(tr => {
+        let totalAmt = 0, totalDisallowed = 0, totalAllowed = 0, totalInterest = 0;
+        let overdueCount = 0;
+
+        document.querySelectorAll('#msme-cards-container .msme-card').forEach(tr => {
+            const invDateStr = tr.querySelector('.msme-inv-date').value;
+            const payDateStr = tr.querySelector('.msme-pay-date').value;
+            const hasAgreement = tr.querySelector('.msme-agree').value === 'true';
+            const rawAmt = parseINRCurrency(tr.querySelector('.msme-amt').value) || 0;
+            const prescribedDays = hasAgreement ? 45 : 15;
+
+            const badge = tr.querySelector('.msme-status-badge');
+            let isOverdue = false;
+            let daysOverdue = 0;
+            let interestAmt = 0;
+
+            if (invDateStr && rawAmt > 0) {
+                const invDate = new Date(invDateStr);
+                invDate.setHours(0, 0, 0, 0);
+                const dueDate = new Date(invDate);
+                dueDate.setDate(dueDate.getDate() + prescribedDays);
+
+                const refDate = payDateStr ? new Date(payDateStr) : today;
+                refDate.setHours(0, 0, 0, 0);
+
+                if (refDate > dueDate) {
+                    isOverdue = true;
+                    daysOverdue = Math.round((refDate - dueDate) / (1000 * 60 * 60 * 24));
+
+                    // Compound interest monthly: A = P(1 + r/12)^n - P  where n = months overdue
+                    const monthsOverdue = daysOverdue / 30.44;
+                    const monthlyRate = INTEREST_RATE_PA / 12;
+                    interestAmt = rawAmt * (Math.pow(1 + monthlyRate, monthsOverdue) - 1);
+                }
+            }
+
+            // Overdue → disallowed in current AY; allowed only if already paid
+            const isPaid = !!payDateStr;
+            let disallowedAmt = 0;
+            let allowedAmt = 0;
+
+            if (isOverdue) {
+                // If paid but late: disallowed in accrual AY, allowed in payment AY
+                // We flag it as disallowed (this AY)
+                disallowedAmt = rawAmt;
+                allowedAmt = 0;
+                overdueCount++;
+            } else {
+                disallowedAmt = 0;
+                allowedAmt = rawAmt;
+            }
+
+            totalAmt += rawAmt;
+            totalDisallowed += disallowedAmt;
+            totalAllowed += allowedAmt;
+            totalInterest += interestAmt;
+
+            // Update row badge
+            if (badge) {
+                if (!invDateStr || rawAmt <= 0) {
+                    badge.textContent = '—';
+                    badge.className = 'msme-status-badge text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-white/10 text-white/40';
+                } else if (isOverdue) {
+                    badge.textContent = `⚠ Overdue ${daysOverdue}d`;
+                    badge.className = 'msme-status-badge text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-brandRed/20 border border-brandRed/40 text-brandRed';
+                } else if (isPaid) {
+                    badge.textContent = '✓ Paid on time';
+                    badge.className = 'msme-status-badge text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-400';
+                } else {
+                    badge.textContent = 'Pending';
+                    badge.className = 'msme-status-badge text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400';
+                }
+            }
+
             items.push({
-                supplier_name: tr.querySelector('.msme-sup').value || 'Unspecified',
-                invoice_date: tr.querySelector('.msme-inv-date').value || null,
-                has_written_agreement: tr.querySelector('.msme-agree').value === 'true',
-                amount_inr: parseFloat(tr.querySelector('.msme-amt').value) || 0,
-                payment_date: tr.querySelector('.msme-pay-date').value || null
+                supplier_name: tr.querySelector('.msme-sup').value || null,
+                invoice_date: invDateStr || null,
+                has_written_agreement: hasAgreement,
+                amount_inr: rawAmt || null,
+                payment_date: payDateStr || null
             });
         });
+
         state.domestic_income.business_income.msme_payables = items;
+
+        // Update totals row
+        const totalsDiv = document.getElementById('msme-totals');
+        if (totalsDiv) {
+            if (items.length > 0) {
+                totalsDiv.classList.remove('hidden');
+                const fmtINR = (n) => '₹' + Math.round(n).toLocaleString('en-IN');
+                document.getElementById('msme-total-amt').textContent = fmtINR(totalAmt);
+                document.getElementById('msme-total-disallowed').textContent = fmtINR(totalDisallowed);
+                document.getElementById('msme-total-allowed').textContent = fmtINR(totalAllowed);
+                document.getElementById('msme-total-interest').textContent = fmtINR(totalInterest);
+            } else {
+                totalsDiv.classList.add('hidden');
+            }
+        }
+
+        // Update overdue banner
+        const banner = document.getElementById('msme-overdue-banner');
+        const summary = document.getElementById('msme-overdue-summary');
+        if (banner && summary) {
+            if (overdueCount > 0) {
+                banner.classList.remove('hidden');
+                summary.textContent = `${overdueCount} invoice${overdueCount > 1 ? 's are' : ' is'} overdue. ₹${Math.round(totalDisallowed).toLocaleString('en-IN')} will be disallowed as a deduction this year and deferred to the year of actual payment. An estimated ₹${Math.round(totalInterest).toLocaleString('en-IN')} of compound interest (3× RBI rate) is also payable to suppliers but is not tax-deductible.`;
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
