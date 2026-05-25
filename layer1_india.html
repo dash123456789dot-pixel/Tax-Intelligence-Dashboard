@@ -1530,7 +1530,7 @@
                 </details>
 
                 <!-- ACCORDION: Expenses & Deductions -->
-                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
+                <details id="acc-expenses-deductions" class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors transition-opacity" >
                     <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
                         <div class="flex items-center gap-3">
                             <span class="text-xl">💸</span>
@@ -1541,6 +1541,10 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                <!-- Partner + Other Business Warning -->
+                <div id="note-partner-expenses" class="hidden bg-brandGold/10 border border-brandGold/25 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                    <strong class="text-brandGold">⚠️ Partnership Income Excluded:</strong> You are a partner in a firm/LLP. The firm handles its own expenses — do <strong>not</strong> enter those here. Only enter expenses relating to your <strong>other businesses</strong> in this section.
+                </div>
 <!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-expense-section">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (Non-Presumptive Only)</span>
@@ -4273,11 +4277,34 @@
             }
         }
 
-        // Entire Expense Breakdown Section — ENABLED IF: presumptive_scheme = []
+        // Entire Expense Breakdown Section — ENABLED IF: not only partner_in_firm AND not fully presumptive
         const noPresumptive = state.domestic_income.business_income.presumptive_scheme.length === 0;
+        const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
+        const hasOtherBusinessWithPartner = natures.includes('partner_in_firm') && natures.some(n => n !== 'partner_in_firm');
+
+        // Hide/show entire Expenses accordion
+        const accExpenses = document.getElementById('acc-expenses-deductions');
+        if (accExpenses) {
+            if (isOnlyPartner) {
+                accExpenses.style.opacity = '0.35';
+                accExpenses.style.pointerEvents = 'none';
+                accExpenses.removeAttribute('open');
+            } else {
+                accExpenses.style.opacity = '';
+                accExpenses.style.pointerEvents = '';
+            }
+        }
+
+        // Show partner note if partner_in_firm + other business
+        const notePartner = document.getElementById('note-partner-expenses');
+        if (notePartner) {
+            if (hasOtherBusinessWithPartner) notePartner.classList.remove('hidden');
+            else notePartner.classList.add('hidden');
+        }
+
         const divExpenseSection = document.getElementById('div-expense-section');
         if (divExpenseSection) {
-            if (noPresumptive) {
+            if (noPresumptive && !isOnlyPartner) {
                 divExpenseSection.classList.remove('hidden');
             } else {
                 divExpenseSection.classList.add('hidden');
