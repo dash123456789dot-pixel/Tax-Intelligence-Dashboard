@@ -1367,6 +1367,20 @@
                 </div>
 
 
+                <!-- Partner Firms — Dynamic List (s.28(v), s.10(2A)) -->
+                <div id="div-partner-income" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Partner / LLP Income (s.28(v), s.10(2A))</span>
+                        <button onclick="addPartnerFirm()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Firm</button>
+                    </div>
+                    <div class="bg-brandGold/10 border border-brandGold/20 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                        <strong class="text-brandGold">💡 How partner income is taxed:</strong> Your <strong>share of profit is fully exempt</strong> under s.10(2A). However, <strong>remuneration</strong> and <strong>interest on capital</strong> from the firm/LLP are taxable as PGBP. Add one entry per firm you are a partner in.
+                    </div>
+                    <div id="partner-firms-container" class="flex flex-col gap-4">
+                        <p class="text-[10px] text-white/30 text-center py-2">No firms added yet. Click "+ Add Firm" above.</p>
+                    </div>
+                </div>
+
                 <!-- General Turnover (For non-s.44AD) -->
                 <div id="div-general-turnover" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
                     <span id="title-general-turnover" class="text-xs font-black uppercase tracking-widest text-brandGold">Total Gross Turnover</span>
@@ -1804,10 +1818,10 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
-                <!-- AMT Brought Forward and s.41 bad debt recoveries -->
+                <!-- Deemed Business Income (s.41) -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Tax Credits & Recovered Bad Debts</span>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Deemed Business Income (s.41)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business liabilities you no longer have to pay</label>
                             <input type="text" inputmode="numeric" id="biz-s41-1" oninput="updateBizNum('s41_remission_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
@@ -1816,6 +1830,13 @@
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Old bad debts that you have now recovered</label>
                             <input type="text" inputmode="numeric" id="biz-s41-4" oninput="updateBizNum('s41_bad_debt_recovery_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
                         </div>
+                    </div>
+                </div>
+
+                <!-- Special Tax Credits -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Tax Credits</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Alternate Minimum Tax (AMT) Credit from past years</label>
                             <input type="text" inputmode="numeric" id="biz-amt-bf" oninput="updateBizNum('amt_credit_bf_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
@@ -1848,33 +1869,7 @@
                     </div>
                 </div>
 
-                <!-- Partner / Firm Income -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Partnership / LLP / Firm Income (s.28 / s.40(b))</span>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Entity Type</label>
-                            <select id="biz-partner-type" onchange="updatePartnerField('entity_type', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
-                                <option value="">N/A – Not a Partner</option>
-                                <option value="firm">Partnership Firm</option>
-                                <option value="llp">LLP</option>
-                                <option value="aop">AOP / BOI</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Remuneration from Firm (₹)</label>
-                            <input type="text" inputmode="numeric" id="biz-partner-rem" oninput="updatePartnerNum('remuneration_from_entity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Capital from Firm (₹)</label>
-                            <input type="text" inputmode="numeric" id="biz-partner-int" oninput="updatePartnerNum('interest_on_capital_from_entity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exempt Profit Share from Firm (₹)</label>
-                            <input type="text" inputmode="numeric" id="biz-partner-profit" oninput="updatePartnerNum('profit_share_exempt_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
             
@@ -2430,12 +2425,7 @@
                 fno_turnover_inr: null,
                 s41_remission_income_inr: null,
                 s41_bad_debt_recovery_inr: null,
-                partner_income: {
-                    entity_type: null,
-                    remuneration_from_entity_inr: null,
-                    interest_on_capital_from_entity_inr: null,
-                    profit_share_exempt_inr: null
-                },
+                partner_firms: [],
                 msme_payables: [],
                 amt_credit_bf_inr: null,
                 amt_credit_bf_origin_ay: null
@@ -4310,6 +4300,13 @@
             else divIntraIncome.classList.add('hidden');
         }
 
+        // Partner Income — ENABLED IF partner_in_firm
+        const divPartner = document.getElementById('div-partner-income');
+        if (divPartner) {
+            if (natures.includes('partner_in_firm')) divPartner.classList.remove('hidden');
+            else divPartner.classList.add('hidden');
+        }
+
         const divTradingExp = document.getElementById('div-trading-expenses');
         if (divTradingExp) {
             if (hasTrading && noPresumptive) {
@@ -5263,13 +5260,81 @@
         state.domestic_income.agricultural_income_inr = val === '' ? null : parseINRCurrency(val);
     }
 
-    // Partner / firm income helpers
-    function updatePartnerField(field, val) {
-        state.domestic_income.business_income.partner_income[field] = val || null;
+    // ── PARTNER FIRMS — Dynamic Array Helpers ──────────────────────────────────
+    function addPartnerFirm() {
+        state.domestic_income.business_income.partner_firms.push({
+            firm_name: '',
+            entity_type: 'registered_firm',
+            remuneration_from_entity_inr: null,
+            interest_on_capital_from_entity_inr: null,
+            profit_share_exempt_inr: null
+        });
+        renderPartnerFirms();
     }
-    function updatePartnerNum(field, val) {
-        state.domestic_income.business_income.partner_income[field] = val === '' ? null : parseINRCurrency(val);
+
+    function removePartnerFirm(idx) {
+        state.domestic_income.business_income.partner_firms.splice(idx, 1);
+        renderPartnerFirms();
         evaluateSurchargeBuckets();
+    }
+
+    function updatePartnerFirm(idx, field, val) {
+        const firm = state.domestic_income.business_income.partner_firms[idx];
+        if (!firm) return;
+        const numFields = ['remuneration_from_entity_inr', 'interest_on_capital_from_entity_inr', 'profit_share_exempt_inr'];
+        if (numFields.includes(field)) {
+            firm[field] = val === '' ? null : parseINRCurrency(val);
+        } else {
+            firm[field] = val || null;
+        }
+        evaluateSurchargeBuckets();
+    }
+
+    function renderPartnerFirms() {
+        const container = document.getElementById('partner-firms-container');
+        if (!container) return;
+        const firms = state.domestic_income.business_income.partner_firms;
+
+        if (firms.length === 0) {
+            container.innerHTML = '<p class="text-[10px] text-white/30 text-center py-2">No firms added yet. Click \"+ Add Firm\" above.</p>';
+            return;
+        }
+
+        container.innerHTML = firms.map((firm, idx) => `
+            <div class="bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Firm / LLP #${idx + 1}</span>
+                    <button onclick="removePartnerFirm(${idx})" class="text-brandRed/60 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Firm / LLP Name</label>
+                            <input type="text" value="${firm.firm_name || ''}" oninput="updatePartnerFirm(${idx}, 'firm_name', this.value)" placeholder="e.g. ABC & Co." class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Entity Type</label>
+                            <select onchange="updatePartnerFirm(${idx}, 'entity_type', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                                <option value="registered_firm" ${firm.entity_type === 'registered_firm' ? 'selected' : ''}>Registered Partnership Firm</option>
+                                <option value="llp" ${firm.entity_type === 'llp' ? 'selected' : ''}>Limited Liability Partnership (LLP)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Remuneration / Salary / Bonus (₹) <span class="text-brandGold">— Taxable PGBP</span></label>
+                        <input type="text" inputmode="numeric" value="${firm.remuneration_from_entity_inr != null ? firm.remuneration_from_entity_inr.toLocaleString('en-IN') : ''}" oninput="updatePartnerFirm(${idx}, 'remuneration_from_entity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Capital (₹) <span class="text-brandGold">— Taxable PGBP</span></label>
+                        <input type="text" inputmode="numeric" value="${firm.interest_on_capital_from_entity_inr != null ? firm.interest_on_capital_from_entity_inr.toLocaleString('en-IN') : ''}" oninput="updatePartnerFirm(${idx}, 'interest_on_capital_from_entity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Share of Profit (₹) <span class="text-green-400">— EXEMPT u/s 10(2A), enter for disclosure only</span></label>
+                        <input type="text" inputmode="numeric" value="${firm.profit_share_exempt_inr != null ? firm.profit_share_exempt_inr.toLocaleString('en-IN') : ''}" oninput="updatePartnerFirm(${idx}, 'profit_share_exempt_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
 
     // s.80TTA / s.80TTB helper
@@ -5631,6 +5696,14 @@
             
             // Check F&O and regular business
             business += (state.domestic_income.business_income.non_speculative_income_inr || 0);
+            business += (state.domestic_income.business_income.s41_remission_income_inr || 0);
+            business += (state.domestic_income.business_income.s41_bad_debt_recovery_inr || 0);
+            
+            // Sum all partner firm PGBP income (remuneration + interest; profit share is exempt)
+            (state.domestic_income.business_income.partner_firms || []).forEach(firm => {
+                business += (firm.remuneration_from_entity_inr || 0);
+                business += (firm.interest_on_capital_from_entity_inr || 0);
+            });
             
             // Check presumptive transport s44AE
             state.domestic_income.business_income.goods_vehicles.forEach(veh => {
