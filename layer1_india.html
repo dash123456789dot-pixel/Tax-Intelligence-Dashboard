@@ -4092,48 +4092,47 @@
         let ineligibleReason = null;
         let forceRevert = false;
 
-        // 1. Profession "other" check
-        if (profType === 'other') {
-            const hasS44ADA = entries.some(e => e.presumptive_scheme === 's44ADA');
-            if (hasS44ADA) {
-                ineligibleReason = 's.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.';
-                forceRevert = true;
+        entries.forEach((entry) => {
+            if (entry.presumptive_scheme === 's44ADA') {
+                if (profType === 'other') {
+                    ineligibleReason = 's.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.';
+                    forceRevert = true;
+                } else {
+                    const dig = entry.ada_digital_receipts_inr || 0;
+                    const csh = entry.ada_cash_receipts_inr || 0;
+                    const total = dig + csh;
+                    
+                    let limit = 5000000; // 50L
+                    if (total > 0 && dig / total >= 0.95) {
+                        limit = 7500000; // 75L
+                    }
+                    
+                    if (total > limit) {
+                        ineligibleReason = `Total receipts (₹${(total/100000).toFixed(2)}L) exceed the applicable s.44ADA limit of ₹${limit/100000}L. You must use regular computation.`;
+                        forceRevert = true;
+                    }
+                }
+                
+                if (forceRevert) {
+                    entry.presumptive_scheme = null;
+                }
             }
-        }
+        });
         
-        // 2. Threshold Check
-        if (hasS44ADA) {
-            const dig = state.domestic_income.business_income.ada_digital_receipts_inr || 0;
-            const csh = state.domestic_income.business_income.ada_cash_receipts_inr || 0;
-            const total = dig + csh;
-            
-            // Sync to gross_receipts_inr
-            state.domestic_income.business_income.gross_receipts_inr = total;
-            document.getElementById('biz-general-gross-receipts').value = total || '';
-            
-            let limit = 5000000; // 50L
-            if (total > 0 && dig / total >= 0.95) {
-                limit = 7500000; // 75L
-            }
-            
-            if (total > limit) {
+        if (ineligibleReason) {
+            if (warnBanner) {
                 warnBanner.classList.remove('hidden');
                 warnBanner.style.display = 'flex';
-                warnBanner.querySelector('span:last-child').innerText = `Total receipts (₹${(total/100000).toFixed(2)}L) exceed the applicable s.44ADA limit of ₹${limit/100000}L. You must use regular computation.`;
-                
-                const cb = document.querySelector('.biz-pres-chk[value="s44ADA"]');
-                if (cb) cb.checked = false;
-                const scheme = state.domestic_income.business_income.presumptive_scheme;
-                const idx = scheme.indexOf('s44ADA');
-                if (idx > -1) scheme.splice(idx, 1);
-                if (typeof toggleReceiptsVisibility === 'function') toggleReceiptsVisibility();
-                return;
+                const p = warnBanner.querySelector('p');
+                if (p) p.innerText = ineligibleReason;
+            }
+            if (forceRevert) renderBusinessEntries();
+        } else {
+            if (warnBanner) {
+                warnBanner.classList.add('hidden');
+                warnBanner.style.display = 'none';
             }
         }
-        
-        // Clear warning
-        warnBanner.classList.add('hidden');
-        warnBanner.style.display = '';
     }
 
     function update115BACOptOut(checked) {
@@ -6213,9 +6212,10 @@
         
         if (typeof evaluateSalaryRegimeLock === 'function') {
             evaluateSalaryRegimeLock();
-        if (typeof renderHouseProperties === 'function') renderHouseProperties();
-    }
-        if (field === 'tax_regime' && typeof renderHouseProperties === 'function') { renderHouseProperties(); }
+        }
+        if (typeof renderHouseProperties === 'function') {
+            renderHouseProperties();
+        }
     }
 
     function evaluateSalaryRegimeLock() {
