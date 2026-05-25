@@ -2466,12 +2466,13 @@
                         <table class="w-full text-left text-xs text-white/80" id="ftc-table">
                             <thead>
                                 <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
-                                    <th class="p-3">Country</th>
+                                    <th class="p-3 w-20 text-center">Country</th>
                                     <th class="p-3">Income Type</th>
-                                    <th class="p-3">Currency</th>
-                                    <th class="p-3">Foreign Income & Tax</th>
-                                    <th class="p-3">Currency Exchange Rate (SBI TT Buying)</th>
-                                    <th class="p-3 text-right">Action</th>
+                                    <th class="p-3 w-28">Currency</th>
+                                    <th class="p-3 w-32 text-right">Foreign Income</th>
+                                    <th class="p-3 w-32 text-right">Foreign Tax Paid</th>
+                                    <th class="p-3 w-32 text-right">Exchange Rate</th>
+                                    <th class="p-3 w-24 text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -7365,9 +7366,9 @@
         tr.id = rowId;
         tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
         tr.innerHTML = `
-            <td class="p-3"><input type="text" placeholder="US" maxlength="2" class="ftc-country bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono uppercase text-center"></td>
+            <td class="p-3 text-center"><input type="text" placeholder="US" maxlength="2" class="ftc-country bg-white/5 border border-white/10 rounded px-2.5 py-1.5 text-xs w-14 text-white font-mono uppercase text-center focus:border-brandGold focus:ring-0"></td>
             <td class="p-3">
-                <select class="ftc-type bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                <select class="ftc-type bg-[#121212] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none w-full font-sans">
                     <option value="salary">Foreign Salary</option>
                     <option value="interest">Interest</option>
                     <option value="dividend">Dividends</option>
@@ -7377,7 +7378,7 @@
                 </select>
             </td>
             <td class="p-3">
-                <select class="ftc-currency bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                <select class="ftc-currency bg-[#121212] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none w-full font-sans">
                     <option value="USD">USD ($)</option>
                     <option value="EUR">EUR (€)</option>
                     <option value="GBP">GBP (£)</option>
@@ -7389,14 +7390,10 @@
                     <option value="OTH">Other</option>
                 </select>
             </td>
-            <td class="p-3">
-                <div class="flex gap-2">
-                    <input type="text" inputmode="numeric" placeholder="Income" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
-                    <input type="text" inputmode="numeric" placeholder="Tax Paid" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
-                </div>
-            </td>
-            <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-[100px] text-white font-mono text-right"></td>
-            <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans px-2 py-1">Remove</button></td>
+            <td class="p-3"><input type="text" inputmode="numeric" placeholder="0" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+            <td class="p-3"><input type="text" inputmode="numeric" placeholder="0" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+            <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+            <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="px-2.5 py-1.5 text-brandRed bg-brandRed/10 border border-brandRed/20 hover:bg-brandRed/25 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all font-sans">Remove</button></td>
         `;
         tbody.appendChild(tr);
 
@@ -7459,9 +7456,9 @@
             tr.id = rowId;
             tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
             tr.innerHTML = `
-                <td class="p-3"><input type="text" placeholder="US" maxlength="2" value="${item.country || ''}" class="ftc-country bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono uppercase text-center"></td>
+                <td class="p-3 text-center"><input type="text" placeholder="US" maxlength="2" value="${item.country || ''}" class="ftc-country bg-white/5 border border-white/10 rounded px-2.5 py-1.5 text-xs w-14 text-white font-mono uppercase text-center focus:border-brandGold focus:ring-0"></td>
                 <td class="p-3">
-                    <select class="ftc-type bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                    <select class="ftc-type bg-[#121212] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none w-full font-sans">
                         <option value="salary" ${item.income_type === 'salary' ? 'selected' : ''}>Foreign Salary</option>
                         <option value="interest" ${item.income_type === 'interest' ? 'selected' : ''}>Interest</option>
                         <option value="dividend" ${item.income_type === 'dividend' ? 'selected' : ''}>Dividends</option>
@@ -7471,7 +7468,7 @@
                     </select>
                 </td>
                 <td class="p-3">
-                    <select class="ftc-currency bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
+                    <select class="ftc-currency bg-[#121212] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none w-full font-sans">
                         <option value="USD" ${item.foreign_currency === 'USD' ? 'selected' : ''}>USD ($)</option>
                         <option value="EUR" ${item.foreign_currency === 'EUR' ? 'selected' : ''}>EUR (€)</option>
                         <option value="GBP" ${item.foreign_currency === 'GBP' ? 'selected' : ''}>GBP (£)</option>
@@ -7483,14 +7480,10 @@
                         <option value="OTH" ${item.foreign_currency === 'OTH' ? 'selected' : ''}>Other</option>
                     </select>
                 </td>
-                <td class="p-3">
-                    <div class="flex gap-2">
-                        <input type="text" inputmode="numeric" placeholder="Income" value="${item.foreign_income_in_foreign_ccy ? item.foreign_income_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
-                        <input type="text" inputmode="numeric" placeholder="Tax Paid" value="${item.foreign_tax_in_foreign_ccy ? item.foreign_tax_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono text-right">
-                    </div>
-                </td>
-                <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" value="${item.conversion_rate || ''}" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-[100px] text-white font-mono text-right"></td>
-                <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans px-2 py-1">Remove</button></td>
+                <td class="p-3"><input type="text" inputmode="numeric" placeholder="0" value="${item.foreign_income_in_foreign_ccy ? item.foreign_income_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-inc bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+                <td class="p-3"><input type="text" inputmode="numeric" placeholder="0" value="${item.foreign_tax_in_foreign_ccy ? item.foreign_tax_in_foreign_ccy.toLocaleString('en-IN') : ''}" class="inr-input ftc-tax bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+                <td class="p-3"><input type="text" inputmode="numeric" placeholder="83.00" value="${item.conversion_rate || ''}" class="inr-input ftc-rate bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs w-full text-white font-mono text-right focus:border-brandGold focus:ring-0"></td>
+                <td class="p-3 text-right"><button onclick="removeFtcRow('${rowId}')" class="px-2.5 py-1.5 text-brandRed bg-brandRed/10 border border-brandRed/20 hover:bg-brandRed/25 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all font-sans">Remove</button></td>
             `;
             tbody.appendChild(tr);
 
