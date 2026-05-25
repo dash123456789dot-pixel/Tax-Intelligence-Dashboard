@@ -1941,94 +1941,316 @@
         <!-- STEP 9: DEDUCTIONS -->
         <div id="panel-step-deductions" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
             <div>
-                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2L — Tax Deductions (Save Tax)</h2>
-                <p class="text-xs text-white/40 mt-1">Enter the investments you made to save tax (like PPF, ELSS, Health Insurance).</p>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2L — Tax Deductions (Chapter VI-A)</h2>
+                <p class="text-xs text-white/40 mt-1">Available under Old Regime only. Enter eligible investments and expenses to reduce taxable income.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- 80C block -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Standard Tax-Saving Investments (Max ₹1.5 Lakhs)</span>
+            <!-- ── Section 80C, 80CCC, 80CCD(1): ₹1.5L cap ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80C, 80CCC & 80CCD(1) — Tax-Saving Basket</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Combined cap ₹1,50,000</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax-Saving Mutual Funds (ELSS)</label>
-                        <input type="text" inputmode="numeric" id="ded-elss" oninput="update80C('elss_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">EPF (Employee Provident Fund)</label>
+                        <input type="text" inputmode="numeric" id="ded-epf" oninput="update80C('epf_employee_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1" id="label-ppf">Public Provident Fund (PPF)</label>
-                        <input type="text" inputmode="numeric" id="ded-ppf" oninput="update80C('ppf_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                        <span id="warn-ppf" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase">⚠️ Non-Residents cannot make fresh PPF contributions</span>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1" id="label-ppf">PPF (Public Provident Fund)</label>
+                        <input type="text" inputmode="numeric" id="ded-ppf" oninput="update80C('ppf_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-ppf-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh PPF contributions blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">ELSS (Mutual Funds)</label>
+                        <input type="text" inputmode="numeric" id="ded-elss" oninput="update80C('elss_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Life Insurance Premium</label>
+                        <input type="text" inputmode="numeric" id="ded-lic" oninput="update80C('life_insurance_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Loan Principal Repayment</label>
-                        <input type="text" inputmode="numeric" id="ded-home-loan" oninput="update80C('principal_home_loan_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <input type="text" inputmode="numeric" id="ded-home-loan" oninput="update80C('principal_home_loan_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NSC (National Savings Cert.)</label>
+                        <input type="text" inputmode="numeric" id="ded-nsc" oninput="update80C('nsc_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-nsc-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh NSC investments blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Children's Tuition Fees</label>
+                        <input type="text" inputmode="numeric" id="ded-tuition" oninput="update80C('tuition_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Sukanya Samriddhi Yojana (SSY)</label>
+                        <input type="text" inputmode="numeric" id="ded-sukanya" oninput="update80C('sukanya_samriddhi_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-ssy-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh SSY accounts blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax-Saving Fixed Deposit (5-year)</label>
+                        <input type="text" inputmode="numeric" id="ded-taxfd" oninput="update80C('tax_saving_fd_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Stamp Duty & Registration</label>
+                        <input type="text" inputmode="numeric" id="ded-stamp" oninput="update80C('stamp_duty_registration_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">LIC Annuity Premium (s.80CCC)</label>
+                        <input type="text" inputmode="numeric" id="ded-lic-annuity" oninput="update80CCC_80CCD1('lic_annuity_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Employee Contribution (s.80CCD(1))</label>
+                        <input type="text" inputmode="numeric" id="ded-nps-employee" oninput="update80CCC_80CCD1('nps_employee_contribution_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
                 </div>
+            </div>
 
-                <!-- 80D and NPS -->
-                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Health Insurance & Extra NPS Contributions</span>
+            <!-- ── Section 80CCD(1B): Extra NPS contribution ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80CCD(1B) — Additional NPS Contribution</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Additional limit ₹50,000</span>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Voluntary Contribution u/s 80CCD(1B)</label>
+                    <input type="text" inputmode="numeric" id="ded-nps-add" oninput="updateNpsAdd('nps_additional_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">This is an additional deduction exclusively for NPS contributions, over and above the ₹1.5L cap of s.80C.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80D: Health Insurance ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80D — Medical Insurance & Preventive Checkup</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Self: ₹25K | Parents: ₹25K - ₹50K</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Health Insurance Premium (For yourself, spouse & children)</label>
-                        <input type="text" inputmode="numeric" id="ded-80d-self" oninput="update80D('self_family_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Self, Spouse & Children</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-self" oninput="update80D('self_family_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Health Insurance Premium (For your parents)</label>
-                        <input type="text" inputmode="numeric" id="ded-80d-parents" oninput="update80D('parents_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Self & Family (Max ₹5,000 sub-limit)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-checkup" oninput="update80D('self_family_preventive_checkup_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
-                    <div class="flex items-center justify-between p-2.5 bg-white/5 border border-white/10 rounded-xl">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Parents</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents" oninput="update80D('parents_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Parents (Max ₹5,000 sub-limit)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents-checkup" oninput="update80D('parents_preventive_checkup_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
                         <div class="flex flex-col">
-                            <span class="text-xs font-bold text-white/80">Are Parents Senior Citizens?</span>
-                            <span class="text-[9px] text-white/30">Increases parent health cap from ₹25K to ₹50K.</span>
+                            <span class="text-xs font-bold text-white/80 font-display">Are Parents Senior Citizens?</span>
+                            <span class="text-[9px] text-white/30 font-sans">Increases parent deduction cap from ₹25,000 to ₹50,000.</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="ded-80d-senior" onchange="update80DBool('parents_are_senior', this.checked)" class="sr-only peer">
                             <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
                         </label>
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Extra National Pension System (NPS) Contribution (Max ₹50,000)</label>
-                        <input type="text" inputmode="numeric" id="ded-nps-add" oninput="updateNpsAdd('nps_additional_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80 font-display">Parents Have Health Insurance Policy?</span>
+                            <span class="text-[9px] text-white/30 font-sans">If false, allows parents' medical expenditures to be claimed.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="ded-80d-parents-has-insurance" onchange="update80DBool('parents_has_health_insurance', this.checked)" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
+                    </div>
+
+                    <div id="div-parents-med" class="hidden md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Medical Expenditure — Parents (Only if Seniors & No Policy in force)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents-med" oninput="update80D('parents_medical_expenditure_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Deductible up to ₹50,000 for senior citizen parents who do not have any active health insurance coverage.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 80G Donations dynamic array -->
+            <!-- ── Section 80DD: Disabled Dependents ── -->
+            <div id="card-80dd" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80DD — Maintenance & Medical Treatment of Disabled Dependent</span>
+                    <span id="warn-80dd-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80DD Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For expenses on medical treatment/rehabilitation of a disabled dependent.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80dd-has" onchange="update80DDBool('s80DD', 'has_disabled_dependents', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80dd-details" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
+                    <select id="ded-80dd-percent" onchange="update80DDField('s80DD', 'disability_percentage', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="">-- Select Disability Level --</option>
+                        <option value="standard">Standard Disability (>= 40% but < 80%) — Flat ₹75,000 deduction</option>
+                        <option value="severe">Severe Disability (>= 80%) — Flat ₹1,25,000 deduction</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ── Section 80DDB: Specified Diseases Treatment ── -->
+            <div id="card-80ddb" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80DDB — Medical Treatment Expenses for Specified Diseases</span>
+                    <span id="warn-80ddb-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80DDB Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For expenses incurred on treatment of self/dependents for specified ailments.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80ddb-has" onchange="update80DDBool('s80DDB', 'has_specified_diseases_treatment', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80ddb-details" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patient Category</label>
+                        <select id="ded-80ddb-cat" onchange="update80DDField('s80DDB', 'patient_category', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <option value="">-- Select Category --</option>
+                            <option value="normal">Normal Individual (Cap: ₹40,000)</option>
+                            <option value="senior">Senior Citizen (Cap: ₹1,00,000)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Actual Medical Expenses Incurred (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80ddb-expenses" oninput="update80DDNum('s80DDB', 'medical_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 80U: Self Disability ── -->
+            <div id="card-80u" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80U — Deduction in Case of Person with Disability (Self)</span>
+                    <span id="warn-80u-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80U Self-Disability?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For tax resident individuals who are certified to have a physical/mental disability.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80u-has" onchange="update80DDBool('s80U', 'has_self_disability', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80u-details" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
+                    <select id="ded-80u-percent" onchange="update80DDField('s80U', 'disability_percentage', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="">-- Select Disability Level --</option>
+                        <option value="standard">Standard Disability (>= 40% but < 80%) — Flat ₹75,000 deduction</option>
+                        <option value="severe">Severe Disability (>= 80%) — Flat ₹1,25,000 deduction</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ── Section 80GG: House Rent Paid (No HRA) ── -->
+            <div id="card-80gg" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80GG — House Rent Paid (No HRA Received)</span>
+                    <span id="warn-80gg-block" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80GG Rent Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">Available only if you do not receive House Rent Allowance (HRA) from an employer.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80gg-has" onchange="update80GGBool('has_rent_paid_no_hra', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80gg-rent-input" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Rent Paid During the FY (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80gg-rent" oninput="update80GGNum('rent_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                </div>
+            </div>
+
+            <!-- ── Section 80G: Donations cards container ── -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Donations to Charity</span>
-                    <button onclick="add80GRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Donation</button>
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80G — Donations to Charities / Approved Funds</span>
+                    <button onclick="add80GRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold font-sans font-bold font-sans font-bold font-sans font-bold font-sans font-bold">+ Add Donation</button>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-white/80" id="s80g-table">
-                        <thead>
-                            <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
-                                <th class="p-3">Donee Name</th>
-                                <th class="p-3">PAN of Donee</th>
-                                <th class="p-3">Amount</th>
-                                <th class="p-3">Deduction %</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <p class="text-[10px] text-white/40 -mt-2">Cash donations exceeding ₹2,000, and donations in kind or other modes are legally ineligible for tax deductions.</p>
+                
+                <!-- Dynamic cards stack -->
+                <div id="s80g-cards-container" class="flex flex-col gap-3"></div>
+            </div>
+
+            <!-- ── Section 80TTA / 80TTB: Savings & FD Interest ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80TTA / s.80TTB — Interest on Savings & Fixed Deposits</span>
+                    <span id="badge-80tta" class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/20 border border-brandGold/30 text-brandGold font-black uppercase font-sans">80TTA</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Account Interest (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80tta-savings" oninput="update80TTA('savings_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div id="div-80tta-fd" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest (₹, s.80TTB Senior only)</label>
+                        <input type="text" inputmode="numeric" id="ded-80tta-fd" oninput="update80TTA('fd_rd_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Derived Gating Category</label>
+                        <div id="ded-80tta-display" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white/70 px-3 py-2.5 font-mono">s.80TTA (Non-Senior / NRI — NRO Savings only, ₹10,000 cap)</div>
+                        <input type="hidden" id="ded-80tta-section">
+                    </div>
+                </div>
+                <div id="warn-80ttb-nr" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans leading-relaxed">
+                    ⚠️ <strong>NRI Restriction:</strong> Non-residents are statutorily ineligible for s.80TTB benefits. Only s.80TTA applies to NRO savings interest (capped at ₹10,000).
                 </div>
             </div>
 
-            <!-- s.80TTA / s.80TTB Savings Interest Deduction -->
+            <!-- ── Section 80E: Education Loan Interest ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80E — Interest on Education Loan</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Education Loan Interest Repaid (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80e" oninput="update80E('education_loan_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deductible for interest paid on loans taken for higher education of self, spouse, children, or students for whom you are the legal guardian. No upper limit on deduction; valid for up to 8 years.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80EEA / 80EE: Affordable Housing Loan Interest ── -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Deduction for Interest Earned on Savings Accounts</span>
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80EEA / s.80EE — Additional Home Loan Interest</span>
+                <p class="text-[10px] text-white/40 -mt-2">Additional interest deduction over and above Section 24(b). Derived automatically based on loan sanction date window.</p>
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Account Interest to Claim (₹, max ₹10K / ₹50K for seniors)</label>
-                        <input type="text" inputmode="numeric" id="ded-80tta-savings" oninput="update80TTA('savings_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Additional Home Loan Interest (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80eea" oninput="update80EEA('affordable_home_loan_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Select your Age Category</label>
-                        <select id="ded-80tta-section" onchange="update80TTA('applicable_section', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
-                            <option value="80TTA">Non-Senior Citizen (Max deduction ₹10,000)</option>
-                            <option value="80TTB">Senior Citizen (Max deduction ₹50,000)</option>
-                            <option value="none">N/A — Non-Resident (Not Eligible)</option>
-                        </select>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loan Sanction Date</label>
+                        <input type="date" id="ded-80eea-date" oninput="update80EEA('loan_sanction_date', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:ring-0">
                     </div>
                 </div>
             </div>
@@ -2499,11 +2721,67 @@
             deemed_dividend_from_buyback_inr: null
         },
         deductions: {
-            s80C: { elss_inr: null, ppf_inr: null, principal_home_loan_inr: null },
-            s80CCD_1B: { nps_additional_inr: null },
-            s80D: { self_family_premium_inr: null, parents_premium_inr: null, parents_are_senior: false },
+            s80C: {
+                epf_employee_inr: null,
+                ppf_inr: null,
+                elss_inr: null,
+                life_insurance_premium_inr: null,
+                principal_home_loan_inr: null,
+                nsc_inr: null,
+                tuition_fees_inr: null,
+                sukanya_samriddhi_inr: null,
+                tax_saving_fd_inr: null,
+                stamp_duty_registration_inr: null
+            },
+            s80CCC_80CCD1: {
+                lic_annuity_premium_inr: null,
+                nps_employee_contribution_inr: null
+            },
+            s80CCD_1B: {
+                nps_additional_inr: null
+            },
+            s80D: {
+                self_family_premium_inr: null,
+                self_family_preventive_checkup_inr: null,
+                parents_premium_inr: null,
+                parents_are_senior: false,
+                parents_preventive_checkup_inr: null,
+                parents_medical_expenditure_inr: null,
+                parents_has_health_insurance: true
+            },
+            s80DD: {
+                has_disabled_dependents: false,
+                disability_percentage: null,
+                is_nri_blocked: false
+            },
+            s80DDB: {
+                has_specified_diseases_treatment: false,
+                patient_category: null,
+                medical_expenses_inr: null,
+                is_nri_blocked: false
+            },
+            s80U: {
+                has_self_disability: false,
+                disability_percentage: null,
+                is_nri_blocked: false
+            },
             s80G: [],
-            s80TTA_TTB: { savings_interest_inr: null, applicable_section: null }
+            s80GG: {
+                has_rent_paid_no_hra: false,
+                rent_paid_inr: null
+            },
+            s80TTA_TTB: {
+                applicable_section: null,
+                savings_interest_inr: null,
+                fd_rd_interest_inr: null
+            },
+            s80E: {
+                education_loan_interest_inr: null
+            },
+            s80EEA_EE: {
+                affordable_home_loan_interest_inr: null,
+                loan_sanction_date: null
+            }
         },
         carry_forward_losses: {
             has_brought_forward_losses: false,
@@ -2586,6 +2864,9 @@
             } else if (step === 'step-profile') {
                 isAllowed = true;
                 label = "Lock";
+            } else if (step === 'step-deductions') {
+                isAllowed = (state.profile.tax_regime === 'OLD') || (lock === 'RNOR' || lock === 'ROR');
+                label = isAllowed ? "Active" : "🔒";
             } else {
                 isAllowed = true;
                 label = "Active";
@@ -2623,15 +2904,114 @@
             updateBizPresumptive();
         }
 
-        // Enforce PPF warning if NR
-        const ppfWarn = document.getElementById('warn-ppf');
+        // Enforce PPF and other NRI warnings & locks
+        const isNR = (lock === 'NR');
+        
+        // PPF warning
+        const ppfWarn = document.getElementById('warn-ppf-nri');
         if (ppfWarn) {
-            if (lock === 'NR') {
-                ppfWarn.classList.remove('hidden');
-            } else {
-                ppfWarn.classList.add('hidden');
-            }
+            if (isNR) ppfWarn.classList.remove('hidden');
+            else ppfWarn.classList.add('hidden');
         }
+
+        // NSC warning
+        const nscWarn = document.getElementById('warn-nsc-nri');
+        if (nscWarn) {
+            if (isNR) nscWarn.classList.remove('hidden');
+            else nscWarn.classList.add('hidden');
+        }
+
+        // SSY warning
+        const ssyWarn = document.getElementById('warn-ssy-nri');
+        if (ssyWarn) {
+            if (isNR) ssyWarn.classList.remove('hidden');
+            else ssyWarn.classList.add('hidden');
+        }
+
+        // SCSS warning
+        const scssWarn = document.getElementById('warn-scss-nri');
+        if (scssWarn) {
+            if (isNR) scssWarn.classList.remove('hidden');
+            else scssWarn.classList.add('hidden');
+        }
+
+        // s.80DD NRI block
+        state.deductions.s80DD.is_nri_blocked = isNR;
+        const cardDD = document.getElementById('card-80dd');
+        const warnDD = document.getElementById('warn-80dd-nri');
+        if (isNR) {
+            if (cardDD) cardDD.classList.add('opacity-40', 'pointer-events-none');
+            if (warnDD) warnDD.classList.remove('hidden');
+            state.deductions.s80DD.has_disabled_dependents = false;
+            state.deductions.s80DD.disability_percentage = null;
+            const checkDD = document.getElementById('ded-80dd-has');
+            if (checkDD) checkDD.checked = false;
+            sync80DDVisibility('s80DD');
+        } else {
+            if (cardDD) cardDD.classList.remove('opacity-40', 'pointer-events-none');
+            if (warnDD) warnDD.classList.add('hidden');
+        }
+
+        // s.80DDB NRI block
+        state.deductions.s80DDB.is_nri_blocked = isNR;
+        const cardDDB = document.getElementById('card-80ddb');
+        const warnDDB = document.getElementById('warn-80ddb-nri');
+        if (isNR) {
+            if (cardDDB) cardDDB.classList.add('opacity-40', 'pointer-events-none');
+            if (warnDDB) warnDDB.classList.remove('hidden');
+            state.deductions.s80DDB.has_specified_diseases_treatment = false;
+            state.deductions.s80DDB.patient_category = null;
+            state.deductions.s80DDB.medical_expenses_inr = null;
+            const checkDDB = document.getElementById('ded-80ddb-has');
+            if (checkDDB) checkDDB.checked = false;
+            sync80DDVisibility('s80DDB');
+        } else {
+            if (cardDDB) cardDDB.classList.remove('opacity-40', 'pointer-events-none');
+            if (warnDDB) warnDDB.classList.add('hidden');
+        }
+
+        // s.80U NRI block
+        state.deductions.s80U.is_nri_blocked = isNR;
+        const cardU = document.getElementById('card-80u');
+        const warnU = document.getElementById('warn-80u-nri');
+        if (isNR) {
+            if (cardU) cardU.classList.add('opacity-40', 'pointer-events-none');
+            if (warnU) warnU.classList.remove('hidden');
+            state.deductions.s80U.has_self_disability = false;
+            state.deductions.s80U.disability_percentage = null;
+            const checkU = document.getElementById('ded-80u-has');
+            if (checkU) checkU.checked = false;
+            sync80DDVisibility('s80U');
+        } else {
+            if (cardU) cardU.classList.remove('opacity-40', 'pointer-events-none');
+            if (warnU) warnU.classList.add('hidden');
+        }
+
+        // s.80GG HRA / Salary check
+        const hasSalary = state.domestic_income.salary.has_salary_income === true;
+        const hraReceived = (state.domestic_income.salary.hra_received_inr || 0) > 0;
+        const cardGG = document.getElementById('card-80gg');
+        const warnGG = document.getElementById('warn-80gg-block');
+        const isGGBlocked = !hasSalary || hraReceived;
+        
+        if (isGGBlocked) {
+            if (cardGG) cardGG.classList.add('opacity-40', 'pointer-events-none');
+            if (warnGG) {
+                warnGG.classList.remove('hidden');
+                warnGG.textContent = !hasSalary ? "⚠️ Blocked: Requires active Salary income." : "⚠️ Blocked: Cannot claim 80GG when receiving HRA.";
+            }
+            state.deductions.s80GG.has_rent_paid_no_hra = false;
+            state.deductions.s80GG.rent_paid_inr = null;
+            const checkGG = document.getElementById('ded-80gg-has');
+            if (checkGG) checkGG.checked = false;
+            update80GGBool('has_rent_paid_no_hra', false);
+        } else {
+            if (cardGG) cardGG.classList.remove('opacity-40', 'pointer-events-none');
+            if (warnGG) warnGG.classList.add('hidden');
+        }
+
+        // Derive s.80TTA / s.80TTB
+        derive80TTASection();
 
         // Show LRS outbound schedule if ROR
         const lrsDiv = document.getElementById('div-lrs-section');
@@ -2813,12 +3193,14 @@
     function updateProfileField(field, val) {
         state.profile[field] = val;
         runResidencySolver();
-        if (field === 'tax_regime' && typeof syncAmtCreditRegimeLock === 'function') { syncAmtCreditRegimeLock(); }
-        if (field === 'tax_regime' && typeof evaluateSalaryRegimeLock === 'function') {
-            evaluateSalaryRegimeLock();
-        if (typeof renderHouseProperties === 'function') renderHouseProperties();
-    }
-        if (field === 'tax_regime' && typeof renderHouseProperties === 'function') { renderHouseProperties(); }
+        if (field === 'tax_regime') {
+            if (typeof syncAmtCreditRegimeLock === 'function') syncAmtCreditRegimeLock();
+            if (typeof evaluateSalaryRegimeLock === 'function') evaluateSalaryRegimeLock();
+            if (typeof renderHouseProperties === 'function') renderHouseProperties();
+        }
+        if (field === 'date_of_birth') {
+            if (typeof derive80TTASection === 'function') derive80TTASection();
+        }
     }
 
     function syncResidencyUI() {
@@ -5994,66 +6376,292 @@
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // DEDUCTIONS & s.80G LEDGER
+    // DEDUCTIONS & s.80G LEDGER (OVERHAULED)
     // ═══════════════════════════════════════════════════════════════════════
+    function isSeniorCitizen() {
+        if (!state.profile.date_of_birth) return false;
+        const dob = new Date(state.profile.date_of_birth);
+        const endOfFY = new Date("2026-03-31");
+        let age = endOfFY.getFullYear() - dob.getFullYear();
+        const m = endOfFY.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && endOfFY.getDate() < dob.getDate())) {
+            age--;
+        }
+        return age >= 60;
+    }
+
     function update80C(field, val) {
         state.deductions.s80C[field] = val === '' ? null : parseINRCurrency(val);
+    }
+    
+    function update80CCC_80CCD1(field, val) {
+        state.deductions.s80CCC_80CCD1[field] = val === '' ? null : parseINRCurrency(val);
     }
 
     function update80D(field, val) {
         state.deductions.s80D[field] = val === '' ? null : parseINRCurrency(val);
+        sync80DMedicalVisibility();
     }
 
     function update80DBool(field, val) {
         state.deductions.s80D[field] = val;
+        sync80DMedicalVisibility();
+    }
+
+    function sync80DMedicalVisibility() {
+        const divMed = document.getElementById('div-parents-med');
+        if (divMed) {
+            const hasIns = state.deductions.s80D.parents_has_health_insurance !== false;
+            const isSenior = state.deductions.s80D.parents_are_senior === true;
+            if (!hasIns && isSenior) {
+                divMed.classList.remove('hidden');
+            } else {
+                divMed.classList.add('hidden');
+                state.deductions.s80D.parents_medical_expenditure_inr = null;
+                const inputMed = document.getElementById('ded-80d-parents-med');
+                if (inputMed) inputMed.value = '';
+            }
+        }
+    }
+
+    function update80DDBool(section, field, val) {
+        state.deductions[section][field] = val;
+        sync80DDVisibility(section);
+    }
+
+    function update80DDField(section, field, val) {
+        state.deductions[section][field] = val || null;
+    }
+
+    function update80DDNum(section, field, val) {
+        state.deductions[section][field] = val === '' ? null : parseINRCurrency(val);
+    }
+
+    // Helper visibility function
+    function sync80DDVisibility(section) {
+        const hasField = section === 's80DD' ? 'has_disabled_dependents' :
+                         section === 's80DDB' ? 'has_specified_diseases_treatment' :
+                         'has_self_disability';
+        const containerId = section === 's80DD' ? 'div-80dd-details' :
+                            section === 's80DDB' ? 'div-80ddb-details' :
+                            'div-80u-details';
+        const div = document.getElementById(containerId);
+        if (div) {
+            if (state.deductions[section][hasField]) {
+                div.classList.remove('hidden');
+            } else {
+                div.classList.add('hidden');
+                if (section === 's80DD' || section === 's80U') {
+                    state.deductions[section].disability_percentage = null;
+                    const sel = document.getElementById(`ded-${section.toLowerCase()}-percent`);
+                    if (sel) sel.value = '';
+                } else if (section === 's80DDB') {
+                    state.deductions.s80DDB.patient_category = null;
+                    state.deductions.s80DDB.medical_expenses_inr = null;
+                    const cat = document.getElementById('ded-80ddb-cat');
+                    const exp = document.getElementById('ded-80ddb-expenses');
+                    if (cat) cat.value = '';
+                    if (exp) exp.value = '';
+                }
+            }
+        }
+    }
+
+    function update80GGBool(field, val) {
+        state.deductions.s80GG[field] = val;
+        const divRent = document.getElementById('div-80gg-rent-input');
+        if (divRent) {
+            if (val) {
+                divRent.classList.remove('hidden');
+            } else {
+                divRent.classList.add('hidden');
+                state.deductions.s80GG.rent_paid_inr = null;
+                const rentInput = document.getElementById('ded-80gg-rent');
+                if (rentInput) rentInput.value = '';
+            }
+        }
+    }
+
+    // s.80GG helper
+    function update80GGNum(field, val) {
+        state.deductions.s80GG[field] = val === '' ? null : parseINRCurrency(val);
+    }
+
+    function update80TTA(field, val) {
+        state.deductions.s80TTA_TTB[field] = val === '' ? null : parseINRCurrency(val);
+    }
+
+    // s.80E helper
+    function update80E(field, val) {
+        state.deductions.s80E[field] = val === '' ? null : parseINRCurrency(val);
+    }
+
+    // s.80EEA helper
+    function update80EEA(field, val) {
+        state.deductions.s80EEA_EE[field] = val === '' ? null : (field === 'affordable_home_loan_interest_inr' ? parseINRCurrency(val) : val);
     }
 
     function updateNpsAdd(field, val) {
         state.deductions.s80CCD_1B[field] = val === '' ? null : parseINRCurrency(val);
     }
 
+    function derive80TTASection() {
+        const residency = state.residency_detail.final_india_residency_status || 'ROR';
+        const isNR = residency === 'NR';
+        const isSenior = isSeniorCitizen();
+        
+        const display = document.getElementById('ded-80tta-display');
+        const badge = document.getElementById('badge-80tta');
+        const nrWarn = document.getElementById('warn-80ttb-nr');
+        const fdDiv = document.getElementById('div-80tta-fd');
+
+        let section = '80TTA';
+        let displayText = '';
+
+        if (isNR) {
+            section = '80TTA';
+            displayText = 's.80TTA (NRI — NRO Savings Interest only, cap ₹10,000)';
+            if (nrWarn) nrWarn.classList.remove('hidden');
+            if (fdDiv) fdDiv.classList.add('hidden');
+            state.deductions.s80TTA_TTB.fd_rd_interest_inr = null;
+            const fdInput = document.getElementById('ded-80tta-fd');
+            if (fdInput) fdInput.value = '';
+        } else if (isSenior) {
+            section = '80TTB';
+            displayText = 's.80TTB (Senior Citizen — Savings & FD/RD Interest, cap ₹50,000)';
+            if (nrWarn) nrWarn.classList.add('hidden');
+            if (fdDiv) fdDiv.classList.remove('hidden');
+        } else {
+            section = '80TTA';
+            displayText = 's.80TTA (Non-Senior — Savings Interest only, cap ₹10,000)';
+            if (nrWarn) nrWarn.classList.add('hidden');
+            if (fdDiv) fdDiv.classList.add('hidden');
+            state.deductions.s80TTA_TTB.fd_rd_interest_inr = null;
+            const fdInput = document.getElementById('ded-80tta-fd');
+            if (fdInput) fdInput.value = '';
+        }
+
+        state.deductions.s80TTA_TTB.applicable_section = section;
+        if (display) display.textContent = displayText;
+        if (badge) badge.textContent = section;
+        
+        const hiddenInput = document.getElementById('ded-80tta-section');
+        if (hiddenInput) hiddenInput.value = section;
+    }
+
     function add80GRow() {
         const rowId = 'g80-' + Date.now();
-        const tbody = document.querySelector('#s80g-table tbody');
-        const tr = document.createElement('tr');
-        tr.id = rowId;
-        tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
-        tr.innerHTML = `
-            <td class="p-3"><input type="text" placeholder="PM Relief Fund" class="g80-name bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white"></td>
-            <td class="p-3"><input type="text" placeholder="PAN of Donee" class="g80-pan bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
-            <td class="p-3"><input type="text" inputmode="numeric" placeholder="Amount" class="inr-input g80-amt bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
-            <td class="p-3">
-                <select class="g80-percent bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
-                    <option value="50">50% Deduction</option>
-                    <option value="100">100% Deduction</option>
-                </select>
-            </td>
-            <td class="p-3 text-right"><button onclick="remove80GRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans">Remove</button></td>
+        const container = document.getElementById('s80g-cards-container');
+        const card = document.createElement('div');
+        card.id = rowId;
+        card.className = 'g80-card bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3';
+        card.innerHTML = `
+            <div class="flex justify-end">
+                <button onclick="remove80GRow('${rowId}')" class="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donee / Organisation Name</label>
+                    <input type="text" placeholder="e.g. PM National Relief Fund" class="g80-name w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">PAN of Donee</label>
+                    <input type="text" placeholder="AAACPXXXX" class="g80-pan w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all uppercase">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation Amount (₹)</label>
+                    <input type="text" inputmode="numeric" placeholder="0" class="inr-input g80-amt w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Deduction Rate</label>
+                    <select class="g80-percent w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="100">100% Deduction</option>
+                        <option value="50">50% Deduction</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation Payment Mode</label>
+                    <select class="g80-mode w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="cheque">Cheque / Digital / Banking Channels</option>
+                        <option value="cash">Cash Payment</option>
+                        <option value="kind">In Kind (Ineligible)</option>
+                        <option value="other">Other Modes (Ineligible)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation Category</label>
+                    <select class="g80-cat w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="100_percent_no_limit">100% - No Qualifying Limit (e.g. PM Relief Fund)</option>
+                        <option value="50_percent_no_limit">50% - No Qualifying Limit (e.g. National Children Fund)</option>
+                        <option value="100_percent_with_qualifying_limit">100% - Subject to Qualifying Limit</option>
+                        <option value="50_percent_with_qualifying_limit">50% - Subject to Qualifying Limit (e.g. Approved NGO)</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Subject to Qualifying Limit?</span>
+                        <span class="text-[9px] text-white/30 font-sans">If yes, total deduction is capped at 10% of Adjusted Gross Total Income.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
+                        <input type="checkbox" class="g80-limit sr-only peer" checked>
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div class="g80-ineligible-warning hidden md:col-span-2 p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                    ⚠️ THIS DONATION IS INELIGIBLE: Cash donations over ₹2,000, and donations in kind or other modes cannot be claimed as tax deductions.
+                </div>
+            </div>
         `;
-        tbody.appendChild(tr);
+        container.appendChild(card);
 
-        tr.querySelectorAll('input, select').forEach(el => {
+        card.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', sync80GState);
+            el.addEventListener('change', sync80GState);
         });
+
+        if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
 
         sync80GState();
     }
 
     function remove80GRow(id) {
-        const row = document.getElementById(id);
-        if (row) row.remove();
+        const card = document.getElementById(id);
+        if (card) card.remove();
         sync80GState();
     }
 
     function sync80GState() {
         const items = [];
-        document.querySelectorAll('#s80g-table tbody tr').forEach(tr => {
-            items.push({
-                donee_name: tr.querySelector('.g80-name').value || 'Unspecified',
-                pan_of_donee: tr.querySelector('.g80-pan').value || null,
-                amount_inr: parseFloat(tr.querySelector('.g80-amt').value) || 0,
-                deduction_percent: parseInt(tr.querySelector('.g80-percent').value)
-            });
+        document.querySelectorAll('#s80g-cards-container .g80-card').forEach(card => {
+            const amtStr = card.querySelector('.g80-amt').value;
+            const amt = parseINRCurrency(amtStr) || 0;
+            const mode = card.querySelector('.g80-mode').value;
+            const cat = card.querySelector('.g80-cat').value;
+            
+            // Validate eligibility
+            let isEligible = true;
+            if (mode === 'kind' || mode === 'other') isEligible = false;
+            if (mode === 'cash' && amt > 2000) isEligible = false;
+
+            const warnDiv = card.querySelector('.g80-ineligible-warning');
+            if (warnDiv) {
+                if (!isEligible && amt > 0) {
+                    warnDiv.classList.remove('hidden');
+                } else {
+                    warnDiv.classList.add('hidden');
+                }
+            }
+
+            if (isEligible) {
+                items.push({
+                    donee_name: card.querySelector('.g80-name').value || null,
+                    donee_pan: card.querySelector('.g80-pan').value || null,
+                    donation_amount_inr: amt || null,
+                    donation_mode: mode,
+                    category: cat
+                });
+            }
         });
         state.deductions.s80G = items;
     }
