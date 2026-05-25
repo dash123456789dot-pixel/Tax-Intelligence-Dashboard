@@ -4089,7 +4089,6 @@
     }
 
     function validateS44ADAEligibility() {
-        const profType = state.domestic_income.business_income.profession_type;
         const entries = state.domestic_income.business_income.business_entries || [];
         const warnBanner = document.getElementById('warn-pres-s44ada-ineligible');
         let ineligibleReason = null;
@@ -4097,7 +4096,7 @@
 
         entries.forEach((entry) => {
             if (entry.presumptive_scheme === 's44ADA') {
-                if (profType === 'other') {
+                if (entry.profession_type === 'other') {
                     ineligibleReason = 's.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.';
                     forceRevert = true;
                 } else {
@@ -4205,7 +4204,7 @@
         const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
         
         // Business Entries — show if 'own_business' is selected
-        const hasOwnBusiness = natures.includes('own_business');
+        const hasOwnBusiness = natures.includes('own_business') || natures.includes('goods_transport');
         const divBizEntries = document.getElementById('div-business-entries');
         if (divBizEntries) {
             if (hasOwnBusiness) divBizEntries.classList.remove('hidden');
@@ -5370,6 +5369,37 @@
                     <option value="goods_carriage" ${bCode === 'goods_carriage' ? 'selected' : ''}>Goods Carriage / Transport</option>
                 </optgroup>`;
 
+            const profOptions = `
+                <option value="">-- Select Profession --</option>
+                <option value="legal" ${entry.profession_type === 'legal' ? 'selected' : ''}>Legal</option>
+                <option value="medical" ${entry.profession_type === 'medical' ? 'selected' : ''}>Medical</option>
+                <option value="engineering" ${entry.profession_type === 'engineering' ? 'selected' : ''}>Engineering</option>
+                <option value="architecture" ${entry.profession_type === 'architecture' ? 'selected' : ''}>Architecture</option>
+                <option value="accountancy" ${entry.profession_type === 'accountancy' ? 'selected' : ''}>Accountancy</option>
+                <option value="technical_consultancy" ${entry.profession_type === 'technical_consultancy' ? 'selected' : ''}>Technical Consultancy</option>
+                <option value="interior_decoration" ${entry.profession_type === 'interior_decoration' ? 'selected' : ''}>Interior Decoration</option>
+                <option value="authorised_representative" ${entry.profession_type === 'authorised_representative' ? 'selected' : ''}>Authorised Representative</option>
+                <option value="film_artist" ${entry.profession_type === 'film_artist' ? 'selected' : ''}>Film Artist</option>
+                <option value="it_services" ${entry.profession_type === 'it_services' ? 'selected' : ''}>IT Services</option>
+                <option value="other" ${entry.profession_type === 'other' ? 'selected' : ''}>Other (s.44ADA not available)</option>
+            `;
+
+            const codeOrProfHTML = isProf ? `
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Profession Type (Rule 6F)</label>
+                        <select onchange="updateBusinessEntry(${idx}, 'profession_type', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none">
+                            ${profOptions}
+                        </select>
+                    </div>
+            ` : `
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Business Code</label>
+                        <select onchange="updateBusinessEntry(${idx}, 'business_code', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none">
+                            ${codeOptions}
+                        </select>
+                    </div>
+            `;
+
             const receiptsHTML = isSmall && scheme === 's44AD'
                 ? `<div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels (₹)</label>
@@ -5387,6 +5417,11 @@
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in Cash (₹)</label>
                         <input type="text" inputmode="numeric" value="${entry.ada_cash_receipts_inr != null ? entry.ada_cash_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'ada_cash_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                    </div>
+                    <div class="md:col-span-2 mt-2 p-3 bg-brandGold/10 border border-brandGold/30 rounded-xl">
+                        <p class="text-[10px] text-white/70 leading-relaxed">
+                            <span class="text-brandGold font-bold">Important Note:</span> While digital receipts won't lower your 50% profit tax rate under Section 44ADA, keeping cash transactions to a minimum is still crucial if your income is high. To qualify for the higher ₹75 Lakhs threshold limit, your total cash receipts for the financial year must not exceed 5% of your gross receipts. If your cash intake is higher than 5%, your eligibility limit drops back down to ₹50 Lakhs.
+                        </p>
                     </div>`
                 : isProf && !scheme
                 ? `<div class="md:col-span-2">
@@ -5416,12 +5451,7 @@
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business / Practice Name</label>
                         <input type="text" value="${entry.business_name || ''}" oninput="updateBusinessEntry(${idx}, 'business_name', this.value)" placeholder="e.g. Saarthak Traders" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0">
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Business Code</label>
-                        <select onchange="updateBusinessEntry(${idx}, 'business_code', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none">
-                            ${codeOptions}
-                        </select>
-                    </div>
+                    ${codeOrProfHTML}
                     </div>
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Nature of Business</label>
@@ -5445,37 +5475,47 @@
     }
 
     function syncExpensesWarning() {
-        const entries = state.domestic_income.business_income.business_entries;
-        const natures = state.domestic_income.business_income.nature_of_business;
+        const entries = state.domestic_income.business_income.business_entries || [];
+        const natures = state.domestic_income.business_income.nature_of_business || [];
         const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
-        const allPresumptive = entries.length > 0 && entries.every(e => e.presumptive_scheme !== null && e.presumptive_scheme !== '');
-        const anyPresumptive = entries.some(e => e.presumptive_scheme !== null && e.presumptive_scheme !== '');
+        
+        const hasS44AE = state.domestic_income.business_income.presumptive_scheme && state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+        
+        let hasRegularBooks = entries.some(e => !e.presumptive_scheme);
+        let anyPresumptive = entries.some(e => !!e.presumptive_scheme) || hasS44AE;
+        let allPresumptive = anyPresumptive && !hasRegularBooks;
+        
         const accExpenses = document.getElementById('acc-expenses-deductions');
+        const accDepreciation = document.getElementById('acc-assets-depreciation');
         const divExpenseSection = document.getElementById('div-expense-section');
         const notePartner = document.getElementById('note-partner-expenses');
         const notePresumptive = document.getElementById('note-presumptive-expenses');
 
-        if (isOnlyPartner) {
+        if (isOnlyPartner || allPresumptive) {
             if (accExpenses) { accExpenses.style.opacity = '0.35'; accExpenses.style.pointerEvents = 'none'; accExpenses.removeAttribute('open'); }
+            if (accDepreciation) { accDepreciation.style.opacity = '0.35'; accDepreciation.style.pointerEvents = 'none'; accDepreciation.removeAttribute('open'); }
+            
+            if (divExpenseSection) divExpenseSection.classList.add('hidden');
+            if (notePresumptive && allPresumptive) { 
+                notePresumptive.classList.remove('hidden'); 
+                notePresumptive.innerHTML = '<strong class="text-amber-400">⚠️ Expenses Locked:</strong> All your businesses are on presumptive schemes. Under presumptive taxation, expenses and depreciation are deemed by law — you cannot claim additional deductions here.'; 
+            }
             return;
         } else {
             if (accExpenses) { accExpenses.style.opacity = ''; accExpenses.style.pointerEvents = ''; }
+            if (accDepreciation) { accDepreciation.style.opacity = ''; accDepreciation.style.pointerEvents = ''; }
         }
 
-        // All businesses are presumptive → disable expense section
-        if (allPresumptive && entries.length > 0) {
-            if (divExpenseSection) divExpenseSection.classList.add('hidden');
-            if (notePresumptive) { notePresumptive.classList.remove('hidden'); notePresumptive.innerHTML = '<strong class="text-amber-400">⚠️ Expenses Locked:</strong> All your businesses are on presumptive schemes. Under presumptive taxation, expenses are deemed by law — you cannot claim additional deductions here.'; }
-        } else {
-            if (divExpenseSection) divExpenseSection.classList.remove('hidden');
-            if (notePresumptive) {
-                if (anyPresumptive) {
-                    const presumptiveNames = entries.filter(e => e.presumptive_scheme).map(e => e.business_name || 'Unnamed Business').join(', ');
-                    notePresumptive.classList.remove('hidden');
-                    notePresumptive.innerHTML = `<strong class="text-amber-400">⚠️ Partial Presumptive Warning:</strong> Do <strong>not</strong> enter expenses for: <em>${presumptiveNames}</em> — those businesses are on a presumptive scheme. Only enter expenses for your other businesses here.`;
-                } else {
-                    notePresumptive.classList.add('hidden');
-                }
+        if (divExpenseSection) divExpenseSection.classList.remove('hidden');
+        if (notePresumptive) {
+            if (anyPresumptive) {
+                let presumptiveNames = entries.filter(e => e.presumptive_scheme).map(e => e.business_name || 'Unnamed Business').join(', ');
+                if (hasS44AE) presumptiveNames += (presumptiveNames ? ', ' : '') + 'Goods Transport (s.44AE)';
+                
+                notePresumptive.classList.remove('hidden');
+                notePresumptive.innerHTML = `<strong class="text-amber-400">⚠️ Partial Presumptive Warning:</strong> Do <strong>not</strong> enter expenses or depreciation for: <em>${presumptiveNames}</em> — those businesses are on a presumptive scheme. Only enter expenses for your regular businesses here.`;
+            } else {
+                notePresumptive.classList.add('hidden');
             }
         }
     }
