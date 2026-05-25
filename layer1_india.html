@@ -4212,10 +4212,11 @@
             else divBizEntries.classList.add('hidden');
         }
         
-        // Show 5-year lock-in inputs if they have business
+        // Show 5-year lock-in inputs only if they have a small business
         const divS44AD = document.getElementById('div-pres-s44ad');
         if (divS44AD) {
-            if (hasOwnBusiness) divS44AD.classList.remove('hidden');
+            const hasSmallBiz = (state.domestic_income.business_income.business_entries || []).some(e => e.nature === 'small_business');
+            if (hasSmallBiz) divS44AD.classList.remove('hidden');
             else divS44AD.classList.add('hidden');
         }
 
