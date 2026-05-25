@@ -4397,27 +4397,44 @@
     }
 
     function updateBizPresumptive() {
-        // Global presumptive checkboxes removed. Selection is now managed inside business entries.
-        state.domestic_income.business_income.presumptive_scheme = [];
+        // Helper to sync from business entries to the global presumptive_scheme array
+        const syncChecked = () => {
+            const entries = state.domestic_income.business_income.business_entries || [];
+            const checked = [];
+            entries.forEach(e => {
+                if (e.presumptive_scheme && !checked.includes(e.presumptive_scheme)) {
+                    checked.push(e.presumptive_scheme);
+                }
+            });
+            state.domestic_income.business_income.presumptive_scheme = checked;
+            return checked;
+        };
 
+        // First sync to have initial checked array
+        let checked = syncChecked();
+
+        // Run validations (these might reset invalid selections in business_entries)
         validateEntityPresumptiveEligibility();
         validateS44ADEligibility();
         validateS44ADAEligibility();
         validateS44AEEligibility();
+
+        // Re-sync after validations to get the final valid list
+        checked = syncChecked();
+
+        // Toggle dropdowns/visibility based on final valid list
         toggleProfessionDropdown();
         toggleReceiptsVisibility();
-    }
 
-        // Toggle sub forms
+        // Toggle sub forms (e.g. s44AE vehicle table)
         const formAE = document.getElementById('div-pres-s44ae');
-
         if (checked.includes('s44AE')) {
-            formAE.classList.remove('hidden');
+            if (formAE) formAE.classList.remove('hidden');
             if (document.querySelectorAll('#vehicle-table tbody tr').length === 0) {
                 addVehicleRow();
             }
         } else {
-            formAE.classList.add('hidden');
+            if (formAE) formAE.classList.add('hidden');
         }
         evaluateSurchargeBuckets();
     }
