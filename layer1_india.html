@@ -5321,7 +5321,10 @@
             const eligible = ror && entity !== 'llp' && entity !== 'company';
 
             let schemeOptions;
-            if (!eligible) {
+            if (isTransport) {
+                schemeOptions = `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44AE" ${scheme === 's44AE' ? 'selected' : ''}>s.44AE — Presumptive (Vehicle basis)</option>`;
+            } else if (!eligible) {
                 schemeOptions = `<option value="">Regular Books (Presumptive NOT allowed for ${!ror ? 'NR/RNOR' : entity.toUpperCase()})</option>`;
             } else {
                 schemeOptions = isSmall
@@ -5330,9 +5333,6 @@
                     : isProf
                     ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
                        <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
-                    : isTransport
-                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
-                       <option value="s44AE" ${scheme === 's44AE' ? 'selected' : ''}>s.44AE — Presumptive (Vehicle basis)</option>`
                     : `<option value="">Regular Books (Mandatory)</option>`;
             }
 
