@@ -1288,12 +1288,10 @@
                     <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2">
                         <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">What type of business do you run? (Select all that apply)</label>
                         <div class="space-y-2 text-xs">
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="small_business" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Small Business (Simplified Scheme)</span></label>
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="professional" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Professional / Freelancer (Simplified Scheme)</span></label>
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="goods_transport" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Goods Transport / Truck Owner (Simplified Scheme)</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" value="own_business" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Proprietorship / Profession / Regular Business</span></label>
+                            <label class="flex items-center space-x-2"><input type="checkbox" value="goods_transport" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Goods Transport / Truck Owner (s.44AE)</span></label>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="fno_trader" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Derivatives & Options Trading (F&O)</span></label>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="intraday_trader" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Intraday Day Trading</span></label>
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="regular_business" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Regular Business (Detailed Books)</span></label>
                             <label class="flex items-center space-x-2"><input type="checkbox" value="partner_in_firm" onchange="updateBizNature()" class="biz-nature-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Partner in a Firm (Remuneration/Interest)</span></label>
                         </div>
                         <div id="div-biz-code-container" class="mt-4 border-t border-white/5 pt-4 hidden transition-all">
@@ -4194,8 +4192,8 @@
         const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
         const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
         
-        // Business Entries — show if any non-trading, non-partner business nature selected
-        const hasOwnBusiness = natures.some(n => ['regular_business','small_business','professional'].includes(n));
+        // Business Entries — show if 'own_business' is selected
+        const hasOwnBusiness = natures.includes('own_business');
         const divBizEntries = document.getElementById('div-business-entries');
         if (divBizEntries) {
             if (hasOwnBusiness) divBizEntries.classList.remove('hidden');
@@ -4336,38 +4334,42 @@
 
     function validateEntityPresumptiveEligibility() {
         const entity = state.domestic_income.business_income.entity_type;
-        const checked = state.domestic_income.business_income.presumptive_scheme;
-        const hasADorADA = checked.includes('s44AD') || checked.includes('s44ADA');
-        const warnBanner = document.getElementById('warn-entity-presumptive');
+        const ror = state.residency_detail.final_india_residency_status === 'ROR';
+        const eligible = ror && entity !== 'llp' && entity !== 'company';
         
-        if ((entity === 'llp' || entity === 'company') && hasADorADA) {
-            if (warnBanner) {
-                warnBanner.classList.remove('hidden');
-                warnBanner.style.display = 'flex';
-            }
-            
-            const cbAD = document.querySelector('.biz-pres-chk[value="s44AD"]');
-            if (cbAD) cbAD.checked = false;
-            
-            const cbADA = document.querySelector('.biz-pres-chk[value="s44ADA"]');
-            if (cbADA) cbADA.checked = false;
-            
-            const idxAD = checked.indexOf('s44AD');
-            if (idxAD > -1) checked.splice(idxAD, 1);
-            
-            const idxADA = checked.indexOf('s44ADA');
-            if (idxADA > -1) checked.splice(idxADA, 1);
-            
-            toggleProfessionDropdown();
-            toggleReceiptsVisibility();
-            
-            const formAD = document.getElementById('div-pres-s44ad');
-            if (formAD) formAD.classList.add('hidden');
+        const warnBanner = document.getElementById('warn-entity-presumptive');
+        const nriBanner = document.getElementById('warn-pres-nri');
+        let forceRevert = false;
+
+        // Force revert any business_entries if ineligible
+        if (!eligible) {
+            const entries = state.domestic_income.business_income.business_entries || [];
+            entries.forEach(entry => {
+                if (entry.presumptive_scheme === 's44AD' || entry.presumptive_scheme === 's44ADA') {
+                    entry.presumptive_scheme = null;
+                    forceRevert = true;
+                }
+            });
+        }
+
+        // Entity Warning Banner
+        if ((entity === 'llp' || entity === 'company') && !eligible) {
+            if (warnBanner) { warnBanner.classList.remove('hidden'); warnBanner.style.display = 'flex'; }
         } else {
-            if (warnBanner) {
-                warnBanner.classList.add('hidden');
-                warnBanner.style.display = '';
-            }
+            if (warnBanner) { warnBanner.classList.add('hidden'); warnBanner.style.display = 'none'; }
+        }
+
+        // NRI Warning Banner
+        if (!ror && !eligible) {
+            if (nriBanner) { nriBanner.classList.remove('hidden'); nriBanner.style.display = 'flex'; }
+        } else {
+            if (nriBanner) { nriBanner.classList.add('hidden'); nriBanner.style.display = 'none'; }
+        }
+
+        if (forceRevert) {
+            renderBusinessEntries();
+            evaluateSurchargeBuckets();
+            syncExpensesWarning();
         }
     }
 
@@ -5309,13 +5311,23 @@
             const isRegular = entry.nature === 'regular_business';
             const scheme = entry.presumptive_scheme;
 
-            const schemeOptions = isSmall
-                ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
-                   <option value="s44AD" ${scheme === 's44AD' ? 'selected' : ''}>s.44AD — Presumptive (6% digital / 8% cash)</option>`
-                : isProf
-                ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
-                   <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
-                : `<option value="">Regular Books (Mandatory)</option>`;
+            // Eligibility check: ROR and not LLP/Company
+            const ror = state.residency_detail.final_india_residency_status === 'ROR';
+            const entity = state.domestic_income.business_income.entity_type;
+            const eligible = ror && entity !== 'llp' && entity !== 'company';
+
+            let schemeOptions;
+            if (!eligible) {
+                schemeOptions = `<option value="">Regular Books (Presumptive NOT allowed for ${!ror ? 'NR/RNOR' : entity.toUpperCase()})</option>`;
+            } else {
+                schemeOptions = isSmall
+                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44AD" ${scheme === 's44AD' ? 'selected' : ''}>s.44AD — Presumptive (6% digital / 8% cash)</option>`
+                    : isProf
+                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
+                    : `<option value="">Regular Books (Mandatory)</option>`;
+            }
 
             const receiptsHTML = isSmall && scheme === 's44AD'
                 ? `<div>
