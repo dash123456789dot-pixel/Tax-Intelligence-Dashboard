@@ -1309,15 +1309,7 @@
                         </div>
                     </div>
 
-                    <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2">
-                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Choose Simplified "Presumptive" Tax Schemes</label>
-                        <div class="space-y-2 text-xs">
-                            <div class="p-2 mb-2 bg-brandGold/10 border border-brandGold/20 rounded-lg text-[10px] text-white/70">
-                                💡 Note: Small Business (s.44AD) and Professional (s.44ADA) schemes are now selected individually for each business in the <strong>Revenue & Receipts</strong> section below.
-                            </div>
-                            <label class="flex items-center space-x-2"><input type="checkbox" value="s44AE" onchange="updateBizPresumptive()" class="biz-pres-chk rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"> <span>Opt for Transporter Simplified Tax (Max 10 vehicles)</span></label>
-                        </div>
-                    </div>
+
                 </div>
 
                 
@@ -4046,24 +4038,30 @@
 
     function validateS44AEEligibility() {
         const vehicles = state.domestic_income.business_income.goods_vehicles || [];
-        const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+        const entries = state.domestic_income.business_income.business_entries || [];
+        const hasS44AE = entries.some(e => e.presumptive_scheme === 's44AE');
         const warnBanner = document.getElementById('warn-s44ae-limit');
         
         if (hasS44AE && vehicles.length > 10) {
-            // Force uncheck
-            const cbAE = document.querySelector('input[value="s44AE"].biz-pres-chk');
-            if (cbAE) cbAE.checked = false;
-            
-            const index = state.domestic_income.business_income.presumptive_scheme.indexOf('s44AE');
-            if (index > -1) {
-                state.domestic_income.business_income.presumptive_scheme.splice(index, 1);
-            }
+            // Force revert in entries
+            let changed = false;
+            entries.forEach(e => {
+                if (e.presumptive_scheme === 's44AE') {
+                    e.presumptive_scheme = null;
+                    changed = true;
+                }
+            });
             
             if (warnBanner) {
                 warnBanner.style.display = 'flex';
                 warnBanner.classList.remove('hidden');
             }
-            toggleReceiptsVisibility();
+            
+            if (changed) {
+                renderBusinessEntries();
+                syncExpensesWarning();
+                toggleReceiptsVisibility();
+            }
         } else {
             if (warnBanner) {
                 warnBanner.style.display = 'none';
@@ -4200,9 +4198,10 @@
         const natures = state.domestic_income.business_income.nature_of_business;
         const hasGeneralBusiness = natures.some(n => n !== 'professional' && n !== 'partner_in_firm' && n !== 'fno_trader' && n !== 'intraday_trader');
         const isProfessional = natures.includes('professional');
-        const hasS44AD = state.domestic_income.business_income.presumptive_scheme.includes('s44AD');
-        const hasS44ADA = state.domestic_income.business_income.presumptive_scheme.includes('s44ADA');
-        const hasS44AE = state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+        const entries = state.domestic_income.business_income.business_entries || [];
+        const hasS44AD = entries.some(e => e.presumptive_scheme === 's44AD');
+        const hasS44ADA = entries.some(e => e.presumptive_scheme === 's44ADA');
+        const hasS44AE = entries.some(e => e.presumptive_scheme === 's44AE');
         
         // Business Entries — show if 'own_business' is selected
         const hasOwnBusiness = natures.includes('own_business') || natures.includes('goods_transport');
@@ -4400,11 +4399,8 @@
     }
 
     function updateBizPresumptive() {
-        const checked = [];
-        document.querySelectorAll('.biz-pres-chk:checked').forEach(cb => {
-            checked.push(cb.value);
-        });
-        state.domestic_income.business_income.presumptive_scheme = checked;
+        // Global presumptive checkboxes removed. Selection is now managed inside business entries.
+        state.domestic_income.business_income.presumptive_scheme = [];
 
         validateEntityPresumptiveEligibility();
         validateS44ADEligibility();
@@ -5279,9 +5275,15 @@
 
     // ── BUSINESS ENTRIES — Dynamic Array Helpers ────────────────────────────────
     function addBusinessEntry() {
+        const natures = state.domestic_income.business_income.nature_of_business || [];
+        let defaultNature = 'small_business';
+        if (natures.includes('goods_transport') && !natures.includes('own_business') && !natures.includes('professional')) {
+            defaultNature = 'goods_transport';
+        }
+
         state.domestic_income.business_income.business_entries.push({
             business_name: '',
-            nature: 'small_business',
+            nature: defaultNature,
             presumptive_scheme: null,
             turnover_inr: null,
             digital_receipts_inr: null,
@@ -5314,6 +5316,7 @@
         
         validateS44ADEligibility();
         validateS44ADAEligibility();
+        validateS44AEEligibility();
         evaluateSurchargeBuckets();
         syncExpensesWarning();
         if (typeof toggleReceiptsVisibility === 'function') toggleReceiptsVisibility();
@@ -5333,6 +5336,7 @@
             const isSmall = entry.nature === 'small_business';
             const isProf = entry.nature === 'professional';
             const isRegular = entry.nature === 'regular_business';
+            const isTransport = entry.nature === 'goods_transport';
             const scheme = entry.presumptive_scheme;
 
             // Eligibility check: ROR and not LLP/Company
@@ -5350,6 +5354,9 @@
                     : isProf
                     ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
                        <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
+                    : isTransport
+                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44AE" ${scheme === 's44AE' ? 'selected' : ''}>s.44AE — Presumptive (Vehicle basis)</option>`
                     : `<option value="">Regular Books (Mandatory)</option>`;
             }
 
@@ -5424,6 +5431,12 @@
                             <span class="text-brandGold font-bold">Important Note:</span> While digital receipts won't lower your 50% profit tax rate under Section 44ADA, keeping cash transactions to a minimum is still crucial if your income is high. To qualify for the higher ₹75 Lakhs threshold limit, your total cash receipts for the financial year must not exceed 5% of your gross receipts. If your cash intake is higher than 5%, your eligibility limit drops back down to ₹50 Lakhs.
                         </p>
                     </div>`
+                : isTransport && scheme === 's44AE'
+                ? `<div class="md:col-span-2 mt-2 p-3 bg-brandGold/10 border border-brandGold/30 rounded-xl">
+                        <p class="text-[10px] text-brandGold leading-relaxed">
+                            <strong>💡 s.44AE Selected:</strong> You have opted for the presumptive scheme for goods carriages. Please scroll down to the <strong>Goods Transport Vehicles</strong> section to declare your vehicles. Regular turnover fields are not required here.
+                        </p>
+                    </div>`
                 : isProf && !scheme
                 ? `<div class="md:col-span-2">
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Gross Receipts (₹)</label>
@@ -5437,6 +5450,8 @@
             const schemeLabel = scheme === 's44AD' 
                 ? '<span class="text-[9px] text-green-400 font-bold ml-2">Presumptive</span>'
                 : scheme === 's44ADA'
+                ? '<span class="text-[9px] text-green-400 font-bold ml-2">Presumptive</span>'
+                : scheme === 's44AE'
                 ? '<span class="text-[9px] text-green-400 font-bold ml-2">Presumptive</span>'
                 : '<span class="text-[9px] text-white/30 font-bold ml-2">Regular Books</span>';
 
@@ -5460,6 +5475,7 @@
                             <option value="small_business" ${entry.nature === 'small_business' ? 'selected' : ''}>Small Business (Turnover ≤ ₹3 Cr)</option>
                             <option value="regular_business" ${entry.nature === 'regular_business' ? 'selected' : ''}>Regular Business (Full Books)</option>
                             <option value="professional" ${entry.nature === 'professional' ? 'selected' : ''}>Professional Practice / Freelancing</option>
+                            <option value="goods_transport" ${entry.nature === 'goods_transport' ? 'selected' : ''}>Goods Transport / Truck Owner</option>
                         </select>
                     </div>
                     <div class="${isRegular ? 'hidden' : ''}">
@@ -5482,7 +5498,7 @@
             const natures = state.domestic_income.business_income.nature_of_business || [];
             const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
             
-            const hasS44AE = state.domestic_income.business_income.presumptive_scheme && state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+            const hasS44AE = entries.some(e => e.presumptive_scheme === 's44AE');
             
             // Explicitly check for falsy values to mean "Regular Books"
             let hasRegularBooks = false;
@@ -5996,14 +6012,17 @@
             });
             
             // Check presumptive transport s44AE
-            state.domestic_income.business_income.goods_vehicles.forEach(veh => {
-                const multi = veh.months_owned || 0;
-                if (veh.vehicle_type === 'heavy') {
-                    business += multi * 1000 * (veh.gvw_tonnes || 12);
-                } else {
-                    business += multi * 7500;
-                }
-            });
+            const hasS44AE = (state.domestic_income.business_income.business_entries || []).some(e => e.presumptive_scheme === 's44AE');
+            if (hasS44AE) {
+                state.domestic_income.business_income.goods_vehicles.forEach(veh => {
+                    const multi = veh.months_owned || 0;
+                    if (veh.vehicle_type === 'heavy') {
+                        business += multi * 1000 * (veh.gvw_tonnes || 12);
+                    } else {
+                        business += multi * 7500;
+                    }
+                });
+            }
         }
 
         const savingsInt = state.other_sources.interest_savings_inr || 0;
