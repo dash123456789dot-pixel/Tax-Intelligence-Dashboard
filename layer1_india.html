@@ -3919,6 +3919,9 @@
                 
                 if (forceRevert) {
                     entry.presumptive_scheme = null;
+                    if (ineligibleReason) {
+                        alert("Presumptive Taxation Disabled:\n\n" + ineligibleReason);
+                    }
                 }
             }
         });
@@ -4115,6 +4118,9 @@
                 
                 if (forceRevert) {
                     entry.presumptive_scheme = null;
+                    if (ineligibleReason) {
+                        alert("Presumptive Taxation Disabled:\n\n" + ineligibleReason);
+                    }
                 }
             }
         });
@@ -4356,6 +4362,12 @@
                     forceRevert = true;
                 }
             });
+            if (forceRevert) {
+                alert("Presumptive Taxation Disabled:\n\nOnly Resident & Ordinarily Resident (ROR) taxpayers (excluding LLPs and Companies) can opt for s.44AD or s.44ADA.");
+            }
+            if (forceRevert) {
+                alert("Presumptive Taxation Disabled:\n\nOnly Resident & Ordinarily Resident (ROR) taxpayers (excluding LLPs and Companies) can opt for s.44AD or s.44ADA.");
+            }
         }
 
         // Entity Warning Banner
