@@ -4192,6 +4192,7 @@
         state.domestic_income.business_income.nature_of_business = checked;
         toggleProfessionDropdown();
         toggleReceiptsVisibility();
+        syncExpensesWarning();
     }
 
     
@@ -4394,8 +4395,8 @@
         if (forceRevert) {
             renderBusinessEntries();
             evaluateSurchargeBuckets();
-            syncExpensesWarning();
         }
+        syncExpensesWarning();
     }
 
     function updateBizPresumptive() {
@@ -5475,49 +5476,69 @@
     }
 
     function syncExpensesWarning() {
-        const entries = state.domestic_income.business_income.business_entries || [];
-        const natures = state.domestic_income.business_income.nature_of_business || [];
-        const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
-        
-        const hasS44AE = state.domestic_income.business_income.presumptive_scheme && state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
-        
-        let hasRegularBooks = entries.some(e => !e.presumptive_scheme);
-        let anyPresumptive = entries.some(e => !!e.presumptive_scheme) || hasS44AE;
-        let allPresumptive = anyPresumptive && !hasRegularBooks;
-        
-        const accExpenses = document.getElementById('acc-expenses-deductions');
-        const accDepreciation = document.getElementById('acc-assets-depreciation');
-        const divExpenseSection = document.getElementById('div-expense-section');
-        const notePartner = document.getElementById('note-partner-expenses');
-        const notePresumptive = document.getElementById('note-presumptive-expenses');
-
-        if (isOnlyPartner || allPresumptive) {
-            if (accExpenses) { accExpenses.style.opacity = '0.35'; accExpenses.style.pointerEvents = 'none'; accExpenses.removeAttribute('open'); }
-            if (accDepreciation) { accDepreciation.style.opacity = '0.35'; accDepreciation.style.pointerEvents = 'none'; accDepreciation.removeAttribute('open'); }
+        // Enforce DOM flush using setTimeout so any re-renders are complete
+        setTimeout(() => {
+            const entries = state.domestic_income.business_income.business_entries || [];
+            const natures = state.domestic_income.business_income.nature_of_business || [];
+            const isOnlyPartner = natures.length > 0 && natures.every(n => n === 'partner_in_firm');
             
-            if (divExpenseSection) divExpenseSection.classList.add('hidden');
-            if (notePresumptive && allPresumptive) { 
-                notePresumptive.classList.remove('hidden'); 
-                notePresumptive.innerHTML = '<strong class="text-amber-400">⚠️ Expenses Locked:</strong> All your businesses are on presumptive schemes. Under presumptive taxation, expenses and depreciation are deemed by law — you cannot claim additional deductions here.'; 
+            const hasS44AE = state.domestic_income.business_income.presumptive_scheme && state.domestic_income.business_income.presumptive_scheme.includes('s44AE');
+            
+            // Explicitly check for falsy values to mean "Regular Books"
+            let hasRegularBooks = false;
+            let anyPresumptive = hasS44AE;
+            
+            if (entries.length > 0) {
+                hasRegularBooks = entries.some(e => !e.presumptive_scheme || e.presumptive_scheme === '');
+                anyPresumptive = anyPresumptive || entries.some(e => e.presumptive_scheme === 's44AD' || e.presumptive_scheme === 's44ADA');
             }
-            return;
-        } else {
-            if (accExpenses) { accExpenses.style.opacity = ''; accExpenses.style.pointerEvents = ''; }
-            if (accDepreciation) { accDepreciation.style.opacity = ''; accDepreciation.style.pointerEvents = ''; }
-        }
+            
+            let allPresumptive = anyPresumptive && !hasRegularBooks;
+            
+            console.log("[syncExpensesWarning] hasRegular:", hasRegularBooks, "anyPres:", anyPresumptive, "allPres:", allPresumptive);
+            
+            const accExpenses = document.getElementById('acc-expenses-deductions');
+            const accDepreciation = document.getElementById('acc-assets-depreciation');
+            const divExpenseSection = document.getElementById('div-expense-section');
+            const notePresumptive = document.getElementById('note-presumptive-expenses');
 
-        if (divExpenseSection) divExpenseSection.classList.remove('hidden');
-        if (notePresumptive) {
-            if (anyPresumptive) {
-                let presumptiveNames = entries.filter(e => e.presumptive_scheme).map(e => e.business_name || 'Unnamed Business').join(', ');
-                if (hasS44AE) presumptiveNames += (presumptiveNames ? ', ' : '') + 'Goods Transport (s.44AE)';
+            if (isOnlyPartner || allPresumptive) {
+                if (accExpenses) { 
+                    accExpenses.style.opacity = '0.35'; 
+                    accExpenses.style.pointerEvents = 'none'; 
+                    accExpenses.removeAttribute('open'); 
+                    // Force a reflow just in case
+                    accExpenses.offsetHeight; 
+                }
+                if (accDepreciation) { 
+                    accDepreciation.style.opacity = '0.35'; 
+                    accDepreciation.style.pointerEvents = 'none'; 
+                    accDepreciation.removeAttribute('open'); 
+                }
                 
-                notePresumptive.classList.remove('hidden');
-                notePresumptive.innerHTML = `<strong class="text-amber-400">⚠️ Partial Presumptive Warning:</strong> Do <strong>not</strong> enter expenses or depreciation for: <em>${presumptiveNames}</em> — those businesses are on a presumptive scheme. Only enter expenses for your regular businesses here.`;
+                if (divExpenseSection) divExpenseSection.classList.add('hidden');
+                if (notePresumptive && allPresumptive) { 
+                    notePresumptive.classList.remove('hidden'); 
+                    notePresumptive.innerHTML = '<strong class="text-amber-400">⚠️ Expenses Locked:</strong> All your businesses are on presumptive schemes. Under presumptive taxation, expenses and depreciation are deemed by law — you cannot claim additional deductions here.'; 
+                }
             } else {
-                notePresumptive.classList.add('hidden');
+                if (accExpenses) { accExpenses.style.opacity = '1'; accExpenses.style.pointerEvents = 'auto'; }
+                if (accDepreciation) { accDepreciation.style.opacity = '1'; accDepreciation.style.pointerEvents = 'auto'; }
+                if (divExpenseSection) divExpenseSection.classList.remove('hidden');
+                
+                if (notePresumptive) {
+                    if (anyPresumptive) {
+                        let presumptiveNames = entries.filter(e => e.presumptive_scheme).map(e => e.business_name || 'Unnamed Business').join(', ');
+                        if (hasS44AE) presumptiveNames += (presumptiveNames ? ', ' : '') + 'Goods Transport (s.44AE)';
+                        
+                        notePresumptive.classList.remove('hidden');
+                        notePresumptive.innerHTML = `<strong class="text-amber-400">⚠️ Partial Presumptive Warning:</strong> Do <strong>not</strong> enter expenses or depreciation for: <em>${presumptiveNames}</em> — those businesses are on a presumptive scheme. Only enter expenses for your regular businesses here.`;
+                    } else {
+                        notePresumptive.classList.add('hidden');
+                    }
+                }
             }
-        }
+        }, 10);
     }
 
     // ── PARTNER FIRMS — Dynamic Array Helpers ──────────────────────────────────
