@@ -4211,6 +4211,13 @@
             if (hasOwnBusiness) divBizEntries.classList.remove('hidden');
             else divBizEntries.classList.add('hidden');
         }
+        
+        // Show 5-year lock-in inputs if they have business
+        const divS44AD = document.getElementById('div-pres-s44ad');
+        if (divS44AD) {
+            if (hasOwnBusiness) divS44AD.classList.remove('hidden');
+            else divS44AD.classList.add('hidden');
+        }
 
         // s44ADA breakdown (kept for legacy validation warnings; inputs now in business_entries)
         const divS44ADA = document.getElementById('div-pres-s44ada');
@@ -4446,14 +4453,7 @@
         }
 
         // Toggle sub forms
-        const formAD = document.getElementById('div-pres-s44ad');
         const formAE = document.getElementById('div-pres-s44ae');
-
-        if (checked.includes('s44AD')) {
-            formAD.classList.remove('hidden');
-        } else {
-            formAD.classList.add('hidden');
-        }
 
         if (checked.includes('s44AE')) {
             formAE.classList.remove('hidden');
