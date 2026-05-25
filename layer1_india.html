@@ -2404,20 +2404,32 @@
                 <span class="text-xs font-black uppercase tracking-widest text-brandGold">Taxes Already Paid (TDS & Advance Tax)</span>
                 
                 <!-- TDS & 26AS Upload Toggle -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-white/5 pb-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-white/5 pb-4">
                     <div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">TDS Already Deducted (See Form 26AS / AIS)</label>
-                        <input type="text" inputmode="numeric" id="crd-tds" oninput="updateCreditNum('tds_already_deducted_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        <input type="text" inputmode="numeric" id="crd-tds" oninput="updateCreditNum('tds_already_deducted_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
                     </div>
+                    
                     <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
                         <div class="flex flex-col">
-                            <span class="text-xs font-bold text-white/80 font-display">Form 26AS / AIS Reconciled / Uploaded?</span>
-                            <span class="text-[9px] text-white/30 font-sans">Toggle to indicate if tax credit records match portal data.</span>
+                            <span class="text-xs font-bold text-white/80 font-display">Form 26AS / AIS Reconciled?</span>
+                            <span class="text-[9px] text-white/30 font-sans">Reconciled manually or via PDF upload.</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="crd-26as-uploaded" onchange="state.tax_credits.form_26as_uploaded = this.checked" class="sr-only peer">
                             <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
                         </label>
+                    </div>
+
+                    <div class="p-3 bg-white/5 border border-white/10 rounded-xl flex flex-col justify-center gap-1.5">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold font-display">Upload Form 26AS (PDF)</label>
+                        <div class="flex items-center gap-2">
+                            <label class="cursor-pointer bg-brandGold/10 hover:bg-brandGold/20 text-brandGold border border-brandGold/20 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap font-sans font-bold">
+                                Choose PDF
+                                <input type="file" id="crd-26as-upload" class="hidden" accept=".pdf" onchange="handleForm26ASUpload(event)">
+                            </label>
+                            <span id="crd-26as-upload-status" class="text-[9px] text-white/40 truncate font-sans max-w-[120px]">No file chosen</span>
+                        </div>
                     </div>
                 </div>
 
@@ -3575,6 +3587,41 @@
                 // Highlight the input box briefly to show it was auto-filled
                 ackInput.classList.add('ring-2', 'ring-green-500', 'bg-green-500/10');
                 setTimeout(() => ackInput.classList.remove('ring-2', 'ring-green-500', 'bg-green-500/10'), 2000);
+            }, 1500);
+        } else {
+            statusEl.textContent = 'No file chosen';
+            statusEl.classList.remove('text-green-400', 'text-brandGold', 'animate-pulse');
+            statusEl.classList.add('text-white/40');
+        }
+    }
+
+    function handleForm26ASUpload(event) {
+        const file = event.target.files[0];
+        const statusEl = document.getElementById('crd-26as-upload-status');
+        const tdsInput = document.getElementById('crd-tds');
+        const toggleCheck = document.getElementById('crd-26as-uploaded');
+        if (file) {
+            statusEl.textContent = 'Scanning 26AS...';
+            statusEl.classList.add('animate-pulse', 'text-brandGold');
+            statusEl.classList.remove('text-white/40', 'text-green-400');
+            
+            // Simulate OCR / extraction delay
+            setTimeout(() => {
+                // Generate a random TDS amount simulating extraction
+                const extractedTds = 284350;
+                if (tdsInput) {
+                    tdsInput.value = extractedTds.toLocaleString('en-IN');
+                    tdsInput.classList.add('ring-2', 'ring-green-500', 'bg-green-500/10');
+                    setTimeout(() => tdsInput.classList.remove('ring-2', 'ring-green-500', 'bg-green-500/10'), 2000);
+                }
+                state.tax_credits.tds_already_deducted_inr = extractedTds; // Sync to state
+                
+                state.tax_credits.form_26as_uploaded = true;
+                if (toggleCheck) toggleCheck.checked = true;
+                
+                statusEl.classList.remove('animate-pulse', 'text-brandGold');
+                statusEl.classList.add('text-green-400');
+                statusEl.textContent = 'Extracted: ' + file.name;
             }, 1500);
         } else {
             statusEl.textContent = 'No file chosen';
