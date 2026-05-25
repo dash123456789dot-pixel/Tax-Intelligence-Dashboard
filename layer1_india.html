@@ -2270,36 +2270,53 @@
 
             <!-- Brought forward losses -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Past Years' Losses to Carry Forward</span>
-                    <button onclick="addLossRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Loss</button>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Brought Forward Past Losses (Schedule BFLA/CFL)</span>
+                        <span class="text-[9px] text-white/40 font-sans mt-0.5">Do you have any unused past years' losses to claim or carry forward?</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button id="btn-loss-yes" onclick="toggleBroughtForwardLosses(true)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">Yes</button>
+                        <button id="btn-loss-no" onclick="toggleBroughtForwardLosses(false)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">No</button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-white/80" id="loss-table">
-                        <thead>
-                            <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
-                                <th class="p-3">Loss Category</th>
-                                <th class="p-3">Origin FY</th>
-                                <th class="p-3">Amount</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+
+                <div id="div-loss-table-container" class="hidden flex flex-col gap-4">
+                    <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-white/50 font-sans">Add each loss entry separately by category and origin year.</span>
+                        <button onclick="addLossRow()" class="px-3 py-1 bg-brandGold/20 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold">+ Add Loss Card</button>
+                    </div>
+                    
+                    <!-- Dynamic Loss Cards Stack -->
+                    <div id="loss-cards-container" class="flex flex-col gap-3"></div>
                 </div>
             </div>
 
-            <!-- Unabsorbed Depreciation (carry_forward_losses.unabsorbed_depreciation_cf) -->
-            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
-                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Past Unused Business Depreciation</span>
-                <div class="max-w-xs">
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brought-Forward Unabsorbed Depreciation (₹)</label>
-                    <input type="text" inputmode="numeric" id="loss-unadep" oninput="state.carry_forward_losses.unabsorbed_depreciation_cf = (this.value === '' ? null : parseInt(this.value)); evaluateSurchargeBuckets()" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                    <span class="text-[8px] text-white/30 mt-1 block">This can be adjusted against most types of income, without the usual 8-year limit.</span>
+            <!-- Unabsorbed Depreciation -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Brought-Forward Unabsorbed Depreciation</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="div-unadep-total-container">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Unabsorbed Depreciation (₹)</label>
+                        <input type="text" inputmode="numeric" id="loss-unadep" oninput="updateUnabsorbedDep('unabsorbed_depreciation_cf', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span class="text-[8px] text-white/30 mt-1 block">Can be adjusted against any income head except salary, with no expiry period.</span>
+                    </div>
+                    <div id="div-unadep-additional-container" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Portion from Additional Depreciation (₹)</label>
+                        <input type="text" inputmode="numeric" id="loss-unadep-additional" oninput="updateUnabsorbedDep('unabsorbed_depreciation_attributable_to_additional_dep_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span class="text-[8px] text-white/30 mt-1 block">Attributable to additional depreciation under Section 32(1)(iia) .</span>
+                    </div>
+                </div>
+                
+                <div id="warn-unadep-lapsed" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                    ⚠️ NEW REGIME RESTRICTION: The portion of unabsorbed depreciation attributable to additional (₹<span id="warn-unadep-lapsed-amt">0</span>) lapses and cannot be adjusted under the New Tax Regime.
                 </div>
             </div>
 
-            <!-- Schedule FA (LRS Outbound) -->
+                        <!-- Schedule FA (LRS Outbound) -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-lrs-section">
                 <div class="flex items-center justify-between border-b border-white/5 pb-2">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold">Foreign Assets (Only for Residents)</span>
@@ -2784,13 +2801,14 @@
             }
         },
         carry_forward_losses: {
-            has_brought_forward_losses: false,
+            has_brought_forward_losses: null,
             business_loss_cf: [],
             speculative_loss_cf: [],
             stcg_loss_cf: [],
             ltcg_loss_cf: [],
             house_property_loss_cf: [],
-            unabsorbed_depreciation_cf: null
+            unabsorbed_depreciation_cf: null,
+            unabsorbed_depreciation_attributable_to_additional_dep_inr: null
         },
         lrs_outbound: {
             total_lrs_remitted_this_fy_inr: null,
@@ -3197,6 +3215,7 @@
             if (typeof syncAmtCreditRegimeLock === 'function') syncAmtCreditRegimeLock();
             if (typeof evaluateSalaryRegimeLock === 'function') evaluateSalaryRegimeLock();
             if (typeof renderHouseProperties === 'function') renderHouseProperties();
+            if (typeof syncLossState === 'function') syncLossState();
         }
         if (field === 'date_of_birth') {
             if (typeof derive80TTASection === 'function') derive80TTASection();
@@ -6669,38 +6688,181 @@
     // ═══════════════════════════════════════════════════════════════════════
     // LOSSES, LRS & TAX CREDITS
     // ═══════════════════════════════════════════════════════════════════════
-    function addLossRow() {
-        const rowId = 'loss-' + Date.now();
-        const tbody = document.querySelector('#loss-table tbody');
-        const tr = document.createElement('tr');
-        tr.id = rowId;
-        tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
-        tr.innerHTML = `
-            <td class="p-3">
-                <select class="loss-cat bg-[#121212] border border-white/10 rounded px-2 py-1 text-xs text-white">
-                    <option value="business_loss_cf">Regular Business Loss</option>
-                    <option value="speculative_loss_cf">Speculative Intraday Loss</option>
-                    <option value="stcg_loss_cf">Short Term Capital Loss</option>
-                    <option value="ltcg_loss_cf">Long Term Capital Loss</option>
-                    <option value="house_property_loss_cf">House Property Loss</option>
-                </select>
-            </td>
-            <td class="p-3"><input type="text" placeholder="FY2023-24" class="loss-fy bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
-            <td class="p-3"><input type="text" inputmode="numeric" placeholder="Loss Amount" class="inr-input loss-amt bg-white/5 border border-white/10 rounded px-2 py-1 text-xs w-full text-white font-mono"></td>
-            <td class="p-3 text-right"><button onclick="removeLossRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans">Remove</button></td>
-        `;
-        tbody.appendChild(tr);
+    function toggleBroughtForwardLosses(hasLosses) {
+        state.carry_forward_losses.has_brought_forward_losses = hasLosses;
+        const div = document.getElementById('div-loss-table-container');
+        const btnYes = document.getElementById('btn-loss-yes');
+        const btnNo = document.getElementById('btn-loss-no');
 
-        tr.querySelectorAll('input, select').forEach(el => {
+        if (hasLosses === true) {
+            if (div) div.classList.remove('hidden');
+            if (btnYes) btnYes.className = "px-4 py-2 bg-brandGold text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all";
+            if (btnNo) btnNo.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
+        } else if (hasLosses === false) {
+            if (div) div.classList.add('hidden');
+            if (btnYes) btnYes.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
+            if (btnNo) btnNo.className = "px-4 py-2 bg-brandRed text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all";
+            const tbody = document.querySelector('#loss-table tbody');
+            if (tbody) tbody.innerHTML = '';
+            syncLossState();
+        } else {
+            if (div) div.classList.add('hidden');
+            if (btnYes) btnYes.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
+            if (btnNo) btnNo.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
+            const tbody = document.querySelector('#loss-table tbody');
+            if (tbody) tbody.innerHTML = '';
+            syncLossState();
+        }
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function updateUnabsorbedDep(field, val) {
+        state.carry_forward_losses[field] = val === '' ? null : parseINRCurrency(val);
+        syncUnabsorbedDepWarnings();
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function syncUnabsorbedDepWarnings() {
+        const regime = state.profile.tax_regime;
+        const addDep = state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr || 0;
+        const warnDiv = document.getElementById('warn-unadep-lapsed');
+        const warnAmt = document.getElementById('warn-unadep-lapsed-amt');
+        const additionalInputContainer = document.getElementById('div-unadep-additional-container');
+
+        if (regime === 'NEW') {
+            if (additionalInputContainer) additionalInputContainer.classList.remove('hidden');
+            if (addDep > 0) {
+                if (warnDiv) warnDiv.classList.remove('hidden');
+                if (warnAmt) warnAmt.textContent = addDep.toLocaleString('en-IN');
+            } else {
+                if (warnDiv) warnDiv.classList.add('hidden');
+            }
+        } else {
+            if (additionalInputContainer) additionalInputContainer.classList.add('hidden');
+            if (warnDiv) warnDiv.classList.add('hidden');
+            // Reset additional dep to null in state under OLD regime
+            state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr = null;
+            const input = document.getElementById('loss-unadep-additional');
+            if (input) input.value = '';
+        }
+    }
+
+    function addLossRow() {
+        const rowId = 'loss-' + Date.now() + Math.random().toString(36).substring(2, 5);
+        const container = document.getElementById('loss-cards-container');
+        if (!container) return;
+
+        const card = document.createElement('div');
+        card.id = rowId;
+        card.className = 'loss-card bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3';
+        card.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] font-black uppercase tracking-widest text-brandGold/80">Loss Record</span>
+                <button onclick="removeLossRow('${rowId}')" class="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loss Category</label>
+                    <select class="loss-cat w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="business_loss_cf">Regular Business Loss</option>
+                        <option value="speculative_loss_cf">Speculative Intraday Loss</option>
+                        <option value="stcg_loss_cf">Short Term Capital Loss</option>
+                        <option value="ltcg_loss_cf">Long Term Capital Loss</option>
+                        <option value="house_property_loss_cf">House Property Loss</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Origin FY</label>
+                    <input type="text" placeholder="e.g. FY2023-24" class="loss-fy w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loss Amount (₹)</label>
+                    <input type="text" inputmode="numeric" placeholder="0" class="inr-input loss-amt w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Filing Date Gate -->
+            <div class="loss-filing-gate flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white/80 font-display">ITR for Origin Year Filed on/before Due Date?</span>
+                    <span class="text-[9px] text-white/30 font-sans">Required u/s 80 to carry forward business and capital losses.</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="loss-filed-ontime sr-only peer" checked>
+                    <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                </label>
+            </div>
+
+            <!-- Additional Depreciation Attribute -->
+            <div class="loss-add-dep-container hidden grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-white/5 border border-white/10 rounded-xl">
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Portion Attributable to Additional Depreciation (₹)</label>
+                    <input type="text" inputmode="numeric" placeholder="0" class="inr-input loss-add-dep w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                </div>
+                <div class="flex items-center text-[8px] text-white/40 font-sans leading-relaxed">
+                    Under Section 32(1)(iia) , any portion of brought-forward business loss attributable to additional depreciation lapses under the New Tax Regime.
+                </div>
+            </div>
+
+            <!-- Warning Banners -->
+            <div class="loss-new-regime-warning-hp hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                ⚠️ NEW REGIME RESTRICTION: Brought-forward house property losses cannot be set off against current year income under the New Tax Regime. They will bypass current adjustments (Schedule BFLA) but can continue to be carried forward.
+            </div>
+
+            <div class="loss-new-regime-warning-biz-dep hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                ⚠️ NEW REGIME RESTRICTION: The portion of business loss attributable to additional (₹<span class="loss-add-dep-warning-amt">0</span>) lapses and cannot be adjusted under the New Tax Regime.
+            </div>
+
+            <div class="loss-late-filing-warning hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                ⚠️ INELIGIBLE LOSS u/s 80: Business and Capital losses cannot be carried forward or adjusted if the historical return for that year was filed after the due date u/s 139(1).
+            </div>
+        `;
+
+        container.appendChild(card);
+
+        // Bind events
+        card.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', syncLossState);
+            el.addEventListener('change', syncLossState);
         });
+
+        // Initialize display visibility
+        card.querySelector('.loss-cat').addEventListener('change', function() {
+            updateCardRowVisibility(card, this.value);
+            syncLossState();
+        });
+
+        card.querySelector('.loss-filed-ontime').addEventListener('change', syncLossState);
+
+        updateCardRowVisibility(card, 'business_loss_cf');
+
+        if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
 
         syncLossState();
     }
 
+    function updateCardRowVisibility(card, category) {
+        const filingGate = card.querySelector('.loss-filing-gate');
+        const addDepContainer = card.querySelector('.loss-add-dep-container');
+        const regime = state.profile.tax_regime;
+
+        if (category === 'house_property_loss_cf') {
+            if (filingGate) filingGate.classList.add('hidden');
+        } else {
+            if (filingGate) filingGate.classList.remove('hidden');
+        }
+
+        if (category === 'business_loss_cf' && regime === 'NEW') {
+            if (addDepContainer) addDepContainer.classList.remove('hidden');
+        } else {
+            if (addDepContainer) addDepContainer.classList.add('hidden');
+        }
+    }
+
     function removeLossRow(id) {
-        const row = document.getElementById(id);
-        if (row) row.remove();
+        const card = document.getElementById(id);
+        if (card) card.remove();
         syncLossState();
     }
 
@@ -6712,14 +6874,196 @@
         state.carry_forward_losses.ltcg_loss_cf = [];
         state.carry_forward_losses.house_property_loss_cf = [];
 
-        document.querySelectorAll('#loss-table tbody tr').forEach(tr => {
-            const cat = tr.querySelector('.loss-cat').value;
-            const fy = tr.querySelector('.loss-fy').value || 'FY2024-25';
-            const amt = parseFloat(tr.querySelector('.loss-amt').value) || 0;
+        const regime = state.profile.tax_regime;
 
-            state.carry_forward_losses.has_brought_forward_losses = true;
-            state.carry_forward_losses[cat].push({ fy: fy, amount_inr: amt });
+        if (state.carry_forward_losses.has_brought_forward_losses === true) {
+            document.querySelectorAll('#loss-cards-container .loss-card').forEach(card => {
+                const cat = card.querySelector('.loss-cat').value;
+                updateCardRowVisibility(card, cat);
+                
+                const fy = card.querySelector('.loss-fy').value || '';
+                const amtStr = card.querySelector('.loss-amt').value;
+                const amt = parseINRCurrency(amtStr) || 0;
+
+                const filedOnTime = cat === 'house_property_loss_cf' || card.querySelector('.loss-filed-ontime').checked;
+                
+                let addDep = 0;
+                if (cat === 'business_loss_cf') {
+                    if (regime === 'NEW') {
+                        const addDepStr = card.querySelector('.loss-add-dep').value;
+                        addDep = parseINRCurrency(addDepStr) || 0;
+                    } else {
+                        const addDepInput = card.querySelector('.loss-add-dep');
+                        if (addDepInput) addDepInput.value = '';
+                    }
+                }
+
+                // Show/hide late filing warning
+                const warnLate = card.querySelector('.loss-late-filing-warning');
+                if (warnLate) {
+                    if (!filedOnTime && amt > 0) warnLate.classList.remove('hidden');
+                    else warnLate.classList.add('hidden');
+                }
+
+                // Show/hide new regime HP warning
+                const warnHP = card.querySelector('.loss-new-regime-warning-hp');
+                if (warnHP) {
+                    if (regime === 'NEW' && cat === 'house_property_loss_cf' && amt > 0) warnHP.classList.remove('hidden');
+                    else warnHP.classList.add('hidden');
+                }
+
+                // Show/hide new regime business additional dep warning
+                const warnAddDep = card.querySelector('.loss-new-regime-warning-biz-dep');
+                const warnAddDepAmt = card.querySelector('.loss-add-dep-warning-amt');
+                if (warnAddDep) {
+                    if (regime === 'NEW' && cat === 'business_loss_cf' && addDep > 0) {
+                        warnAddDep.classList.remove('hidden');
+                        if (warnAddDepAmt) warnAddDepAmt.textContent = addDep.toLocaleString('en-IN');
+                    } else {
+                        warnAddDep.classList.add('hidden');
+                    }
+                }
+
+                // Calculate eligibility
+                let isEligible = true;
+                if (!filedOnTime) isEligible = false;
+
+                // Adjust for new regime limitations
+                let finalAllowedAmt = amt;
+                if (regime === 'NEW') {
+                    if (cat === 'house_property_loss_cf') {
+                        finalAllowedAmt = 0; // Bypasses BFLA entirely
+                    } else if (cat === 'business_loss_cf') {
+                        finalAllowedAmt = Math.max(0, amt - addDep); // Lapsed portion subtracted
+                    }
+                }
+
+                state.carry_forward_losses[cat].push({
+                    fy: fy || null,
+                    amount_inr: amt || null,
+                    was_filed_before_due_date: filedOnTime,
+                    attributable_to_additional_dep_inr: cat === 'business_loss_cf' ? addDep : null,
+                    is_eligible: isEligible,
+                    final_allowed_amount_inr: isEligible ? finalAllowedAmt : 0
+                });
+            });
+        }
+
+        // Sync unabsorbed dep warnings & state
+        syncUnabsorbedDepWarnings();
+
+        if (typeof evaluateSurchargeBuckets === 'function') evaluateSurchargeBuckets();
+    }
+
+    function renderLossCards() {
+        const container = document.getElementById('loss-cards-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        const categories = [
+            'business_loss_cf',
+            'speculative_loss_cf',
+            'stcg_loss_cf',
+            'ltcg_loss_cf',
+            'house_property_loss_cf'
+        ];
+
+        let hasAny = false;
+        categories.forEach(cat => {
+            const list = state.carry_forward_losses[cat] || [];
+            list.forEach(item => {
+                hasAny = true;
+                const rowId = 'loss-' + Date.now() + Math.random().toString(36).substring(2, 7);
+                const card = document.createElement('div');
+                card.id = rowId;
+                card.className = 'loss-card bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-brandGold/80">Loss Record</span>
+                        <button onclick="removeLossRow('${rowId}')" class="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">✕ Remove</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loss Category</label>
+                            <select class="loss-cat w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                                <option value="business_loss_cf" ${cat === 'business_loss_cf' ? 'selected' : ''}>Regular Business Loss</option>
+                                <option value="speculative_loss_cf" ${cat === 'speculative_loss_cf' ? 'selected' : ''}>Speculative Intraday Loss</option>
+                                <option value="stcg_loss_cf" ${cat === 'stcg_loss_cf' ? 'selected' : ''}>Short Term Capital Loss</option>
+                                <option value="ltcg_loss_cf" ${cat === 'ltcg_loss_cf' ? 'selected' : ''}>Long Term Capital Loss</option>
+                                <option value="house_property_loss_cf" ${cat === 'house_property_loss_cf' ? 'selected' : ''}>House Property Loss</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Origin FY</label>
+                            <input type="text" placeholder="e.g. FY2023-24" value="${item.fy || ''}" class="loss-fy w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loss Amount (₹)</label>
+                            <input type="text" inputmode="numeric" placeholder="0" value="${item.amount_inr ? item.amount_inr.toLocaleString('en-IN') : ''}" class="inr-input loss-amt w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:ring-0 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Filing Date Gate -->
+                    <div class="loss-filing-gate flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80 font-display">ITR for Origin Year Filed on/before Due Date?</span>
+                            <span class="text-[9px] text-white/30 font-sans">Required u/s 80 to carry forward business and capital losses.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="loss-filed-ontime sr-only peer" ${item.was_filed_before_due_date !== false ? 'checked' : ''}>
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
+                    </div>
+
+                    <!-- Additional Depreciation Attribute -->
+                    <div class="loss-add-dep-container hidden grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Portion Attributable to Additional Depreciation (₹)</label>
+                            <input type="text" inputmode="numeric" placeholder="0" value="${item.attributable_to_additional_dep_inr ? item.attributable_to_additional_dep_inr.toLocaleString('en-IN') : ''}" class="inr-input loss-add-dep w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:outline-none transition-all">
+                        </div>
+                        <div class="flex items-center text-[8px] text-white/40 font-sans leading-relaxed">
+                            Under Section 32(1)(iia) , any portion of brought-forward business loss attributable to additional depreciation lapses under the New Tax Regime.
+                        </div>
+                    </div>
+
+                    <!-- Warning Banners -->
+                    <div class="loss-new-regime-warning-hp hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                        ⚠️ NEW REGIME RESTRICTION: Brought-forward house property losses cannot be set off against current year income under the New Tax Regime. They will bypass current adjustments (Schedule BFLA) but can continue to be carried forward.
+                    </div>
+
+                    <div class="loss-new-regime-warning-biz-dep hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                        ⚠️ NEW REGIME RESTRICTION: The portion of business loss attributable to additional (₹<span class="loss-add-dep-warning-amt">0</span>) lapses and cannot be adjusted under the New Tax Regime.
+                    </div>
+
+                    <div class="loss-late-filing-warning hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                        ⚠️ INELIGIBLE LOSS u/s 80: Business and Capital losses cannot be carried forward or adjusted if the historical return for that year was filed after the due date u/s 139(1).
+                    </div>
+                `;
+                container.appendChild(card);
+
+                // Bind events
+                card.querySelectorAll('input, select').forEach(el => {
+                    el.addEventListener('input', syncLossState);
+                    el.addEventListener('change', syncLossState);
+                });
+
+                card.querySelector('.loss-cat').addEventListener('change', function() {
+                    updateCardRowVisibility(card, this.value);
+                    syncLossState();
+                });
+
+                card.querySelector('.loss-filed-ontime').addEventListener('change', syncLossState);
+
+                updateCardRowVisibility(card, cat);
+            });
         });
+
+        if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
+
+        // Update YES/NO buttons display
+        const val = state.carry_forward_losses.has_brought_forward_losses;
+        toggleBroughtForwardLosses(val);
     }
 
     // Schedule FA
@@ -7163,6 +7507,21 @@
         // Initialize display
         runResidencySolver();
         renderDtaaElections();
+        
+        if (typeof renderLossCards === 'function') {
+            renderLossCards();
+        }
+        if (state.carry_forward_losses.unabsorbed_depreciation_cf !== null) {
+            const input = document.getElementById('loss-unadep');
+            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_cf.toLocaleString('en-IN');
+        }
+        if (state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr !== null) {
+            const input = document.getElementById('loss-unadep-additional');
+            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr.toLocaleString('en-IN');
+        }
+        if (typeof syncUnabsorbedDepWarnings === 'function') {
+            syncUnabsorbedDepWarnings();
+        }
         
         if (typeof evaluateSalaryRegimeLock === 'function') {
             evaluateSalaryRegimeLock();
