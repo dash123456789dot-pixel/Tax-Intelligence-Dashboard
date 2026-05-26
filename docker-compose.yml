@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./wising-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./wising-frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  backend:
+    build:
+      context: ./wising-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./wising-backend:/app

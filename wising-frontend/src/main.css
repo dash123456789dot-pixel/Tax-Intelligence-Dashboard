@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-brandDark: #0A0A0A;
+  --color-brandGray: #121212;
+  --color-brandGold: #D4AF37;
+  --color-brandRed: #EF4444;
+  --color-brandCyan: #06B6D4;
+  --color-brandGreen: #10B981;
+
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+.print-only { display: none; }
+
+@media print {
+  body { background: white !important; color: black !important; font-family: 'Inter', sans-serif !important; }
+  #dashboard-shell, header, .sidebar-drawer, .no-print, button, .pulsating-beam, .flow-dot { display: none !important; }
+  .print-only { display: block !important; width: 100% !important; margin: 0 !important; }
+  .report-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+  .report-table th, .report-table td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 10pt; }
+  .report-table th { background-color: #f5f5f5; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; }
+  .report-header { border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 40px; }
+  .report-footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; font-size: 8pt; color: #666; }
+}
+
+@layer base {
+  body {
+    @apply bg-brandDark text-gray-200 font-sans selection:bg-brandGold selection:text-black;
+  }
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0c0c0c; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+@layer components {
+  .glass-card {
+    @apply bg-brandGray border border-white/5 rounded-2xl backdrop-blur-md transition-all duration-300 relative overflow-hidden;
+  }
+  
+  .glass-card-hover:hover, .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background-color: #161616;
+  }
+
+  .heading-silver-shimmer {
+      background: linear-gradient(90deg, #94A3B8 0%, #F1F5F9 45%, #FFFFFF 50%, #F1F5F9 55%, #94A3B8 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer-text 5s linear infinite;
+      font-weight: 800;
+      text-shadow: 0 0 20px rgba(255,255,255,0.05);
+  }
+  
+  .input-field {
+    @apply w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brandGold/50 transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply w-full py-4 rounded-xl bg-brandGold text-black font-semibold text-lg hover:bg-yellow-500 transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)];
+  }
+}
+
+@keyframes shimmer-text { 
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Typeform Transition System */
+.question-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(60px) scale(0.96);
+    pointer-events: none;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none;
+}
+.question-slide.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}

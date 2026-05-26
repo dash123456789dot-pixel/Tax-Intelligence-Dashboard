@@ -1,0 +1,40 @@
+# Wising: Technical Architecture & Intelligence Logic
+
+Wising is an "Engineer-Friendly" wealth intelligence platform. This document provides deep technical context for AI agents and developers.
+
+## 1. Domain Model: Cross-Border Tax Intelligence
+
+The platform operates on a "Dual Sovereign" model, tracking two independent tax nodes simultaneously:
+- **India Node (Source/Resident)**: Covers FY 2025-26 Budget updates, including s.112 LTCG on real estate and the "Regime Battle" between Old (u/s 115BAC) and New tax systems.
+- **US Node (Global/Resident)**: Follows IRS Form 1040/1116 logic, including OBBBA 2026 inflation-adjusted brackets and s.1411 NIIT assessments.
+
+### 1.1 The FTC Bridge (Bridge Protocol)
+The most sensitive logic is the **Foreign Tax Credit (FTC)** bridge.
+- **Rule**: `Claim = min(Foreign_Tax_Paid, FTC_Cap)`
+- **Cap Calculation**: `US_Tax * (Foreign_Source_Income / Global_Income)`
+- **Treaty Base**: US-India DTAA Article 25.
+
+### 1.2 Residency Calculus
+- **India**: Tracks 182-day rule for NR/NRI status and 4-year aggregate stay.
+- **US**: Implements the Substantial Presence Test (SPT): `CY Days + (1/3 * PY1 Days) + (1/6 * PY2 Days)`.
+
+## 2. Component Intelligence
+
+### 2.1 Tax Intelligence Dashboard (`index.html`)
+- **Stat Hero**: Primary KPI for worldwide estimated liability.
+- **CPA Audit Export**: A print-optimized certification layer that translates dashboard state into a formal audit report.
+- **PFIC Alert System**: Detection of Indian Mutual Funds that violate US tax neutrality.
+
+### 2.2 Income & Employment Intelligence (`income.html`)
+- **Module M2**: Focuses on remuneration, RSUs, and ISOs.
+- **Zero Blockage Workflow**: Uses a document-first approach where Form 16 (India) or W-2 (US) can be uploaded to auto-populate the module.
+- **PE Risk (Permanent Establishment)**: Monitors "Engineer-Specific" risks where remote work might trigger corporate tax nexus.
+
+## 3. Implementation Details
+- **Tech Stack**: Vanilla HTML5, Tailwind CSS v3, Reactive JS (State-driven UI).
+- **Design System**: High-fidelity dark mode with "BrandGold" (#D4AF37) and "BrandCyan" (#06B6D4) accents.
+- **Data Persistence**: Local-first state management for privacy-focused wealth tracking.
+
+## 4. AI-Specific Meta-Data
+- **Parsing**: AI agents should look for `id` attributes on stat elements (e.g., `indiaNetTaxVal`, `heroGrossINR`) to extract real-time simulation results.
+- **Commands**: The dashboard supports "Simulations" via range inputs. Agents can trace the effect of residency shifts by observing the `updateState()` and `updateUSState()` methods.

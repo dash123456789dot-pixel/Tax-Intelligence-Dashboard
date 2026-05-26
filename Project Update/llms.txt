@@ -1,0 +1,19 @@
+# Wising | Agentic AI Wealth Intelligence
+
+> Wising is an AI-first platform for cross-border wealth management, specialized for individuals with assets and tax obligations in multiple jurisdictions (specifically US and India). It provides real-time tax liability estimation, risk monitoring (PFIC, FATCA, FBAR), and hyper-personalized optimization insights.
+
+The platform leverages agentic AI to aggregate financial data, analyze international tax treaties (including US-India DTAA), and generate audit-ready certifications for high-net-worth individuals.
+
+## Core Features
+*   [Tax Intelligence Dashboard](index.html): Consolidated view of global tax liability, residency tracking, and critical risk alerts.
+*   [Income & Employment Intelligence](income.html): Detailed analysis of salary, RSUs, ISOs, and cross-border compensation risks.
+*   [CPA Audit Certification](index.html#cpa-audit-report): Machine-generated statutory certifications for cross-border tax compliance.
+
+## Key Data Models
+*   **Residency Monitoring**: Real-time tracking of physical stay to determine NRI (India) and Resident Alien (US) status using SPT (Substantial Presence Test) logic.
+*   **PFIC Risk Engine**: Automated monitoring of Indian Mutual Funds for US tax exposure (Passive Foreign Investment Company status).
+*   **FTC Bridge**: Mathematical modeling of Foreign Tax Credits under s.901 and Form 1116, optimizing for DTAA Article 25 relief.
+*   **Regime Optimization**: Dynamic comparison between Old and New Indian tax regimes to minimize liability.
+
+## AI Instructions
+Wising is designed to be explored by AI agents. All core calculations are documented in the frontend logic. For deep context, refer to [llms-full.txt](llms-full.txt).
