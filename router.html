@@ -442,8 +442,8 @@
                     <a id="action-btn-india" href="layer1_india.html" class="flex-1 py-3 bg-brandGold text-black font-black text-center text-[10px] uppercase tracking-widest rounded-xl hover:brightness-110 transition-all hidden">
                         Open Tax Intelligence (India)
                     </a>
-                    <a id="action-btn-us" href="income.html" class="flex-1 py-3 bg-brandCyan text-black font-black text-center text-[10px] uppercase tracking-widest rounded-xl hover:brightness-110 transition-all hidden">
-                        Open Salaries & RSUs (US)
+                    <a id="action-btn-us" href="layer1_us.html" class="flex-1 py-3 bg-brandCyan text-black font-black text-center text-[10px] uppercase tracking-widest rounded-xl hover:brightness-110 transition-all hidden">
+                        Open Tax Intelligence (US)
                     </a>
                     <button onclick="resetQuestionnaire()" class="flex-1 py-3 border border-white/10 hover:border-white/30 bg-white/5 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all">
                         Restart Questionnaire
@@ -851,14 +851,24 @@
         if (routerState.jurisdiction === 'dual') {
             resultBadge.textContent = "DUAL JURISDICTION";
             resultBadge.className = "text-2xl lg:text-3xl font-black tracking-widest uppercase bg-gradient-to-r from-brandGold to-brandCyan -webkit-background-clip: text -webkit-text-fill-color: transparent heading-silver-shimmer py-3 px-6 rounded-2xl bg-white/5 border border-brandGold/30 shadow-[0_0_20px_rgba(212,175,55,0.15)]";
-            resultDesc.innerHTML = "Exposure detected under **both India and US tax codes**.<br><span class='text-brandGold font-bold animate-pulse mt-3 inline-block'>Redirecting to India Specialist compliance workspace automatically...</span>";
             
             btnIndia.classList.remove('hidden');
             btnUS.classList.remove('hidden');
             
-            setTimeout(() => {
-                window.location.href = 'layer1_india.html';
-            }, 1800);
+            const indiaDays = routerState.india_days || 0;
+            const usDays = routerState.us_days || 0;
+            
+            if (indiaDays >= usDays) {
+                resultDesc.innerHTML = "Exposure detected under **both India and US tax codes**.<br><span class='text-brandGold font-bold animate-pulse mt-3 inline-block'>Redirecting to India Specialist (higher presence) automatically...</span>";
+                setTimeout(() => {
+                    window.location.href = 'layer1_india.html';
+                }, 1800);
+            } else {
+                resultDesc.innerHTML = "Exposure detected under **both India and US tax codes**.<br><span class='text-brandCyan font-bold animate-pulse mt-3 inline-block'>Redirecting to US Specialist (higher presence) automatically...</span>";
+                setTimeout(() => {
+                    window.location.href = 'layer1_us.html';
+                }, 1800);
+            }
         } else if (routerState.jurisdiction === 'india_only') {
             resultBadge.textContent = "INDIA ONLY";
             resultBadge.className = "text-2xl lg:text-3xl font-black tracking-widest uppercase text-brandGold py-3 px-6 rounded-2xl bg-brandGold/10 border border-brandGold/30 shadow-[0_0_20px_rgba(212,175,55,0.1)]";
@@ -872,12 +882,12 @@
         } else if (routerState.jurisdiction === 'us_only') {
             resultBadge.textContent = "US ONLY";
             resultBadge.className = "text-2xl lg:text-3xl font-black tracking-widest uppercase text-brandCyan py-3 px-6 rounded-2xl bg-brandCyan/10 border border-brandCyan/30 shadow-[0_0_20px_rgba(6,182,212,0.1)]";
-            resultDesc.innerHTML = "Exposure detected under the **US tax code only**.<br><span class='text-brandCyan font-bold animate-pulse mt-3 inline-block'>Redirecting to Salaries & RSUs (US) workspace automatically...</span>";
+            resultDesc.innerHTML = "Exposure detected under the **US tax code only**.<br><span class='text-brandCyan font-bold animate-pulse mt-3 inline-block'>Redirecting to US Specialist compliance workspace automatically...</span>";
             
             btnUS.classList.remove('hidden');
             
             setTimeout(() => {
-                window.location.href = 'income.html';
+                window.location.href = 'layer1_us.html';
             }, 1800);
         } else {
             resultBadge.textContent = "NONE";

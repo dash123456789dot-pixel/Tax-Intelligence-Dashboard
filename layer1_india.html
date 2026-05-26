@@ -134,6 +134,9 @@
                         <a href="index.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Tax Intelligence</a>
                         <a href="income.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Salaries & RSUs</a>
                         <a href="router.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors">Jurisdiction Router</a>
+                        <div id="sidebar-switcher-separator" class="h-[1px] bg-white/5 my-2 mx-10"></div>
+                        <a id="sidebar-link-india" href="layer1_india.html" class="flex items-center px-10 py-5 hover:bg-[#121212] transition-colors text-brandGold">India Specialist L1</a>
+                        <a id="sidebar-link-us" href="layer1_us.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors text-brandCyan/80 hover:text-brandCyan font-bold">US Specialist L1</a>
                     </div>
                 </div>
             </div>
@@ -142,9 +145,16 @@
                 <span class="text-xs font-black uppercase tracking-[0.4em] text-white">India Specialist</span>
             </a>
         </div>
-        <div class="flex items-center space-x-4">
-            <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
-            <span class="text-[9px] font-black tracking-widest text-brandGold uppercase">Layer 1 active</span>
+        <div class="flex items-center space-x-4 lg:space-x-6">
+            <!-- Workspace Switcher -->
+            <div id="workspace-switcher" class="flex items-center bg-white/5 border border-white/10 p-0.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                <span class="px-3 py-1.5 bg-brandGold text-black rounded-lg shadow-sm">India L1</span>
+                <a href="layer1_us.html" class="px-3 py-1.5 text-white/40 hover:text-brandCyan transition-all rounded-lg font-bold">US L1</a>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-brandGold animate-pulse"></span>
+                <span class="text-[9px] font-black tracking-widest text-brandGold uppercase hidden md:inline">Layer 1 active</span>
+            </div>
         </div>
     </div>
 </header>
@@ -2358,22 +2368,23 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total money sent abroad this year (₹) — for TCS tracking</label>
-                            <input type="text" inputmode="numeric" id="lrs-total" oninput="state.lrs_outbound.total_lrs_remitted_this_fy_inr = (this.value === '' ? null : parseINRCurrency(this.value))" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
-                            <span class="text-[8px] text-white/30 mt-1 block">TCS of 20% applies on remittances exceeding ₹7 Lakhs (w.e.f. Oct 2023 / Apr 2026).</span>
+                            <input type="text" inputmode="numeric" id="lrs-total" oninput="state.lrs_outbound.total_lrs_remitted_this_fy_inr = (this.value === '' ? null : parseINRCurrency(this.value)); updateLrsTcs();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <span class="text-[8px] text-white/30 mt-1 block">Base LRS threshold is ₹10 Lakhs (except for tour packages). TCS rates vary from 0%, 2%, to 20% depending on purpose.</span>
                         </div>
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Purpose of LRS Remittance</label>
-                            <select id="lrs-purpose" onchange="state.lrs_outbound.lrs_purpose = this.value" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <select id="lrs-purpose" onchange="state.lrs_outbound.lrs_purpose = this.value; updateLrsTcs();" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                                 <option value="">-- Select Purpose --</option>
                                 <option value="investment">Investment (Equity/Property)</option>
                                 <option value="education_own_funds">Overseas Education (Own Funds)</option>
                                 <option value="education_loan">Overseas Education (Loan u/s 80E)</option>
                                 <option value="medical">Medical Treatment Abroad</option>
-                                <option value="travel">International Travel</option>
+                                <option value="travel">International Travel (Overseas Tour Packages)</option>
                                 <option value="gift_donation">Gift or Donation to Non-Resident</option>
                             </select>
                         </div>
                     </div>
+                    <div id="lrs-tcs-display" class="hidden"></div>
 
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] text-white/50 font-sans">Declare all foreign bank accounts, shares, property, and income.</span>
@@ -7357,6 +7368,70 @@
         state.tax_credits[field] = val === '' ? null : parseINRCurrency(val);
     }
 
+    function updateLrsTcs() {
+        const total = state.lrs_outbound.total_lrs_remitted_this_fy_inr || 0;
+        const purpose = state.lrs_outbound.lrs_purpose || '';
+        let tcs = 0;
+        let rateStr = 'NIL';
+        let desc = '';
+
+        if (total > 0 && purpose) {
+            if (purpose === 'travel') {
+                // Overseas Tour Packages: 2% flat rate, applicable from the first rupee without a threshold
+                tcs = Math.round(total * 0.02);
+                rateStr = '2% Flat';
+                desc = '2% flat TCS on overseas tour packages from the first rupee.';
+            } else {
+                const threshold = 1000000; // ₹10 Lakhs
+                if (total > threshold) {
+                    const excess = total - threshold;
+                    if (purpose === 'investment' || purpose === 'gift_donation') {
+                        // Investments & General LRS: 20% on excess of 10L
+                        tcs = Math.round(excess * 0.20);
+                        rateStr = '20% on excess';
+                        desc = '20% TCS on General/Investment LRS exceeding ₹10 Lakhs.';
+                    } else if (purpose === 'education_own_funds' || purpose === 'medical') {
+                        // Education (Self-funded) & Medical: 2% on excess of 10L
+                        tcs = Math.round(excess * 0.02);
+                        rateStr = '2% on excess';
+                        desc = '2% TCS on self-funded education/medical exceeding ₹10 Lakhs.';
+                    } else if (purpose === 'education_loan') {
+                        // Education funded via Loan: 0%
+                        tcs = 0;
+                        rateStr = '0%';
+                        desc = '0% (NIL) TCS on education remittance funded via loan.';
+                    }
+                } else {
+                    tcs = 0;
+                    rateStr = 'NIL';
+                    desc = 'Remittance is below the ₹10 Lakhs base threshold.';
+                }
+            }
+        }
+
+        const tcsDisplay = document.getElementById('lrs-tcs-display');
+        if (tcsDisplay) {
+            if (total > 0 && purpose) {
+                tcsDisplay.classList.remove('hidden');
+                tcsDisplay.innerHTML = `
+                    <div class="flex justify-between items-center bg-brandGold/5 border border-brandGold/20 rounded-xl p-3 text-[10px] text-brandGold font-sans font-semibold mt-2">
+                        <div class="flex-1">
+                            <span class="block text-white/50 text-[8px] uppercase tracking-wider font-bold">Estimated TCS (Tax Collected at Source)</span>
+                            <span class="text-white/80">${desc}</span>
+                        </div>
+                        <div class="text-right ml-4">
+                            <span class="block text-white/50 text-[8px] uppercase tracking-wider font-bold">TCS Rate: ${rateStr}</span>
+                            <span class="text-sm font-black text-brandGold font-mono">₹${tcs.toLocaleString('en-IN')}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                tcsDisplay.classList.add('hidden');
+                tcsDisplay.innerHTML = '';
+            }
+        }
+    }
+
     // FTC Form 67 claimed
     function addFtcRow() {
         const rowId = 'ftc-' + Date.now() + Math.random().toString(36).substring(2, 5);
@@ -7804,6 +7879,19 @@
         }
         
         const rData = JSON.parse(routerStr);
+
+        // Gating switcher to Dual Jurisdiction only
+        if (rData.jurisdiction !== 'dual') {
+            const switcher = document.getElementById('workspace-switcher');
+            if (switcher) switcher.classList.add('hidden');
+            
+            const sidebarSep = document.getElementById('sidebar-switcher-separator');
+            const sidebarLinkIndia = document.getElementById('sidebar-link-india');
+            const sidebarLinkUs = document.getElementById('sidebar-link-us');
+            if (sidebarSep) sidebarSep.classList.add('hidden');
+            if (sidebarLinkIndia) sidebarLinkIndia.classList.add('hidden');
+            if (sidebarLinkUs) sidebarLinkUs.classList.add('hidden');
+        }
         // Prefill days & citizen gating from Layer 0 determinations!
         if (rData.india_days !== null) {
             state.residency_detail.days_in_india_current_year = rData.india_days;
@@ -7882,6 +7970,11 @@
         if (state.tax_credits.form_26as_uploaded !== null) {
             const checkbox = document.getElementById('crd-26as-uploaded');
             if (checkbox) checkbox.checked = state.tax_credits.form_26as_uploaded;
+        }
+
+        // Initialize LRS TCS computation
+        if (typeof updateLrsTcs === 'function') {
+            updateLrsTcs();
         }
     }
 
