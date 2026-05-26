@@ -384,10 +384,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-right flex flex-col items-center md:items-end">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-white/40">US Residency Status Lock</span>
-                        <span id="val-res-lock" class="mt-1 px-4 py-2 rounded-xl bg-brandCyan/10 border border-brandCyan/30 text-brandCyan text-sm font-black tracking-wider uppercase font-mono shadow-[0_0_15px_rgba(6,182,212,0.15)]">NON_RESIDENT_ALIEN</span>
-                    </div>
                 </div>
             </div>
 
@@ -2119,18 +2115,20 @@
         // Sync display
         document.getElementById('val-spt-days').textContent = `${details.spt_day_count_weighted} days`;
         document.getElementById('val-spt-met').textContent = details.spt_test_met ? "Yes" : "No";
-        document.getElementById('val-res-lock').textContent = lock;
-
+        
         const badge = document.getElementById('val-res-lock');
-        badge.className = "mt-1 px-4 py-2 rounded-xl border text-sm font-black tracking-wider uppercase font-mono shadow-md transition-all";
-        if (lock === 'US_CITIZEN') {
-            badge.classList.add('bg-brandCyan/10', 'border-brandCyan/30', 'text-brandCyan');
-        } else if (lock === 'RESIDENT_ALIEN') {
-            badge.classList.add('bg-brandGreen/10', 'border-brandGreen/30', 'text-brandGreen');
-        } else if (lock === 'DUAL_STATUS') {
-            badge.classList.add('bg-brandGold/10', 'border-brandGold/30', 'text-brandGold');
-        } else {
-            badge.classList.add('bg-white/5', 'border-white/10', 'text-white/40');
+        if (badge) {
+            badge.textContent = lock;
+            badge.className = "mt-1 px-4 py-2 rounded-xl border text-sm font-black tracking-wider uppercase font-mono shadow-md transition-all";
+            if (lock === 'US_CITIZEN') {
+                badge.classList.add('bg-brandCyan/10', 'border-brandCyan/30', 'text-brandCyan');
+            } else if (lock === 'RESIDENT_ALIEN') {
+                badge.classList.add('bg-brandGreen/10', 'border-brandGreen/30', 'text-brandGreen');
+            } else if (lock === 'DUAL_STATUS') {
+                badge.classList.add('bg-brandGold/10', 'border-brandGold/30', 'text-brandGold');
+            } else {
+                badge.classList.add('bg-white/5', 'border-white/10', 'text-white/40');
+            }
         }
 
         // Sync right sidebar certificate
