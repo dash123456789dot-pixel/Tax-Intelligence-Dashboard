@@ -188,6 +188,42 @@
         <!-- Dynamic Questions Container -->
         <div id="questions-viewport" class="flex-grow relative min-h-[280px]">
             
+            <!-- Q0a: Full Name -->
+            <div data-question-id="full_name" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 01a</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-8 tracking-tight font-display">What is your full name?</h2>
+                <div class="space-y-6">
+                    <div class="relative max-w-sm">
+                        <input type="text" placeholder="Enter your full name" id="full-name-input" oninput="handleTextInput('full_name', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-2xl font-black text-white focus:border-brandGold/50 outline-none transition-colors">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-8">
+                    <button onclick="advanceQuestion()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                        <kbd class="hidden sm:inline px-1.5 py-0.5 bg-black/10 rounded text-[9px] font-mono text-black/50 border border-black/5">Enter</kbd>
+                    </button>
+                </div>
+                <p class="text-[11px] text-white/30 uppercase tracking-widest mt-6">Flag Role: Personal information synced to Specialist compliance workspaces.</p>
+            </div>
+
+            <!-- Q0b: Date of Birth -->
+            <div data-question-id="date_of_birth" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 01b</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-8 tracking-tight font-display">What is your date of birth?</h2>
+                <div class="space-y-6">
+                    <div class="relative max-w-sm">
+                        <input type="date" id="date-of-birth-input" onchange="handleDateInput('date_of_birth', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-2xl font-black text-white focus:border-brandGold/50 outline-none transition-colors">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-8">
+                    <button onclick="advanceQuestion()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                        <kbd class="hidden sm:inline px-1.5 py-0.5 bg-black/10 rounded text-[9px] font-mono text-black/50 border border-black/5">Enter</kbd>
+                    </button>
+                </div>
+                <p class="text-[11px] text-white/30 uppercase tracking-widest mt-6">Flag Role: Personal information synced to Specialist compliance workspaces.</p>
+            </div>
+            
             <!-- Q1: Indian Citizen -->
             <div data-question-id="is_indian_citizen" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 01</span>
@@ -479,6 +515,8 @@
     // ═══════════════════════════════════════════════════════════════════════
     const routerState = {
         // Inputs
+        full_name: null,
+        date_of_birth: null,
         is_indian_citizen: null,
         is_pio_or_oci: null,
         india_days: null,
@@ -498,6 +536,8 @@
     };
 
     const allQuestionIds = [
+        "full_name",
+        "date_of_birth",
         "is_indian_citizen",
         "is_pio_or_oci",
         "india_days",
@@ -548,6 +588,9 @@
 
     function getQuestionsToShow() {
         const list = [];
+        
+        list.push("full_name");
+        list.push("date_of_birth");
         
         // Q1 (Citizen) is always shown
         list.push("is_indian_citizen");
@@ -713,6 +756,16 @@
                 sliderInput.value = inputVal !== null ? inputVal : 0;
             }
         }
+
+        // Text & Date inputs sync
+        if (questionId === 'full_name') {
+            const input = document.getElementById('full-name-input');
+            if (input) input.value = val !== null ? val : '';
+        }
+        if (questionId === 'date_of_birth') {
+            const input = document.getElementById('date-of-birth-input');
+            if (input) input.value = val !== null ? val : '';
+        }
     }
 
     function advanceQuestion() {
@@ -761,6 +814,10 @@
         evaluateFlags();
         
         // Clear all DOM text elements
+        const nameInput = document.getElementById('full-name-input');
+        if (nameInput) nameInput.value = '';
+        const dobInput = document.getElementById('date-of-birth-input');
+        if (dobInput) dobInput.value = '';
         document.getElementById('india-days-input').value = '';
         document.getElementById('india-days-slider').value = 0;
         document.getElementById('us-days-input').value = '';
@@ -772,6 +829,16 @@
     // ═══════════════════════════════════════════════════════════════════════
     // HANDLERS FOR USER INPUTS
     // ═══════════════════════════════════════════════════════════════════════
+    function handleTextInput(questionId, value) {
+        routerState[questionId] = value.trim() === '' ? null : value.trim();
+        evaluateFlags();
+    }
+
+    function handleDateInput(questionId, value) {
+        routerState[questionId] = value === '' ? null : value;
+        evaluateFlags();
+    }
+
     function handleBoolInput(questionId, value) {
         routerState[questionId] = value;
         
