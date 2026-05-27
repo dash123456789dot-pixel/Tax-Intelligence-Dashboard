@@ -822,7 +822,8 @@
                     </div>
                 </div>
                 <div id="div-se-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('se')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload Schedule C</button>
                         <button type="button" onclick="addSeBusinessRow()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Business</button>
                     </div>
                     <div id="div-se-list" class="grid grid-cols-1 gap-4"></div>
@@ -840,7 +841,8 @@
                     </div>
                 </div>
                 <div id="div-farm-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('farm')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload Schedule F</button>
                         <button type="button" onclick="addFarmRow()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Farm Business</button>
                     </div>
                     <div id="div-farm-list" class="grid grid-cols-1 gap-4"></div>
@@ -857,7 +859,8 @@
                     </div>
                 </div>
                 <div id="div-part-k1-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('part_k1')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload 1065 K-1</button>
                         <button type="button" onclick="addPartK1Row()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Partnership K-1</button>
                     </div>
                     <div id="div-part-k1-list" class="grid grid-cols-1 gap-4"></div>
@@ -874,7 +877,8 @@
                     </div>
                 </div>
                 <div id="div-scorp-k1-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('scorp_k1')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload 1120-S K-1</button>
                         <button type="button" onclick="addScorpK1Row()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add S-Corp K-1</button>
                     </div>
                     <div id="div-scorp-k1-list" class="grid grid-cols-1 gap-4"></div>
@@ -891,7 +895,8 @@
                     </div>
                 </div>
                 <div id="div-ccorp-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('ccorp')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload Form 1120</button>
                         <button type="button" onclick="addCcorpRow()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add C-Corp</button>
                     </div>
                     <div id="div-ccorp-list" class="grid grid-cols-1 gap-4"></div>
@@ -908,7 +913,8 @@
                     </div>
                 </div>
                 <div id="div-trust-k1-container" class="hidden flex flex-col gap-4">
-                    <div class="flex justify-end pb-1 border-b border-white/5">
+                    <div class="flex justify-end gap-2 pb-1 border-b border-white/5">
+                        <button type="button" onclick="triggerBizUpload('trust_k1')" class="px-3 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[9px] font-black uppercase tracking-widest transition-all">📤 Upload 1041 K-1</button>
                         <button type="button" onclick="addTrustK1Row()" class="px-3 py-1 bg-white/10 hover:bg-brandCyan/20 hover:text-brandCyan rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Trust/Estate K-1</button>
                     </div>
                     <div id="div-trust-k1-list" class="grid grid-cols-1 gap-4"></div>
@@ -7743,6 +7749,524 @@
     // ══════════════════════════════════════════════════════════════════════
     // W-2 OCR UPLOAD SIMULATOR FUNCTIONS
     // ══════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════
+    // BUSINESS DOCUMENTS OCR UPLOAD SIMULATOR FUNCTIONS
+    // ══════════════════════════════════════════════════════════════════════
+    window.triggerBizUpload = function(docType) {
+        const modal = document.getElementById('modal-biz-upload');
+        if (!modal) return;
+        
+        let title = "Simulated AI Business Doc OCR Reader";
+        let prompt = "Drag and drop your tax document (PDF or Image)";
+        
+        if (docType === 'se') {
+            title = "Simulated Schedule C OCR Reader";
+            prompt = "Drag and drop your Form 1040 Schedule C (Sole Proprietorship)";
+        } else if (docType === 'farm') {
+            title = "Simulated Schedule F OCR Reader";
+            prompt = "Drag and drop your Form 1040 Schedule F (Farming Business)";
+        } else if (docType === 'part_k1') {
+            title = "Simulated Form 1065 Schedule K-1 OCR Reader";
+            prompt = "Drag and drop your Partnership Schedule K-1";
+        } else if (docType === 'scorp_k1') {
+            title = "Simulated Form 1120-S Schedule K-1 OCR Reader";
+            prompt = "Drag and drop your S-Corporation Schedule K-1";
+        } else if (docType === 'ccorp') {
+            title = "Simulated Form 1120 OCR Reader";
+            prompt = "Drag and drop your Form 1120 (C-Corporation Return)";
+        } else if (docType === 'trust_k1') {
+            title = "Simulated Form 1041 Schedule K-1 OCR Reader";
+            prompt = "Drag and drop your Fiduciary Trust & Estate Schedule K-1";
+        }
+        
+        document.getElementById('biz-upload-title').textContent = title;
+        document.getElementById('biz-upload-prompt').textContent = prompt;
+        
+        // Hide loader, show dropzone and templates
+        document.getElementById('biz-upload-dropzone').classList.remove('hidden');
+        document.getElementById('biz-upload-divider').classList.remove('hidden');
+        document.getElementById('biz-upload-templates').classList.remove('hidden');
+        document.getElementById('biz-scan-loader').classList.add('hidden');
+        
+        // Populate templates
+        const templatesContainer = document.getElementById('biz-upload-templates');
+        templatesContainer.innerHTML = '';
+        
+        const bizTemplates = {
+            se: [
+                {
+                    key: 'design',
+                    name: 'Digital Design Studio (Schedule C)',
+                    desc: 'Wages: $15,000 | Gross: $120,000 | Exp: $20,000 | Sec 179: $5,000 | Cash'
+                },
+                {
+                    key: 'retail',
+                    name: 'E-Commerce Retail Store (Schedule C)',
+                    desc: 'Gross: $95,000 | Exp: $60,000 | Home Office: 150 sqft | Accrual'
+                }
+            ],
+            farm: [
+                {
+                    key: 'orchard',
+                    name: 'Golden Apple Orchard (Schedule F)',
+                    desc: 'Wages: $20,000 | Gross: $140,000 | Exp: $80,000 | Assets: $30,000'
+                }
+            ],
+            part_k1: [
+                {
+                    key: 'realestate',
+                    name: 'Apex Real Estate Holdings (1065 K-1)',
+                    desc: 'Guaranteed Payments: $60,000 | Rental Income: $10,000 | General Partner'
+                },
+                {
+                    key: 'startup',
+                    name: 'Quantum Code Startup (1065 K-1)',
+                    desc: 'Ordinary Loss: -$15,000 | Limited Partner | Passive | Basis: $5,000'
+                }
+            ],
+            scorp_k1: [
+                {
+                    key: 'consulting',
+                    name: 'Valuation Partners (1120-S K-1)',
+                    desc: 'Ordinary Income: $110,000 | QBI Wages: $25,000 | Active'
+                }
+            ],
+            ccorp: [
+                {
+                    key: 'manufacturing',
+                    name: 'Novachip Hardware (Form 1120)',
+                    desc: 'Gross: $800,000 | COGS: $400,000 | Opex: $250,000 | Dividends: $20,000'
+                }
+            ],
+            trust_k1: [
+                {
+                    key: 'family',
+                    name: 'Vanderbilt Family Trust (1041 K-1)',
+                    desc: 'Ordinary Income: $12,000 | Rental Real Estate: $4,500 | Passive'
+                }
+            ]
+        };
+        
+        const list = bizTemplates[docType] || [];
+        list.forEach(t => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'w-full p-3 bg-black/40 border border-white/5 hover:border-brandCyan/40 rounded-xl flex items-center justify-between text-left transition-all group';
+            btn.onclick = () => simulateBizScan(docType, t.key);
+            btn.innerHTML = `
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-[10px] font-bold text-white group-hover:text-brandCyan transition-colors">${t.name}</span>
+                    <span class="text-[8px] text-white/40">${t.desc}</span>
+                </div>
+                <span class="text-[10px] text-white/30 group-hover:text-brandCyan transition-colors">Select →</span>
+            `;
+            templatesContainer.appendChild(btn);
+        });
+        
+        // Setup file input change trigger
+        const fileInput = document.getElementById('biz-file-input');
+        if (fileInput) {
+            fileInput.onchange = (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleBizFileSelect(docType, e.target.files[0]);
+                }
+            };
+        }
+        
+        // Bind dropzone click
+        const dropzone = document.getElementById('biz-upload-dropzone');
+        if (dropzone) {
+            dropzone.onclick = () => {
+                if (fileInput) fileInput.click();
+            };
+        }
+        
+        modal.classList.remove('hidden');
+    };
+
+    window.closeBizUploadModal = function() {
+        const modal = document.getElementById('modal-biz-upload');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    window.handleBizFileSelect = function(docType, file) {
+        if (!file) return;
+        simulateBizScan(docType, 'generic', file.name);
+    };
+
+    window.simulateBizScan = function(docType, templateType, customFileName = '') {
+        // Hide inputs
+        document.getElementById('biz-upload-dropzone').classList.add('hidden');
+        document.getElementById('biz-upload-divider').classList.add('hidden');
+        document.getElementById('biz-upload-templates').classList.add('hidden');
+        
+        // Show scanning loader
+        const loader = document.getElementById('biz-scan-loader');
+        loader.classList.remove('hidden');
+        
+        const progressBar = document.getElementById('biz-scan-progress-bar');
+        const pctText = document.getElementById('biz-scan-pct');
+        const logsDiv = document.getElementById('biz-scan-logs');
+        
+        progressBar.style.width = '0%';
+        pctText.textContent = '0%';
+        logsDiv.innerHTML = '';
+        
+        let docData = {};
+        let filename = customFileName;
+        let displayName = "";
+        
+        // Resolve Document Data
+        if (docType === 'se') {
+            displayName = "Schedule C (Sole Proprietorship)";
+            if (templateType === 'design') {
+                filename = filename || 'Schedule_C_Studio_Pixels.pdf';
+                docData = {
+                    business_name: 'Studio Pixels',
+                    naics_code: '541430',
+                    gross_receipts_usd: 120000,
+                    expenses_usd: 20000,
+                    wages_paid_usd: 15000,
+                    sec179_expense_usd: 5000,
+                    new_assets_placed_usd: 0,
+                    vehicle_miles: 2500,
+                    home_office_sqft: 180,
+                    accounting_method: 'cash',
+                    llc_type: 'sole_prop',
+                    tax_election: 'disregarded',
+                    qbi_eligible: true,
+                    is_specified_service_trade: false
+                };
+            } else if (templateType === 'retail') {
+                filename = filename || 'Schedule_C_StyleGrid_Shop.pdf';
+                docData = {
+                    business_name: 'StyleGrid Shop',
+                    naics_code: '454110',
+                    gross_receipts_usd: 95000,
+                    expenses_usd: 60000,
+                    wages_paid_usd: 0,
+                    sec179_expense_usd: 0,
+                    new_assets_placed_usd: 10000,
+                    vehicle_miles: 0,
+                    home_office_sqft: 150,
+                    accounting_method: 'accrual',
+                    llc_type: 'sole_prop',
+                    tax_election: 'disregarded',
+                    qbi_eligible: true,
+                    is_specified_service_trade: false
+                };
+            } else {
+                filename = filename || 'Uploaded_Schedule_C.pdf';
+                docData = {
+                    business_name: 'Consulting Services',
+                    naics_code: '541611',
+                    gross_receipts_usd: 65000,
+                    expenses_usd: 12000,
+                    wages_paid_usd: 0,
+                    sec179_expense_usd: 0,
+                    new_assets_placed_usd: 0,
+                    vehicle_miles: 1500,
+                    home_office_sqft: 100,
+                    accounting_method: 'cash',
+                    llc_type: 'sole_prop',
+                    tax_election: 'disregarded',
+                    qbi_eligible: true,
+                    is_specified_service_trade: false
+                };
+            }
+        } else if (docType === 'farm') {
+            displayName = "Schedule F (Farming Business)";
+            if (templateType === 'orchard') {
+                filename = filename || 'Schedule_F_Apple_Orchard.pdf';
+                docData = {
+                    business_name: 'Golden Apple Orchard',
+                    ein: '11-2233446',
+                    naics_code: '111331',
+                    gross_income_usd: 140000,
+                    expenses_usd: 80000,
+                    wages_paid_usd: 20000,
+                    sec179_expense_usd: 0,
+                    new_assets_placed_usd: 30000,
+                    vehicle_miles: 5200,
+                    home_office_sqft: 0,
+                    accounting_method: 'cash',
+                    qbi_eligible: true,
+                    is_specified_service_trade: false
+                };
+            } else {
+                filename = filename || 'Uploaded_Schedule_F.pdf';
+                docData = {
+                    business_name: 'Local Crop Farm',
+                    ein: '22-3344556',
+                    naics_code: '111190',
+                    gross_income_usd: 75000,
+                    expenses_usd: 45000,
+                    wages_paid_usd: 5000,
+                    sec179_expense_usd: 0,
+                    new_assets_placed_usd: 5000,
+                    vehicle_miles: 2000,
+                    home_office_sqft: 0,
+                    accounting_method: 'cash',
+                    qbi_eligible: true,
+                    is_specified_service_trade: false
+                };
+            }
+        } else if (docType === 'part_k1') {
+            displayName = "Partnership Schedule K-1";
+            if (templateType === 'realestate') {
+                filename = filename || 'Form_1065_K1_Apex_RealEstate.pdf';
+                docData = {
+                    partnership_name: 'Apex Real Estate Holdings LLC',
+                    ein: '56-7890123',
+                    partner_type: 'general',
+                    material_participation: 'active',
+                    ordinary_income_usd: 0,
+                    guaranteed_payments_usd: 60000,
+                    net_rental_real_estate_usd: 10000,
+                    tax_basis_usd: 300000,
+                    sec179_deduction_usd: 0,
+                    interest_income_usd: 0,
+                    ordinary_dividends_usd: 0,
+                    stcg_usd: 0,
+                    ltcg_usd: 0,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 0,
+                    qbi_ubia_usd: 50000,
+                    is_specified_service_trade: false
+                };
+            } else if (templateType === 'startup') {
+                filename = filename || 'Form_1065_K1_Quantum_Code.pdf';
+                docData = {
+                    partnership_name: 'Quantum Code LLC',
+                    ein: '78-9012345',
+                    partner_type: 'limited',
+                    material_participation: 'passive',
+                    ordinary_income_usd: -15000,
+                    guaranteed_payments_usd: 0,
+                    net_rental_real_estate_usd: 0,
+                    tax_basis_usd: 5000,
+                    sec179_deduction_usd: 0,
+                    interest_income_usd: 0,
+                    ordinary_dividends_usd: 0,
+                    stcg_usd: 0,
+                    ltcg_usd: 0,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 0,
+                    qbi_ubia_usd: 0,
+                    is_specified_service_trade: false
+                };
+            } else {
+                filename = filename || 'Uploaded_1065_K1.pdf';
+                docData = {
+                    partnership_name: 'Standard Partner JV',
+                    ein: '88-1234567',
+                    partner_type: 'limited',
+                    material_participation: 'active',
+                    ordinary_income_usd: 25000,
+                    guaranteed_payments_usd: 0,
+                    net_rental_real_estate_usd: 0,
+                    tax_basis_usd: 50000,
+                    sec179_deduction_usd: 1000,
+                    interest_income_usd: 200,
+                    ordinary_dividends_usd: 400,
+                    stcg_usd: 0,
+                    ltcg_usd: 800,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 2000,
+                    qbi_ubia_usd: 10000,
+                    is_specified_service_trade: false
+                };
+            }
+        } else if (docType === 'scorp_k1') {
+            displayName = "S-Corporation Schedule K-1";
+            if (templateType === 'consulting') {
+                filename = filename || 'Form_1120S_K1_Valuation_Partners.pdf';
+                docData = {
+                    corporation_name: 'Valuation Partners Inc.',
+                    ein: '99-8877665',
+                    material_participation: 'active',
+                    ordinary_income_usd: 110000,
+                    tax_basis_usd: 150000,
+                    sec179_deduction_usd: 2000,
+                    interest_income_usd: 500,
+                    ordinary_dividends_usd: 0,
+                    stcg_usd: 0,
+                    ltcg_usd: 1200,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 25000,
+                    qbi_ubia_usd: 0,
+                    is_specified_service_trade: true
+                };
+            } else {
+                filename = filename || 'Uploaded_1120S_K1.pdf';
+                docData = {
+                    corporation_name: 'Custom Tech Solutions Inc.',
+                    ein: '45-1293847',
+                    material_participation: 'active',
+                    ordinary_income_usd: 45000,
+                    tax_basis_usd: 80000,
+                    sec179_deduction_usd: 0,
+                    interest_income_usd: 100,
+                    ordinary_dividends_usd: 0,
+                    stcg_usd: 500,
+                    ltcg_usd: 1000,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 10000,
+                    qbi_ubia_usd: 0,
+                    is_specified_service_trade: false
+                };
+            }
+        } else if (docType === 'ccorp') {
+            displayName = "Form 1120 (C-Corporation Return)";
+            if (templateType === 'manufacturing') {
+                filename = filename || 'Form_1120_Novachip_Hardware.pdf';
+                docData = {
+                    corporation_name: 'Novachip Hardware Corp',
+                    ein: '10-2938475',
+                    state_of_incorporation: 'DE',
+                    gross_receipts_usd: 800000,
+                    cogs_usd: 400000,
+                    operating_expenses_usd: 250000,
+                    nol_carryover_usd: 30000,
+                    dividends_paid_usd: 20000,
+                    tracks_qsbs_eligibility: true
+                };
+            } else {
+                filename = filename || 'Uploaded_Form_1120.pdf';
+                docData = {
+                    corporation_name: 'Retail Goods Inc.',
+                    ein: '33-4455667',
+                    state_of_incorporation: 'NY',
+                    gross_receipts_usd: 300000,
+                    cogs_usd: 150000,
+                    operating_expenses_usd: 110000,
+                    nol_carryover_usd: 0,
+                    dividends_paid_usd: 5000,
+                    tracks_qsbs_eligibility: false
+                };
+            }
+        } else if (docType === 'trust_k1') {
+            displayName = "Fiduciary Trust/Estate Schedule K-1";
+            if (templateType === 'family') {
+                filename = filename || 'Form_1041_K1_Vanderbilt_Trust.pdf';
+                docData = {
+                    trust_name: 'Vanderbilt Family Trust',
+                    ein: '12-3456780',
+                    material_participation: 'passive',
+                    ordinary_income_usd: 12000,
+                    net_rental_real_estate_usd: 4500,
+                    tax_basis_usd: 200000,
+                    sec179_deduction_usd: 0,
+                    interest_income_usd: 800,
+                    ordinary_dividends_usd: 1500,
+                    stcg_usd: 3000,
+                    ltcg_usd: 5000,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 0,
+                    qbi_ubia_usd: 0,
+                    is_specified_service_trade: false
+                };
+            } else {
+                filename = filename || 'Uploaded_1041_K1.pdf';
+                docData = {
+                    trust_name: 'Generic Heritage Trust',
+                    ein: '88-7766554',
+                    material_participation: 'passive',
+                    ordinary_income_usd: 5000,
+                    net_rental_real_estate_usd: 2000,
+                    tax_basis_usd: 100000,
+                    sec179_deduction_usd: 0,
+                    interest_income_usd: 300,
+                    ordinary_dividends_usd: 500,
+                    stcg_usd: 0,
+                    ltcg_usd: 1500,
+                    qbi_eligible: true,
+                    qbi_wages_usd: 0,
+                    qbi_ubia_usd: 0,
+                    is_specified_service_trade: false
+                };
+            }
+        }
+        
+        // Scan animation logs
+        const steps = [
+            { t: 0, msg: `📁 Uploaded: ${filename}` },
+            { t: 300, msg: `⚡ Initializing AI Business OCR engine...` },
+            { t: 700, msg: `🔍 Scanning document header for EIN and legal name...` },
+            { t: 1100, msg: `📊 Extracting business parameters: NAICS & Accounting methods...` },
+            { t: 1500, msg: `🛡️ Solving tax elements: net receipts, wages, and special deductions...` },
+            { t: 1800, msg: `✓ OCR parsing completed for ${displayName}.` }
+        ];
+        
+        steps.forEach(s => {
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.textContent = s.msg;
+                if (s.msg.startsWith('✓')) {
+                    div.className = 'text-brandGreen font-bold';
+                } else if (s.msg.startsWith('📁')) {
+                    div.className = 'text-brandCyan';
+                }
+                logsDiv.appendChild(div);
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+                
+                const progress = Math.round((s.t / 1800) * 100);
+                progressBar.style.width = progress + '%';
+                pctText.textContent = progress + '%';
+                
+                if (s.t === 1800) {
+                    setTimeout(() => {
+                        // Call builder function
+                        if (docType === 'se') {
+                            addSeBusinessRow(docData);
+                            const toggle = document.getElementById('se-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                toggleSeSection(true);
+                            }
+                        } else if (docType === 'farm') {
+                            addFarmRow(docData);
+                            const toggle = document.getElementById('farm-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                toggleFarmSection(true);
+                            }
+                        } else if (docType === 'part_k1') {
+                            addPartK1Row(docData);
+                            const toggle = document.getElementById('part-k1-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                togglePartK1Section(true);
+                            }
+                        } else if (docType === 'scorp_k1') {
+                            addScorpK1Row(docData);
+                            const toggle = document.getElementById('scorp-k1-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                toggleScorpK1Section(true);
+                            }
+                        } else if (docType === 'ccorp') {
+                            addCcorpRow(docData);
+                            const toggle = document.getElementById('ccorp-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                toggleCcorpSection(true);
+                            }
+                        } else if (docType === 'trust_k1') {
+                            addTrustK1Row(docData);
+                            const toggle = document.getElementById('trust-k1-has-toggle');
+                            if (toggle && !toggle.checked) {
+                                toggle.checked = true;
+                                toggleTrustK1Section(true);
+                            }
+                        }
+                        closeBizUploadModal();
+                    }, 400);
+                }
+            }, s.t);
+        });
+    };
+
     window.triggerW2Upload = function() {
         const modal = document.getElementById('modal-w2-upload');
         if (modal) {
@@ -8018,6 +8542,73 @@
                 </div>
                 <!-- Status logs -->
                 <div class="p-3 bg-black/50 border border-white/5 rounded-xl text-[9px] font-mono text-white/60 flex flex-col gap-1 leading-normal" id="w2-scan-logs">
+                    <div>Waiting to start...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Business Document OCR File Upload Simulator -->
+<div id="modal-biz-upload" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+            <div class="flex items-center gap-2">
+                <span class="text-sm">⚡</span>
+                <span id="biz-upload-title" class="text-xs font-bold text-white uppercase tracking-wider font-display">Simulated AI Business Doc OCR Reader</span>
+            </div>
+            <button onclick="closeBizUploadModal()" class="text-white/60 hover:text-white text-xs font-bold font-sans">✕</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="p-6 flex flex-col gap-5">
+            <!-- Drag & Drop Zone -->
+            <div id="biz-upload-dropzone" class="border-2 border-dashed border-white/10 hover:border-brandCyan/40 rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-white/5 cursor-pointer transition-all">
+                <input type="file" id="biz-file-input" class="hidden" accept=".pdf,image/*">
+                <div class="w-12 h-12 rounded-full bg-brandCyan/10 flex items-center justify-center text-brandCyan text-lg border border-brandCyan/20">
+                    📂
+                </div>
+                <div class="text-center">
+                    <p id="biz-upload-prompt" class="text-xs font-bold text-white">Drag and drop your tax document (PDF or Image)</p>
+                    <p class="text-[9px] text-white/40 mt-1">Accepts up to 10MB (PDF, PNG, JPG)</p>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div id="biz-upload-divider" class="flex items-center gap-3">
+                <div class="h-px bg-white/5 flex-grow"></div>
+                <span class="text-[8px] font-black uppercase text-white/30 tracking-widest font-mono">Or select a mock template to simulate OCR scan</span>
+                <div class="h-px bg-white/5 flex-grow"></div>
+            </div>
+            
+            <!-- Quick Templates Container -->
+            <div id="biz-upload-templates" class="grid grid-cols-1 gap-2">
+                <!-- Will be dynamically populated by JS -->
+            </div>
+            
+            <!-- Scanning Progress (Hidden by default) -->
+            <div id="biz-scan-loader" class="hidden flex flex-col gap-4 py-4">
+                <div class="flex items-center gap-3">
+                    <!-- Scanner Doc Icon -->
+                    <div class="relative w-10 h-10 bg-brandCyan/5 border border-brandCyan/20 rounded flex items-center justify-center text-lg overflow-hidden shrink-0">
+                        📄
+                        <!-- Scanner Bar -->
+                        <div class="absolute inset-x-0 h-0.5 bg-brandCyan shadow-[0_0_8px_#00E5FF] top-0" style="animation: scanline 1.5s ease-in-out infinite;"></div>
+                    </div>
+                    <div class="flex-grow flex flex-col gap-1">
+                        <div class="flex justify-between items-center text-[9px] font-bold">
+                            <span class="text-brandCyan uppercase tracking-widest font-mono">Running OCR Extract Engine</span>
+                            <span class="text-white/40 font-mono" id="biz-scan-pct">0%</span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-white/5 rounded-full h-1 overflow-hidden border border-white/10">
+                            <div class="bg-brandCyan h-full rounded-full transition-all duration-100" id="biz-scan-progress-bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Status logs -->
+                <div class="p-3 bg-black/50 border border-white/5 rounded-xl text-[9px] font-mono text-white/60 flex flex-col gap-1 leading-normal" id="biz-scan-logs">
                     <div>Waiting to start...</div>
                 </div>
             </div>
