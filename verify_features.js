@@ -82,6 +82,18 @@ class MockElement {
         delete this[name];
     }
     
+    closest(selector) {
+        let current = this;
+        const target = selector.startsWith('.') ? selector.substring(1) : selector;
+        while (current) {
+            if (current.id === target || current.tagName === target || (current.classList && current.classList.contains(target)) || (current.className && current.className.split(/\s+/).includes(target))) {
+                return current;
+            }
+            current = current._parent || null;
+        }
+        return null;
+    }
+    
     querySelector(selector) {
         if (!this._queries) this._queries = {};
         if (!this._queries[selector]) {
@@ -1193,12 +1205,101 @@ function testBusinessTaxation() {
     console.log("  Advanced Business Taxation features verification passed!");
 }
 
+function test1099Compliance() {
+    console.log("\n--- Testing 1099 Form Selector Compliance Panel ---");
+    const code = getScriptCode('C:/Users/saarthak/.gemini/antigravity-ide/scratch/tax-dashboard/layer1_us.html');
+    
+    const doc = new MockDocument();
+    const win = Object.assign({}, mockWindow);
+    const storage = Object.assign({}, mockStorage);
+    storage.clear();
+    
+    const sandbox = {
+        document: doc,
+        window: win,
+        localStorage: storage,
+        crypto: crypto,
+        alert: function(msg) { console.log("ALERT:", msg); },
+        console: console,
+        setTimeout: setTimeout,
+        setInterval: setInterval,
+        Number: Number,
+        parseInt: parseInt,
+        parseFloat: parseFloat,
+        Math: Math,
+        Date: Date,
+        String: String,
+        Object: Object,
+        Array: Array,
+        RegExp: RegExp,
+        tailwind: { config: {} }
+    };
+    
+    vm.createContext(sandbox);
+    const codeWithExports = code + "\n; globalThis.migrate1099Legacy = migrate1099Legacy; globalThis.normalizePartK1Item = normalizePartK1Item; globalThis.normalizeScorpK1Item = normalizeScorpK1Item; globalThis.normalizeCcorpItem = normalizeCcorpItem; globalThis.addPartK1Row = addPartK1Row; globalThis.addScorpK1Row = addScorpK1Row; globalThis.addCcorpRow = addCcorpRow; globalThis.syncPartK1State = syncPartK1State; globalThis.usState = usState;";
+    vm.runInContext(codeWithExports, sandbox, { filename: 'layer1_us.html [Script]' });
+    
+    // 1. Test migrate1099Legacy function
+    console.log("  Testing migrate1099Legacy:");
+    const legacyItem = { requires_1099_filing: true, filed_1099_forms: true };
+    const migrated = sandbox.migrate1099Legacy(legacyItem);
+    console.log("    Migrated legacy output:", migrated);
+    if (!Array.isArray(migrated) || migrated.length !== 1 || migrated[0].form !== '1099-NEC' || migrated[0].filed !== true) {
+        throw new Error("migrate1099Legacy failed to convert legacy 1099 flags");
+    }
+    
+    // 2. Test Normalizer functions
+    console.log("  Testing normalizer schema preservation:");
+    const emptyPart = sandbox.normalizePartK1Item(null);
+    if (!Array.isArray(emptyPart.forms_1099) || emptyPart.forms_1099.length !== 0) {
+        throw new Error("normalizePartK1Item (null) should return empty forms_1099 array");
+    }
+    
+    const populatedPart = sandbox.normalizePartK1Item({
+        requires_1099_filing: true,
+        filed_1099_forms: false
+    });
+    if (!Array.isArray(populatedPart.forms_1099) || populatedPart.forms_1099.length !== 1 || populatedPart.forms_1099[0].form !== '1099-NEC' || populatedPart.forms_1099[0].filed !== false) {
+        throw new Error("normalizePartK1Item failed to preserve/migrate forms_1099");
+    }
+    
+    // Scorp Normalizer
+    const emptyScorp = sandbox.normalizeScorpK1Item(null);
+    if (!Array.isArray(emptyScorp.forms_1099) || emptyScorp.forms_1099.length !== 0) {
+        throw new Error("normalizeScorpK1Item (null) should return empty forms_1099 array");
+    }
+    
+    // C-Corp Normalizer
+    const emptyCcorp = sandbox.normalizeCcorpItem(null);
+    if (!Array.isArray(emptyCcorp.forms_1099) || emptyCcorp.forms_1099.length !== 0) {
+        throw new Error("normalizeCcorpItem (null) should return empty forms_1099 array");
+    }
+
+    // 3. Test DOM restoration and rendering for null data vs populated data
+    console.log("  Testing DOM restoration and row builder population:");
+    sandbox.addPartK1Row(null); // add new blank card
+    const listEl = doc.getElementById('div-part-k1-list');
+    const firstCard = listEl.children[0];
+    const panelHost = firstCard.querySelector('.part-1099-panel-host');
+    if (!panelHost || !panelHost.innerHTML.includes('part-1099-none')) {
+        throw new Error("Blank Partnership card did not render 1099 panel checkboxes with None option");
+    }
+    
+    // Check that 'None' checkbox is checked by default when forms_1099 is empty by looking at innerHTML
+    if (!panelHost.innerHTML.includes('id="part-1099-none-') || !panelHost.innerHTML.includes('checked')) {
+        throw new Error("None checkbox should be checked by default in blank 1099 panel");
+    }
+
+    console.log("  1099 Form Selector Compliance Panel verification passed!");
+}
+
 try {
     testUSSpecialist();
     testIndiaSpecialist();
     testW2Restructuring();
     testSelfEmploymentRestructuring();
     testBusinessTaxation();
+    test1099Compliance();
     console.log("\n=========================================");
     console.log("ALL FEATURES VERIFIED SUCCESSFULLY!");
     console.log("=========================================");
