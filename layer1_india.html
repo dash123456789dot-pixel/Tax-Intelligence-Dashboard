@@ -219,6 +219,51 @@
             </div>
 
             <!-- Profile Parameters -->
+            
+            <!-- Dual Residency Alert Container (Conditionally Visible) -->
+            <div id="dual-residency-alert" class="hidden p-5 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-amber-400 text-xl shrink-0">⚠️</span>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-black text-amber-400 uppercase tracking-widest font-display">Dual Residency Conflict Detected</span>
+                        <span class="text-xs text-white/70 leading-relaxed">
+                            You are classified as a tax resident under both Indian domestic laws (Fiscal Year: Apr–Mar) and US domestic laws (Calendar Year: Jan–Dec). This creates overlapping worldwide tax exposure.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Collapsible Panel 1: DTAA Art. 4 Tie-Breaker -->
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-brandGold">DTAA Article 4 Tie-Breaker</span>
+                        <p class="text-[10px] text-white/50 leading-relaxed">
+                            Under the India-US Treaty, you can resolve dual residency by breaking the tie to one country using these sequential tests: Permanent Home ➔ Center of Vital Interests ➔ Habitual Abode ➔ Nationality. Breaking the tie to the US allows you to file your Indian return as a Non-Resident and claim DTAA benefits.
+                        </p>
+                    </div>
+
+                    <!-- Collapsible Panel 2: Tax Year Mismatch & FTC -->
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-brandGold">Tax Year Mismatch &amp; FTC Apportionment</span>
+                        <p class="text-[10px] text-white/50 leading-relaxed">
+                            If you do not break the tie, you must claim a Foreign Tax Credit (FTC Form 67 / Section 90) to avoid double taxation in India. Because the Indian Fiscal Year (April–March) crosses two US Calendar Years, you must apportion US calendar-year earnings and withholdings to the corresponding Indian fiscal months.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive treaty residence selector -->
+                <div class="pt-2 border-t border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80">Treaty Residence Determination (DTAA Art. 4)</span>
+                        <span class="text-[10px] text-white/30">Select your tax residence for treaty application purposes.</span>
+                    </div>
+                    <select id="sel-dtaa-residence" onchange="onDtaaResidenceChange(this.value)" class="bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all w-full md:w-80">
+                        <option value="none">No Tie-Break / Dual Resident (Worldwide in both + FTC)</option>
+                        <option value="india">Tie-Break to India (File US Form 1040-NR + Form 8833)</option>
+                        <option value="us">Tie-Break to United States (File Indian return as Non-Resident)</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 gap-4 pt-2">
                 <div>
                     <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Permanent Account Number (PAN)</label>
@@ -2674,6 +2719,7 @@
         dtaa: {
             tax_residency_country: null,
             is_us_resident_for_dtaa: null,
+            dtaa_treaty_residence: "none",
             trc_status: false,
             has_permanent_establishment_in_india: false,
             treaty_elections: [],
@@ -3265,6 +3311,12 @@
             }
         }
 
+        if (state.dtaa.dtaa_treaty_residence === 'us') {
+            status = "NR";
+            path = "DTAA Article 4 Treaty Tie-Breaker to United States";
+            scope = "India-source income only (DTAA Article 4 non-resident status).";
+        }
+
         // Apply derived lock
         state.residency_detail.final_india_residency_status = status;
         
@@ -3295,6 +3347,7 @@
 
         // Evaluate NR fields for Unlisted Equity
         if (typeof evaluateUnlistedNRStatus === 'function') evaluateUnlistedNRStatus();
+        checkDualResidencyConflict();
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -3409,6 +3462,82 @@
         const div = document.getElementById('div-pe-alert');
         if (div) div.classList.toggle('hidden', !show);
     }
+
+    function checkDualResidencyConflict() {
+        const lock = state.residency_detail.final_india_residency_status;
+        const isTreatyUS = state.dtaa?.dtaa_treaty_residence === 'us';
+        const isIndiaDomesticResident = (lock === "ROR" || lock === "RNOR" || isTreatyUS);
+        
+        let isUSDomesticResident = false;
+        try {
+            const usStateStr = localStorage.getItem('wising_us_state');
+            if (usStateStr) {
+                const usStateParsed = JSON.parse(usStateStr);
+                const details = usStateParsed?.us_residency_detail;
+                if (details) {
+                    isUSDomesticResident = details.is_us_citizen || 
+                                           (details.has_green_card && !details.i407_surrendered_date) || 
+                                           (details.spt_test_met && !details.closer_connection_claim);
+                }
+            }
+        } catch (e) {
+            console.error("Error evaluating US residency conflict state in India L1:", e);
+        }
+        
+        const alertDiv = document.getElementById('dual-residency-alert');
+        if (alertDiv) {
+            if (isIndiaDomesticResident && isUSDomesticResident) {
+                alertDiv.classList.remove('hidden');
+                const select = document.getElementById('sel-dtaa-residence');
+                if (select) {
+                    select.value = state.dtaa?.dtaa_treaty_residence || 'none';
+                }
+            } else {
+                alertDiv.classList.add('hidden');
+            }
+        }
+    }
+
+    function onDtaaResidenceChange(val) {
+        if (!state.dtaa) state.dtaa = {};
+        state.dtaa.dtaa_treaty_residence = val;
+        
+        try {
+            const usStateStr = localStorage.getItem('wising_us_state');
+            if (usStateStr) {
+                const usState = JSON.parse(usStateStr);
+                if (!usState.us_residency_detail) usState.us_residency_detail = {};
+                usState.us_residency_detail.dtaa_treaty_residence = val;
+                localStorage.setItem('wising_us_state', JSON.stringify(usState));
+            }
+        } catch (e) {
+            console.error("Error syncing DTAA change to US state in India L1:", e);
+        }
+        
+        runResidencySolver();
+        updateJSONOutput();
+    }
+
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'wising_us_state') {
+            const usStateStr = e.newValue;
+            if (usStateStr) {
+                try {
+                    const usStateParsed = JSON.parse(usStateStr);
+                    const newVal = usStateParsed.us_residency_detail ? usStateParsed.us_residency_detail.dtaa_treaty_residence : 'none';
+                    if (state.dtaa.dtaa_treaty_residence !== newVal) {
+                        if (!state.dtaa) state.dtaa = {};
+                        state.dtaa.dtaa_treaty_residence = newVal;
+                        runResidencySolver();
+                        updateJSONOutput();
+                    }
+                } catch (e) {
+                    console.error("Error handling US storage change event in India L1:", e);
+                }
+            }
+            checkDualResidencyConflict();
+        }
+    });
 
     function updateDtaaField(field, val) {
         state.dtaa[field] = val;
@@ -7860,8 +7989,425 @@
     })();
 
     // ═══════════════════════════════════════════════════════════════════════
-    // INITIALIZATION & PREFILL FROM LAYER 0 STATE
+    // STATE DOM RESTORATION
     // ═══════════════════════════════════════════════════════════════════════
+    function restoreBankAccountsDOM() {
+        const list = document.getElementById('div-bank-list');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        if (state.bank_accounts && state.bank_accounts.length > 0) {
+            state.bank_accounts.forEach((acc, idx) => {
+                const rowId = 'bank-restored-' + idx + '-' + Date.now();
+                const div = document.createElement('div');
+                div.id = rowId;
+                div.className = "bank-card bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg";
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-brandGold">Bank Account Details</h3>
+                        <button onclick="removeBankAccountRow('${rowId}')" class="text-[10px] uppercase font-bold tracking-wider text-brandRed/80 hover:text-brandRed transition-colors">Delete Entry</button>
+                    </div>
+                    
+                    <div class="mt-2 border-2 border-dashed border-brandGold/30 bg-brandGold/5 rounded-xl p-4 text-center cursor-pointer hover:bg-brandGold/10 transition-colors relative" onclick="this.querySelector('input').click()">
+                        <span class="text-xs font-bold text-brandGold block mb-1">🏦 Upload Bank Statement / Passbook</span>
+                        <span class="text-[9px] text-brandGold/60">Upload your document to auto-fill these fields</span>
+                        <input type="file" accept=".pdf,image/*" class="hidden" id="${rowId}-upload" onchange="handleBankUpload(event, '${rowId}')">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1">Bank Name</label>
+                            <input type="text" class="bank-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all" placeholder="e.g. HDFC Bank" oninput="syncBankAccountsState()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1 flex items-center gap-1 group relative w-fit">
+                                Account Type
+                                <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </span>
+                                <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                    <strong>Savings</strong>: Standard domestic account.<br>
+                                    <strong>NRO</strong>: Non-Resident Ordinary. Income earned in India (Rent, Interest). Fully taxable.<br>
+                                    <strong>NRE</strong>: Non-Resident External. Foreign income parked in INR. Tax-free interest.<br>
+                                    <strong>FCNR</strong>: Foreign Currency Non-Resident. Foreign currency deposits. Tax-free interest.
+                                </div>
+                            </label>
+                            <select class="bank-type w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all" onchange="toggleBankTypeDependencies('${rowId}')">
+                                <option value="SAVINGS">Savings Account (Resident)</option>
+                                <option value="NRO">NRO Account (Non-Resident Ordinary)</option>
+                                <option value="NRE">NRE Account (Non-Resident External)</option>
+                                <option value="FCNR">FCNR Account (Foreign Currency Deposit)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1">Peak Balance in FY</label>
+                            <div class="flex">
+                                <input type="text" inputmode="numeric" class="inr-input bank-bal w-2/3 bg-[#121212] border border-white/10 rounded-l-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none border-r-0 transition-all font-mono" placeholder="0.00" oninput="syncBankAccountsState()">
+                                <select class="bank-bal-curr w-1/3 bg-[#2A2A2A] border border-white/10 rounded-r-lg text-[10px] text-white px-2 focus:border-brandGold focus:outline-none transition-all" onchange="syncBankAccountsState()">
+                                    <option value="INR">INR</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1 flex items-center gap-1 group relative w-fit">
+                                Interest Credited (INR)
+                                <span class="cursor-help text-white/40 hover:text-white/60 transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </span>
+                                <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-white/5 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                    Provide the total interest amount credited to this account during the financial year.
+                                </div>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-white/40 text-xs">₹</span>
+                                <input type="text" inputmode="numeric" class="inr-input bank-int w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white pl-7 pr-3 py-2.5 focus:border-brandGold focus:outline-none transition-all font-mono" placeholder="0" oninput="syncBankAccountsState()">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-white/60 mb-1 flex items-center gap-1 group relative w-fit">
+                                Interest Rate (%)
+                                <span class="cursor-help text-white/40 hover:text-white/60 transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </span>
+                                <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-white/5 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+                                    Provide the interest rate if you do not know the exact interest amount.
+                                </div>
+                            </label>
+                            <input type="text" inputmode="numeric" step="0.01" class="inr-input bank-rate w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all font-mono" placeholder="e.g. 3.5" oninput="syncBankAccountsState()">
+                            <p class="text-[9px] text-white/30 mt-1">Leave blank if you only know the interest amount credited.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Conditional Dependencies -->
+                    <div class="bank-nre-conversion hidden">
+                        <label class="block text-[10px] text-brandGold mb-1">Conversion Date (If residency changed)</label>
+                        <input type="date" class="bank-nre-date w-full bg-[#1A1A1A] border border-brandGold/30 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all font-mono" onchange="syncBankAccountsState()">
+                        <p class="text-[9px] text-brandGold/60 mt-1">If residency lock changed to RNOR or ROR this FY</p>
+                    </div>
+                    <div class="bank-fcnr-maturity hidden">
+                        <label class="block text-[10px] text-white/60 mb-1">FCNR Maturity Date</label>
+                        <input type="date" class="bank-fcnr-date w-full bg-[#1A1A1A] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all font-mono" onchange="syncBankAccountsState()">
+                    </div>
+                    <div class="bank-nro-balance hidden">
+                        <label class="block text-[10px] text-white/60 mb-1">NRO balance at conversion date</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-white/40 text-xs">₹</span>
+                            <input type="text" inputmode="numeric" class="inr-input bank-nro-bal-input w-full bg-[#1A1A1A] border border-brandGold/30 rounded-lg text-xs text-white pl-7 pr-3 py-2.5 focus:border-brandGold focus:outline-none transition-all font-mono" placeholder="0" oninput="syncBankAccountsState()">
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+                
+                // Populate values in inputs
+                div.querySelector('.bank-name').value = acc.bank_name || '';
+                div.querySelector('.bank-type').value = acc.account_type || 'SAVINGS';
+                div.querySelector('.bank-bal').value = acc.current_balance || '';
+                div.querySelector('.bank-bal-curr').value = acc.current_balance_currency || 'INR';
+                div.querySelector('.bank-rate').value = acc.annual_interest_rate ? (acc.annual_interest_rate * 100).toFixed(2) : '';
+                div.querySelector('.bank-int').value = acc.interest_credited_this_fy_inr || '';
+                
+                toggleBankTypeDependencies(rowId);
+                
+                if (acc.account_type === 'NRE') {
+                    div.querySelector('.bank-nre-date').value = acc.account_conversion_date || '';
+                } else if (acc.account_type === 'FCNR') {
+                    div.querySelector('.bank-fcnr-date').value = acc.fcnr_maturity_date || '';
+                } else if (acc.account_type === 'NRO') {
+                    div.querySelector('.bank-nro-bal-input').value = acc.nro_balance || '';
+                }
+            });
+        }
+        
+        // Restore NRO repatriation inputs if present
+        if (state.nro_repatriation) {
+            const rep = document.getElementById('nro-repat-usd');
+            const pend = document.getElementById('nro-pending-inr');
+            const tds = document.getElementById('nro-tds-deducted');
+            
+            if (rep && state.nro_repatriation.cumulative_repatriated_usd_this_fy !== null) {
+                rep.value = state.nro_repatriation.cumulative_repatriated_usd_this_fy;
+            }
+            if (pend && state.nro_repatriation.pending_repatriation_inr !== null) {
+                pend.value = state.nro_repatriation.pending_repatriation_inr;
+            }
+            if (tds) {
+                tds.checked = state.nro_repatriation.tds_deducted_on_nro_balance || false;
+            }
+        }
+        
+        checkNROAccounts();
+    }
+
+    function restoreIndiaDOMFromState() {
+        // Profile
+        const pan = document.getElementById('prof-pan');
+        if (pan) pan.value = state.profile.pan || '';
+        
+        const aadhaar = document.getElementById('prof-aadhaar-linked');
+        if (aadhaar) aadhaar.checked = state.profile.pan_aadhaar_linked || false;
+        
+        const regime = document.getElementById('prof-regime');
+        if (regime) regime.value = state.profile.tax_regime || 'NEW';
+        
+        // Residency
+        const daysCurr = document.getElementById('res-days-current');
+        if (daysCurr) daysCurr.value = state.residency_detail.days_in_india_current_year || 182;
+        
+        const daysVal = document.getElementById('days-val');
+        if (daysVal) daysVal.value = state.residency_detail.days_in_india_current_year || 182;
+        
+        const p4y = document.getElementById('res-p4y');
+        if (p4y) p4y.value = state.residency_detail.days_in_india_preceding_4_years_gte_365 === null ? 'null' : String(state.residency_detail.days_in_india_preceding_4_years_gte_365);
+        
+        const emp = document.getElementById('res-emp');
+        if (emp) emp.value = state.residency_detail.employment_or_crew_status || 'null';
+        
+        const isDep = document.getElementById('res-is-departure');
+        if (isDep) isDep.value = state.residency_detail.is_departure_year === null ? 'null' : String(state.residency_detail.is_departure_year);
+        
+        const visitor = document.getElementById('res-visitor');
+        if (visitor) visitor.value = state.residency_detail.came_on_visit_to_india_pio_citizen === null ? 'null' : String(state.residency_detail.came_on_visit_to_india_pio_citizen);
+        
+        const nr9 = document.getElementById('res-nr9');
+        if (nr9) nr9.value = state.residency_detail.nr_years_last_10_gte_9 === null ? 'null' : String(state.residency_detail.nr_years_last_10_gte_9);
+        
+        const d7 = document.getElementById('res-d7');
+        if (d7) d7.value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : String(state.residency_detail.days_in_india_last_7_years_lte_729);
+        
+        const inc15 = document.getElementById('res-inc15');
+        if (inc15) inc15.value = state.residency_detail.india_source_income_above_15l === null ? 'null' : String(state.residency_detail.india_source_income_above_15l);
+        
+        syncResidencyUI();
+        
+        // DTAA
+        const country = document.getElementById('dtaa-country');
+        if (country) {
+            country.value = state.dtaa.tax_residency_country || '';
+            toggleUSResidentDtaa(state.dtaa.tax_residency_country);
+        }
+        
+        const usRes = document.getElementById('dtaa-us-resident');
+        if (usRes) usRes.checked = state.dtaa.is_us_resident_for_dtaa || false;
+        
+        const trc = document.getElementById('dtaa-trc');
+        if (trc) {
+            trc.checked = state.dtaa.trc_status || false;
+            toggleTrcUpload(state.dtaa.trc_status);
+        }
+        
+        const pe = document.getElementById('dtaa-pe');
+        if (pe) {
+            pe.checked = state.dtaa.has_permanent_establishment_in_india || false;
+            togglePeAlert(state.dtaa.has_permanent_establishment_in_india);
+        }
+        
+        const selDtaa = document.getElementById('sel-dtaa-residence');
+        if (selDtaa) selDtaa.value = state.dtaa.dtaa_treaty_residence || 'none';
+
+        // Compliance Docs
+        const trcStart = document.getElementById('comp-trc-start');
+        if (trcStart) trcStart.value = state.compliance_docs.trc.validity_start_date || '';
+        
+        const trcEnd = document.getElementById('comp-trc-end');
+        if (trcEnd) trcEnd.value = state.compliance_docs.trc.validity_end_date || '';
+        
+        const filed10f = document.getElementById('comp-10f-filed');
+        if (filed10f) {
+            filed10f.checked = state.compliance_docs.form_10f.is_filed || false;
+            const divAck = document.getElementById('div-10f-ack');
+            if (divAck) {
+                if (state.compliance_docs.form_10f.is_filed) divAck.classList.remove('hidden');
+                else divAck.classList.add('hidden');
+            }
+        }
+        
+        const ack10f = document.getElementById('comp-10f-ack');
+        if (ack10f) ack10f.value = state.compliance_docs.form_10f.ack_number || '';
+        
+        const s197Has = document.getElementById('comp-s197-has');
+        if (s197Has) {
+            s197Has.checked = state.compliance_docs.section_197_cert.is_available || false;
+            const divDet = document.getElementById('div-s197-detail');
+            if (divDet) {
+                if (state.compliance_docs.section_197_cert.is_available) divDet.classList.remove('hidden');
+                else divDet.classList.add('hidden');
+            }
+        }
+        
+        const s197Rate = document.getElementById('comp-s197-rate');
+        if (s197Rate) s197Rate.value = state.compliance_docs.section_197_cert.rate || '';
+        
+        const s197Start = document.getElementById('comp-s197-start');
+        if (s197Start) s197Start.value = state.compliance_docs.section_197_cert.validity_start_date || '';
+        
+        const s197End = document.getElementById('comp-s197-end');
+        if (s197End) s197End.value = state.compliance_docs.section_197_cert.validity_end_date || '';
+        
+        // NPS checkboxes
+        const NPSCheckboxes = document.querySelectorAll('#div-s197-detail input[type="checkbox"]');
+        NPSCheckboxes.forEach(cb => {
+            if (state.compliance_docs.section_197_cert.covered_income_types) {
+                cb.checked = state.compliance_docs.section_197_cert.covered_income_types.includes(cb.value);
+            } else {
+                cb.checked = false;
+            }
+        });
+        
+        const compXiia = document.getElementById('comp-xiia');
+        if (compXiia) compXiia.checked = state.compliance_docs.chapter_xiia_elected || false;
+
+        // Deductions Step
+        const ded80c = state.deductions.s80C;
+        if (ded80c) {
+            const ppf = document.getElementById('ded-ppf'); if (ppf) ppf.value = ded80c.ppf_inr || '';
+            const elss = document.getElementById('ded-elss'); if (elss) elss.value = ded80c.elss_inr || '';
+            const lic = document.getElementById('ded-lic'); if (lic) lic.value = ded80c.life_insurance_premium_inr || '';
+            const hloan = document.getElementById('ded-home-loan'); if (hloan) hloan.value = ded80c.principal_home_loan_inr || '';
+            const nsc = document.getElementById('ded-nsc'); if (nsc) nsc.value = ded80c.nsc_inr || '';
+            const tuit = document.getElementById('ded-tuition'); if (tuit) tuit.value = ded80c.tuition_fees_inr || '';
+            const suk = document.getElementById('ded-sukanya'); if (suk) suk.value = ded80c.sukanya_samriddhi_inr || '';
+            const fd = document.getElementById('ded-taxfd'); if (fd) fd.value = ded80c.tax_saving_fd_inr || '';
+            const stamp = document.getElementById('ded-stamp'); if (stamp) stamp.value = ded80c.stamp_duty_registration_inr || '';
+        }
+        
+        const dedLicAn = document.getElementById('ded-lic-annuity');
+        if (dedLicAn) dedLicAn.value = state.deductions.s80CCC_80CCD1.lic_annuity_premium_inr || '';
+        
+        const dedNps = document.getElementById('ded-nps-employee');
+        if (dedNps) dedNps.value = state.deductions.s80CCC_80CCD1.nps_employee_contribution_inr || '';
+        
+        const s80D = state.deductions.s80D;
+        if (s80D) {
+            const hasD = document.getElementById('ded-80d-has');
+            if (hasD) {
+                hasD.checked = s80D.has_health_insurance || false;
+                sync80DDVisibility('s80D');
+            }
+            const self = document.getElementById('ded-80d-self'); if (self) self.value = s80D.premium_self_spouse_children_inr || '';
+            const parents = document.getElementById('ded-80d-parents'); if (parents) parents.value = s80D.premium_parents_inr || '';
+            const prev = document.getElementById('ded-80d-preventive'); if (prev) prev.value = s80D.preventive_health_checkup_inr || '';
+            const senior = document.getElementById('ded-80d-senior'); if (senior) senior.checked = s80D.parents_are_senior || false;
+            const parentInsurance = document.getElementById('ded-80d-parents-has-insurance'); if (parentInsurance) parentInsurance.checked = s80D.parents_has_health_insurance || false;
+            const parentsMed = document.getElementById('ded-80d-parents-med'); if (parentsMed) parentsMed.value = s80D.parents_medical_expenditure_inr || '';
+        }
+        
+        const s80DD = state.deductions.s80DD;
+        if (s80DD) {
+            const hasDD = document.getElementById('ded-80dd-has');
+            if (hasDD) {
+                hasDD.checked = s80DD.has_disabled_dependents || false;
+                sync80DDVisibility('s80DD');
+            }
+            const lvl = document.getElementById('ded-80dd-percent'); if (lvl) lvl.value = s80DD.disability_percentage || '';
+        }
+        
+        const s80DDB = state.deductions.s80DDB;
+        if (s80DDB) {
+            const hasDDB = document.getElementById('ded-80ddb-has');
+            if (hasDDB) {
+                hasDDB.checked = s80DDB.has_specified_diseases_treatment || false;
+                sync80DDVisibility('s80DDB');
+            }
+            const cat = document.getElementById('ded-80ddb-cat'); if (cat) cat.value = s80DDB.patient_category || '';
+            const exp = document.getElementById('ded-80ddb-expenses'); if (exp) exp.value = s80DDB.medical_expenses_inr || '';
+        }
+        
+        const s80U = state.deductions.s80U;
+        if (s80U) {
+            const hasU = document.getElementById('ded-80u-has');
+            if (hasU) {
+                hasU.checked = s80U.has_self_disability || false;
+                sync80DDVisibility('s80U');
+            }
+            const lvl = document.getElementById('ded-80u-percent'); if (lvl) lvl.value = s80U.disability_percentage || '';
+        }
+        
+        const s80GG = state.deductions.s80GG;
+        if (s80GG) {
+            const hasGG = document.getElementById('ded-80gg-has');
+            if (hasGG) {
+                hasGG.checked = s80GG.has_rent_paid_no_hra || false;
+                const rentDiv = document.getElementById('ded-80gg-rent')?.parentElement;
+                if (rentDiv) {
+                    if (s80GG.has_rent_paid_no_hra) rentDiv.classList.remove('hidden');
+                    else rentDiv.classList.add('hidden');
+                }
+            }
+            const rent = document.getElementById('ded-80gg-rent'); if (rent) rent.value = s80GG.rent_paid_inr || '';
+        }
+        
+        const s80TTA = state.deductions.s80TTA_80TTB;
+        if (s80TTA) {
+            const sav = document.getElementById('ded-80tta-savings'); if (sav) sav.value = s80TTA.savings_interest_inr || '';
+            const fd = document.getElementById('ded-80tta-fd'); if (fd) fd.value = s80TTA.fd_rd_interest_inr || '';
+        }
+        
+        const s80E = state.deductions.s80E;
+        if (s80E) {
+            const interest = document.getElementById('ded-80e'); if (interest) interest.value = s80E.education_loan_interest_inr || '';
+        }
+        
+        const s80EEA = state.deductions.s80EEA;
+        if (s80EEA) {
+            const aff = document.getElementById('ded-80eea'); if (aff) aff.value = s80EEA.affordable_home_loan_interest_inr || '';
+            const sdate = document.getElementById('ded-80eea-date'); if (sdate) sdate.value = s80EEA.loan_sanction_date || '';
+        }
+
+        // LRS Outbound & CF Losses
+        const lrsTot = document.getElementById('lrs-total');
+        if (lrsTot && state.lrs_outbound.total_lrs_remitted_this_fy_inr !== null) {
+            lrsTot.value = state.lrs_outbound.total_lrs_remitted_this_fy_inr;
+        }
+        const lrsPurp = document.getElementById('lrs-purpose');
+        if (lrsPurp && state.lrs_outbound.lrs_purpose !== null) {
+            lrsPurp.value = state.lrs_outbound.lrs_purpose;
+        }
+        const lossU = document.getElementById('loss-unadep');
+        if (lossU && state.carry_forward_losses.unabsorbed_depreciation_cf !== null) {
+            lossU.value = state.carry_forward_losses.unabsorbed_depreciation_cf;
+        }
+        const lossUA = document.getElementById('loss-unadep-additional');
+        if (lossUA && state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr !== null) {
+            lossUA.value = state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr;
+        }
+
+        // Tax Credits
+        const crdTds = document.getElementById('crd-tds');
+        if (crdTds && state.tax_credits.tds_already_deducted_inr !== null) {
+            crdTds.value = state.tax_credits.tds_already_deducted_inr;
+        }
+        const crdQ1 = document.getElementById('crd-q1');
+        if (crdQ1 && state.tax_credits.advance_tax_q1_15jun_inr !== null) {
+            crdQ1.value = state.tax_credits.advance_tax_q1_15jun_inr;
+        }
+        const crdQ2 = document.getElementById('crd-q2');
+        if (crdQ2 && state.tax_credits.advance_tax_q2_15sep_inr !== null) {
+            crdQ2.value = state.tax_credits.advance_tax_q2_15sep_inr;
+        }
+        const crdQ3 = document.getElementById('crd-q3');
+        if (crdQ3 && state.tax_credits.advance_tax_q3_15dec_inr !== null) {
+            crdQ3.value = state.tax_credits.advance_tax_q3_15dec_inr;
+        }
+        const crdQ4 = document.getElementById('crd-q4');
+        if (crdQ4 && state.tax_credits.advance_tax_q4_15mar_inr !== null) {
+            crdQ4.value = state.tax_credits.advance_tax_q4_15mar_inr;
+        }
+        const crd26AS = document.getElementById('crd-26as-uploaded');
+        if (crd26AS) crd26AS.checked = state.tax_credits.form_26as_uploaded || false;
+        
+        // Restore Dynamic lists/cards
+        restoreBankAccountsDOM();
+        renderDtaaElections();
+        renderLossCards();
+        renderLrsRows();
+        renderFtcRows();
+        renderHouseProperties();
+    }
+
     window.onload = function() {
         const routerStr = localStorage.getItem('wising_router_state');
         if (!routerStr) {
@@ -7871,6 +8417,55 @@
         }
         
         const rData = JSON.parse(routerStr);
+
+        // Load saved L1 India state if exists
+        const savedIndiaStateStr = localStorage.getItem('wising_layer1_india_state');
+        if (savedIndiaStateStr) {
+            try {
+                const savedState = JSON.parse(savedIndiaStateStr);
+                // Merge states
+                if (savedState.profile) Object.assign(state.profile, savedState.profile);
+                if (savedState.residency_detail) Object.assign(state.residency_detail, savedState.residency_detail);
+                if (savedState.dtaa) Object.assign(state.dtaa, savedState.dtaa);
+                if (savedState.compliance_docs) {
+                    if (savedState.compliance_docs.trc) Object.assign(state.compliance_docs.trc, savedState.compliance_docs.trc);
+                    if (savedState.compliance_docs.form_10f) Object.assign(state.compliance_docs.form_10f, savedState.compliance_docs.form_10f);
+                    if (savedState.compliance_docs.section_197_cert) Object.assign(state.compliance_docs.section_197_cert, savedState.compliance_docs.section_197_cert);
+                    state.compliance_docs.chapter_xiia_elected = savedState.compliance_docs.chapter_xiia_elected;
+                }
+                if (savedState.bank_accounts) state.bank_accounts = savedState.bank_accounts;
+                if (savedState.property) Object.assign(state.property, savedState.property);
+                if (savedState.financial_holdings) Object.assign(state.financial_holdings, savedState.financial_holdings);
+                if (savedState.commodities) Object.assign(state.commodities, savedState.commodities);
+                if (savedState.unlisted_equity) Object.assign(state.unlisted_equity, savedState.unlisted_equity);
+                if (savedState.carry_forward_losses) Object.assign(state.carry_forward_losses, savedState.carry_forward_losses);
+                if (savedState.tax_credits) Object.assign(state.tax_credits, savedState.tax_credits);
+                if (savedState.deductions) {
+                    for (const key in savedState.deductions) {
+                        if (state.deductions[key] && typeof savedState.deductions[key] === 'object') {
+                            Object.assign(state.deductions[key], savedState.deductions[key]);
+                        } else {
+                            state.deductions[key] = savedState.deductions[key];
+                        }
+                    }
+                }
+                if (savedState.domestic_income) {
+                    for (const key in savedState.domestic_income) {
+                        if (state.domestic_income[key] && typeof savedState.domestic_income[key] === 'object') {
+                            Object.assign(state.domestic_income[key], savedState.domestic_income[key]);
+                        } else {
+                            state.domestic_income[key] = savedState.domestic_income[key];
+                        }
+                    }
+                }
+                if (savedState.lrs_outbound) Object.assign(state.lrs_outbound, savedState.lrs_outbound);
+                if (savedState.gift_received) Object.assign(state.gift_received, savedState.gift_received);
+                if (savedState.salary_exemptions) Object.assign(state.salary_exemptions, savedState.salary_exemptions);
+                if (savedState.other_exemptions) Object.assign(state.other_exemptions, savedState.other_exemptions);
+            } catch (e) {
+                console.error("Error loading saved India L1 state:", e);
+            }
+        }
 
         // Gating switcher to Dual Jurisdiction only
         if (rData.jurisdiction !== 'dual') {
@@ -7884,7 +8479,8 @@
             if (sidebarLinkIndia) sidebarLinkIndia.classList.add('hidden');
             if (sidebarLinkUs) sidebarLinkUs.classList.add('hidden');
         }
-        // Prefill Name and DOB from Layer 0 state
+        
+        // Prefill Name and DOB from Layer 0 state (always takes precedence)
         if (rData.full_name) {
             state.profile.full_name = rData.full_name;
         }
@@ -7893,23 +8489,23 @@
             if (typeof derive80TTASection === 'function') derive80TTASection();
         }
 
-        // Prefill days & citizen gating from Layer 0 determinations!
-        if (rData.india_days !== null) {
-            state.residency_detail.days_in_india_current_year = rData.india_days;
-            document.getElementById('res-days-current').value = rData.india_days;
-            document.getElementById('days-val').value = rData.india_days;
+        // Prefill days & citizen gating from Layer 0 determinations if not already in state
+        if (state.residency_detail.days_in_india_current_year === undefined || state.residency_detail.days_in_india_current_year === null || !savedIndiaStateStr) {
+            if (rData.india_days !== null) {
+                state.residency_detail.days_in_india_current_year = rData.india_days;
+            }
         }
-        if (rData.left_india_for_employment_this_year === true) {
+        if (rData.left_india_for_employment_this_year === true && !savedIndiaStateStr) {
             state.residency_detail.employment_or_crew_status = "employed_abroad";
-            document.getElementById('res-emp').value = "employed_abroad";
         }
-        if (rData.is_indian_citizen === true) {
-            // Liable to tax check
+        if (rData.is_indian_citizen === true && !savedIndiaStateStr) {
             state.residency_detail.india_source_income_above_15l = rData.has_india_source_income_or_assets === true;
-            document.getElementById('res-inc15').value = rData.has_india_source_income_or_assets ? 'true' : 'false';
         }
 
-        // Initialize display
+        // Restore DOM inputs from the merged state
+        restoreIndiaDOMFromState();
+
+        // Initialize display and solvers
         runResidencySolver();
         renderDtaaElections();
         
@@ -7921,7 +8517,7 @@
         }
         if (state.lrs_outbound.total_lrs_remitted_this_fy_inr !== null) {
             const input = document.getElementById('lrs-total');
-            if (input) input.value = state.lrs_outbound.total_lrs_remitted_this_fy_inr.toLocaleString('en-IN');
+            if (input) input.value = state.lrs_outbound.total_lrs_remitted_this_fy_inr;
         }
         if (state.lrs_outbound.lrs_purpose !== null) {
             const input = document.getElementById('lrs-purpose');
@@ -7929,11 +8525,11 @@
         }
         if (state.carry_forward_losses.unabsorbed_depreciation_cf !== null) {
             const input = document.getElementById('loss-unadep');
-            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_cf.toLocaleString('en-IN');
+            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_cf;
         }
         if (state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr !== null) {
             const input = document.getElementById('loss-unadep-additional');
-            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr.toLocaleString('en-IN');
+            if (input) input.value = state.carry_forward_losses.unabsorbed_depreciation_attributable_to_additional_dep_inr;
         }
         if (typeof syncUnabsorbedDepWarnings === 'function') {
             syncUnabsorbedDepWarnings();
@@ -7950,23 +8546,23 @@
         }
         if (state.tax_credits.tds_already_deducted_inr !== null) {
             const input = document.getElementById('crd-tds');
-            if (input) input.value = state.tax_credits.tds_already_deducted_inr.toLocaleString('en-IN');
+            if (input) input.value = state.tax_credits.tds_already_deducted_inr;
         }
         if (state.tax_credits.advance_tax_q1_15jun_inr !== null) {
             const input = document.getElementById('crd-q1');
-            if (input) input.value = state.tax_credits.advance_tax_q1_15jun_inr.toLocaleString('en-IN');
+            if (input) input.value = state.tax_credits.advance_tax_q1_15jun_inr;
         }
         if (state.tax_credits.advance_tax_q2_15sep_inr !== null) {
             const input = document.getElementById('crd-q2');
-            if (input) input.value = state.tax_credits.advance_tax_q2_15sep_inr.toLocaleString('en-IN');
+            if (input) input.value = state.tax_credits.advance_tax_q2_15sep_inr;
         }
         if (state.tax_credits.advance_tax_q3_15dec_inr !== null) {
             const input = document.getElementById('crd-q3');
-            if (input) input.value = state.tax_credits.advance_tax_q3_15dec_inr.toLocaleString('en-IN');
+            if (input) input.value = state.tax_credits.advance_tax_q3_15dec_inr;
         }
         if (state.tax_credits.advance_tax_q4_15mar_inr !== null) {
             const input = document.getElementById('crd-q4');
-            if (input) input.value = state.tax_credits.advance_tax_q4_15mar_inr.toLocaleString('en-IN');
+            if (input) input.value = state.tax_credits.advance_tax_q4_15mar_inr;
         }
         if (state.tax_credits.form_26as_uploaded !== null) {
             const checkbox = document.getElementById('crd-26as-uploaded');
