@@ -85,6 +85,21 @@
         opacity: 0.35;
         cursor: not-allowed;
     }
+
+    /* Alignment & Label Uniformity for dynamic forms */
+    .farm-card label,
+    .se-card label,
+    .part-k1-card label,
+    .scorp-k1-card label,
+    .ccorp-card label,
+    .trust-k1-card label,
+    .asset-row label {
+        height: 26px !important;
+        display: flex !important;
+        align-items: flex-end !important;
+        margin-bottom: 4px !important;
+        line-height: 1.1 !important;
+    }
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -4722,7 +4737,7 @@
         
         const rowId = 'state-sale-' + Date.now() + Math.random().toString(36).substring(2, 5);
         const div = document.createElement('div');
-        div.className = 'state-sale-row grid grid-cols-12 gap-3 items-center bg-black/30 border border-white/5 rounded-lg p-2 mt-2';
+        div.className = 'state-sale-row grid grid-cols-12 gap-3 items-end bg-black/30 border border-white/5 rounded-lg p-2 mt-2';
         div.dataset.rowId = rowId;
         
         const states = [
@@ -4745,8 +4760,8 @@
                 <label class="block text-[7px] font-black uppercase tracking-widest text-white/40 mb-0.5">Allocated Gross Receipts (USD)</label>
                 <input type="number" class="state-gross-receipts w-full bg-[#121212] border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Amount" oninput="syncStateAllocationsState('${type}')">
             </div>
-            <div class="col-span-2 text-right mt-3">
-                <button type="button" onclick="removeStateSaleRow(this, '${type}')" class="text-brandRed/60 hover:text-brandRed font-bold font-sans text-xs p-1">✕</button>
+            <div class="col-span-2 text-right">
+                <button type="button" onclick="removeStateSaleRow(this, '${type}')" class="text-brandRed/60 hover:text-brandRed font-bold font-sans text-xs p-1 pb-1.5">✕</button>
             </div>
         `;
         container.appendChild(div);
@@ -4805,7 +4820,7 @@
             </div>
 
             <!-- Row 2: Financials & Deduction Preview -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end border-t border-white/5 pt-2">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 border-t border-white/5 pt-2">
                 <div class="md:col-span-3">
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Cost Basis (USD)</label>
                     <input type="number" class="asset-cost w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Cost" oninput="syncAssetRowState('${type}')">
@@ -4815,15 +4830,15 @@
                     <input type="number" class="asset-sec179 w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Sec 179" oninput="syncAssetRowState('${type}')">
                 </div>
                 <div class="md:col-span-3">
-                    <div class="flex items-center justify-between px-3 py-1.5 bg-black/20 border border-white/5 rounded-lg h-[34px]" title="Check to claim 20% Bonus Depreciation on the remaining basis after Section 179.">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">Bonus Depr (20%)?</span>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Check to claim 20% Bonus Depreciation on the remaining basis after Section 179.">Bonus Depr (20%)?</label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
                         <input type="checkbox" class="asset-bonus rounded bg-[#181818] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncAssetRowState('${type}')">
-                    </div>
+                    </label>
                 </div>
                 <div class="md:col-span-3">
-                    <div class="flex flex-col justify-center px-3 py-1 bg-brandCyan/5 border border-brandCyan/20 rounded-lg h-[34px]">
-                        <span class="text-[7px] font-black uppercase tracking-widest text-brandCyan/80 leading-none mb-0.5">Yr 1 Deduction</span>
-                        <span class="font-mono text-xs font-bold text-brandCyan asset-depr-preview leading-none">$0.00</span>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Yr 1 Deduction</label>
+                    <div class="flex items-center justify-center bg-brandCyan/5 border border-brandCyan/20 rounded-lg h-[29px] font-mono text-xs font-bold text-brandCyan asset-depr-preview">
+                        $0.00
                     </div>
                 </div>
             </div>
@@ -4920,6 +4935,7 @@
             id: 'se-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: null,
             naics_code: null,
+            industry_category: null,
             has_se_income: false,
             gross_receipts_usd: null,
             expenses_usd: null,
@@ -4947,6 +4963,7 @@
             id: item.id || 'se-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             has_se_income: item.has_se_income !== undefined ? !!item.has_se_income : true,
             gross_receipts_usd: item.gross_receipts_usd !== undefined ? item.gross_receipts_usd : null,
             expenses_usd: item.expenses_usd !== undefined ? item.expenses_usd : null,
@@ -5002,7 +5019,31 @@
             </div>
 
             <!-- Row 2: Financials & Tax Toggles -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="se-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'se')">
+                        <option value="">-- Select Industry --</option>
+                        <option value="retail">Retail / E-Commerce (Eligible)</option>
+                        <option value="manufacturing">Manufacturing (Eligible)</option>
+                        <option value="construction">Construction / Trade (Eligible)</option>
+                        <option value="real_estate">Real Estate / Agent (Eligible)</option>
+                        <option value="architecture">Architectural (Eligible)</option>
+                        <option value="engineering">Engineering (Eligible)</option>
+                        <option value="technology">Software / Tech (Eligible)</option>
+                        <option value="health">Health / Medical (SSTB)</option>
+                        <option value="law">Law Firm / Legal (SSTB)</option>
+                        <option value="accounting">Accounting / Tax (SSTB)</option>
+                        <option value="consulting">Consulting / Advice (SSTB)</option>
+                        <option value="performing_arts">Performing Arts (SSTB)</option>
+                        <option value="athletics">Athletics / Sports (SSTB)</option>
+                        <option value="financial_services">Financial Services (SSTB)</option>
+                        <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                        <option value="trading">Trading Securities (SSTB)</option>
+                        <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                        <option value="other_sstb">Other Services (SSTB)</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Receipts (USD)</label>
                     <input type="number" class="se-gross w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
@@ -5011,13 +5052,17 @@
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Expenses (USD)</label>
                     <input type="number" class="se-expenses w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="se-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="se-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                    </label>
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                    <input type="checkbox" class="se-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="se-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                    </label>
                 </div>
             </div>
 
@@ -5070,13 +5115,17 @@
 
                 <!-- Form 1099 Compliance Questions -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</span>
-                        <input type="checkbox" class="se-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'se'); syncSeState()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="se-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'se'); syncSeState()">
+                        </label>
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] se-filed-1099-container hidden">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</span>
-                        <input type="checkbox" class="se-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                    <div class="se-filed-1099-container hidden">
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="se-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                        </label>
                     </div>
                 </div>
 
@@ -5142,6 +5191,7 @@
         if (data) {
             div.querySelector('.se-business-name').value = data.business_name || '';
             div.querySelector('.se-naics-code').value = data.naics_code || '';
+            div.querySelector('.se-industry-category').value = data.industry_category || '';
             div.querySelector('.se-gross').value = data.gross_receipts_usd || '';
             div.querySelector('.se-expenses').value = data.expenses_usd || '';
             div.querySelector('.se-qbi').checked = !!data.qbi_eligible;
@@ -5253,6 +5303,7 @@
                 id: div.id,
                 business_name: div.querySelector('.se-business-name').value || null,
                 naics_code: div.querySelector('.se-naics-code').value || null,
+                industry_category: div.querySelector('.se-industry-category').value || null,
                 has_se_income: toggleChecked,
                 gross_receipts_usd: parseFloat(div.querySelector('.se-gross').value) || null,
                 expenses_usd: parseFloat(div.querySelector('.se-expenses').value) || null,
@@ -5295,6 +5346,7 @@
             business_name: null,
             ein: null,
             naics_code: null,
+            industry_category: null,
             gross_income_usd: null,
             expenses_usd: null,
             qbi_eligible: false,
@@ -5313,6 +5365,7 @@
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             gross_income_usd: item.gross_income_usd !== undefined ? item.gross_income_usd : null,
             expenses_usd: item.expenses_usd !== undefined ? item.expenses_usd : null,
             qbi_eligible: !!item.qbi_eligible,
@@ -5363,7 +5416,32 @@
                     <input type="text" maxlength="6" class="farm-naics w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="111100" oninput="validateNaics(this); syncFarmState()">
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="farm-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'farm')">
+                        <option value="">-- Select Industry --</option>
+                        <option value="farming" selected>Farming / Agriculture (Eligible)</option>
+                        <option value="retail">Retail / E-Commerce (Eligible)</option>
+                        <option value="manufacturing">Manufacturing (Eligible)</option>
+                        <option value="construction">Construction / Trade (Eligible)</option>
+                        <option value="real_estate">Real Estate / Agent (Eligible)</option>
+                        <option value="architecture">Architectural (Eligible)</option>
+                        <option value="engineering">Engineering (Eligible)</option>
+                        <option value="technology">Software / Tech (Eligible)</option>
+                        <option value="health">Health / Medical (SSTB)</option>
+                        <option value="law">Law Firm / Legal (SSTB)</option>
+                        <option value="accounting">Accounting / Tax (SSTB)</option>
+                        <option value="consulting">Consulting / Advice (SSTB)</option>
+                        <option value="performing_arts">Performing Arts (SSTB)</option>
+                        <option value="athletics">Athletics / Sports (SSTB)</option>
+                        <option value="financial_services">Financial Services (SSTB)</option>
+                        <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                        <option value="trading">Trading Securities (SSTB)</option>
+                        <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                        <option value="other_sstb">Other Services (SSTB)</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Agricultural Income (USD)</label>
                     <input type="number" class="farm-gross w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
@@ -5372,13 +5450,17 @@
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Farming Expenses (USD)</label>
                     <input type="number" class="farm-expenses w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="farm-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="farm-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                    </label>
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                    <input type="checkbox" class="farm-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="farm-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                    </label>
                 </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
@@ -5412,13 +5494,17 @@
 
                 <!-- Form 1099 Compliance Questions -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</span>
-                        <input type="checkbox" class="farm-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'farm'); syncFarmState()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="farm-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'farm'); syncFarmState()">
+                        </label>
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] farm-filed-1099-container hidden">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</span>
-                        <input type="checkbox" class="farm-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                    <div class="farm-filed-1099-container hidden">
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="farm-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                        </label>
                     </div>
                 </div>
 
@@ -5445,6 +5531,7 @@
             div.querySelector('.farm-name').value = data.business_name || '';
             div.querySelector('.farm-ein').value = data.ein || '';
             div.querySelector('.farm-naics').value = data.naics_code || '';
+            div.querySelector('.farm-industry-category').value = data.industry_category || 'farming';
             div.querySelector('.farm-gross').value = data.gross_income_usd || '';
             div.querySelector('.farm-expenses').value = data.expenses_usd || '';
             div.querySelector('.farm-qbi').checked = !!data.qbi_eligible;
@@ -5517,6 +5604,7 @@
                 business_name: div.querySelector('.farm-name').value || null,
                 ein: div.querySelector('.farm-ein').value || null,
                 naics_code: div.querySelector('.farm-naics').value || null,
+                industry_category: div.querySelector('.farm-industry-category').value || 'farming',
                 has_farm_income: toggleChecked,
                 gross_income_usd: parseFloat(div.querySelector('.farm-gross').value) || null,
                 expenses_usd: parseFloat(div.querySelector('.farm-expenses').value) || null,
@@ -5546,7 +5634,7 @@
     function normalizePartK1Item(item) {
         if (!item) return {
             id: 'part-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, naics_code: null, partner_type: 'limited',
+            business_name: null, ein: null, naics_code: null, industry_category: null, partner_type: 'limited',
             material_participation: 'active', tax_basis_usd: null,
             at_risk_basis_usd: null, active_rental_participant: false,
             ordinary_income_usd: null, net_rental_real_estate_usd: null, sec179_deduction_usd: null,
@@ -5565,6 +5653,7 @@
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             partner_type: item.partner_type || 'limited',
             material_participation: item.material_participation || 'active',
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
@@ -5698,25 +5787,56 @@
                         <input type="number" class="part-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-3 items-center font-sans">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                        <input type="checkbox" class="part-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
-                    </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="part-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
-                    </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">Active Rental Participant?</span>
-                        <input type="checkbox" class="part-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                        <select class="part-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'part')">
+                            <option value="">-- Select Industry --</option>
+                            <option value="retail">Retail / E-Commerce (Eligible)</option>
+                            <option value="manufacturing">Manufacturing (Eligible)</option>
+                            <option value="construction">Construction / Trade (Eligible)</option>
+                            <option value="farming">Farming / Agriculture (Eligible)</option>
+                            <option value="real_estate">Real Estate / Rental (Eligible)</option>
+                            <option value="architecture">Architectural (Eligible)</option>
+                            <option value="engineering">Engineering (Eligible)</option>
+                            <option value="technology">Software / Tech (Eligible)</option>
+                            <option value="health">Health / Medical (SSTB)</option>
+                            <option value="law">Law Firm / Legal (SSTB)</option>
+                            <option value="accounting">Accounting / Tax (SSTB)</option>
+                            <option value="consulting">Consulting / Advice (SSTB)</option>
+                            <option value="performing_arts">Performing Arts (SSTB)</option>
+                            <option value="athletics">Athletics / Sports (SSTB)</option>
+                            <option value="financial_services">Financial Services (SSTB)</option>
+                            <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                            <option value="trading">Trading Securities (SSTB)</option>
+                            <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                            <option value="other_sstb">Other Services (SSTB)</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">W-2 Wages (Box 20V)</label>
                         <input type="number" class="part-qbi-wages w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity UBIA (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">UBIA (Box 20V)</label>
                         <input type="number" class="part-qbi-ubia w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
@@ -5807,6 +5927,7 @@
             div.querySelector('.part-name').value = data.business_name || '';
             div.querySelector('.part-ein').value = data.ein || '';
             div.querySelector('.part-naics').value = data.naics_code || '';
+            div.querySelector('.part-industry-category').value = data.industry_category || '';
             div.querySelector('.part-partner-type').value = data.partner_type || 'limited';
             div.querySelector('.part-participation').value = data.material_participation || 'active';
             div.querySelector('.part-basis').value = data.tax_basis_usd || '';
@@ -5876,6 +5997,7 @@
                 business_name: div.querySelector('.part-name').value || null,
                 ein: div.querySelector('.part-ein').value || null,
                 naics_code: div.querySelector('.part-naics').value || null,
+                industry_category: div.querySelector('.part-industry-category').value || null,
                 has_part_income: toggleChecked,
                 partner_type: div.querySelector('.part-partner-type').value || 'limited',
                 material_participation: div.querySelector('.part-participation').value || 'active',
@@ -5926,7 +6048,7 @@
     function normalizeScorpK1Item(item) {
         if (!item) return {
             id: 'scorp-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, naics_code: null, ownership_percent: null,
+            business_name: null, ein: null, naics_code: null, industry_category: null, ownership_percent: null,
             material_participation: 'active', tax_basis_usd: null,
             at_risk_basis_usd: null, active_rental_participant: false,
             ordinary_income_usd: null, net_rental_real_estate_usd: null, sec179_deduction_usd: null,
@@ -5942,6 +6064,7 @@
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             ownership_percent: item.ownership_percent !== undefined ? item.ownership_percent : null,
             material_participation: item.material_participation || 'active',
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
@@ -6060,18 +6183,49 @@
                         <input type="number" class="scorp-box8a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-3 items-center font-sans">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                        <input type="checkbox" class="scorp-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                        <select class="scorp-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'scorp')">
+                            <option value="">-- Select Industry --</option>
+                            <option value="retail">Retail / E-Commerce (Eligible)</option>
+                            <option value="manufacturing">Manufacturing (Eligible)</option>
+                            <option value="construction">Construction / Trade (Eligible)</option>
+                            <option value="farming">Farming / Agriculture (Eligible)</option>
+                            <option value="real_estate">Real Estate / Rental (Eligible)</option>
+                            <option value="architecture">Architectural (Eligible)</option>
+                            <option value="engineering">Engineering (Eligible)</option>
+                            <option value="technology">Software / Tech (Eligible)</option>
+                            <option value="health">Health / Medical (SSTB)</option>
+                            <option value="law">Law Firm / Legal (SSTB)</option>
+                            <option value="accounting">Accounting / Tax (SSTB)</option>
+                            <option value="consulting">Consulting / Advice (SSTB)</option>
+                            <option value="performing_arts">Performing Arts (SSTB)</option>
+                            <option value="athletics">Articles / Sports (SSTB)</option>
+                            <option value="financial_services">Financial Services (SSTB)</option>
+                            <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                            <option value="trading">Trading Securities (SSTB)</option>
+                            <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                            <option value="other_sstb">Other Services (SSTB)</option>
+                        </select>
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="scorp-sstb rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">Active Rental Participant?</span>
-                        <input type="checkbox" class="scorp-rental-active rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-sstb rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental Participant?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-rental-active rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
                     </div>
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages (Box 17V)</label>
@@ -6098,6 +6252,7 @@
             div.querySelector('.scorp-name').value = data.business_name || '';
             div.querySelector('.scorp-ein').value = data.ein || '';
             div.querySelector('.scorp-naics').value = data.naics_code || '';
+            div.querySelector('.scorp-industry-category').value = data.industry_category || '';
             div.querySelector('.scorp-percent').value = data.ownership_percent || '';
             div.querySelector('.scorp-participation').value = data.material_participation || 'active';
             div.querySelector('.scorp-basis').value = data.tax_basis_usd || '';
@@ -6112,6 +6267,7 @@
             div.querySelector('.scorp-box8a').value = data.ltcg_usd || '';
             div.querySelector('.scorp-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.scorp-sstb').checked = !!data.is_specified_service_trade;
+            div.querySelector('.scorp-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.scorp-qbi-wages').value = data.qbi_wages_usd || '';
             div.querySelector('.scorp-qbi-ubia').value = data.qbi_ubia_usd || '';
 
@@ -6151,6 +6307,7 @@
                 business_name: div.querySelector('.scorp-name').value || null,
                 ein: div.querySelector('.scorp-ein').value || null,
                 naics_code: div.querySelector('.scorp-naics').value || null,
+                industry_category: div.querySelector('.scorp-industry-category').value || null,
                 has_scorp_income: toggleChecked,
                 ownership_percent: parseFloat(div.querySelector('.scorp-percent').value) || null,
                 material_participation: div.querySelector('.scorp-participation').value || 'active',
@@ -6186,7 +6343,7 @@
     function normalizeCcorpItem(item) {
         if (!item) return {
             id: 'ccorp-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, gross_receipts_usd: null, cogs_usd: null,
+            business_name: null, ein: null, industry_category: null, gross_receipts_usd: null, cogs_usd: null,
             operating_expenses_usd: null, nol_carryover_usd: null, dividends_paid_usd: null,
             dividend_type: 'qualified', is_qsbs: false,
             state_allocations: [],
@@ -6196,6 +6353,7 @@
             id: item.id || 'ccorp-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
+            industry_category: item.industry_category || null,
             gross_receipts_usd: item.gross_receipts_usd !== undefined ? item.gross_receipts_usd : null,
             cogs_usd: item.cogs_usd !== undefined ? item.cogs_usd : null,
             operating_expenses_usd: item.operating_expenses_usd !== undefined ? item.operating_expenses_usd : null,
@@ -6225,7 +6383,7 @@
         div.className = "ccorp-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
         div.innerHTML = `
             <button type="button" onclick="removeCcorpRow('${rowId}')" class="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">✕</button>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pr-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8">
                 <div class="md:col-span-2">
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">C-Corporation Name</label>
                     <input type="text" class="ccorp-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" placeholder="e.g. Enterprise Inc" oninput="syncCcorpState()">
@@ -6233,6 +6391,31 @@
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">EIN</label>
                     <input type="text" class="ccorp-ein w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="12-3456789" oninput="syncCcorpState()">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="ccorp-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncCcorpState()">
+                        <option value="">-- Select Industry --</option>
+                        <option value="retail">Retail / E-Commerce</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="construction">Construction / Trade</option>
+                        <option value="farming">Farming / Agriculture</option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="architecture">Architectural</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="technology">Software / Tech</option>
+                        <option value="health">Health / Medical</option>
+                        <option value="law">Law Firm / Legal</option>
+                        <option value="accounting">Accounting / Tax</option>
+                        <option value="consulting">Consulting / Advice</option>
+                        <option value="performing_arts">Performing Arts</option>
+                        <option value="athletics">Athletics / Sports</option>
+                        <option value="financial_services">Financial Services</option>
+                        <option value="investing">Investing / Asset Mgmt</option>
+                        <option value="trading">Trading Securities</option>
+                        <option value="other_eligible">Other Trade</option>
+                        <option value="other_sstb">Other Services</option>
+                    </select>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -6292,6 +6475,7 @@
         if (data) {
             div.querySelector('.ccorp-name').value = data.business_name || '';
             div.querySelector('.ccorp-ein').value = data.ein || '';
+            div.querySelector('.ccorp-industry-category').value = data.industry_category || '';
             div.querySelector('.ccorp-gross').value = data.gross_receipts_usd || '';
             div.querySelector('.ccorp-cogs').value = data.cogs_usd || '';
             div.querySelector('.ccorp-opex').value = data.operating_expenses_usd || '';
@@ -6382,6 +6566,7 @@
                 id: div.id,
                 business_name: div.querySelector('.ccorp-name').value || null,
                 ein: div.querySelector('.ccorp-ein').value || null,
+                industry_category: div.querySelector('.ccorp-industry-category').value || null,
                 has_ccorp: toggleChecked,
                 gross_receipts_usd: gross || null,
                 cogs_usd: cogs || null,
@@ -6472,8 +6657,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="trust-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1 text-[9px] font-normal font-sans">ⓘ</span></span>
+                    <input type="checkbox" class="trust-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
                 </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
@@ -6503,10 +6688,12 @@
                         <input type="number" class="trust-ltcg w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 items-center font-sans">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">Active Rental Participant?</span>
-                        <input type="checkbox" class="trust-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental Participant?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="trust-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                        </label>
                     </div>
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Net Rental Real Estate (Box 7)</label>
@@ -6516,9 +6703,11 @@
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Depreciation Allocation (Box 9a)</label>
                         <input type="number" class="trust-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="trust-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="trust-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                        </label>
                     </div>
                 </div>
 
@@ -9625,6 +9814,71 @@
             }, s.t);
         });
     };
+
+    function openQbiSstbModal(tab) {
+        const modal = document.getElementById('modal-qbi-sstb-guide');
+        if (modal) {
+            modal.classList.remove('hidden');
+            switchQbiSstbTab(tab);
+        }
+    }
+    function closeQbiSstbModal() {
+        const modal = document.getElementById('modal-qbi-sstb-guide');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+    function switchQbiSstbTab(tab) {
+        const qbiTab = document.getElementById('tab-qbi');
+        const sstbTab = document.getElementById('tab-sstb');
+        const qbiContent = document.getElementById('content-qbi');
+        const sstbContent = document.getElementById('content-sstb');
+        
+        if (tab === 'qbi') {
+            qbiTab.classList.add('border-brandCyan', 'text-brandCyan');
+            qbiTab.classList.remove('border-transparent', 'text-white/40');
+            sstbTab.classList.remove('border-brandCyan', 'text-brandCyan');
+            sstbTab.classList.add('border-transparent', 'text-white/40');
+            
+            qbiContent.classList.remove('hidden');
+            sstbContent.classList.add('hidden');
+        } else {
+            sstbTab.classList.add('border-brandCyan', 'text-brandCyan');
+            sstbTab.classList.remove('border-transparent', 'text-white/40');
+            qbiTab.classList.remove('border-brandCyan', 'text-brandCyan');
+            qbiTab.classList.add('border-transparent', 'text-white/40');
+            
+            sstbContent.classList.remove('hidden');
+        }
+    }
+
+    function onIndustryCategoryChange(selectElem, prefix) {
+        const card = selectElem.closest(`.${prefix}-card`);
+        if (!card) return;
+        
+        const qbiCheckbox = card.querySelector(`.${prefix}-qbi`);
+        const sstbCheckbox = card.querySelector(`.${prefix}-sstb`);
+        const val = selectElem.value;
+        
+        if (!val) {
+            if (qbiCheckbox) qbiCheckbox.checked = false;
+            if (sstbCheckbox) sstbCheckbox.checked = false;
+        } else {
+            const sstbValues = [
+                'health', 'law', 'accounting', 'consulting', 'performing_arts', 
+                'athletics', 'financial_services', 'investing', 'trading', 'other_sstb'
+            ];
+            
+            if (qbiCheckbox) qbiCheckbox.checked = true;
+            if (sstbCheckbox) sstbCheckbox.checked = sstbValues.includes(val);
+        }
+        
+        if (prefix === 'se') syncSeState();
+        else if (prefix === 'farm') syncFarmState();
+        else if (prefix === 'part') syncPartK1State();
+        else if (prefix === 'scorp') syncScorpK1State();
+        else if (prefix === 'trust') syncTrustK1State();
+    }
 </script>
 
 <!-- Modal: W-2 OCR File Upload Simulator -->
@@ -9777,6 +10031,162 @@
                     <div>Waiting to start...</div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Modal: QBI & SSTB Eligibility Guide -->
+<div id="modal-qbi-sstb-guide" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col h-[85vh] max-h-[650px]">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+            <div class="flex items-center gap-2">
+                <span class="text-brandCyan text-sm font-bold font-mono">§199A</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider font-display">QBI & SSTB Tax Guide</span>
+            </div>
+            <button onclick="closeQbiSstbModal()" class="text-white/60 hover:text-white text-xs font-bold font-sans">✕</button>
+        </div>
+        
+        <!-- Tab Bar -->
+        <div class="flex border-b border-white/5 bg-black/25">
+            <button id="tab-qbi" onclick="switchQbiSstbTab('qbi')" class="flex-1 py-3 text-center text-[10px] font-black uppercase tracking-widest border-b-2 border-brandCyan text-brandCyan transition-all focus:outline-none">
+                QBI Eligible Trades
+            </button>
+            <button id="tab-sstb" onclick="switchQbiSstbTab('sstb')" class="flex-grow py-3 text-center text-[10px] font-black uppercase tracking-widest border-b-2 border-transparent text-white/40 hover:text-white transition-all focus:outline-none">
+                SSTB Exclusions List
+            </button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 overflow-y-auto flex-grow flex flex-col gap-4 font-sans text-xs text-white/80 leading-relaxed">
+            
+            <!-- Tab 1: QBI Eligibility -->
+            <div id="content-qbi" class="flex flex-col gap-4">
+                <div class="p-3 bg-brandCyan/10 border border-brandCyan/20 rounded-xl">
+                    <p class="font-bold text-white mb-1">What is the Section 199A QBI Deduction?</p>
+                    <p class="text-[11px] text-brandCyan/90">It allows self-employed individuals and owners of pass-through businesses (sole proprietorships, partnerships, S-corps, and trusts) to deduct up to <strong>20% of their net business income</strong> from their personal income tax.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Core Eligibility Checklist</h4>
+                    <ul class="flex flex-col gap-2 pl-1">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brandCyan mt-0.5">✓</span>
+                            <div>
+                                <strong class="text-white">Active U.S. Business:</strong>
+                                <span class="block text-[11px] text-white/60">Must be a domestic U.S. trade or business operations (Schedule C, Schedule F, or K-1 pass-throughs).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brandCyan mt-0.5">✓</span>
+                            <div>
+                                <strong class="text-white">Positive Net Profit:</strong>
+                                <span class="block text-[11px] text-white/60">Calculated on the net business profit. If the business has a net loss, QBI is $0 (and is suspended/carried forward).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-400 mt-0.5">✕</span>
+                            <div>
+                                <strong class="text-white">Not W-2 Employment:</strong>
+                                <span class="block text-[11px] text-white/60">Performing services as a W-2 employee is strictly ineligible.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-white/5 pt-3">
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Standard Eligible Business Examples</h4>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] text-white/60 bg-black/20 p-3 border border-white/5 rounded-xl">
+                        <div>
+                            <span class="block font-bold text-white mb-1">Trades & General Operations:</span>
+                            • Retail Stores & E-Commerce<br>
+                            • Restaurants, Cafes & Food Services<br>
+                            • Manufacturing & Wholesaling<br>
+                            • Construction Contractors & Builders<br>
+                            • Real Estate Agents & Landlords (Active)<br>
+                            • Farms & Ranches (Schedule F)
+                        </div>
+                        <div>
+                            <span class="block font-bold text-white mb-1">Exempt Professional Services:</span>
+                            • Architects & Designers<br>
+                            • Engineering Firms & Inspectors<br>
+                            • Salons, Barber Shops & Personal Care<br>
+                            • Dry Cleaning, Garages & Repair Shops<br>
+                            • Tourism & Logistics Companies
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-400 block mb-1">⚠️ Income Threshold Alert</span>
+                    <p class="text-[11px] text-white/60 leading-normal">For high-income taxpayers (above <strong>$201,775</strong> Single / <strong>$403,500</strong> Joint in 2026), the QBI deduction is restricted or completely phased out if the business is a <strong>Specified Service Trade or Business (SSTB)</strong> or fails standard W-2 wage / UBIA property cap limits. Review the next tab to check if your business is an SSTB.</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: SSTB Exclusions -->
+            <div id="content-sstb" class="hidden flex flex-col gap-4">
+                <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <p class="font-bold text-white mb-1">What is a Specified Service Trade or Business (SSTB)?</p>
+                    <p class="text-[11px] text-white/60">An SSTB is any business where the principal asset is the <strong>reputation or skill</strong> of one or more of its owners or employees. If your business is an SSTB, your QBI deduction is phased down above the lower limit and **completely eliminated** above the upper limit.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Exhaustive SSTB Categories (IRS §199A)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+                        <div class="flex flex-col gap-2">
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">1. Health Services</strong>
+                                <span class="block text-white/50 mt-0.5">Doctors, nurses, dentists, veterinarians, physical therapists, psychiatrists, etc.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">2. Law Firms</strong>
+                                <span class="block text-white/50 mt-0.5">Attorneys, paralegals, legal consultants, arbitrators.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">3. Accounting</strong>
+                                <span class="block text-white/50 mt-0.5">CPAs, enrolled agents, bookkeepers, tax preparers.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">4. Consulting</strong>
+                                <span class="block text-white/50 mt-0.5">Business consulting, strategic planning, lobbyists, policy advisors.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">5. Performing Arts</strong>
+                                <span class="block text-white/50 mt-0.5">Actors, singers, musicians, entertainers, stage directors.</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">6. Athletics</strong>
+                                <span class="block text-white/50 mt-0.5">Professional athletes, coaches, trainers, sports managers.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">7. Financial & Brokerage Services</strong>
+                                <span class="block text-white/50 mt-0.5">Investment bankers, portfolio managers, stockbrokers, trading consultants.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">8. Investing & Trading</strong>
+                                <span class="block text-white/50 mt-0.5">Dealing or trading in securities, commodities, or partnership interests.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">9. Reputation & Skill</strong>
+                                <span class="block text-white/50 mt-0.5">Receiving fees/royalties for endorsement, appearances, or licensing of name/image/voice.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-white/5 border border-white/10 rounded-xl text-[11px]">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-brandCyan block mb-1">📌 Rule of Thumb for Checklist Settings</span>
+                    • <strong class="text-white">Income Below $201,775 (Single) / $403,500 (MFJ):</strong> You can select <strong class="text-brandCyan">QBI Eligible</strong> regardless of whether your business is an SSTB.<br>
+                    • <strong class="text-white">Income Above $251,775 (Single) / $503,500 (MFJ):</strong> If your business falls under any SSTB category above, you **must NOT** check the QBI Eligible box (or if selected, the engine will disallow the deduction automatically).
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Footer -->
+        <div class="px-5 py-3 border-t border-white/5 bg-white/5 flex items-center justify-end">
+            <button onclick="closeQbiSstbModal()" class="px-4 py-1.5 bg-brandCyan hover:bg-brandCyan/80 text-black font-bold uppercase tracking-widest text-[9px] rounded-lg transition-all">Understood</button>
         </div>
     </div>
 </div>
