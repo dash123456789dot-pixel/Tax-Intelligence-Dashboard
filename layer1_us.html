@@ -100,6 +100,78 @@
         margin-bottom: 4px !important;
         line-height: 1.1 !important;
     }
+
+    /* 1099 compliance panel labels — override the global card-label height rule */
+    .se-1099-panel label,
+    .farm-1099-panel label,
+    .part-1099-panel label,
+    .scorp-1099-panel label,
+    .ccorp-1099-panel label {
+        height: auto !important;
+        align-items: center !important;
+        margin-bottom: 0 !important;
+        line-height: 1.4 !important;
+        cursor: pointer !important;
+    }
+
+    /* ─── Custom CSS Tooltip System ──────────────────────────────────── */
+    /* Usage: <element data-tooltip="Your tooltip text">label ⓘ</element> */
+    [data-tooltip] {
+        position: relative;
+        cursor: help;
+    }
+    [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%) translateY(4px);
+        background: #0f0f0f;
+        color: rgba(255,255,255,0.80);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 9px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        line-height: 1.5;
+        white-space: normal;
+        width: 220px;
+        text-align: left;
+        text-transform: none;
+        letter-spacing: 0;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+        z-index: 9999;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(6,182,212,0.08);
+    }
+    [data-tooltip]:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+    /* Arrow pointing down from tooltip */
+    [data-tooltip]::before {
+        content: '';
+        position: absolute;
+        bottom: calc(100% + 3px);
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: rgba(255,255,255,0.12);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.18s ease, visibility 0.18s;
+        z-index: 9999;
+    }
+    [data-tooltip]:hover::before {
+        opacity: 1;
+        visibility: visible;
+    }
+    /* ─── End Tooltip System ─────────────────────────────────────────── */
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -3127,16 +3199,8 @@
                     <button onclick="removeSecondaryStateRow(${i})" class="ml-3 text-white/30 hover:text-red-400 text-xs transition-all font-black">✕ Remove</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div class="flex items-center justify-between p-2.5 bg-black/20 border border-white/5 rounded-lg relative group">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[9px] text-white/60">Did you have a home there?</span>
-                            <span class="text-[9px] text-brandCyan/60 hover:text-brandCyan cursor-help">ℹ️</span>
-                            <!-- Tooltip bubble -->
-                            <div class="absolute bottom-full left-4 mb-2 w-56 p-3 bg-[#121212] border border-white/15 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none shadow-2xl text-[9px] text-white/70 normal-case leading-relaxed font-sans font-medium">
-                                <span class="block text-brandCyan font-black mb-1 uppercase tracking-wider text-[8px]">Permanent Place of Abode</span>
-                                Maintaining a home (PPA) means owning, renting, or having free access to a house or apartment suitable for year-round use. Temporary hotel stays or short-term vacation rentals are excluded.
-                            </div>
-                        </div>
+                    <div class="flex items-center justify-between p-2.5 bg-black/20 border border-white/5 rounded-lg">
+                        <span class="text-[9px] text-white/60" data-tooltip="Permanent Place of Abode (PPA): owning, renting, or having free access to a home suitable for year-round use in this state. Temporary hotel stays or vacation rentals are excluded.">Did you have a home there? ⓘ</span>
                         <input type="checkbox" ${row.maintained_residential_place?'checked':''} onchange="updateSecondaryStateField(${i},'maintained_residential_place',this.checked)" class="rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan">
                     </div>
                     <div>
@@ -4716,18 +4780,199 @@
         else if (type === 'ccorp') syncCcorpState();
     }
 
-    function toggle1099Fields(chk, prefix) {
-        const card = chk.closest(`.${prefix}-card`);
+    // ─── 1099 Form Catalog ───────────────────────────────────────────────────
+    const FORMS_1099_CATALOG = [
+        { form: '1099-NEC',  label: 'Non-Employee Compensation',  threshold: '$600+',  recipDeadline: 'Jan 31',  irsDeadline: 'Jan 31',  desc: 'Paid to contractors, freelancers, or other non-employees for services rendered. E-file required if filing 10+ forms.' },
+        { form: '1099-MISC', label: 'Miscellaneous / Rents',       threshold: '$600+',  recipDeadline: 'Feb 15',  irsDeadline: 'Mar 31',  desc: 'Rents, royalties, prizes, attorney fees, medical payments, and other miscellaneous income not covered by 1099-NEC.' },
+        { form: '1099-S',   label: 'Real Estate Proceeds',        threshold: 'Any',    recipDeadline: 'Closing', irsDeadline: 'Feb 28',  desc: 'Proceeds from the sale or exchange of real estate. Usually filed by the title/closing company on behalf of the seller.' },
+        { form: '1099-INT', label: 'Business Interest Paid',      threshold: '$600+',  recipDeadline: 'Jan 31',  irsDeadline: 'Feb 28',  desc: 'Interest of $600+ paid by a business to another person or entity (not banks; this is for businesses paying interest to lenders).' }
+    ];
+
+    // Renders the 1099 panel HTML string for a given prefix and optionally pre-checked forms
+    function render1099Panel(prefix, savedForms, cardId) {
+        // Backward compat: if old boolean flags were passed, synthesize an array
+        if (!Array.isArray(savedForms)) savedForms = [];
+        const savedSet   = new Set(savedForms.map(f => f.form));
+        const filedSet   = new Set(savedForms.filter(f => f.filed).map(f => f.form));
+        const noneActive = savedForms.length === 0;
+        // cardId is stamped on every checkbox so event handlers can find the card
+        // without relying on closest() traversal through <details> elements
+        const cardRef = cardId ? ` data-card-id="${cardId}"` : '';
+
+        const rows = FORMS_1099_CATALOG.map(c => {
+            const isChecked  = savedSet.has(c.form)  ? 'checked' : '';
+            const isFiled    = filedSet.has(c.form)   ? 'checked' : '';
+            const subHidden  = isChecked              ? '' : 'hidden';
+            const badge      = isChecked
+                ? (filedSet.has(c.form)
+                    ? '<span class="text-[10px] font-black text-brandGreen ml-auto">✓ Filed</span>'
+                    : '<span class="text-[10px] font-black text-amber-400 ml-auto">⚠ Unfiled</span>')
+                : '';
+            const safeForm = c.form.replace('-', '_');
+            return `
+                <label class="flex items-start gap-2 p-2 rounded-lg bg-black/20 border border-white/5 hover:border-white/10 cursor-pointer transition-all" for="${prefix}-1099-${safeForm}">
+                    <input type="checkbox" id="${prefix}-1099-${safeForm}" data-form-1099="${c.form}"${cardRef}
+                        class="${prefix}-1099-form-chk mt-0.5 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan shrink-0"
+                        ${isChecked} onchange="toggle1099FormRow(this, '${prefix}')">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-[11px] font-black text-white/95 font-mono">${c.form}</span>
+                            <span class="text-[10px] text-white/75 font-semibold">${c.label}</span>
+                            <span class="text-[10px] text-brandCyan/90 font-mono">${c.threshold}</span>
+                            <span class="text-[10px] text-white/60 ml-auto font-medium">Recip: ${c.recipDeadline} · IRS: ${c.irsDeadline}</span>
+                            ${badge}
+                        </div>
+                        <div class="${prefix}-1099-sub-${safeForm} ${subHidden} mt-1.5 pl-0 flex items-center gap-3 border-t border-white/5 pt-1.5">
+                            <span class="text-[10px] text-white/70 flex-1">${c.desc}</span>
+                            <label class="flex items-center gap-1.5 shrink-0 cursor-pointer">
+                                <input type="checkbox" data-filed-for="${c.form}"${cardRef} class="${prefix}-1099-filed-chk rounded bg-[#121212] border-white/20 text-brandGreen focus:ring-brandGreen" ${isFiled} onchange="on1099FiledChange(this, '${prefix}')">
+                                <span class="text-[10px] font-black text-white/85">Filed by ${c.recipDeadline}</span>
+                            </label>
+                        </div>
+                    </div>
+                </label>`;
+        }).join('');
+
+        const noneChecked  = noneActive ? 'checked' : '';
+        const noneDisabled = noneActive ? '' : 'disabled';
+        const noneClasses  = noneActive ? 'bg-black/10 hover:border-white/10' : 'bg-black/5 border-white/5 opacity-30 cursor-not-allowed pointer-events-none';
+        return `
+            <div class="${prefix}-1099-panel flex flex-col gap-1.5">
+                ${rows}
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-white/5 transition-all ${noneClasses}" for="${prefix}-1099-none">
+                    <input type="checkbox" id="${prefix}-1099-none" data-form-1099="none"${cardRef}
+                        class="${prefix}-1099-none-chk rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan shrink-0"
+                        ${noneChecked} ${noneDisabled} onchange="toggle1099None(this, '${prefix}')"
+                    >
+                    <span class="text-[10px] text-white/75 font-bold">None — no 1099 filing obligations this year</span>
+                </label>
+            </div>`;
+    }
+
+    // Resolves the ancestor card element for a 1099 checkbox.
+    // Prefers data-card-id (stamped at render time) over DOM traversal,
+    // which can fail when the panel is nested inside a <details> element.
+    function _get1099Card(chk, prefix) {
+        if (chk.dataset.cardId) return document.getElementById(chk.dataset.cardId);
+        return chk.closest(`.${prefix}-card, .${prefix}-k1-card`);
+    }
+
+    // Toggle the expansion row when a form checkbox is clicked
+    function toggle1099FormRow(chk, prefix) {
+        const card = _get1099Card(chk, prefix);
         if (!card) return;
-        const container = card.querySelector(`.${prefix}-filed-1099-container`);
-        if (container) {
-            container.classList.toggle('hidden', !chk.checked);
-            if (!chk.checked) {
-                const field = container.querySelector(`.${prefix}-filed-1099`);
-                if (field) field.checked = false;
+        const safeForm = chk.dataset.form1099.replace('-', '_');
+        const subRow   = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
+        if (subRow) subRow.classList.toggle('hidden', !chk.checked);
+        // Update badge in the parent label
+        _refresh1099Badge(chk, prefix);
+        // Update "None" checkbox disabled/blacked-out state
+        _refresh1099NoneState(card, prefix);
+        // Sync state
+        _dispatch1099Sync(prefix);
+    }
+
+    // Toggle the "None" checkbox (deselects all form rows)
+    function toggle1099None(chk, prefix) {
+        const card = _get1099Card(chk, prefix);
+        if (!card) return;
+        if (chk.checked) {
+            card.querySelectorAll(`.${prefix}-1099-form-chk`).forEach(fc => {
+                fc.checked = false;
+                const safeForm = fc.dataset.form1099.replace('-', '_');
+                const subRow = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
+                if (subRow) subRow.classList.add('hidden');
+                _refresh1099Badge(fc, prefix);
+            });
+        }
+        _refresh1099NoneState(card, prefix);
+        _dispatch1099Sync(prefix);
+    }
+
+    function _refresh1099NoneState(card, prefix) {
+        const formChks = Array.from(card.querySelectorAll(`.${prefix}-1099-form-chk`));
+        const noneChk = card.querySelector(`.${prefix}-1099-none-chk`);
+        if (!noneChk) return;
+        const noneLabel = noneChk.closest('label');
+        
+        const anyChecked = formChks.some(fc => fc.checked);
+        if (anyChecked) {
+            noneChk.checked = false;
+            noneChk.disabled = true;
+            if (noneLabel) {
+                noneLabel.classList.add('opacity-30', 'cursor-not-allowed', 'pointer-events-none', 'bg-black/5', 'border-white/5');
+                noneLabel.classList.remove('bg-black/10', 'hover:border-white/10');
+            }
+        } else {
+            noneChk.disabled = false;
+            if (noneLabel) {
+                noneLabel.classList.remove('opacity-30', 'cursor-not-allowed', 'pointer-events-none', 'bg-black/5', 'border-white/5');
+                noneLabel.classList.add('bg-black/10', 'hover:border-white/10');
             }
         }
     }
+
+    // Refresh the filed/unfiled badge on a form row label after a filed-checkbox changes
+    function on1099FiledChange(chk, prefix) {
+        const card = _get1099Card(chk, prefix);
+        if (!card) return;
+        const formChk = card.querySelector(`[data-form-1099="${chk.dataset.filedFor}"]`);
+        if (formChk) _refresh1099Badge(formChk, prefix);
+        _dispatch1099Sync(prefix);
+    }
+
+    function _refresh1099Badge(formChk, prefix) {
+        const form     = formChk.dataset.form1099;
+        const safeForm = form.replace('-', '_');
+        const card     = _get1099Card(formChk, prefix);
+        if (!card) return;
+        const subRow   = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
+        const catalog  = FORMS_1099_CATALOG.find(c => c.form === form);
+        if (!catalog) return;
+        const label    = formChk.closest('label');
+        const oldBadge = label && label.querySelector('.badge-1099-status');
+        if (oldBadge) oldBadge.remove();
+        if (formChk.checked && label) {
+            const filedChk = subRow && subRow.querySelector(`.${prefix}-1099-filed-chk`);
+            const badge = document.createElement('span');
+            badge.className = 'badge-1099-status text-[8px] font-black ml-auto';
+            badge.className += filedChk && filedChk.checked ? ' text-brandGreen' : ' text-amber-400';
+            badge.textContent = filedChk && filedChk.checked ? '✓ Filed' : '⚠ Unfiled';
+            label.querySelector('.flex.items-center').appendChild(badge);
+        }
+    }
+
+    function _dispatch1099Sync(prefix) {
+        const syncMap = { se: 'syncSeState', farm: 'syncFarmState', part: 'syncPartK1State', scorp: 'syncScorpK1State', ccorp: 'syncCcorpState', trust: 'syncTrustK1State' };
+        if (syncMap[prefix] && typeof window[syncMap[prefix]] === 'function') window[syncMap[prefix]]();
+    }
+
+    // Reads current checked state from a card element and returns forms_1099 array
+    function sync1099Forms(prefix, cardEl) {
+        const forms = [];
+        cardEl.querySelectorAll(`.${prefix}-1099-form-chk`).forEach(chk => {
+            if (chk.checked) {
+                const form    = chk.dataset.form1099;
+                const safeF   = form.replace('-', '_');
+                const subRow  = cardEl.querySelector(`.${prefix}-1099-sub-${safeF}`);
+                const filed   = subRow ? !!subRow.querySelector(`.${prefix}-1099-filed-chk`)?.checked : false;
+                forms.push({ form, filed });
+            }
+        });
+        return forms;
+    }
+
+    // Migrate old boolean flags to forms_1099 array (backward compat)
+    function migrate1099Legacy(item) {
+        if (Array.isArray(item.forms_1099)) return item.forms_1099;
+        if (item.requires_1099_filing) {
+            return [{ form: '1099-NEC', filed: !!item.filed_1099_forms }];
+        }
+        return [];
+    }
+
+    // Legacy stub — no longer used but kept to avoid JS errors from cached references
+    function toggle1099Fields() {}
 
     function addStateSaleRow(cardId, type, stateData = null) {
         const card = document.getElementById(cardId);
@@ -4803,7 +5048,7 @@
                     <input type="text" class="asset-name w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none" placeholder="e.g. Office Computer, Delivery Van, Furniture" oninput="syncAssetRowState('${type}')">
                 </div>
                 <div class="md:col-span-4">
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="IRS MACRS Asset Class. Choose the class corresponding to the asset type.">MACRS Category / Class ⓘ</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" data-tooltip="IRS MACRS Asset Class — choose the class that matches your asset type. Determines the annual depreciation rate applied to the remaining basis.">MACRS Category / Class ⓘ</label>
                     <select class="asset-class w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none" onchange="syncAssetRowState('${type}')">
                         <option value="3-year">3-Yr [33.33%] (Special Tools, Tractors)</option>
                         <option value="5-year" selected>5-Yr [20.00%] (Computers, Vehicles, Devices)</option>
@@ -4814,7 +5059,7 @@
                     </select>
                 </div>
                 <div class="md:col-span-3">
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="The exact date the asset was placed in service. Important for convention limitations.">Date Placed in Service ⓘ</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" data-tooltip="The exact date the asset was first placed in service. Affects the mid-year convention and bonus depreciation eligibility for the tax year.">Date Placed in Service ⓘ</label>
                     <input type="date" class="asset-date w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" onchange="syncAssetRowState('${type}')">
                 </div>
             </div>
@@ -4826,11 +5071,11 @@
                     <input type="number" class="asset-cost w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Cost" oninput="syncAssetRowState('${type}')">
                 </div>
                 <div class="md:col-span-3">
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Deduct up to 100% of the cost immediately under Section 179. Capped globally.">Sec 179 Claim (USD) ⓘ</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" data-tooltip="Deduct up to 100% of the asset cost immediately under IRC §179. The annual election is capped at $1,160,000 across all businesses and phases out above $2,890,000 total asset additions.">Sec 179 Claim (USD) ⓘ</label>
                     <input type="number" class="asset-sec179 w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Sec 179" oninput="syncAssetRowState('${type}')">
                 </div>
                 <div class="md:col-span-3">
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Check to claim 20% Bonus Depreciation on the remaining basis after Section 179.">Bonus Depr (20%)?</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" data-tooltip="Claim 20% Bonus Depreciation (2026 rate) on the remaining cost basis after any §179 deduction. Applies to qualified property with a MACRS recovery period of 20 years or less.">Bonus Depr (20%)? ⓘ</label>
                     <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
                         <input type="checkbox" class="asset-bonus rounded bg-[#181818] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncAssetRowState('${type}')">
                     </label>
@@ -4948,8 +5193,7 @@
             accounting_method: 'cash',
             llc_type: 'sole_prop',
             tax_election: 'disregarded',
-            requires_1099_filing: false,
-            filed_1099_forms: false,
+            forms_1099: [],
             cogs_method: 'cost',
             cogs_beginning_inventory: null,
             cogs_purchases: null,
@@ -4976,8 +5220,7 @@
             accounting_method: item.accounting_method || 'cash',
             llc_type: item.llc_type || 'sole_prop',
             tax_election: item.tax_election || 'disregarded',
-            requires_1099_filing: item.requires_1099_filing !== undefined ? !!item.requires_1099_filing : false,
-            filed_1099_forms: item.filed_1099_forms !== undefined ? !!item.filed_1099_forms : false,
+            forms_1099: migrate1099Legacy(item),
             cogs_method: item.cogs_method || 'cost',
             cogs_beginning_inventory: item.cogs_beginning_inventory !== undefined ? item.cogs_beginning_inventory : null,
             cogs_purchases: item.cogs_purchases !== undefined ? item.cogs_purchases : null,
@@ -5113,19 +5356,14 @@
                     </div>
                 </div>
 
-                <!-- Form 1099 Compliance Questions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
-                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
-                            <input type="checkbox" class="se-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'se'); syncSeState()">
-                        </label>
+                <!-- Form 1099 Compliance Panel -->
+                <div class="mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">1099 Filing Obligations</span>
+                        <span class="text-[8px] text-white/30">Select all forms you were required to issue in 2026</span>
                     </div>
-                    <div class="se-filed-1099-container hidden">
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
-                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
-                            <input type="checkbox" class="se-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
-                        </label>
+                    <div class="se-1099-panel-host">
+                        <!-- Populated by render1099Panel() -->
                     </div>
                 </div>
 
@@ -5204,14 +5442,6 @@
             div.querySelector('.se-veh-miles').value = data.vehicle_miles || '';
             div.querySelector('.se-home-office').value = data.home_office_sqft || '';
             
-            // Populate 1099
-            div.querySelector('.se-requires-1099').checked = !!data.requires_1099_filing;
-            if (data.requires_1099_filing) {
-                const filedContainer = div.querySelector('.se-filed-1099-container');
-                filedContainer.classList.remove('hidden');
-                div.querySelector('.se-filed-1099').checked = !!data.filed_1099_forms;
-            }
-            
             // Populate COGS
             div.querySelector('.se-cogs-method').value = data.cogs_method || 'cost';
             div.querySelector('.se-cogs-beg').value = data.cogs_beginning_inventory || '';
@@ -5232,6 +5462,11 @@
             assets.forEach(asset => {
                 createAssetRowDOM(assetContainer, rowId, 'se', asset);
             });
+        }
+        // Populate 1099 panel
+        const se1099Panel = div.querySelector('.se-1099-panel-host');
+        if (se1099Panel) {
+            se1099Panel.innerHTML = render1099Panel('se', data ? (data.forms_1099 || migrate1099Legacy(data)) : [], div.id);
         }
         syncSeState();
     }
@@ -5316,8 +5551,7 @@
                 wages_paid_usd: parseFloat(div.querySelector('.se-wages').value) || null,
                 vehicle_miles: parseFloat(div.querySelector('.se-veh-miles').value) || null,
                 home_office_sqft: parseFloat(div.querySelector('.se-home-office').value) || null,
-                requires_1099_filing: div.querySelector('.se-requires-1099').checked,
-                filed_1099_forms: div.querySelector('.se-filed-1099').checked,
+                forms_1099: sync1099Forms('se', div),
                 cogs_method: div.querySelector('.se-cogs-method').value || 'cost',
                 cogs_beginning_inventory: parseFloat(div.querySelector('.se-cogs-beg').value) || null,
                 cogs_purchases: parseFloat(div.querySelector('.se-cogs-purchases').value) || null,
@@ -5355,8 +5589,7 @@
             wages_paid_usd: null,
             vehicle_miles: null,
             home_office_sqft: null,
-            requires_1099_filing: false,
-            filed_1099_forms: false,
+            forms_1099: [],
             state_allocations: [],
             assets: []
         };
@@ -5374,8 +5607,7 @@
             wages_paid_usd: item.wages_paid_usd !== undefined ? item.wages_paid_usd : null,
             vehicle_miles: item.vehicle_miles !== undefined ? item.vehicle_miles : null,
             home_office_sqft: item.home_office_sqft !== undefined ? item.home_office_sqft : null,
-            requires_1099_filing: item.requires_1099_filing !== undefined ? !!item.requires_1099_filing : false,
-            filed_1099_forms: item.filed_1099_forms !== undefined ? !!item.filed_1099_forms : false,
+            forms_1099: migrate1099Legacy(item),
             state_allocations: normalizeStateAllocations(item.state_allocations),
             assets: normalizeAssetsList(item.assets, item.sec179_expense_usd, item.new_assets_placed_usd)
         };
@@ -5492,19 +5724,14 @@
                     </div>
                 </div>
 
-                <!-- Form 1099 Compliance Questions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
-                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
-                            <input type="checkbox" class="farm-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'farm'); syncFarmState()">
-                        </label>
+                <!-- Form 1099 Compliance Panel -->
+                <div class="mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">1099 Filing Obligations</span>
+                        <span class="text-[8px] text-white/30">Select all forms you were required to issue in 2026</span>
                     </div>
-                    <div class="farm-filed-1099-container hidden">
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
-                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
-                            <input type="checkbox" class="farm-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
-                        </label>
+                    <div class="farm-1099-panel-host">
+                        <!-- Populated by render1099Panel() -->
                     </div>
                 </div>
 
@@ -5541,14 +5768,6 @@
             div.querySelector('.farm-veh-miles').value = data.vehicle_miles || '';
             div.querySelector('.farm-home-office').value = data.home_office_sqft || '';
 
-            // Populate 1099
-            div.querySelector('.farm-requires-1099').checked = !!data.requires_1099_filing;
-            if (data.requires_1099_filing) {
-                const filedContainer = div.querySelector('.farm-filed-1099-container');
-                filedContainer.classList.remove('hidden');
-                div.querySelector('.farm-filed-1099').checked = !!data.filed_1099_forms;
-            }
-
             // Populate State Allocations
             const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
             const stateAllocations = data.state_allocations || [];
@@ -5561,6 +5780,11 @@
             assets.forEach(asset => {
                 createAssetRowDOM(assetContainer, rowId, 'farm', asset);
             });
+        }
+        // Populate 1099 panel
+        const farm1099Panel = div.querySelector('.farm-1099-panel-host');
+        if (farm1099Panel) {
+            farm1099Panel.innerHTML = render1099Panel('farm', data ? (data.forms_1099 || migrate1099Legacy(data)) : [], div.id);
         }
         syncFarmState();
     }
@@ -5614,8 +5838,7 @@
                 wages_paid_usd: parseFloat(div.querySelector('.farm-wages').value) || null,
                 vehicle_miles: parseFloat(div.querySelector('.farm-veh-miles').value) || null,
                 home_office_sqft: parseFloat(div.querySelector('.farm-home-office').value) || null,
-                requires_1099_filing: div.querySelector('.farm-requires-1099').checked,
-                filed_1099_forms: div.querySelector('.farm-filed-1099').checked,
+                forms_1099: sync1099Forms('farm', div),
                 state_allocations: stateAllocations,
                 assets: assets
             });
@@ -5646,7 +5869,8 @@
             loss_percentage_beg: null, loss_percentage_end: null,
             capital_percentage_beg: null, capital_percentage_end: null,
             liabilities_nonrecourse: null, liabilities_qualified_nonrecourse: null, liabilities_recourse: null,
-            state_allocations: []
+            state_allocations: [],
+            forms_1099: []
         };
         return {
             id: item.id || 'part-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
@@ -5683,7 +5907,8 @@
             liabilities_nonrecourse: item.liabilities_nonrecourse !== undefined ? item.liabilities_nonrecourse : null,
             liabilities_qualified_nonrecourse: item.liabilities_qualified_nonrecourse !== undefined ? item.liabilities_qualified_nonrecourse : null,
             liabilities_recourse: item.liabilities_recourse !== undefined ? item.liabilities_recourse : null,
-            state_allocations: normalizeStateAllocations(item.state_allocations)
+            state_allocations: normalizeStateAllocations(item.state_allocations),
+            forms_1099: migrate1099Legacy(item)
         };
     }
     function togglePartK1Section(checked) {
@@ -5701,7 +5926,7 @@
 
         const div = document.createElement('div');
         div.id = rowId;
-        div.className = "part-k1-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
+        div.className = "part-k1-card part-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
         div.innerHTML = `
             <button type="button" onclick="removePartK1Row('${rowId}')" class="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">✕</button>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8">
@@ -5912,6 +6137,17 @@
                     </div>
                 </div>
 
+                <!-- Form 1099 Compliance Panel -->
+                <div class="mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">1099 Filing Obligations</span>
+                        <span class="text-[8px] text-white/30">Select all forms you were required to issue in 2026</span>
+                    </div>
+                    <div class="part-1099-panel-host">
+                        <!-- Populated by render1099Panel() -->
+                    </div>
+                </div>
+
                 <!-- State-by-State Sales Allocation -->
                 <div class="md:col-span-3 mt-3 border-t border-white/5 pt-3">
                     <div class="flex items-center justify-between pb-2 mb-2">
@@ -5967,6 +6203,11 @@
             stateAllocations.forEach(stateAlloc => {
                 addStateSaleRow(rowId, 'part', stateAlloc);
             });
+        }
+        // Populate 1099 panel
+        const part1099Panel = div.querySelector('.part-1099-panel-host');
+        if (part1099Panel) {
+            part1099Panel.innerHTML = render1099Panel('part', data ? (data.forms_1099 || migrate1099Legacy(data)) : [], div.id);
         }
         syncPartK1State();
     }
@@ -6030,6 +6271,7 @@
                 partner_share_nonrecourse_usd: parseFloat(div.querySelector('.part-nonrecourse').value) || null,
                 partner_share_qualified_nonrecourse_usd: parseFloat(div.querySelector('.part-qual-nonrecourse').value) || null,
                 partner_share_recourse_usd: parseFloat(div.querySelector('.part-recourse').value) || null,
+                forms_1099: sync1099Forms('part', div),
                 state_allocations: stateAllocations
             });
         });
@@ -6057,7 +6299,8 @@
             qbi_wages_usd: null, qbi_ubia_usd: null,
             shareholder_ein: null, corporation_ein: null,
             stock_percentage_beg: null, stock_percentage_end: null,
-            state_allocations: []
+            state_allocations: [],
+            forms_1099: []
         };
         return {
             id: item.id || 'scorp-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
@@ -6086,7 +6329,8 @@
             corporation_ein: item.corporation_ein || null,
             stock_percentage_beg: item.stock_percentage_beg !== undefined ? item.stock_percentage_beg : null,
             stock_percentage_end: item.stock_percentage_end !== undefined ? item.stock_percentage_end : null,
-            state_allocations: normalizeStateAllocations(item.state_allocations)
+            state_allocations: normalizeStateAllocations(item.state_allocations),
+            forms_1099: migrate1099Legacy(item)
         };
     }
     function toggleScorpK1Section(checked) {
@@ -6104,7 +6348,7 @@
 
         const div = document.createElement('div');
         div.id = rowId;
-        div.className = "scorp-k1-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
+        div.className = "scorp-k1-card scorp-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
         div.innerHTML = `
             <button type="button" onclick="removeScorpK1Row('${rowId}')" class="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">✕</button>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8">
@@ -6237,6 +6481,17 @@
                     </div>
                 </div>
 
+                <!-- Form 1099 Compliance Panel -->
+                <div class="mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">1099 Filing Obligations</span>
+                        <span class="text-[8px] text-white/30">Select all forms you were required to issue in 2026</span>
+                    </div>
+                    <div class="scorp-1099-panel-host">
+                        <!-- Populated by render1099Panel() -->
+                    </div>
+                </div>
+
                 <!-- State-by-State Sales Allocation -->
                 <div class="md:col-span-5 mt-3 border-t border-white/5 pt-3">
                     <div class="flex items-center justify-between pb-2 mb-2">
@@ -6277,6 +6532,11 @@
             stateAllocations.forEach(stateAlloc => {
                 addStateSaleRow(rowId, 'scorp', stateAlloc);
             });
+        }
+        // Populate 1099 panel
+        const scorp1099Panel = div.querySelector('.scorp-1099-panel-host');
+        if (scorp1099Panel) {
+            scorp1099Panel.innerHTML = render1099Panel('scorp', data ? (data.forms_1099 || migrate1099Legacy(data)) : [], div.id);
         }
         syncScorpK1State();
     }
@@ -6326,6 +6586,7 @@
                 active_rental_participant: div.querySelector('.scorp-rental-active').checked,
                 qbi_wages_usd: parseFloat(div.querySelector('.scorp-qbi-wages').value) || null,
                 qbi_ubia_usd: parseFloat(div.querySelector('.scorp-qbi-ubia').value) || null,
+                forms_1099: sync1099Forms('scorp', div),
                 state_allocations: stateAllocations
             });
         });
@@ -6347,7 +6608,8 @@
             operating_expenses_usd: null, nol_carryover_usd: null, dividends_paid_usd: null,
             dividend_type: 'qualified', is_qsbs: false,
             state_allocations: [],
-            assets: []
+            assets: [],
+            forms_1099: []
         };
         return {
             id: item.id || 'ccorp-' + Date.now() + Math.random().toString(36).substring(2, 5),
@@ -6362,7 +6624,8 @@
             dividend_type: item.dividend_type || 'qualified',
             is_qsbs: !!item.is_qsbs,
             state_allocations: normalizeStateAllocations(item.state_allocations),
-            assets: normalizeAssetsList(item.assets, null, null)
+            assets: normalizeAssetsList(item.assets, null, null),
+            forms_1099: migrate1099Legacy(item)
         };
     }
     function toggleCcorpSection(checked) {
@@ -6436,6 +6699,18 @@
                     <input type="number" class="ccorp-nol w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncCcorpState()">
                 </div>
             </div>
+
+            <!-- Form 1099 Compliance Panel -->
+            <div class="mt-3 border-t border-white/5 pt-3">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">1099 Filing Obligations</span>
+                    <span class="text-[8px] text-white/30">Select all forms you were required to issue in 2026</span>
+                </div>
+                <div class="ccorp-1099-panel-host">
+                    <!-- Populated by render1099Panel() -->
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center mt-1 border-t border-white/5 pt-3">
                 <div>
                     <span class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Corp Tax Owed (21%)</span>
@@ -6492,6 +6767,11 @@
             
             const taxable = Math.max(0, (data.gross_receipts_usd || 0) - (data.cogs_usd || 0) - (data.operating_expenses_usd || 0) - (data.nol_carryover_usd || 0));
             div.querySelector('.ccorp-tax-display').textContent = formatCurrency(taxable * 0.21);
+        }
+        // Populate 1099 panel
+        const ccorp1099Panel = div.querySelector('.ccorp-1099-panel-host');
+        if (ccorp1099Panel) {
+            ccorp1099Panel.innerHTML = render1099Panel('ccorp', data ? (data.forms_1099 || migrate1099Legacy(data)) : [], div.id);
         }
         syncCcorpState();
     }
@@ -6576,6 +6856,7 @@
                 dividends_paid_usd: parseFloat(div.querySelector('.ccorp-divs').value) || null,
                 dividend_type: div.querySelector('.ccorp-div-type').value || 'qualified',
                 is_qsbs: div.querySelector('.ccorp-qsbs').checked,
+                forms_1099: sync1099Forms('ccorp', div),
                 assets: assets
             });
         });
@@ -6593,7 +6874,7 @@
     function normalizeTrustK1Item(item) {
         if (!item) return {
             id: 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, ordinary_income_usd: null, interest_income_usd: null,
+            business_name: null, ein: null, industry_category: null, ordinary_income_usd: null, interest_income_usd: null,
             ordinary_dividends_usd: null, qualified_dividends_usd: null, stcg_usd: null, ltcg_usd: null,
             qbi_eligible: false, is_specified_service_trade: false, material_participation: 'active',
             active_rental_participant: false, net_rental_real_estate_usd: null, depreciation_allocation_usd: null
@@ -6602,6 +6883,7 @@
             id: item.id || 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
+            industry_category: item.industry_category || null,
             ordinary_income_usd: item.ordinary_income_usd !== undefined ? item.ordinary_income_usd : null,
             interest_income_usd: item.interest_income_usd !== undefined ? item.interest_income_usd : null,
             ordinary_dividends_usd: item.ordinary_dividends_usd !== undefined ? item.ordinary_dividends_usd : null,
@@ -6634,7 +6916,7 @@
         div.className = "trust-k1-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
         div.innerHTML = `
             <button type="button" onclick="removeTrustK1Row('${rowId}')" class="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">✕</button>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pr-8 font-sans">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8 font-sans">
                 <div class="md:col-span-2">
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Trust or Estate Name</label>
                     <input type="text" class="trust-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" placeholder="e.g. John Doe Trust" oninput="syncTrustK1State()">
@@ -6642,6 +6924,31 @@
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">EIN</label>
                     <input type="text" class="trust-ein w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="12-3456789" oninput="syncTrustK1State()">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="trust-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'trust')">
+                        <option value="">-- Select Industry --</option>
+                        <option value="retail">Retail / E-Commerce (Eligible)</option>
+                        <option value="manufacturing">Manufacturing (Eligible)</option>
+                        <option value="construction">Construction / Trade (Eligible)</option>
+                        <option value="farming">Farming / Agriculture (Eligible)</option>
+                        <option value="real_estate">Real Estate / Agent (Eligible)</option>
+                        <option value="architecture">Architectural (Eligible)</option>
+                        <option value="engineering">Engineering (Eligible)</option>
+                        <option value="technology">Software / Tech (Eligible)</option>
+                        <option value="health">Health / Medical (SSTB)</option>
+                        <option value="law">Law Firm / Legal (SSTB)</option>
+                        <option value="accounting">Accounting / Tax (SSTB)</option>
+                        <option value="consulting">Consulting / Advice (SSTB)</option>
+                        <option value="performing_arts">Performing Arts (SSTB)</option>
+                        <option value="athletics">Athletics / Sports (SSTB)</option>
+                        <option value="financial_services">Financial Services (SSTB)</option>
+                        <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                        <option value="trading">Trading Securities (SSTB)</option>
+                        <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                        <option value="other_sstb">Other Services (SSTB)</option>
+                    </select>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
@@ -6737,6 +7044,7 @@
             div.querySelector('.trust-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.trust-box7').value = data.net_rental_real_estate_usd || '';
             div.querySelector('.trust-box9a').value = data.depreciation_allocation_usd || '';
+            if (data.industry_category) div.querySelector('.trust-industry-category').value = data.industry_category;
 
             // Populate State Allocations
             const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
@@ -6786,6 +7094,7 @@
                 active_rental_participant: div.querySelector('.trust-rental-active').checked,
                 net_rental_real_estate_usd: parseFloat(div.querySelector('.trust-box7').value) || null,
                 depreciation_allocation_usd: parseFloat(div.querySelector('.trust-box9a').value) || null,
+                industry_category: div.querySelector('.trust-industry-category').value || null,
                 state_allocations: stateAllocations
             });
         });
