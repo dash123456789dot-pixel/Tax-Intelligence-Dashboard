@@ -85,6 +85,21 @@
         opacity: 0.35;
         cursor: not-allowed;
     }
+
+    /* Alignment & Label Uniformity for dynamic forms */
+    .farm-card label,
+    .se-card label,
+    .part-k1-card label,
+    .scorp-k1-card label,
+    .ccorp-card label,
+    .trust-k1-card label,
+    .asset-row label {
+        height: 26px !important;
+        display: flex !important;
+        align-items: flex-end !important;
+        margin-bottom: 4px !important;
+        line-height: 1.1 !important;
+    }
 </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -941,26 +956,60 @@
             <!-- Business Compliance Analyzer & Summary -->
             <div class="p-5 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl flex flex-col gap-4">
                 <span class="text-xs font-black uppercase tracking-widest text-brandCyan border-b border-brandCyan/20 pb-2">Business Compliance & Tax Analyzer</span>
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Total Net Income</span>
-                        <span id="biz-anal-net-inc" class="text-xs font-bold text-white font-mono">$0</span>
+                
+                <!-- Row 1: Income & Tax Liabilities -->
+                <div class="flex flex-col gap-2">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-white/50">Business Income & Taxes</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1.5 relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Total Net Income</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 rounded-md border border-emerald-500/20">Income</span>
+                            </div>
+                            <span id="biz-anal-net-inc" class="text-sm font-bold text-white font-mono">$0</span>
+                        </div>
+                        <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1.5 relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Schedule SE Tax</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-brandRed/10 text-brandRed rounded-md border border-brandRed/20">Tax</span>
+                            </div>
+                            <span id="biz-anal-se-tax" class="text-sm font-bold text-white font-mono">$0</span>
+                        </div>
+                        <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1.5 relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Corporate Tax (Form 1120)</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-brandRed/10 text-brandRed rounded-md border border-brandRed/20">Tax</span>
+                            </div>
+                            <span id="biz-anal-corp-tax" class="text-sm font-bold text-white font-mono">$0</span>
+                        </div>
                     </div>
-                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Schedule SE Tax</span>
-                        <span id="biz-anal-se-tax" class="text-xs font-bold text-white font-mono">$0</span>
-                    </div>
-                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/40">SE Tax Deduction</span>
-                        <span id="biz-anal-se-ded" class="text-xs font-bold text-white font-mono">$0</span>
-                    </div>
-                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Section 199A QBI</span>
-                        <span id="biz-anal-qbi-ded" class="text-xs font-bold text-brandCyan font-mono">$0</span>
-                    </div>
-                    <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1 col-span-2 md:col-span-1">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Corporate Tax (1120)</span>
-                        <span id="biz-anal-corp-tax" class="text-xs font-bold text-white font-mono">$0</span>
+                </div>
+
+                <!-- Row 2: Deductions & Net Liability -->
+                <div class="flex flex-col gap-2 border-t border-white/5 pt-3">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-white/50">Tax Deductions & Net Liability</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1.5 relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-white/40">SE Tax Deduction</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-brandCyan/10 text-brandCyan rounded-md border border-brandCyan/20">Deduction</span>
+                            </div>
+                            <span id="biz-anal-se-ded" class="text-sm font-bold text-white font-mono">$0</span>
+                        </div>
+                        <div class="p-3 bg-black/40 border border-white/5 rounded-xl flex flex-col gap-1.5 relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-white/40">Section 199A QBI</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-brandCyan/10 text-brandCyan rounded-md border border-brandCyan/20">Deduction</span>
+                            </div>
+                            <span id="biz-anal-qbi-ded" class="text-sm font-bold text-brandCyan font-mono">$0</span>
+                        </div>
+                        <div class="p-3 bg-brandGold/10 border border-brandGold/30 rounded-xl flex flex-col gap-1.5 relative overflow-hidden shadow-lg shadow-brandGold/5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[8px] font-black uppercase tracking-widest text-brandGold font-bold">Net Business Tax Liability</span>
+                                <span class="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest bg-brandGold/20 text-brandGold rounded-md border border-brandGold/30">Total Owed</span>
+                            </div>
+                            <span id="biz-anal-net-liability" class="text-sm font-bold text-brandGold font-mono">$0</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -979,6 +1028,27 @@
                             <span class="text-[8px] text-white/60">Aggregate active business losses exceed the IRC §461(l) threshold ($305,000 / $610,000). Excess is disallowed and treated as NOL.</span>
                         </div>
                         <span id="biz-flag-ebl-amt" class="text-xs font-bold text-brandRed font-mono">$0</span>
+                    </div>
+                    <div id="biz-flag-sec179-limit" class="hidden flex items-center justify-between p-3 bg-brandGold/10 border border-brandGold/30 rounded-xl">
+                        <div class="flex flex-col font-sans">
+                            <span class="text-[10px] font-bold text-brandGold uppercase">Global Section 179 Cap Exceeded (Form 4562)</span>
+                            <span class="text-[8px] text-white/60">Section 179 deduction is globally capped at $1.2M and phased out when property exceeds $3M. Disallowed amounts are scaled down.</span>
+                        </div>
+                        <span id="biz-flag-sec179-amt" class="text-xs font-bold text-brandGold font-mono">$0</span>
+                    </div>
+                    <div id="biz-flag-sec179-income-limit" class="hidden flex items-center justify-between p-3 bg-brandGold/10 border border-brandGold/30 rounded-xl">
+                        <div class="flex flex-col font-sans">
+                            <span class="text-[10px] font-bold text-brandGold uppercase">Section 179 Income Limit Suspension (Form 4562)</span>
+                            <span class="text-[8px] text-white/60">Section 179 deduction is limited to your net active business taxable income (including W-2 wages). Excess is suspended and carried forward.</span>
+                        </div>
+                        <span id="biz-flag-sec179-income-amt" class="text-xs font-bold text-brandGold font-mono">$0</span>
+                    </div>
+                    <div id="biz-flag-atrisk-loss" class="hidden flex items-center justify-between p-3 bg-brandRed/10 border border-brandRed/30 rounded-xl">
+                        <div class="flex flex-col font-sans">
+                            <span class="text-[10px] font-bold text-brandRed uppercase">At-Risk or Tax Basis Limitation (Form 6198)</span>
+                            <span class="text-[8px] text-white/60">Losses are restricted to the lesser of Tax Basis and At-Risk Basis. Excess losses are suspended and carried forward.</span>
+                        </div>
+                        <span id="biz-flag-atrisk-amt" class="text-xs font-bold text-brandRed font-mono">$0</span>
                     </div>
                     <div id="biz-flag-nexus" class="hidden flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
                         <span class="text-[10px] font-bold text-brandCyan uppercase">Economic Nexus Triggers (Wayfair Rule)</span>
@@ -3597,7 +3667,11 @@
             qbiDeduction: 0,
             cCorpTax: 0,
             totalBusinessAgiFlow: 0,
-            nexusAlerts: []
+            nexusAlerts: [],
+            disallowedSec179: 0,
+            suspendedSec179IncomeLimit: 0,
+            disallowedBasisAndAtRisk: 0,
+            netPassiveNii: 0
         };
 
         // 1. Calculate W-2 SS Wages (to adjust SE tax cap)
@@ -3609,7 +3683,194 @@
             });
         }
 
-        // 2. Schedule C (Sole Prop/LLC disregarded)
+        // --- Section 179 Global Limitation & Phase-out (Pass 1) ---
+        let totalSec179Requested = 0;
+        let totalPlacedInService = 0;
+
+        // Schedule C
+        if (usState.income_us_source.self_employment) {
+            usState.income_us_source.self_employment.forEach(se => {
+                const isToggled = se.has_se_income || (document.getElementById('se-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const assets = (se.assets && se.assets.length > 0) ? se.assets : normalizeAssetsList(null, se.sec179_expense_usd, se.new_assets_placed_usd);
+                    assets.forEach(asset => {
+                        const cost = asset.cost || 0;
+                        const klass = asset.class || '5-year';
+                        const allowsSec179 = (klass !== '27.5-year' && klass !== '39-year');
+                        const req = allowsSec179 ? Math.min(asset.sec179 || 0, cost) : 0;
+                        totalSec179Requested += req;
+                        if (req > 0) {
+                            totalPlacedInService += cost;
+                        }
+                    });
+                }
+            });
+        }
+        // Schedule F
+        if (usState.income_us_source.farming_schedule_f) {
+            usState.income_us_source.farming_schedule_f.forEach(farm => {
+                const isToggled = farm.has_farm_income || (document.getElementById('farm-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const assets = (farm.assets && farm.assets.length > 0) ? farm.assets : normalizeAssetsList(null, farm.sec179_expense_usd, farm.new_assets_placed_usd);
+                    assets.forEach(asset => {
+                        const cost = asset.cost || 0;
+                        const klass = asset.class || '5-year';
+                        const allowsSec179 = (klass !== '27.5-year' && klass !== '39-year');
+                        const req = allowsSec179 ? Math.min(asset.sec179 || 0, cost) : 0;
+                        totalSec179Requested += req;
+                        if (req > 0) {
+                            totalPlacedInService += cost;
+                        }
+                    });
+                }
+            });
+        }
+        // K-1s
+        if (usState.income_us_source.partnerships_k1) {
+            usState.income_us_source.partnerships_k1.forEach(k1 => {
+                const isToggled = k1.has_part_income || (document.getElementById('part-k1-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const req = k1.sec179_deduction_usd || 0;
+                    totalSec179Requested += req;
+                    if (req > 0) {
+                        totalPlacedInService += req;
+                    }
+                }
+            });
+        }
+        if (usState.income_us_source.s_corporations_k1) {
+            usState.income_us_source.s_corporations_k1.forEach(k1 => {
+                const isToggled = k1.has_scorp_income || (document.getElementById('scorp-k1-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const req = k1.sec179_deduction_usd || 0;
+                    totalSec179Requested += req;
+                    if (req > 0) {
+                        totalPlacedInService += req;
+                    }
+                }
+            });
+        }
+
+        const sec179Cap = 1200000;
+        const sec179PhaseoutThreshold = 3000000;
+        const phaseoutExcess = Math.max(0, totalPlacedInService - sec179PhaseoutThreshold);
+        const allowedSec179Limit = Math.max(0, sec179Cap - phaseoutExcess);
+        
+        let sec179Scale = 1.0;
+        if (totalSec179Requested > allowedSec179Limit) {
+            sec179Scale = allowedSec179Limit / totalSec179Requested;
+            result.disallowedSec179 = totalSec179Requested - allowedSec179Limit;
+        }
+
+        const MACRS_RATES = {
+            '3-year': 0.3333,
+            '5-year': 0.2000,
+            '7-year': 0.1429,
+            '15-year': 0.0500,
+            '27.5-year': 0.03636,
+            '39-year': 0.02564
+        };
+
+        const computeAssetsDepreciation = (assets, scale) => {
+            let totalDepr = 0;
+            if (!assets) return 0;
+            assets.forEach(asset => {
+                const cost = asset.cost || 0;
+                const klass = asset.class || '5-year';
+                const allowsSec179 = (klass !== '27.5-year' && klass !== '39-year');
+                const reqSec179 = allowsSec179 ? (asset.sec179 || 0) : 0;
+                const allowedSec179 = Math.min(reqSec179, cost) * scale;
+                const allowsBonus = (klass !== '27.5-year' && klass !== '39-year');
+                const allowedBonus = (asset.bonus && allowsBonus) ? (cost - allowedSec179) * 0.20 : 0;
+                const remainingBasis = Math.max(0, cost - allowedSec179 - allowedBonus);
+                const rate = MACRS_RATES[klass] || 0;
+                const regularMacrs = remainingBasis * rate;
+                totalDepr += allowedSec179 + allowedBonus + regularMacrs;
+            });
+            return totalDepr;
+        };
+
+        // --- Compute Active Business Income Before Section 179 (for active taxable income limit) ---
+        let activeIncomeBeforeSec179 = totalW2SSWages;
+
+        // Schedule C before Sec 179
+        if (usState.income_us_source.self_employment) {
+            usState.income_us_source.self_employment.forEach(se => {
+                const isToggled = se.has_se_income || (document.getElementById('se-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const gross = se.gross_receipts_usd || 0;
+                    const exp = se.expenses_usd || 0;
+                    const assets = (se.assets && se.assets.length > 0) ? se.assets : normalizeAssetsList(null, 0, se.new_assets_placed_usd);
+                    const assetDepr = computeAssetsDepreciation(assets, 0); // scale = 0 (no Section 179)
+                    const vehDed = (se.vehicle_miles || 0) * 0.68;
+                    const hoDed = Math.min(se.home_office_sqft || 0, 300) * 5;
+                    const net = gross - (exp + assetDepr + vehDed + hoDed);
+                    if (!se.statutory_w2_link_id) {
+                        activeIncomeBeforeSec179 += Math.max(0, net);
+                    } else {
+                        activeIncomeBeforeSec179 += net;
+                    }
+                }
+            });
+        }
+
+        // Schedule F before Sec 179
+        if (usState.income_us_source.farming_schedule_f) {
+            usState.income_us_source.farming_schedule_f.forEach(farm => {
+                const isToggled = farm.has_farm_income || (document.getElementById('farm-has-toggle')?.checked || false);
+                if (isToggled) {
+                    const gross = farm.gross_income_usd || 0;
+                    const exp = farm.expenses_usd || 0;
+                    const assets = (farm.assets && farm.assets.length > 0) ? farm.assets : normalizeAssetsList(null, 0, farm.new_assets_placed_usd);
+                    const assetDepr = computeAssetsDepreciation(assets, 0);
+                    const vehDed = (farm.vehicle_miles || 0) * 0.68;
+                    const hoDed = Math.min(farm.home_office_sqft || 0, 300) * 5;
+                    const net = gross - (exp + assetDepr + vehDed + hoDed);
+                    activeIncomeBeforeSec179 += Math.max(0, net);
+                }
+            });
+        }
+
+        // K-1s before Sec 179
+        const processK1BeforeSec179 = (k1) => {
+            const ord = k1.ordinary_income_usd || 0;
+            const guaranteed = k1.guaranteed_payments_usd || 0;
+            const deprAlloc = k1.depreciation_allocation_usd || 0;
+            const taxBasis = k1.tax_basis_usd !== null && k1.tax_basis_usd !== undefined ? k1.tax_basis_usd : 99999999;
+            const atRiskBasis = k1.at_risk_basis_usd !== null && k1.at_risk_basis_usd !== undefined ? k1.at_risk_basis_usd : 99999999;
+            const allowedBasisLimit = Math.min(taxBasis, atRiskBasis);
+
+            let ordAllowed = ord;
+            if (ord < 0 && Math.abs(ord) > allowedBasisLimit) {
+                ordAllowed = -allowedBasisLimit;
+            }
+
+            const netOperating = ordAllowed + guaranteed - deprAlloc;
+            if (k1.material_participation !== 'passive') {
+                if (netOperating > 0) activeIncomeBeforeSec179 += netOperating;
+                else activeIncomeBeforeSec179 -= Math.abs(netOperating);
+            }
+        };
+
+        if (usState.income_us_source.partnerships_k1) {
+            usState.income_us_source.partnerships_k1.forEach(k1 => {
+                const isToggled = k1.has_part_income || (document.getElementById('part-k1-has-toggle')?.checked || false);
+                if (isToggled) processK1BeforeSec179(k1);
+            });
+        }
+        if (usState.income_us_source.s_corporations_k1) {
+            usState.income_us_source.s_corporations_k1.forEach(k1 => {
+                const isToggled = k1.has_scorp_income || (document.getElementById('scorp-k1-has-toggle')?.checked || false);
+                if (isToggled) processK1BeforeSec179(k1);
+            });
+        }
+
+        // Apply Active Taxable Business Income Limit
+        const allowedAfterPhaseout = totalSec179Requested * sec179Scale;
+        const currentYearSec179Allowed = Math.min(allowedAfterPhaseout, Math.max(0, activeIncomeBeforeSec179));
+        result.suspendedSec179IncomeLimit = Math.max(0, allowedAfterPhaseout - currentYearSec179Allowed);
+        
+        // 2. Schedule C
         let scheduleCNetActive = 0;
         let scheduleCNetSE = 0;
         if (usState.income_us_source.self_employment) {
@@ -3619,32 +3880,26 @@
                     const gross = se.gross_receipts_usd || 0;
                     const exp = se.expenses_usd || 0;
                     
-                    // Depreciation math
-                    const sec179 = se.sec179_expense_usd || 0;
-                    const newAssets = se.new_assets_placed_usd || 0;
-                    const bonusDep = newAssets * 0.20; // 20% bonus depreciation in 2026
-                    
-                    // Vehicle miles deduction ($0.68/mile in 2026)
+                    const assets = (se.assets && se.assets.length > 0) ? se.assets : normalizeAssetsList(null, se.sec179_expense_usd, se.new_assets_placed_usd);
+                    const assetDepr = computeAssetsDepreciation(assets, sec179Scale);
                     const vehMiles = se.vehicle_miles || 0;
                     const vehDed = vehMiles * 0.68;
-                    
-                    // Home office deduction (simplified: $5 per sqft up to 300 sqft => max $1,500)
                     const hoSqft = se.home_office_sqft || 0;
                     const hoDed = Math.min(hoSqft, 300) * 5;
 
-                    const net = gross - (exp + sec179 + bonusDep + vehDed + hoDed);
+                    const net = gross - (exp + assetDepr + vehDed + hoDed);
 
-                    // If statutory link is active, it reduces AGI directly and is not subject to SE tax
                     if (se.statutory_w2_link_id) {
                         result.totalBusinessAgiFlow += net;
                     } else {
                         scheduleCNetActive += Math.max(0, net);
                         if (net > 0) {
                             scheduleCNetSE += net;
+                        } else {
+                            scheduleCNetSE += net;
                         }
                     }
 
-                    // Economic Nexus check (Wayfair)
                     if (se.naics_code && gross > 100000) {
                         result.nexusAlerts.push(`${se.business_name || 'Schedule C Business'} exceeds $100K gross sales economic nexus threshold.`);
                     }
@@ -3661,14 +3916,17 @@
                 if (isToggled) {
                     const gross = farm.gross_income_usd || 0;
                     const exp = farm.expenses_usd || 0;
-                    const sec179 = farm.sec179_expense_usd || 0;
-                    const bonusDep = (farm.new_assets_placed_usd || 0) * 0.20;
+                    
+                    const assets = (farm.assets && farm.assets.length > 0) ? farm.assets : normalizeAssetsList(null, farm.sec179_expense_usd, farm.new_assets_placed_usd);
+                    const assetDepr = computeAssetsDepreciation(assets, sec179Scale);
                     const vehDed = (farm.vehicle_miles || 0) * 0.68;
                     const hoDed = Math.min(farm.home_office_sqft || 0, 300) * 5;
 
-                    const net = gross - (exp + sec179 + bonusDep + vehDed + hoDed);
+                    const net = gross - (exp + assetDepr + vehDed + hoDed);
                     scheduleFNetActive += Math.max(0, net);
                     if (net > 0) {
+                        scheduleFNetSE += net;
+                    } else {
                         scheduleFNetSE += net;
                     }
 
@@ -3679,48 +3937,59 @@
             });
         }
 
-        // 4. Partnerships (Form 1065 K-1) & S-Corps (Form 1120-S K-1) & Trusts (Form 1041 K-1)
+        // 4. Partnerships, S-Corps, Trusts K-1s
         let k1PortfolioAgi = 0;
+        let totalActiveRentalLoss = 0;
+        let totalActiveRentalGain = 0;
+        let regularPassiveIncome = 0;
+        let regularPassiveLosses = 0;
 
         const processK1 = (k1, type) => {
             const ord = k1.ordinary_income_usd || 0;
             const rental = k1.net_rental_real_estate_usd || 0;
             const guaranteed = k1.guaranteed_payments_usd || 0;
-            const sec179 = k1.sec179_deduction_usd || 0;
+            const allowedK1Sec179 = (k1.sec179_deduction_usd || 0) * sec179Scale;
+            const deprAlloc = k1.depreciation_allocation_usd || 0;
+            
             const interest = k1.interest_income_usd || 0;
             const ordinaryDiv = k1.ordinary_dividends_usd || 0;
             const stcg = k1.stcg_usd || 0;
             const ltcg = k1.ltcg_usd || 0;
 
-            // Stock/Debt Basis check
-            const basis = k1.tax_basis_usd !== null ? k1.tax_basis_usd : 99999999;
+            const taxBasis = k1.tax_basis_usd !== null && k1.tax_basis_usd !== undefined ? k1.tax_basis_usd : 99999999;
+            const atRiskBasis = k1.at_risk_basis_usd !== null && k1.at_risk_basis_usd !== undefined ? k1.at_risk_basis_usd : 99999999;
+            const allowedBasisLimit = Math.min(taxBasis, atRiskBasis);
+
             let ordAllowed = ord;
-            if (ord < 0 && Math.abs(ord) > basis) {
-                ordAllowed = -basis; // loss limited to basis
+            if (ord < 0 && Math.abs(ord) > allowedBasisLimit) {
+                ordAllowed = -allowedBasisLimit;
+                result.disallowedBasisAndAtRisk += Math.abs(ord) - allowedBasisLimit;
             }
 
-            // Guaranteed payments and ordinary income general partner are subject to SE tax (for partnerships)
             if (type === 'partnership' && k1.partner_type === 'general') {
                 if (ordAllowed > 0) scheduleCNetSE += ordAllowed;
                 if (guaranteed > 0) scheduleCNetSE += guaranteed;
             }
 
-            const netOperating = ordAllowed + guaranteed - sec179;
+            const netOperating = ordAllowed + guaranteed - allowedK1Sec179 - deprAlloc;
 
-            if (k1.material_participation === 'passive' || rental !== 0) {
-                // Passive activity
-                if (netOperating > 0) result.passiveIncome += netOperating;
-                else result.passiveLosses += Math.abs(netOperating);
+            if (rental < 0 && k1.active_rental_participant) {
+                totalActiveRentalLoss += Math.abs(rental);
+            } else if (rental > 0 && k1.active_rental_participant) {
+                totalActiveRentalGain += rental;
+            } else if (rental !== 0) {
+                if (rental > 0) regularPassiveIncome += rental;
+                else regularPassiveLosses += Math.abs(rental);
+            }
 
-                if (rental > 0) result.passiveIncome += rental;
-                else result.passiveLosses += Math.abs(rental);
+            if (k1.material_participation === 'passive') {
+                if (netOperating > 0) regularPassiveIncome += netOperating;
+                else regularPassiveLosses += Math.abs(netOperating);
             } else {
-                // Active activity
                 if (netOperating > 0) result.activeBusinessIncome += netOperating;
                 else result.activeBusinessLosses += Math.abs(netOperating);
             }
 
-            // Portfolio flows directly to personal AGI
             k1PortfolioAgi += interest + ordinaryDiv + stcg + ltcg;
         };
 
@@ -3743,44 +4012,80 @@
             });
         }
 
-        // 5. Passive Loss Solver (Form 8582)
-        result.allowedPassiveLoss = Math.min(result.passiveLosses, result.passiveIncome);
-        const netPassiveFlow = result.passiveIncome - result.allowedPassiveLoss;
+        // --- Active Rental Exception & Passive Loss Solver (Form 8582) ---
+        let activeAGI = totalW2SSWages + scheduleCNetActive + scheduleFNetActive + result.activeBusinessIncome - result.activeBusinessLosses + k1PortfolioAgi;
+        activeAGI += usState.income_us_source.interest_us_source_usd || 0;
+        activeAGI += usState.income_us_source.ordinary_dividends_us_source_usd || 0;
+        activeAGI += usState.income_us_source.stcg_us_source_usd || 0;
+        activeAGI += usState.income_us_source.ltcg_us_source_usd || 0;
+
+        let activeRentalLimit = 25000;
+        if (activeAGI > 100000) {
+            activeRentalLimit = Math.max(0, 25000 - (activeAGI - 100000) * 0.50);
+        }
+
+        const netActiveRentalLoss = Math.max(0, totalActiveRentalLoss - totalActiveRentalGain);
+        const allowedActiveRentalLoss = Math.min(netActiveRentalLoss, activeRentalLimit);
+        const suspendedActiveRentalLoss = netActiveRentalLoss - allowedActiveRentalLoss;
+
+        const totalRegularPassiveLosses = regularPassiveLosses + suspendedActiveRentalLoss;
+        const totalRegularPassiveIncome = regularPassiveIncome + (totalActiveRentalGain > totalActiveRentalLoss ? totalActiveRentalGain - totalActiveRentalLoss : 0);
+
+        const allowedRegularPassiveLoss = Math.min(totalRegularPassiveLosses, totalRegularPassiveIncome);
+        
+        result.passiveIncome = totalRegularPassiveIncome;
+        result.passiveLosses = totalRegularPassiveLosses + netActiveRentalLoss;
+        result.allowedPassiveLoss = allowedRegularPassiveLoss + allowedActiveRentalLoss;
+
+        const netPassiveFlow = totalRegularPassiveIncome + (totalActiveRentalGain > totalActiveRentalLoss ? totalActiveRentalGain - totalActiveRentalLoss : 0) - allowedRegularPassiveLoss - allowedActiveRentalLoss;
         result.totalBusinessAgiFlow += netPassiveFlow;
 
-        // 6. Excess Business Loss Solver (Form 461)
+        result.netPassiveNii = Math.max(0, totalRegularPassiveIncome - allowedRegularPassiveLoss);
+
+        // 5. Excess Business Loss Solver (Form 461)
         const netActiveBusiness = scheduleCNetActive + scheduleFNetActive + result.activeBusinessIncome - result.activeBusinessLosses;
-        const eblLimit = isMfj ? 610000 : 305000; // 2026 inflation-adjusted limits
+        const eblLimit = isMfj ? 610000 : 305000;
 
         if (netActiveBusiness < 0 && Math.abs(netActiveBusiness) > eblLimit) {
             result.disallowedEbl = Math.abs(netActiveBusiness) - eblLimit;
-            result.totalBusinessAgiFlow += -eblLimit; // capped loss
+            result.totalBusinessAgiFlow += -eblLimit;
         } else {
             result.totalBusinessAgiFlow += netActiveBusiness;
         }
 
-        // 7. Calculate Schedule SE Self-Employment Tax
-        const netSeEarnings = (scheduleCNetSE + scheduleFNetSE) * 0.9235;
+        // 6. Schedule SE Self-Employment Tax
+        const netSeEarnings = Math.max(0, scheduleCNetSE + scheduleFNetSE) * 0.9235;
         if (netSeEarnings > 400) {
-            const ssCap = 176100; // 2026 SS Cap
+            const ssCap = 176100;
             const ssAvailableBase = Math.max(0, ssCap - totalW2SSWages);
             const ssSeTax = 0.124 * Math.min(netSeEarnings, ssAvailableBase);
             const medSeTax = 0.029 * netSeEarnings;
             result.seTax = ssSeTax + medSeTax;
-            result.seDeduction = result.seTax * 0.5; // 50% above-the-line deduction
+            result.seDeduction = result.seTax * 0.5;
         }
 
-        // Subtract SE tax deduction and SE health insurance / retirement deductions
+        // 7. Statutory Self-Employed Retirement Cap
+        let isAge50OrOlder = false;
+        if (usState.profile.date_of_birth) {
+            const birthYear = new Date(usState.profile.date_of_birth).getFullYear();
+            const ageIn2026 = 2026 - birthYear;
+            if (ageIn2026 >= 50) {
+                isAge50OrOlder = true;
+            }
+        }
+        const seRetirementCap = isAge50OrOlder ? 80500 : 73000;
+
         const healthInsuranceDed = usState.income_us_source.se_health_insurance_deduction_usd || 0;
         const retirementDed = usState.income_us_source.se_retirement_deduction_usd || 0;
-        
-        result.seHealthInsuranceAllowed = Math.min(healthInsuranceDed, Math.max(0, scheduleCNetSE + scheduleFNetSE));
-        result.seRetirementAllowed = Math.min(retirementDed, Math.max(0, scheduleCNetSE + scheduleFNetSE) * 0.20); 
 
-        // Subtract deductions from AGI flow
+        const seNetIncome = Math.max(0, scheduleCNetSE + scheduleFNetSE);
+        result.seHealthInsuranceAllowed = Math.min(healthInsuranceDed, seNetIncome);
+        result.seRetirementAllowed = Math.min(retirementDed, seRetirementCap, seNetIncome);
+
         result.totalBusinessAgiFlow -= (result.seDeduction + result.seHealthInsuranceAllowed + result.seRetirementAllowed);
+        result.totalBusinessAgiFlow += result.suspendedSec179IncomeLimit;
 
-        // 8. C-Corporations (Form 1120) corporate-level tax and shareholder dividend flow
+        // 8. C-Corporations (Form 1120)
         if (usState.income_us_source.c_corporations_1120) {
             usState.income_us_source.c_corporations_1120.forEach(ccorp => {
                 const isToggled = ccorp.has_ccorp || (document.getElementById('ccorp-has-toggle')?.checked || false);
@@ -3789,21 +4094,43 @@
                     const cogs = ccorp.cogs_usd || 0;
                     const opex = ccorp.operating_expenses_usd || 0;
                     const nol = ccorp.nol_carryover_usd || 0;
-                    const taxable = Math.max(0, gross - cogs - opex - nol);
+                    
+                    let ccorpSec179Requested = 0;
+                    let ccorpPlacedInService = 0;
+                    if (ccorp.assets) {
+                        ccorp.assets.forEach(asset => {
+                            const cost = asset.cost || 0;
+                            const req = Math.min(asset.sec179 || 0, cost);
+                            ccorpSec179Requested += req;
+                            if (req > 0) {
+                                ccorpPlacedInService += cost;
+                            }
+                        });
+                    }
+
+                    const ccorpSec179Cap = 1200000;
+                    const ccorpSec179Phaseout = 3000000;
+                    const ccorpPhaseoutExcess = Math.max(0, ccorpPlacedInService - ccorpSec179Phaseout);
+                    const ccorpAllowedLimit = Math.max(0, ccorpSec179Cap - ccorpPhaseoutExcess);
+                    let ccorpSec179Scale = 1.0;
+                    if (ccorpSec179Requested > ccorpAllowedLimit) {
+                        ccorpSec179Scale = ccorpAllowedLimit / ccorpSec179Requested;
+                    }
+
+                    const corpAssetDepr = computeAssetsDepreciation(ccorp.assets, ccorpSec179Scale);
+                    const taxable = Math.max(0, gross - cogs - opex - corpAssetDepr - nol);
                     const corpTax = taxable * 0.21;
                     result.cCorpTax += corpTax;
 
-                    // Dividends flow to personal AGI
                     const divs = ccorp.dividends_paid_usd || 0;
                     result.totalBusinessAgiFlow += divs;
                 }
             });
         }
 
-        // Add pass-through portfolio items
         result.totalBusinessAgiFlow += k1PortfolioAgi;
 
-        // 9. Section 199A QBI Deduction Solver
+        // 9. Section 199A QBI
         let totalQbi = 0;
         let totalQbiWages = 0;
         let totalQbiUbia = 0;
@@ -3818,7 +4145,6 @@
             }
         };
 
-        // Schedule C
         if (usState.income_us_source.self_employment) {
             usState.income_us_source.self_employment.forEach(se => {
                 const isToggled = se.has_se_income || (document.getElementById('se-has-toggle')?.checked || false);
@@ -3828,7 +4154,6 @@
                 }
             });
         }
-        // Schedule F
         if (usState.income_us_source.farming_schedule_f) {
             usState.income_us_source.farming_schedule_f.forEach(farm => {
                 const isToggled = farm.has_farm_income || (document.getElementById('farm-has-toggle')?.checked || false);
@@ -3838,7 +4163,6 @@
                 }
             });
         }
-        // K-1s
         const addK1Qbi = (k1list, typeKey) => {
             if (k1list) {
                 k1list.forEach(k1 => {
@@ -4118,7 +4442,8 @@
                     (usState.income_foreign_source.foreign_dividends_usd || 0) +
                     (usState.income_foreign_source.foreign_stcg_usd || 0) +
                     (usState.income_foreign_source.foreign_ltcg_usd || 0) +
-                    (usState.income_foreign_source.foreign_rental_income_usd || 0);
+                    (usState.income_foreign_source.foreign_rental_income_usd || 0) +
+                    (biz.netPassiveNii || 0);
         usState.niit_inputs.net_investment_income_usd = nii;
 
         const niitOwed = Math.max(0, Math.min(nii, agi - niitThreshold) * 0.038);
@@ -4214,12 +4539,14 @@
         const bizSeDed = document.getElementById('biz-anal-se-ded');
         const bizQbiDed = document.getElementById('biz-anal-qbi-ded');
         const bizCorpTax = document.getElementById('biz-anal-corp-tax');
+        const bizNetLiability = document.getElementById('biz-anal-net-liability');
 
         if (bizNetInc) bizNetInc.textContent = formatCurrency(biz.netSeIncome);
         if (bizSeTax) bizSeTax.textContent = formatCurrency(biz.seTax);
         if (bizSeDed) bizSeDed.textContent = formatCurrency(biz.seDeduction);
         if (bizQbiDed) bizQbiDed.textContent = formatCurrency(biz.qbiDeduction);
         if (bizCorpTax) bizCorpTax.textContent = formatCurrency(biz.cCorpTax);
+        if (bizNetLiability) bizNetLiability.textContent = formatCurrency(biz.seTax + biz.cCorpTax);
 
         // Flags
         const passiveFlag = document.getElementById('biz-flag-passive-loss');
@@ -4242,6 +4569,39 @@
                 if (eblAmt) eblAmt.textContent = formatCurrency(biz.disallowedEbl);
             } else {
                 eblFlag.classList.add('hidden');
+            }
+        }
+
+        const sec179Flag = document.getElementById('biz-flag-sec179-limit');
+        const sec179Amt = document.getElementById('biz-flag-sec179-amt');
+        if (sec179Flag) {
+            if (biz.disallowedSec179 > 0) {
+                sec179Flag.classList.remove('hidden');
+                if (sec179Amt) sec179Amt.textContent = formatCurrency(biz.disallowedSec179);
+            } else {
+                sec179Flag.classList.add('hidden');
+            }
+        }
+
+        const sec179IncFlag = document.getElementById('biz-flag-sec179-income-limit');
+        const sec179IncAmt = document.getElementById('biz-flag-sec179-income-amt');
+        if (sec179IncFlag) {
+            if (biz.suspendedSec179IncomeLimit > 0) {
+                sec179IncFlag.classList.remove('hidden');
+                if (sec179IncAmt) sec179IncAmt.textContent = formatCurrency(biz.suspendedSec179IncomeLimit);
+            } else {
+                sec179IncFlag.classList.add('hidden');
+            }
+        }
+
+        const atriskFlag = document.getElementById('biz-flag-atrisk-loss');
+        const atriskAmt = document.getElementById('biz-flag-atrisk-amt');
+        if (atriskFlag) {
+            if (biz.disallowedBasisAndAtRisk > 0) {
+                atriskFlag.classList.remove('hidden');
+                if (atriskAmt) atriskAmt.textContent = formatCurrency(biz.disallowedBasisAndAtRisk);
+            } else {
+                atriskFlag.classList.add('hidden');
             }
         }
 
@@ -4270,6 +4630,298 @@
     // ══════════════════════════════════════════════════════════════════════
     // DYNAMIC TABLE ROW ADDITIONS & MODIFIERS
     // ══════════════════════════════════════════════════════════════════════
+    function normalizeAssetItem(item) {
+        if (!item) return null;
+        return {
+            id: item.id || 'asset-' + Date.now() + Math.random().toString(36).substring(2, 5),
+            name: item.name || '',
+            class: item.class || '5-year',
+            cost: item.cost !== undefined ? parseFloat(item.cost) || 0 : 0,
+            sec179: item.sec179 !== undefined ? parseFloat(item.sec179) || 0 : 0,
+            bonus: item.bonus !== undefined ? !!item.bonus : true,
+            placed_in_service_date: item.placed_in_service_date || ''
+        };
+    }
+
+    function normalizeAssetsList(assets, fallbackSec179, fallbackNewAssets) {
+        if (Array.isArray(assets) && assets.length > 0) {
+            return assets.map(normalizeAssetItem).filter(Boolean);
+        }
+        const list = [];
+        if ((fallbackSec179 && fallbackSec179 > 0) || (fallbackNewAssets && fallbackNewAssets > 0)) {
+            if (fallbackSec179 && fallbackSec179 > 0) {
+                list.push({
+                    id: 'asset-mig-1',
+                    name: 'Legacy Section 179 Asset',
+                    class: '7-year',
+                    cost: parseFloat(fallbackSec179) || 0,
+                    sec179: parseFloat(fallbackSec179) || 0,
+                    bonus: false,
+                    placed_in_service_date: '2026-06-15'
+                });
+            }
+            if (fallbackNewAssets && fallbackNewAssets > 0) {
+                list.push({
+                    id: 'asset-mig-2',
+                    name: 'Legacy 2026 Asset Base',
+                    class: '5-year',
+                    cost: parseFloat(fallbackNewAssets) || 0,
+                    sec179: 0,
+                    bonus: true,
+                    placed_in_service_date: '2026-06-15'
+                });
+            }
+        }
+        return list;
+    }
+
+    function normalizeStateAllocations(list) {
+        if (!Array.isArray(list)) return [];
+        return list.map(item => {
+            if (!item) return null;
+            return {
+                state: item.state || '',
+                gross_receipts_usd: item.gross_receipts_usd !== undefined ? parseFloat(item.gross_receipts_usd) || 0 : 0
+            };
+        }).filter(Boolean);
+    }
+
+    function addNewAsset(cardId, type) {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        const container = card.querySelector(`.asset-list-${cardId}`);
+        if (!container) return;
+        createAssetRowDOM(container, cardId, type);
+        updateAssetDepreciationPreviews();
+        if (type === 'se') syncSeState();
+        else if (type === 'farm') syncFarmState();
+        else if (type === 'ccorp') syncCcorpState();
+    }
+
+    function removeAssetRow(btn, type) {
+        const row = btn.closest('.asset-row');
+        if (row) {
+            row.remove();
+        }
+        updateAssetDepreciationPreviews();
+        if (type === 'se') syncSeState();
+        else if (type === 'farm') syncFarmState();
+        else if (type === 'ccorp') syncCcorpState();
+    }
+
+    function syncAssetRowState(type) {
+        updateAssetDepreciationPreviews();
+        if (type === 'se') syncSeState();
+        else if (type === 'farm') syncFarmState();
+        else if (type === 'ccorp') syncCcorpState();
+    }
+
+    function toggle1099Fields(chk, prefix) {
+        const card = chk.closest(`.${prefix}-card`);
+        if (!card) return;
+        const container = card.querySelector(`.${prefix}-filed-1099-container`);
+        if (container) {
+            container.classList.toggle('hidden', !chk.checked);
+            if (!chk.checked) {
+                const field = container.querySelector(`.${prefix}-filed-1099`);
+                if (field) field.checked = false;
+            }
+        }
+    }
+
+    function addStateSaleRow(cardId, type, stateData = null) {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        const container = card.querySelector(`.state-sales-list-${cardId}`);
+        if (!container) return;
+        
+        const rowId = 'state-sale-' + Date.now() + Math.random().toString(36).substring(2, 5);
+        const div = document.createElement('div');
+        div.className = 'state-sale-row grid grid-cols-12 gap-3 items-end bg-black/30 border border-white/5 rounded-lg p-2 mt-2';
+        div.dataset.rowId = rowId;
+        
+        const states = [
+            "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+            "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+            "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
+        ];
+        let selectHtml = `<select class="state-code w-full bg-[#121212] border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:border-brandCyan focus:outline-none" onchange="syncStateAllocationsState('${type}')">`;
+        states.forEach(st => {
+            selectHtml += `<option value="${st}">${st}</option>`;
+        });
+        selectHtml += `</select>`;
+        
+        div.innerHTML = `
+            <div class="col-span-4">
+                <label class="block text-[7px] font-black uppercase tracking-widest text-white/40 mb-0.5">State</label>
+                ${selectHtml}
+            </div>
+            <div class="col-span-6">
+                <label class="block text-[7px] font-black uppercase tracking-widest text-white/40 mb-0.5">Allocated Gross Receipts (USD)</label>
+                <input type="number" class="state-gross-receipts w-full bg-[#121212] border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Amount" oninput="syncStateAllocationsState('${type}')">
+            </div>
+            <div class="col-span-2 text-right">
+                <button type="button" onclick="removeStateSaleRow(this, '${type}')" class="text-brandRed/60 hover:text-brandRed font-bold font-sans text-xs p-1 pb-1.5">✕</button>
+            </div>
+        `;
+        container.appendChild(div);
+        
+        if (stateData) {
+            div.querySelector('.state-code').value = stateData.state || '';
+            div.querySelector('.state-gross-receipts').value = stateData.gross_receipts_usd || '';
+        }
+        syncStateAllocationsState(type);
+    }
+
+    function removeStateSaleRow(btn, type) {
+        const row = btn.closest('.state-sale-row');
+        if (row) row.remove();
+        syncStateAllocationsState(type);
+    }
+
+    function syncStateAllocationsState(type) {
+        if (type === 'se') syncSeState();
+        else if (type === 'farm') syncFarmState();
+        else if (type === 'part') syncPartK1State();
+        else if (type === 'scorp') syncScorpK1State();
+        else if (type === 'ccorp') syncCcorpState();
+    }
+
+    function createAssetRowDOM(container, cardId, type, asset = null) {
+        const assetId = asset ? asset.id : 'asset-' + Date.now() + Math.random().toString(36).substring(2, 5);
+        const div = document.createElement('div');
+        div.className = 'asset-row bg-[#121212]/80 border border-white/10 rounded-xl p-3 flex flex-col gap-2.5 shadow-md relative mt-2';
+        div.dataset.assetId = assetId;
+        div.innerHTML = `
+            <!-- Delete Button in corner -->
+            <button type="button" onclick="removeAssetRow(this, '${type}')" class="absolute top-2 right-3 text-brandRed/60 hover:text-brandRed font-bold font-sans text-xs p-1" title="Remove Asset">✕</button>
+
+            <!-- Row 1: Asset Name, MACRS Category & Date Placed in Service -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pr-6">
+                <div class="md:col-span-5">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Asset Description</label>
+                    <input type="text" class="asset-name w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none" placeholder="e.g. Office Computer, Delivery Van, Furniture" oninput="syncAssetRowState('${type}')">
+                </div>
+                <div class="md:col-span-4">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="IRS MACRS Asset Class. Choose the class corresponding to the asset type.">MACRS Category / Class ⓘ</label>
+                    <select class="asset-class w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none" onchange="syncAssetRowState('${type}')">
+                        <option value="3-year">3-Yr [33.33%] (Special Tools, Tractors)</option>
+                        <option value="5-year" selected>5-Yr [20.00%] (Computers, Vehicles, Devices)</option>
+                        <option value="7-year">7-Yr [14.29%] (Office Furniture, Machinery)</option>
+                        <option value="15-year">15-Yr [5.00%] (Fences, Sidewalks, Shrubbery)</option>
+                        <option value="27.5-year">27.5-Yr [3.64%] (Residential Rental Buildings)</option>
+                        <option value="39-year">39-Yr [2.56%] (Commercial Property, Offices)</option>
+                    </select>
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="The exact date the asset was placed in service. Important for convention limitations.">Date Placed in Service ⓘ</label>
+                    <input type="date" class="asset-date w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" onchange="syncAssetRowState('${type}')">
+                </div>
+            </div>
+
+            <!-- Row 2: Financials & Deduction Preview -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 border-t border-white/5 pt-2">
+                <div class="md:col-span-3">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Cost Basis (USD)</label>
+                    <input type="number" class="asset-cost w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Cost" oninput="syncAssetRowState('${type}')">
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Deduct up to 100% of the cost immediately under Section 179. Capped globally.">Sec 179 Claim (USD) ⓘ</label>
+                    <input type="number" class="asset-sec179 w-full bg-[#181818] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white focus:border-brandCyan focus:outline-none font-mono" placeholder="Sec 179" oninput="syncAssetRowState('${type}')">
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Check to claim 20% Bonus Depreciation on the remaining basis after Section 179.">Bonus Depr (20%)?</label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="asset-bonus rounded bg-[#181818] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncAssetRowState('${type}')">
+                    </label>
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Yr 1 Deduction</label>
+                    <div class="flex items-center justify-center bg-brandCyan/5 border border-brandCyan/20 rounded-lg h-[29px] font-mono text-xs font-bold text-brandCyan asset-depr-preview">
+                        $0.00
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+        if (asset) {
+            div.querySelector('.asset-name').value = asset.name || '';
+            div.querySelector('.asset-class').value = asset.class || '5-year';
+            div.querySelector('.asset-date').value = asset.placed_in_service_date || '';
+            div.querySelector('.asset-cost').value = asset.cost || '';
+            div.querySelector('.asset-sec179').value = asset.sec179 || '';
+            div.querySelector('.asset-bonus').checked = asset.bonus !== undefined ? !!asset.bonus : true;
+        }
+    }
+
+    function updateAssetDepreciationPreviews() {
+        const MACRS_RATES = {
+            '3-year': 0.3333,
+            '5-year': 0.2000,
+            '7-year': 0.1429,
+            '15-year': 0.0500,
+            '27.5-year': 0.03636,
+            '39-year': 0.02564
+        };
+        
+        document.querySelectorAll('.asset-row').forEach(row => {
+            const cost = parseFloat(row.querySelector('.asset-cost').value) || 0;
+            const sec179Input = row.querySelector('.asset-sec179');
+            const rawSec179 = parseFloat(sec179Input.value) || 0;
+            
+            const klass = row.querySelector('.asset-class').value || '5-year';
+            const allowsSec179 = (klass !== '27.5-year' && klass !== '39-year');
+            
+            if (!allowsSec179) {
+                sec179Input.value = '';
+                sec179Input.disabled = true;
+                sec179Input.classList.add('opacity-40');
+                sec179Input.title = "Real estate assets (27.5-yr / 39-yr) are ineligible for Section 179 expensing.";
+                sec179Input.classList.remove('border-brandRed/60', 'focus:border-brandRed');
+                sec179Input.classList.add('border-white/10');
+            } else {
+                sec179Input.disabled = false;
+                sec179Input.classList.remove('opacity-40');
+                // Validation: Section 179 cannot exceed asset cost
+                if (rawSec179 > cost) {
+                    sec179Input.classList.remove('border-white/10');
+                    sec179Input.classList.add('border-brandRed/60', 'focus:border-brandRed');
+                    sec179Input.title = "Section 179 claim cannot exceed the asset cost basis.";
+                } else {
+                    sec179Input.classList.remove('border-brandRed/60', 'focus:border-brandRed');
+                    sec179Input.classList.add('border-white/10');
+                    sec179Input.title = "Deduct up to 100% of the cost immediately under Section 179. Subject to global cap.";
+                }
+            }
+            
+            const sec179 = Math.min(parseFloat(sec179Input.value) || 0, cost);
+            const allowsBonus = (klass !== '27.5-year' && klass !== '39-year');
+            const bonusCheckbox = row.querySelector('.asset-bonus');
+            const bonusParent = bonusCheckbox.parentElement;
+            
+            // Gating: Real Estate is ineligible for Bonus Depreciation
+            if (!allowsBonus) {
+                bonusCheckbox.checked = false;
+                bonusCheckbox.disabled = true;
+                bonusParent.classList.add('opacity-40');
+                bonusParent.title = "Real estate assets (27.5-yr / 39-yr) are ineligible for Bonus Depreciation.";
+            } else {
+                bonusCheckbox.disabled = false;
+                bonusParent.classList.remove('opacity-40');
+                bonusParent.title = "Check to claim 20% Bonus Depreciation on the remaining basis after Section 179.";
+            }
+            
+            const isBonus = bonusCheckbox.checked;
+            const bonusDep = (isBonus && allowsBonus) ? (cost - sec179) * 0.20 : 0;
+            const remainingBasis = Math.max(0, cost - sec179 - bonusDep);
+            const rate = MACRS_RATES[klass] || 0;
+            const regularMacrs = remainingBasis * rate;
+            
+            const totalDepr = sec179 + bonusDep + regularMacrs;
+            row.querySelector('.asset-depr-preview').textContent = formatCurrency(totalDepr);
+        });
+    }
+
     function normalizeSeData(data) {
         if (!data) return [];
         if (Array.isArray(data)) {
@@ -4283,23 +4935,57 @@
             id: 'se-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: null,
             naics_code: null,
+            industry_category: null,
             has_se_income: false,
             gross_receipts_usd: null,
             expenses_usd: null,
             qbi_eligible: false,
             is_specified_service_trade: false,
-            statutory_w2_link_id: null
+            statutory_w2_link_id: null,
+            vehicle_miles: null,
+            home_office_sqft: null,
+            wages_paid_usd: null,
+            accounting_method: 'cash',
+            llc_type: 'sole_prop',
+            tax_election: 'disregarded',
+            requires_1099_filing: false,
+            filed_1099_forms: false,
+            cogs_method: 'cost',
+            cogs_beginning_inventory: null,
+            cogs_purchases: null,
+            cogs_labor: null,
+            cogs_materials: null,
+            cogs_ending_inventory: null,
+            state_allocations: [],
+            assets: []
         };
         return {
             id: item.id || 'se-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             has_se_income: item.has_se_income !== undefined ? !!item.has_se_income : true,
             gross_receipts_usd: item.gross_receipts_usd !== undefined ? item.gross_receipts_usd : null,
             expenses_usd: item.expenses_usd !== undefined ? item.expenses_usd : null,
             qbi_eligible: !!item.qbi_eligible,
             is_specified_service_trade: !!item.is_specified_service_trade,
-            statutory_w2_link_id: item.statutory_w2_link_id || null
+            statutory_w2_link_id: item.statutory_w2_link_id || null,
+            vehicle_miles: item.vehicle_miles !== undefined ? item.vehicle_miles : null,
+            home_office_sqft: item.home_office_sqft !== undefined ? item.home_office_sqft : null,
+            wages_paid_usd: item.wages_paid_usd !== undefined ? item.wages_paid_usd : null,
+            accounting_method: item.accounting_method || 'cash',
+            llc_type: item.llc_type || 'sole_prop',
+            tax_election: item.tax_election || 'disregarded',
+            requires_1099_filing: item.requires_1099_filing !== undefined ? !!item.requires_1099_filing : false,
+            filed_1099_forms: item.filed_1099_forms !== undefined ? !!item.filed_1099_forms : false,
+            cogs_method: item.cogs_method || 'cost',
+            cogs_beginning_inventory: item.cogs_beginning_inventory !== undefined ? item.cogs_beginning_inventory : null,
+            cogs_purchases: item.cogs_purchases !== undefined ? item.cogs_purchases : null,
+            cogs_labor: item.cogs_labor !== undefined ? item.cogs_labor : null,
+            cogs_materials: item.cogs_materials !== undefined ? item.cogs_materials : null,
+            cogs_ending_inventory: item.cogs_ending_inventory !== undefined ? item.cogs_ending_inventory : null,
+            state_allocations: normalizeStateAllocations(item.state_allocations),
+            assets: normalizeAssetsList(item.assets, item.sec179_expense_usd, item.new_assets_placed_usd)
         };
     }
 
@@ -4333,7 +5019,31 @@
             </div>
 
             <!-- Row 2: Financials & Tax Toggles -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="se-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'se')">
+                        <option value="">-- Select Industry --</option>
+                        <option value="retail">Retail / E-Commerce (Eligible)</option>
+                        <option value="manufacturing">Manufacturing (Eligible)</option>
+                        <option value="construction">Construction / Trade (Eligible)</option>
+                        <option value="real_estate">Real Estate / Agent (Eligible)</option>
+                        <option value="architecture">Architectural (Eligible)</option>
+                        <option value="engineering">Engineering (Eligible)</option>
+                        <option value="technology">Software / Tech (Eligible)</option>
+                        <option value="health">Health / Medical (SSTB)</option>
+                        <option value="law">Law Firm / Legal (SSTB)</option>
+                        <option value="accounting">Accounting / Tax (SSTB)</option>
+                        <option value="consulting">Consulting / Advice (SSTB)</option>
+                        <option value="performing_arts">Performing Arts (SSTB)</option>
+                        <option value="athletics">Athletics / Sports (SSTB)</option>
+                        <option value="financial_services">Financial Services (SSTB)</option>
+                        <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                        <option value="trading">Trading Securities (SSTB)</option>
+                        <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                        <option value="other_sstb">Other Services (SSTB)</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Receipts (USD)</label>
                     <input type="number" class="se-gross w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
@@ -4342,13 +5052,17 @@
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Expenses (USD)</label>
                     <input type="number" class="se-expenses w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="se-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="se-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                    </label>
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                    <input type="checkbox" class="se-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="se-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                    </label>
                 </div>
             </div>
 
@@ -4388,15 +5102,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179 Asset Placed (USD)</label>
-                        <input type="number" class="se-sec179 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">New 2026 Asset Base (USD)</label>
-                        <input type="number" class="se-new-assets w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Business Vehicle Miles</label>
                         <input type="number" class="se-veh-miles w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
@@ -4405,6 +5111,76 @@
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office Sq-Footage</label>
                         <input type="number" class="se-home-office w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
                     </div>
+                </div>
+
+                <!-- Form 1099 Compliance Questions -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="se-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'se'); syncSeState()">
+                        </label>
+                    </div>
+                    <div class="se-filed-1099-container hidden">
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="se-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncSeState()">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- COGS Section -->
+                <div class="mt-3 border-t border-white/5 pt-3">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan block mb-2">Cost of Goods Sold (COGS) (Part III)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Valuation Method</label>
+                            <select class="se-cogs-method w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncSeState()">
+                                <option value="cost">Cost</option>
+                                <option value="lower">Lower of Cost or Market</option>
+                                <option value="other">Other Method</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Beginning Inventory (USD)</label>
+                            <input type="number" class="se-cogs-beg w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Purchases (USD)</label>
+                            <input type="number" class="se-cogs-purchases w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Cost of Labor (USD)</label>
+                            <input type="number" class="se-cogs-labor w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Materials & Supplies (USD)</label>
+                            <input type="number" class="se-cogs-materials w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
+                        </div>
+                        <div>
+                            <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ending Inventory (USD)</label>
+                            <input type="number" class="se-cogs-ending w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncSeState()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- State-by-State Sales Allocation -->
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Wayfair Nexus Check)</span>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'se')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                    </div>
+                    <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
+                </div>
+
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Depreciable Assets (MACRS / Sec 179 / Bonus)</span>
+                        <button type="button" onclick="addNewAsset('${rowId}', 'se')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add Asset</button>
+                    </div>
+                    <div class="asset-list-${rowId} flex flex-col gap-2"></div>
                 </div>
             </details>
         `;
@@ -4415,6 +5191,7 @@
         if (data) {
             div.querySelector('.se-business-name').value = data.business_name || '';
             div.querySelector('.se-naics-code').value = data.naics_code || '';
+            div.querySelector('.se-industry-category').value = data.industry_category || '';
             div.querySelector('.se-gross').value = data.gross_receipts_usd || '';
             div.querySelector('.se-expenses').value = data.expenses_usd || '';
             div.querySelector('.se-qbi').checked = !!data.qbi_eligible;
@@ -4424,10 +5201,37 @@
             div.querySelector('.se-llc-type').value = data.llc_type || 'sole_prop';
             div.querySelector('.se-tax-election').value = data.tax_election || 'disregarded';
             div.querySelector('.se-wages').value = data.wages_paid_usd || '';
-            div.querySelector('.se-sec179').value = data.sec179_expense_usd || '';
-            div.querySelector('.se-new-assets').value = data.new_assets_placed_usd || '';
             div.querySelector('.se-veh-miles').value = data.vehicle_miles || '';
             div.querySelector('.se-home-office').value = data.home_office_sqft || '';
+            
+            // Populate 1099
+            div.querySelector('.se-requires-1099').checked = !!data.requires_1099_filing;
+            if (data.requires_1099_filing) {
+                const filedContainer = div.querySelector('.se-filed-1099-container');
+                filedContainer.classList.remove('hidden');
+                div.querySelector('.se-filed-1099').checked = !!data.filed_1099_forms;
+            }
+            
+            // Populate COGS
+            div.querySelector('.se-cogs-method').value = data.cogs_method || 'cost';
+            div.querySelector('.se-cogs-beg').value = data.cogs_beginning_inventory || '';
+            div.querySelector('.se-cogs-purchases').value = data.cogs_purchases || '';
+            div.querySelector('.se-cogs-labor').value = data.cogs_labor || '';
+            div.querySelector('.se-cogs-materials').value = data.cogs_materials || '';
+            div.querySelector('.se-cogs-ending').value = data.cogs_ending_inventory || '';
+
+            // Populate State Allocations
+            const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
+            const stateAllocations = data.state_allocations || [];
+            stateAllocations.forEach(stateAlloc => {
+                addStateSaleRow(rowId, 'se', stateAlloc);
+            });
+            
+            const assetContainer = div.querySelector(`.asset-list-${rowId}`);
+            const assets = data.assets || [];
+            assets.forEach(asset => {
+                createAssetRowDOM(assetContainer, rowId, 'se', asset);
+            });
         }
         syncSeState();
     }
@@ -4474,10 +5278,32 @@
         const toggleChecked = document.getElementById('se-has-toggle')?.checked || false;
         
         document.querySelectorAll('.se-card').forEach(div => {
+            const assets = [];
+            div.querySelectorAll('.asset-row').forEach(row => {
+                assets.push({
+                    id: row.dataset.assetId,
+                    name: row.querySelector('.asset-name').value || '',
+                    class: row.querySelector('.asset-class').value || '5-year',
+                    cost: parseFloat(row.querySelector('.asset-cost').value) || 0,
+                    sec179: parseFloat(row.querySelector('.asset-sec179').value) || 0,
+                    bonus: row.querySelector('.asset-bonus').checked,
+                    placed_in_service_date: row.querySelector('.asset-date').value || ''
+                });
+            });
+            
+            const stateAllocations = [];
+            div.querySelectorAll('.state-sale-row').forEach(row => {
+                stateAllocations.push({
+                    state: row.querySelector('.state-code').value || '',
+                    gross_receipts_usd: parseFloat(row.querySelector('.state-gross-receipts').value) || 0
+                });
+            });
+            
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.se-business-name').value || null,
                 naics_code: div.querySelector('.se-naics-code').value || null,
+                industry_category: div.querySelector('.se-industry-category').value || null,
                 has_se_income: toggleChecked,
                 gross_receipts_usd: parseFloat(div.querySelector('.se-gross').value) || null,
                 expenses_usd: parseFloat(div.querySelector('.se-expenses').value) || null,
@@ -4488,10 +5314,18 @@
                 llc_type: div.querySelector('.se-llc-type').value || 'sole_prop',
                 tax_election: div.querySelector('.se-tax-election').value || 'disregarded',
                 wages_paid_usd: parseFloat(div.querySelector('.se-wages').value) || null,
-                sec179_expense_usd: parseFloat(div.querySelector('.se-sec179').value) || null,
-                new_assets_placed_usd: parseFloat(div.querySelector('.se-new-assets').value) || null,
                 vehicle_miles: parseFloat(div.querySelector('.se-veh-miles').value) || null,
-                home_office_sqft: parseFloat(div.querySelector('.se-home-office').value) || null
+                home_office_sqft: parseFloat(div.querySelector('.se-home-office').value) || null,
+                requires_1099_filing: div.querySelector('.se-requires-1099').checked,
+                filed_1099_forms: div.querySelector('.se-filed-1099').checked,
+                cogs_method: div.querySelector('.se-cogs-method').value || 'cost',
+                cogs_beginning_inventory: parseFloat(div.querySelector('.se-cogs-beg').value) || null,
+                cogs_purchases: parseFloat(div.querySelector('.se-cogs-purchases').value) || null,
+                cogs_labor: parseFloat(div.querySelector('.se-cogs-labor').value) || null,
+                cogs_materials: parseFloat(div.querySelector('.se-cogs-materials').value) || null,
+                cogs_ending_inventory: parseFloat(div.querySelector('.se-cogs-ending').value) || null,
+                state_allocations: stateAllocations,
+                assets: assets
             });
         });
         
@@ -4512,32 +5346,38 @@
             business_name: null,
             ein: null,
             naics_code: null,
+            industry_category: null,
             gross_income_usd: null,
             expenses_usd: null,
             qbi_eligible: false,
             is_specified_service_trade: false,
             accounting_method: 'cash',
             wages_paid_usd: null,
-            sec179_expense_usd: null,
-            new_assets_placed_usd: null,
             vehicle_miles: null,
-            home_office_sqft: null
+            home_office_sqft: null,
+            requires_1099_filing: false,
+            filed_1099_forms: false,
+            state_allocations: [],
+            assets: []
         };
         return {
             id: item.id || 'farm-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             gross_income_usd: item.gross_income_usd !== undefined ? item.gross_income_usd : null,
             expenses_usd: item.expenses_usd !== undefined ? item.expenses_usd : null,
             qbi_eligible: !!item.qbi_eligible,
             is_specified_service_trade: !!item.is_specified_service_trade,
             accounting_method: item.accounting_method || 'cash',
             wages_paid_usd: item.wages_paid_usd !== undefined ? item.wages_paid_usd : null,
-            sec179_expense_usd: item.sec179_expense_usd !== undefined ? item.sec179_expense_usd : null,
-            new_assets_placed_usd: item.new_assets_placed_usd !== undefined ? item.new_assets_placed_usd : null,
             vehicle_miles: item.vehicle_miles !== undefined ? item.vehicle_miles : null,
-            home_office_sqft: item.home_office_sqft !== undefined ? item.home_office_sqft : null
+            home_office_sqft: item.home_office_sqft !== undefined ? item.home_office_sqft : null,
+            requires_1099_filing: item.requires_1099_filing !== undefined ? !!item.requires_1099_filing : false,
+            filed_1099_forms: item.filed_1099_forms !== undefined ? !!item.filed_1099_forms : false,
+            state_allocations: normalizeStateAllocations(item.state_allocations),
+            assets: normalizeAssetsList(item.assets, item.sec179_expense_usd, item.new_assets_placed_usd)
         };
     }
     function toggleFarmSection(checked) {
@@ -4550,6 +5390,8 @@
         }
         syncFarmState();
     }
+
+
     function addFarmRow(data = null) {
         const rowId = (data && data.id) ? data.id : 'farm-' + Date.now() + Math.random().toString(36).substring(2, 5);
         const list = document.getElementById('div-farm-list');
@@ -4574,7 +5416,32 @@
                     <input type="text" maxlength="6" class="farm-naics w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="111100" oninput="validateNaics(this); syncFarmState()">
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="farm-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'farm')">
+                        <option value="">-- Select Industry --</option>
+                        <option value="farming" selected>Farming / Agriculture (Eligible)</option>
+                        <option value="retail">Retail / E-Commerce (Eligible)</option>
+                        <option value="manufacturing">Manufacturing (Eligible)</option>
+                        <option value="construction">Construction / Trade (Eligible)</option>
+                        <option value="real_estate">Real Estate / Agent (Eligible)</option>
+                        <option value="architecture">Architectural (Eligible)</option>
+                        <option value="engineering">Engineering (Eligible)</option>
+                        <option value="technology">Software / Tech (Eligible)</option>
+                        <option value="health">Health / Medical (SSTB)</option>
+                        <option value="law">Law Firm / Legal (SSTB)</option>
+                        <option value="accounting">Accounting / Tax (SSTB)</option>
+                        <option value="consulting">Consulting / Advice (SSTB)</option>
+                        <option value="performing_arts">Performing Arts (SSTB)</option>
+                        <option value="athletics">Athletics / Sports (SSTB)</option>
+                        <option value="financial_services">Financial Services (SSTB)</option>
+                        <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                        <option value="trading">Trading Securities (SSTB)</option>
+                        <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                        <option value="other_sstb">Other Services (SSTB)</option>
+                    </select>
+                </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Agricultural Income (USD)</label>
                     <input type="number" class="farm-gross w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
@@ -4583,13 +5450,17 @@
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Farming Expenses (USD)</label>
                     <input type="number" class="farm-expenses w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="farm-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="farm-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                    </label>
                 </div>
-                <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                    <input type="checkbox" class="farm-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                    <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                        <input type="checkbox" class="farm-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                    </label>
                 </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
@@ -4597,7 +5468,7 @@
                     <span>Advanced Farming & Asset Details</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 border-t border-white/5 pt-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Accounting Method</label>
                         <select class="farm-accounting w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncFarmState()">
@@ -4608,14 +5479,6 @@
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Wages Paid (USD)</label>
                         <input type="number" class="farm-wages w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179 Placed (USD)</label>
-                        <input type="number" class="farm-sec179 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">New 2026 Assets (USD)</label>
-                        <input type="number" class="farm-new-assets w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
@@ -4628,6 +5491,39 @@
                         <input type="number" class="farm-home-office w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncFarmState()">
                     </div>
                 </div>
+
+                <!-- Form 1099 Compliance Questions -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 border-t border-white/5 pt-3">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you make any payments in 2026 that would require you to file Form(s) 1099?">Made 1099 Payments? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="farm-requires-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="toggle1099Fields(this, 'farm'); syncFarmState()">
+                        </label>
+                    </div>
+                    <div class="farm-filed-1099-container hidden">
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1" title="Did you or will you file required Form(s) 1099?">Filed/Will File 1099s? ⓘ</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="farm-filed-1099 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncFarmState()">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- State-by-State Sales Allocation -->
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Wayfair Nexus Check)</span>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'farm')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                    </div>
+                    <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
+                </div>
+
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Depreciable Assets (MACRS / Sec 179 / Bonus)</span>
+                        <button type="button" onclick="addNewAsset('${rowId}', 'farm')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add Asset</button>
+                    </div>
+                    <div class="asset-list-${rowId} flex flex-col gap-2"></div>
+                </div>
             </details>
         `;
         list.appendChild(div);
@@ -4635,16 +5531,36 @@
             div.querySelector('.farm-name').value = data.business_name || '';
             div.querySelector('.farm-ein').value = data.ein || '';
             div.querySelector('.farm-naics').value = data.naics_code || '';
+            div.querySelector('.farm-industry-category').value = data.industry_category || 'farming';
             div.querySelector('.farm-gross').value = data.gross_income_usd || '';
             div.querySelector('.farm-expenses').value = data.expenses_usd || '';
             div.querySelector('.farm-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.farm-sstb').checked = !!data.is_specified_service_trade;
             div.querySelector('.farm-accounting').value = data.accounting_method || 'cash';
             div.querySelector('.farm-wages').value = data.wages_paid_usd || '';
-            div.querySelector('.farm-sec179').value = data.sec179_expense_usd || '';
-            div.querySelector('.farm-new-assets').value = data.new_assets_placed_usd || '';
             div.querySelector('.farm-veh-miles').value = data.vehicle_miles || '';
             div.querySelector('.farm-home-office').value = data.home_office_sqft || '';
+
+            // Populate 1099
+            div.querySelector('.farm-requires-1099').checked = !!data.requires_1099_filing;
+            if (data.requires_1099_filing) {
+                const filedContainer = div.querySelector('.farm-filed-1099-container');
+                filedContainer.classList.remove('hidden');
+                div.querySelector('.farm-filed-1099').checked = !!data.filed_1099_forms;
+            }
+
+            // Populate State Allocations
+            const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
+            const stateAllocations = data.state_allocations || [];
+            stateAllocations.forEach(stateAlloc => {
+                addStateSaleRow(rowId, 'farm', stateAlloc);
+            });
+
+            const assetContainer = div.querySelector(`.asset-list-${rowId}`);
+            const assets = data.assets || [];
+            assets.forEach(asset => {
+                createAssetRowDOM(assetContainer, rowId, 'farm', asset);
+            });
         }
         syncFarmState();
     }
@@ -4662,11 +5578,33 @@
         const list = [];
         const toggleChecked = document.getElementById('farm-has-toggle')?.checked || false;
         document.querySelectorAll('.farm-card').forEach(div => {
+            const assets = [];
+            div.querySelectorAll('.asset-row').forEach(row => {
+                assets.push({
+                    id: row.dataset.assetId,
+                    name: row.querySelector('.asset-name').value || '',
+                    class: row.querySelector('.asset-class').value || '5-year',
+                    cost: parseFloat(row.querySelector('.asset-cost').value) || 0,
+                    sec179: parseFloat(row.querySelector('.asset-sec179').value) || 0,
+                    bonus: row.querySelector('.asset-bonus').checked,
+                    placed_in_service_date: row.querySelector('.asset-date').value || ''
+                });
+            });
+
+            const stateAllocations = [];
+            div.querySelectorAll('.state-sale-row').forEach(row => {
+                stateAllocations.push({
+                    state: row.querySelector('.state-code').value || '',
+                    gross_receipts_usd: parseFloat(row.querySelector('.state-gross-receipts').value) || 0
+                });
+            });
+
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.farm-name').value || null,
                 ein: div.querySelector('.farm-ein').value || null,
                 naics_code: div.querySelector('.farm-naics').value || null,
+                industry_category: div.querySelector('.farm-industry-category').value || 'farming',
                 has_farm_income: toggleChecked,
                 gross_income_usd: parseFloat(div.querySelector('.farm-gross').value) || null,
                 expenses_usd: parseFloat(div.querySelector('.farm-expenses').value) || null,
@@ -4674,10 +5612,12 @@
                 is_specified_service_trade: div.querySelector('.farm-sstb').checked,
                 accounting_method: div.querySelector('.farm-accounting').value || 'cash',
                 wages_paid_usd: parseFloat(div.querySelector('.farm-wages').value) || null,
-                sec179_expense_usd: parseFloat(div.querySelector('.farm-sec179').value) || null,
-                new_assets_placed_usd: parseFloat(div.querySelector('.farm-new-assets').value) || null,
                 vehicle_miles: parseFloat(div.querySelector('.farm-veh-miles').value) || null,
-                home_office_sqft: parseFloat(div.querySelector('.farm-home-office').value) || null
+                home_office_sqft: parseFloat(div.querySelector('.farm-home-office').value) || null,
+                requires_1099_filing: div.querySelector('.farm-requires-1099').checked,
+                filed_1099_forms: div.querySelector('.farm-filed-1099').checked,
+                state_allocations: stateAllocations,
+                assets: assets
             });
         });
         usState.income_us_source.farming_schedule_f = list;
@@ -4694,25 +5634,33 @@
     function normalizePartK1Item(item) {
         if (!item) return {
             id: 'part-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, naics_code: null, ownership_percent: null,
-            partner_type: 'limited', material_participation: 'active', tax_basis_usd: null,
-            ordinary_income_usd: null, net_rental_real_estate_usd: null, guaranteed_payments_usd: null,
-            sec179_deduction_usd: null, interest_income_usd: null, ordinary_dividends_usd: null,
-            qualified_dividends_usd: null, stcg_usd: null, ltcg_usd: null, qbi_eligible: false,
-            is_specified_service_trade: false, qbi_wages_usd: null, qbi_ubia_usd: null
+            business_name: null, ein: null, naics_code: null, industry_category: null, partner_type: 'limited',
+            material_participation: 'active', tax_basis_usd: null,
+            at_risk_basis_usd: null, active_rental_participant: false,
+            ordinary_income_usd: null, net_rental_real_estate_usd: null, sec179_deduction_usd: null,
+            interest_income_usd: null, ordinary_dividends_usd: null, qualified_dividends_usd: null,
+            stcg_usd: null, ltcg_usd: null, qbi_eligible: false, is_specified_service_trade: false,
+            qbi_wages_usd: null, qbi_ubia_usd: null, guaranteed_payments_usd: null,
+            partner_ein: null, partnership_ein: null,
+            profit_percentage_beg: null, profit_percentage_end: null,
+            loss_percentage_beg: null, loss_percentage_end: null,
+            capital_percentage_beg: null, capital_percentage_end: null,
+            liabilities_nonrecourse: null, liabilities_qualified_nonrecourse: null, liabilities_recourse: null,
+            state_allocations: []
         };
         return {
             id: item.id || 'part-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
-            ownership_percent: item.ownership_percent !== undefined ? item.ownership_percent : null,
+            industry_category: item.industry_category || null,
             partner_type: item.partner_type || 'limited',
             material_participation: item.material_participation || 'active',
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
+            at_risk_basis_usd: item.at_risk_basis_usd !== undefined ? item.at_risk_basis_usd : null,
+            active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
             ordinary_income_usd: item.ordinary_income_usd !== undefined ? item.ordinary_income_usd : null,
             net_rental_real_estate_usd: item.net_rental_real_estate_usd !== undefined ? item.net_rental_real_estate_usd : null,
-            guaranteed_payments_usd: item.guaranteed_payments_usd !== undefined ? item.guaranteed_payments_usd : null,
             sec179_deduction_usd: item.sec179_deduction_usd !== undefined ? item.sec179_deduction_usd : null,
             interest_income_usd: item.interest_income_usd !== undefined ? item.interest_income_usd : null,
             ordinary_dividends_usd: item.ordinary_dividends_usd !== undefined ? item.ordinary_dividends_usd : null,
@@ -4722,7 +5670,20 @@
             qbi_eligible: !!item.qbi_eligible,
             is_specified_service_trade: !!item.is_specified_service_trade,
             qbi_wages_usd: item.qbi_wages_usd !== undefined ? item.qbi_wages_usd : null,
-            qbi_ubia_usd: item.qbi_ubia_usd !== undefined ? item.qbi_ubia_usd : null
+            qbi_ubia_usd: item.qbi_ubia_usd !== undefined ? item.qbi_ubia_usd : null,
+            guaranteed_payments_usd: item.guaranteed_payments_usd !== undefined ? item.guaranteed_payments_usd : null,
+            partner_ein: item.partner_ein || null,
+            partnership_ein: item.partnership_ein || null,
+            profit_percentage_beg: item.profit_percentage_beg !== undefined ? item.profit_percentage_beg : null,
+            profit_percentage_end: item.profit_percentage_end !== undefined ? item.profit_percentage_end : null,
+            loss_percentage_beg: item.loss_percentage_beg !== undefined ? item.loss_percentage_beg : null,
+            loss_percentage_end: item.loss_percentage_end !== undefined ? item.loss_percentage_end : null,
+            capital_percentage_beg: item.capital_percentage_beg !== undefined ? item.capital_percentage_beg : null,
+            capital_percentage_end: item.capital_percentage_end !== undefined ? item.capital_percentage_end : null,
+            liabilities_nonrecourse: item.liabilities_nonrecourse !== undefined ? item.liabilities_nonrecourse : null,
+            liabilities_qualified_nonrecourse: item.liabilities_qualified_nonrecourse !== undefined ? item.liabilities_qualified_nonrecourse : null,
+            liabilities_recourse: item.liabilities_recourse !== undefined ? item.liabilities_recourse : null,
+            state_allocations: normalizeStateAllocations(item.state_allocations)
         };
     }
     function togglePartK1Section(checked) {
@@ -4746,7 +5707,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8">
                 <div class="md:col-span-2">
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Partnership Name</label>
-                    <input type="text" class="part-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" placeholder="e.g. Growth Ventures LP" oninput="syncPartK1State()">
+                    <input type="text" class="part-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" placeholder="e.g. Apex Partners GP" oninput="syncPartK1State()">
                 </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">EIN</label>
@@ -4754,19 +5715,15 @@
                 </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">NAICS Code</label>
-                    <input type="text" maxlength="6" class="part-naics w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="524210" oninput="validateNaics(this); syncPartK1State()">
+                    <input type="text" maxlength="6" class="part-naics w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="541511" oninput="validateNaics(this); syncPartK1State()">
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
-                <div>
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ownership Share (%)</label>
-                    <input type="number" step="0.01" class="part-percent w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center font-sans">
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Partner Type</label>
-                    <select class="part-type w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncPartK1State()">
-                        <option value="limited">Limited Partner (Exempt SE)</option>
-                        <option value="general">General Partner (Subject SE)</option>
+                    <select class="part-partner-type w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncPartK1State()">
+                        <option value="limited">Limited Partner</option>
+                        <option value="general">General Partner</option>
                     </select>
                 </div>
                 <div>
@@ -4777,8 +5734,12 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Initial Stock/Partnership Basis</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Tax Basis (USD)</label>
                     <input type="number" class="part-basis w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="Basis Limit" oninput="syncPartK1State()">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">At-Risk Basis (USD)</label>
+                    <input type="number" class="part-at-risk-basis w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="At-Risk Limit" oninput="syncPartK1State()">
                 </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
@@ -4786,7 +5747,7 @@
                     <span>Partnership Ledger & QBI Details</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 border-t border-white/5 pt-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income (Box 1)</label>
                         <input type="number" class="part-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
@@ -4796,15 +5757,15 @@
                         <input type="number" class="part-box2 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Guaranteed Payments (Box 4)</label>
-                        <input type="number" class="part-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179 (Box 12)</label>
                         <input type="number" class="part-box12 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-2 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Guaranteed Payments</label>
+                        <input type="number" class="part-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
+                    </div>
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest (Box 5)</label>
                         <input type="number" class="part-box5 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
@@ -4826,23 +5787,138 @@
                         <input type="number" class="part-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 items-center">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                        <input type="checkbox" class="part-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
-                    </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="part-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                        <select class="part-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'part')">
+                            <option value="">-- Select Industry --</option>
+                            <option value="retail">Retail / E-Commerce (Eligible)</option>
+                            <option value="manufacturing">Manufacturing (Eligible)</option>
+                            <option value="construction">Construction / Trade (Eligible)</option>
+                            <option value="farming">Farming / Agriculture (Eligible)</option>
+                            <option value="real_estate">Real Estate / Rental (Eligible)</option>
+                            <option value="architecture">Architectural (Eligible)</option>
+                            <option value="engineering">Engineering (Eligible)</option>
+                            <option value="technology">Software / Tech (Eligible)</option>
+                            <option value="health">Health / Medical (SSTB)</option>
+                            <option value="law">Law Firm / Legal (SSTB)</option>
+                            <option value="accounting">Accounting / Tax (SSTB)</option>
+                            <option value="consulting">Consulting / Advice (SSTB)</option>
+                            <option value="performing_arts">Performing Arts (SSTB)</option>
+                            <option value="athletics">Athletics / Sports (SSTB)</option>
+                            <option value="financial_services">Financial Services (SSTB)</option>
+                            <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                            <option value="trading">Trading Securities (SSTB)</option>
+                            <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                            <option value="other_sstb">Other Services (SSTB)</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="part-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncPartK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">W-2 Wages (Box 20V)</label>
                         <input type="number" class="part-qbi-wages w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity UBIA (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">UBIA (Box 20V)</label>
                         <input type="number" class="part-qbi-ubia w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
+                </div>
+            </details>
+
+            <!-- Collapsible Drawer for Advanced Partner Ledger Details -->
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Advanced Partner Details (Form 1065 Part II)</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Partner's SSN/TIN</label>
+                        <input type="text" class="part-partner-tin w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="e.g. 000-00-0000" oninput="syncPartK1State()">
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">General/Limited election</label>
+                        <select class="part-general-partner w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" onchange="syncPartK1State()">
+                            <option value="limited">Limited Partner or other LLC member</option>
+                            <option value="general">General Partner or LLC Managing Member</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Partner Entity Type</label>
+                        <select class="part-partner-entity-type w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncPartK1State()">
+                            <option value="individual">Individual</option>
+                            <option value="corporation">Corporation</option>
+                            <option value="partnership">Partnership</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Profit/Loss/Capital percentages -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Profit Share (Beg % / End %)</label>
+                        <div class="flex gap-2">
+                            <input type="number" step="0.0001" class="part-profit-beg w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="Beg" oninput="syncPartK1State()">
+                            <input type="number" step="0.0001" class="part-profit-end w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="End" oninput="syncPartK1State()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Loss Share (Beg % / End %)</label>
+                        <div class="flex gap-2">
+                            <input type="number" step="0.0001" class="part-loss-beg w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="Beg" oninput="syncPartK1State()">
+                            <input type="number" step="0.0001" class="part-loss-end w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="End" oninput="syncPartK1State()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Capital Share (Beg % / End %)</label>
+                        <div class="flex gap-2">
+                            <input type="number" step="0.0001" class="part-capital-beg w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="Beg" oninput="syncPartK1State()">
+                            <input type="number" step="0.0001" class="part-capital-end w-1/2 bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="End" oninput="syncPartK1State()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partner's Share of Liabilities -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Nonrecourse Liabilities (USD)</label>
+                        <input type="number" class="part-nonrecourse w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Qualified Nonrecourse (USD)</label>
+                        <input type="number" class="part-qual-nonrecourse w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Recourse Liabilities (USD)</label>
+                        <input type="number" class="part-recourse w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
+                    </div>
+                </div>
+
+                <!-- State-by-State Sales Allocation -->
+                <div class="md:col-span-3 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Apportionment)</span>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'part')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                    </div>
+                    <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
                 </div>
             </details>
         `;
@@ -4851,14 +5927,15 @@
             div.querySelector('.part-name').value = data.business_name || '';
             div.querySelector('.part-ein').value = data.ein || '';
             div.querySelector('.part-naics').value = data.naics_code || '';
-            div.querySelector('.part-percent').value = data.ownership_percent || '';
-            div.querySelector('.part-type').value = data.partner_type || 'limited';
+            div.querySelector('.part-industry-category').value = data.industry_category || '';
+            div.querySelector('.part-partner-type').value = data.partner_type || 'limited';
             div.querySelector('.part-participation').value = data.material_participation || 'active';
             div.querySelector('.part-basis').value = data.tax_basis_usd || '';
+            div.querySelector('.part-at-risk-basis').value = data.at_risk_basis_usd || '';
             div.querySelector('.part-box1').value = data.ordinary_income_usd || '';
             div.querySelector('.part-box2').value = data.net_rental_real_estate_usd || '';
-            div.querySelector('.part-box4').value = data.guaranteed_payments_usd || '';
             div.querySelector('.part-box12').value = data.sec179_deduction_usd || '';
+            div.querySelector('.part-box4').value = data.guaranteed_payments_usd || '';
             div.querySelector('.part-box5').value = data.interest_income_usd || '';
             div.querySelector('.part-box6a').value = data.ordinary_dividends_usd || '';
             div.querySelector('.part-box6b').value = data.qualified_dividends_usd || '';
@@ -4866,8 +5943,30 @@
             div.querySelector('.part-box9a').value = data.ltcg_usd || '';
             div.querySelector('.part-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.part-sstb').checked = !!data.is_specified_service_trade;
+            div.querySelector('.part-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.part-qbi-wages').value = data.qbi_wages_usd || '';
             div.querySelector('.part-qbi-ubia').value = data.qbi_ubia_usd || '';
+
+            // Populate advanced partner details
+            div.querySelector('.part-partner-tin').value = data.partner_ein || '';
+            div.querySelector('.part-general-partner').value = data.general_partner ? 'general' : 'limited';
+            div.querySelector('.part-partner-entity-type').value = data.partner_type || 'individual';
+            div.querySelector('.part-profit-beg').value = data.profit_percentage_beg !== undefined ? data.profit_percentage_beg : '';
+            div.querySelector('.part-profit-end').value = data.profit_percentage_end !== undefined ? data.profit_percentage_end : '';
+            div.querySelector('.part-loss-beg').value = data.loss_percentage_beg !== undefined ? data.loss_percentage_beg : '';
+            div.querySelector('.part-loss-end').value = data.loss_percentage_end !== undefined ? data.loss_percentage_end : '';
+            div.querySelector('.part-capital-beg').value = data.capital_percentage_beg !== undefined ? data.capital_percentage_beg : '';
+            div.querySelector('.part-capital-end').value = data.capital_percentage_end !== undefined ? data.capital_percentage_end : '';
+            div.querySelector('.part-nonrecourse').value = data.partner_share_nonrecourse_usd !== undefined ? data.partner_share_nonrecourse_usd : '';
+            div.querySelector('.part-qual-nonrecourse').value = data.partner_share_qualified_nonrecourse_usd !== undefined ? data.partner_share_qualified_nonrecourse_usd : '';
+            div.querySelector('.part-recourse').value = data.partner_share_recourse_usd !== undefined ? data.partner_share_recourse_usd : '';
+
+            // Populate State Allocations
+            const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
+            const stateAllocations = data.state_allocations || [];
+            stateAllocations.forEach(stateAlloc => {
+                addStateSaleRow(rowId, 'part', stateAlloc);
+            });
         }
         syncPartK1State();
     }
@@ -4885,20 +5984,29 @@
         const list = [];
         const toggleChecked = document.getElementById('part-k1-has-toggle')?.checked || false;
         document.querySelectorAll('.part-k1-card').forEach(div => {
+            const stateAllocations = [];
+            div.querySelectorAll('.state-sale-row').forEach(row => {
+                stateAllocations.push({
+                    state: row.querySelector('.state-code').value || '',
+                    gross_receipts_usd: parseFloat(row.querySelector('.state-gross-receipts').value) || 0
+                });
+            });
+
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.part-name').value || null,
                 ein: div.querySelector('.part-ein').value || null,
                 naics_code: div.querySelector('.part-naics').value || null,
+                industry_category: div.querySelector('.part-industry-category').value || null,
                 has_part_income: toggleChecked,
-                ownership_percent: parseFloat(div.querySelector('.part-percent').value) || null,
-                partner_type: div.querySelector('.part-type').value || 'limited',
+                partner_type: div.querySelector('.part-partner-type').value || 'limited',
                 material_participation: div.querySelector('.part-participation').value || 'active',
                 tax_basis_usd: parseFloat(div.querySelector('.part-basis').value) || null,
+                at_risk_basis_usd: parseFloat(div.querySelector('.part-at-risk-basis').value) || null,
                 ordinary_income_usd: parseFloat(div.querySelector('.part-box1').value) || null,
                 net_rental_real_estate_usd: parseFloat(div.querySelector('.part-box2').value) || null,
-                guaranteed_payments_usd: parseFloat(div.querySelector('.part-box4').value) || null,
                 sec179_deduction_usd: parseFloat(div.querySelector('.part-box12').value) || null,
+                guaranteed_payments_usd: parseFloat(div.querySelector('.part-box4').value) || null,
                 interest_income_usd: parseFloat(div.querySelector('.part-box5').value) || null,
                 ordinary_dividends_usd: parseFloat(div.querySelector('.part-box6a').value) || null,
                 qualified_dividends_usd: parseFloat(div.querySelector('.part-box6b').value) || null,
@@ -4906,14 +6014,30 @@
                 ltcg_usd: parseFloat(div.querySelector('.part-box9a').value) || null,
                 qbi_eligible: div.querySelector('.part-qbi').checked,
                 is_specified_service_trade: div.querySelector('.part-sstb').checked,
+                active_rental_participant: div.querySelector('.part-rental-active').checked,
                 qbi_wages_usd: parseFloat(div.querySelector('.part-qbi-wages').value) || null,
-                qbi_ubia_usd: parseFloat(div.querySelector('.part-qbi-ubia').value) || null
+                qbi_ubia_usd: parseFloat(div.querySelector('.part-qbi-ubia').value) || null,
+                partner_ein: div.querySelector('.part-partner-tin').value || null,
+                partnership_ein: div.querySelector('.part-ein').value || null,
+                partner_type: div.querySelector('.part-partner-entity-type').value || 'individual',
+                general_partner: div.querySelector('.part-general-partner').value === 'general',
+                profit_percentage_beg: parseFloat(div.querySelector('.part-profit-beg').value) || null,
+                profit_percentage_end: parseFloat(div.querySelector('.part-profit-end').value) || null,
+                loss_percentage_beg: parseFloat(div.querySelector('.part-loss-beg').value) || null,
+                loss_percentage_end: parseFloat(div.querySelector('.part-loss-end').value) || null,
+                capital_percentage_beg: parseFloat(div.querySelector('.part-capital-beg').value) || null,
+                capital_percentage_end: parseFloat(div.querySelector('.part-capital-end').value) || null,
+                partner_share_nonrecourse_usd: parseFloat(div.querySelector('.part-nonrecourse').value) || null,
+                partner_share_qualified_nonrecourse_usd: parseFloat(div.querySelector('.part-qual-nonrecourse').value) || null,
+                partner_share_recourse_usd: parseFloat(div.querySelector('.part-recourse').value) || null,
+                state_allocations: stateAllocations
             });
         });
         usState.income_us_source.partnerships_k1 = list;
         recalculateDerivedFields();
         saveStateAndSync();
     }
+
 
     // --- S-Corporations (Schedule K-1, Form 1120-S) Helpers ---
     function normalizeScorpK1Data(data) {
@@ -4924,20 +6048,28 @@
     function normalizeScorpK1Item(item) {
         if (!item) return {
             id: 'scorp-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, naics_code: null, ownership_percent: null,
-            material_participation: 'active', tax_basis_usd: null, ordinary_income_usd: null,
-            net_rental_real_estate_usd: null, sec179_deduction_usd: null, interest_income_usd: null,
-            ordinary_dividends_usd: null, qualified_dividends_usd: null, stcg_usd: null, ltcg_usd: null,
-            qbi_eligible: false, is_specified_service_trade: false, qbi_wages_usd: null, qbi_ubia_usd: null
+            business_name: null, ein: null, naics_code: null, industry_category: null, ownership_percent: null,
+            material_participation: 'active', tax_basis_usd: null,
+            at_risk_basis_usd: null, active_rental_participant: false,
+            ordinary_income_usd: null, net_rental_real_estate_usd: null, sec179_deduction_usd: null,
+            interest_income_usd: null, ordinary_dividends_usd: null, qualified_dividends_usd: null,
+            stcg_usd: null, ltcg_usd: null, qbi_eligible: false, is_specified_service_trade: false,
+            qbi_wages_usd: null, qbi_ubia_usd: null,
+            shareholder_ein: null, corporation_ein: null,
+            stock_percentage_beg: null, stock_percentage_end: null,
+            state_allocations: []
         };
         return {
             id: item.id || 'scorp-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
             naics_code: item.naics_code || null,
+            industry_category: item.industry_category || null,
             ownership_percent: item.ownership_percent !== undefined ? item.ownership_percent : null,
             material_participation: item.material_participation || 'active',
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
+            at_risk_basis_usd: item.at_risk_basis_usd !== undefined ? item.at_risk_basis_usd : null,
+            active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
             ordinary_income_usd: item.ordinary_income_usd !== undefined ? item.ordinary_income_usd : null,
             net_rental_real_estate_usd: item.net_rental_real_estate_usd !== undefined ? item.net_rental_real_estate_usd : null,
             sec179_deduction_usd: item.sec179_deduction_usd !== undefined ? item.sec179_deduction_usd : null,
@@ -4949,7 +6081,12 @@
             qbi_eligible: !!item.qbi_eligible,
             is_specified_service_trade: !!item.is_specified_service_trade,
             qbi_wages_usd: item.qbi_wages_usd !== undefined ? item.qbi_wages_usd : null,
-            qbi_ubia_usd: item.qbi_ubia_usd !== undefined ? item.qbi_ubia_usd : null
+            qbi_ubia_usd: item.qbi_ubia_usd !== undefined ? item.qbi_ubia_usd : null,
+            shareholder_ein: item.shareholder_ein || null,
+            corporation_ein: item.corporation_ein || null,
+            stock_percentage_beg: item.stock_percentage_beg !== undefined ? item.stock_percentage_beg : null,
+            stock_percentage_end: item.stock_percentage_end !== undefined ? item.stock_percentage_end : null,
+            state_allocations: normalizeStateAllocations(item.state_allocations)
         };
     }
     function toggleScorpK1Section(checked) {
@@ -4984,7 +6121,7 @@
                     <input type="text" maxlength="6" class="scorp-naics w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="541511" oninput="validateNaics(this); syncScorpK1State()">
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-center font-sans">
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ownership Share (%)</label>
                     <input type="number" step="0.01" class="scorp-percent w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
@@ -5000,13 +6137,17 @@
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Initial Stock/Debt Basis</label>
                     <input type="number" class="scorp-basis w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="Basis Limit" oninput="syncScorpK1State()">
                 </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">At-Risk Basis (USD)</label>
+                    <input type="number" class="scorp-at-risk-basis w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="At-Risk Limit" oninput="syncScorpK1State()">
+                </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
                 <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
                     <span>S-Corp Ledger & QBI Details</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income (Box 1)</label>
                         <input type="number" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
@@ -5020,7 +6161,7 @@
                         <input type="number" class="scorp-box11 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3 font-sans">
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest (Box 4)</label>
                         <input type="number" class="scorp-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
@@ -5042,14 +6183,49 @@
                         <input type="number" class="scorp-box8a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 items-center">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                        <input type="checkbox" class="scorp-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                        <select class="scorp-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="onIndustryCategoryChange(this, 'scorp')">
+                            <option value="">-- Select Industry --</option>
+                            <option value="retail">Retail / E-Commerce (Eligible)</option>
+                            <option value="manufacturing">Manufacturing (Eligible)</option>
+                            <option value="construction">Construction / Trade (Eligible)</option>
+                            <option value="farming">Farming / Agriculture (Eligible)</option>
+                            <option value="real_estate">Real Estate / Rental (Eligible)</option>
+                            <option value="architecture">Architectural (Eligible)</option>
+                            <option value="engineering">Engineering (Eligible)</option>
+                            <option value="technology">Software / Tech (Eligible)</option>
+                            <option value="health">Health / Medical (SSTB)</option>
+                            <option value="law">Law Firm / Legal (SSTB)</option>
+                            <option value="accounting">Accounting / Tax (SSTB)</option>
+                            <option value="consulting">Consulting / Advice (SSTB)</option>
+                            <option value="performing_arts">Performing Arts (SSTB)</option>
+                            <option value="athletics">Articles / Sports (SSTB)</option>
+                            <option value="financial_services">Financial Services (SSTB)</option>
+                            <option value="investing">Investing / Asset Mgmt (SSTB)</option>
+                            <option value="trading">Trading Securities (SSTB)</option>
+                            <option value="other_eligible">Other Trade (Non-SSTB)</option>
+                            <option value="other_sstb">Other Services (SSTB)</option>
+                        </select>
                     </div>
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="scorp-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-sstb rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental Participant?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="scorp-rental-active rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncScorpK1State()">
+                        </label>
                     </div>
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages (Box 17V)</label>
@@ -5060,6 +6236,15 @@
                         <input type="number" class="scorp-qbi-ubia w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
+
+                <!-- State-by-State Sales Allocation -->
+                <div class="md:col-span-5 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Apportionment)</span>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'scorp')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                    </div>
+                    <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
+                </div>
             </details>
         `;
         list.appendChild(div);
@@ -5067,9 +6252,11 @@
             div.querySelector('.scorp-name').value = data.business_name || '';
             div.querySelector('.scorp-ein').value = data.ein || '';
             div.querySelector('.scorp-naics').value = data.naics_code || '';
+            div.querySelector('.scorp-industry-category').value = data.industry_category || '';
             div.querySelector('.scorp-percent').value = data.ownership_percent || '';
             div.querySelector('.scorp-participation').value = data.material_participation || 'active';
             div.querySelector('.scorp-basis').value = data.tax_basis_usd || '';
+            div.querySelector('.scorp-at-risk-basis').value = data.at_risk_basis_usd || '';
             div.querySelector('.scorp-box1').value = data.ordinary_income_usd || '';
             div.querySelector('.scorp-box2').value = data.net_rental_real_estate_usd || '';
             div.querySelector('.scorp-box11').value = data.sec179_deduction_usd || '';
@@ -5080,8 +6267,16 @@
             div.querySelector('.scorp-box8a').value = data.ltcg_usd || '';
             div.querySelector('.scorp-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.scorp-sstb').checked = !!data.is_specified_service_trade;
+            div.querySelector('.scorp-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.scorp-qbi-wages').value = data.qbi_wages_usd || '';
             div.querySelector('.scorp-qbi-ubia').value = data.qbi_ubia_usd || '';
+
+            // Populate State Allocations
+            const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
+            const stateAllocations = data.state_allocations || [];
+            stateAllocations.forEach(stateAlloc => {
+                addStateSaleRow(rowId, 'scorp', stateAlloc);
+            });
         }
         syncScorpK1State();
     }
@@ -5099,15 +6294,25 @@
         const list = [];
         const toggleChecked = document.getElementById('scorp-k1-has-toggle')?.checked || false;
         document.querySelectorAll('.scorp-k1-card').forEach(div => {
+            const stateAllocations = [];
+            div.querySelectorAll('.state-sale-row').forEach(row => {
+                stateAllocations.push({
+                    state: row.querySelector('.state-code').value || '',
+                    gross_receipts_usd: parseFloat(row.querySelector('.state-gross-receipts').value) || 0
+                });
+            });
+
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.scorp-name').value || null,
                 ein: div.querySelector('.scorp-ein').value || null,
                 naics_code: div.querySelector('.scorp-naics').value || null,
+                industry_category: div.querySelector('.scorp-industry-category').value || null,
                 has_scorp_income: toggleChecked,
                 ownership_percent: parseFloat(div.querySelector('.scorp-percent').value) || null,
                 material_participation: div.querySelector('.scorp-participation').value || 'active',
                 tax_basis_usd: parseFloat(div.querySelector('.scorp-basis').value) || null,
+                at_risk_basis_usd: parseFloat(div.querySelector('.scorp-at-risk-basis').value) || null,
                 ordinary_income_usd: parseFloat(div.querySelector('.scorp-box1').value) || null,
                 net_rental_real_estate_usd: parseFloat(div.querySelector('.scorp-box2').value) || null,
                 sec179_deduction_usd: parseFloat(div.querySelector('.scorp-box11').value) || null,
@@ -5118,8 +6323,10 @@
                 ltcg_usd: parseFloat(div.querySelector('.scorp-box8a').value) || null,
                 qbi_eligible: div.querySelector('.scorp-qbi').checked,
                 is_specified_service_trade: div.querySelector('.scorp-sstb').checked,
+                active_rental_participant: div.querySelector('.scorp-rental-active').checked,
                 qbi_wages_usd: parseFloat(div.querySelector('.scorp-qbi-wages').value) || null,
-                qbi_ubia_usd: parseFloat(div.querySelector('.scorp-qbi-ubia').value) || null
+                qbi_ubia_usd: parseFloat(div.querySelector('.scorp-qbi-ubia').value) || null,
+                state_allocations: stateAllocations
             });
         });
         usState.income_us_source.s_corporations_k1 = list;
@@ -5136,21 +6343,26 @@
     function normalizeCcorpItem(item) {
         if (!item) return {
             id: 'ccorp-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, gross_receipts_usd: null, cogs_usd: null,
+            business_name: null, ein: null, industry_category: null, gross_receipts_usd: null, cogs_usd: null,
             operating_expenses_usd: null, nol_carryover_usd: null, dividends_paid_usd: null,
-            dividend_type: 'qualified', is_qsbs: false
+            dividend_type: 'qualified', is_qsbs: false,
+            state_allocations: [],
+            assets: []
         };
         return {
             id: item.id || 'ccorp-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
+            industry_category: item.industry_category || null,
             gross_receipts_usd: item.gross_receipts_usd !== undefined ? item.gross_receipts_usd : null,
             cogs_usd: item.cogs_usd !== undefined ? item.cogs_usd : null,
             operating_expenses_usd: item.operating_expenses_usd !== undefined ? item.operating_expenses_usd : null,
             nol_carryover_usd: item.nol_carryover_usd !== undefined ? item.nol_carryover_usd : null,
             dividends_paid_usd: item.dividends_paid_usd !== undefined ? item.dividends_paid_usd : null,
             dividend_type: item.dividend_type || 'qualified',
-            is_qsbs: !!item.is_qsbs
+            is_qsbs: !!item.is_qsbs,
+            state_allocations: normalizeStateAllocations(item.state_allocations),
+            assets: normalizeAssetsList(item.assets, null, null)
         };
     }
     function toggleCcorpSection(checked) {
@@ -5171,7 +6383,7 @@
         div.className = "ccorp-card p-4 bg-[#141414] border border-white/10 rounded-xl relative flex flex-col gap-3 shadow-md";
         div.innerHTML = `
             <button type="button" onclick="removeCcorpRow('${rowId}')" class="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">✕</button>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pr-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pr-8">
                 <div class="md:col-span-2">
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">C-Corporation Name</label>
                     <input type="text" class="ccorp-name w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" placeholder="e.g. Enterprise Inc" oninput="syncCcorpState()">
@@ -5179,6 +6391,31 @@
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">EIN</label>
                     <input type="text" class="ccorp-ein w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="12-3456789" oninput="syncCcorpState()">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Industry / Category</label>
+                    <select class="ccorp-industry-category w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncCcorpState()">
+                        <option value="">-- Select Industry --</option>
+                        <option value="retail">Retail / E-Commerce</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="construction">Construction / Trade</option>
+                        <option value="farming">Farming / Agriculture</option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="architecture">Architectural</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="technology">Software / Tech</option>
+                        <option value="health">Health / Medical</option>
+                        <option value="law">Law Firm / Legal</option>
+                        <option value="accounting">Accounting / Tax</option>
+                        <option value="consulting">Consulting / Advice</option>
+                        <option value="performing_arts">Performing Arts</option>
+                        <option value="athletics">Athletics / Sports</option>
+                        <option value="financial_services">Financial Services</option>
+                        <option value="investing">Investing / Asset Mgmt</option>
+                        <option value="trading">Trading Securities</option>
+                        <option value="other_eligible">Other Trade</option>
+                        <option value="other_sstb">Other Services</option>
+                    </select>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -5220,11 +6457,25 @@
                     <input type="checkbox" class="ccorp-qsbs rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncCcorpState()">
                 </div>
             </div>
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Corporate Assets & Depreciation</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Depreciable Assets (MACRS / Sec 179 / Bonus)</span>
+                        <button type="button" onclick="addNewAsset('${rowId}', 'ccorp')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add Asset</button>
+                    </div>
+                    <div class="asset-list-${rowId} flex flex-col gap-2"></div>
+                </div>
+            </details>
         `;
         list.appendChild(div);
         if (data) {
             div.querySelector('.ccorp-name').value = data.business_name || '';
             div.querySelector('.ccorp-ein').value = data.ein || '';
+            div.querySelector('.ccorp-industry-category').value = data.industry_category || '';
             div.querySelector('.ccorp-gross').value = data.gross_receipts_usd || '';
             div.querySelector('.ccorp-cogs').value = data.cogs_usd || '';
             div.querySelector('.ccorp-opex').value = data.operating_expenses_usd || '';
@@ -5233,7 +6484,12 @@
             div.querySelector('.ccorp-div-type').value = data.dividend_type || 'qualified';
             div.querySelector('.ccorp-qsbs').checked = !!data.is_qsbs;
             
-            // Calculate display tax
+            const assetContainer = div.querySelector(`.asset-list-${rowId}`);
+            const assets = data.assets || [];
+            assets.forEach(asset => {
+                createAssetRowDOM(assetContainer, rowId, 'ccorp', asset);
+            });
+            
             const taxable = Math.max(0, (data.gross_receipts_usd || 0) - (data.cogs_usd || 0) - (data.operating_expenses_usd || 0) - (data.nol_carryover_usd || 0));
             div.querySelector('.ccorp-tax-display').textContent = formatCurrency(taxable * 0.21);
         }
@@ -5257,7 +6513,52 @@
             const cogs = parseFloat(div.querySelector('.ccorp-cogs').value) || 0;
             const opex = parseFloat(div.querySelector('.ccorp-opex').value) || 0;
             const nol = parseFloat(div.querySelector('.ccorp-nol').value) || 0;
-            const taxable = Math.max(0, gross - cogs - opex - nol);
+            
+            const assets = [];
+            div.querySelectorAll('.asset-row').forEach(row => {
+                assets.push({
+                    id: row.dataset.assetId,
+                    name: row.querySelector('.asset-name').value || '',
+                    class: row.querySelector('.asset-class').value || '5-year',
+                    cost: parseFloat(row.querySelector('.asset-cost').value) || 0,
+                    sec179: parseFloat(row.querySelector('.asset-sec179').value) || 0,
+                    bonus: row.querySelector('.asset-bonus').checked,
+                    placed_in_service_date: row.querySelector('.asset-date').value || ''
+                });
+            });
+
+            let localSec179Requested = 0;
+            let localPlacedInService = 0;
+            assets.forEach(asset => {
+                const req = Math.min(asset.sec179 || 0, asset.cost || 0);
+                localSec179Requested += req;
+                if (req > 0) {
+                    localPlacedInService += asset.cost || 0;
+                }
+            });
+            const localCap = Math.max(0, 1200000 - Math.max(0, localPlacedInService - 3000000));
+            const localScale = localSec179Requested > localCap ? localCap / localSec179Requested : 1.0;
+            
+            const MACRS_RATES = {
+                '3-year': 0.3333,
+                '5-year': 0.2000,
+                '7-year': 0.1429,
+                '15-year': 0.0500,
+                '27.5-year': 0.03636,
+                '39-year': 0.02564
+            };
+            let localDepr = 0;
+            assets.forEach(asset => {
+                const cost = asset.cost || 0;
+                const allowedSec179 = Math.min(asset.sec179 || 0, cost) * localScale;
+                const klass = asset.class || '5-year';
+                const allowsBonus = (klass !== '27.5-year' && klass !== '39-year');
+                const allowedBonus = (asset.bonus && allowsBonus) ? (cost - allowedSec179) * 0.20 : 0;
+                const rate = MACRS_RATES[klass] || 0;
+                localDepr += allowedSec179 + allowedBonus + Math.max(0, cost - allowedSec179 - allowedBonus) * rate;
+            });
+
+            const taxable = Math.max(0, gross - cogs - opex - localDepr - nol);
             const corpTax = taxable * 0.21;
             div.querySelector('.ccorp-tax-display').textContent = formatCurrency(corpTax);
 
@@ -5265,6 +6566,7 @@
                 id: div.id,
                 business_name: div.querySelector('.ccorp-name').value || null,
                 ein: div.querySelector('.ccorp-ein').value || null,
+                industry_category: div.querySelector('.ccorp-industry-category').value || null,
                 has_ccorp: toggleChecked,
                 gross_receipts_usd: gross || null,
                 cogs_usd: cogs || null,
@@ -5273,7 +6575,8 @@
                 calculated_corporate_tax_usd: corpTax,
                 dividends_paid_usd: parseFloat(div.querySelector('.ccorp-divs').value) || null,
                 dividend_type: div.querySelector('.ccorp-div-type').value || 'qualified',
-                is_qsbs: div.querySelector('.ccorp-qsbs').checked
+                is_qsbs: div.querySelector('.ccorp-qsbs').checked,
+                assets: assets
             });
         });
         usState.income_us_source.c_corporations_1120 = list;
@@ -5292,7 +6595,8 @@
             id: 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: null, ein: null, ordinary_income_usd: null, interest_income_usd: null,
             ordinary_dividends_usd: null, qualified_dividends_usd: null, stcg_usd: null, ltcg_usd: null,
-            qbi_eligible: false, is_specified_service_trade: false, material_participation: 'active'
+            qbi_eligible: false, is_specified_service_trade: false, material_participation: 'active',
+            active_rental_participant: false, net_rental_real_estate_usd: null, depreciation_allocation_usd: null
         };
         return {
             id: item.id || 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
@@ -5306,7 +6610,10 @@
             ltcg_usd: item.ltcg_usd !== undefined ? item.ltcg_usd : null,
             qbi_eligible: !!item.qbi_eligible,
             is_specified_service_trade: !!item.is_specified_service_trade,
-            material_participation: item.material_participation || 'active'
+            material_participation: item.material_participation || 'active',
+            active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
+            net_rental_real_estate_usd: item.net_rental_real_estate_usd !== undefined ? item.net_rental_real_estate_usd : null,
+            depreciation_allocation_usd: item.depreciation_allocation_usd !== undefined ? item.depreciation_allocation_usd : null
         };
     }
     function toggleTrustK1Section(checked) {
@@ -5350,8 +6657,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible?</span>
-                    <input type="checkbox" class="trust-qbi rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1 text-[9px] font-normal font-sans">ⓘ</span></span>
+                    <input type="checkbox" class="trust-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
                 </div>
             </div>
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
@@ -5378,14 +6685,39 @@
                     </div>
                     <div>
                         <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">LTCG</label>
-                        <input type="number" class="trust-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
+                        <input type="number" class="trust-ltcg w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 items-center">
-                    <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px]">
-                        <span class="text-[8px] font-black uppercase tracking-widest text-white/60">SSTB (Specified Trade)?</span>
-                        <input type="checkbox" class="trust-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 font-sans">
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Active Rental Participant?</label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="trust-rental-active rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                        </label>
                     </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Net Rental Real Estate (Box 7)</label>
+                        <input type="number" class="trust-box7 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Depreciation Allocation (Box 9a)</label>
+                        <input type="number" class="trust-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
+                            <input type="checkbox" class="trust-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- State-by-State Sales Allocation -->
+                <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
+                    <div class="flex items-center justify-between pb-2 mb-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Apportionment)</span>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'trust')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                    </div>
+                    <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
                 </div>
             </details>
         `;
@@ -5400,8 +6732,18 @@
             div.querySelector('.trust-box6a').value = data.ordinary_dividends_usd || '';
             div.querySelector('.trust-box6b').value = data.qualified_dividends_usd || '';
             div.querySelector('.trust-box8').value = data.stcg_usd || '';
-            div.querySelector('.trust-box9a').value = data.ltcg_usd || '';
+            div.querySelector('.trust-ltcg').value = data.ltcg_usd || '';
             div.querySelector('.trust-sstb').checked = !!data.is_specified_service_trade;
+            div.querySelector('.trust-rental-active').checked = !!data.active_rental_participant;
+            div.querySelector('.trust-box7').value = data.net_rental_real_estate_usd || '';
+            div.querySelector('.trust-box9a').value = data.depreciation_allocation_usd || '';
+
+            // Populate State Allocations
+            const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
+            const stateAllocations = data.state_allocations || [];
+            stateAllocations.forEach(stateAlloc => {
+                addStateSaleRow(rowId, 'trust', stateAlloc);
+            });
         }
         syncTrustK1State();
     }
@@ -5419,6 +6761,14 @@
         const list = [];
         const toggleChecked = document.getElementById('trust-k1-has-toggle')?.checked || false;
         document.querySelectorAll('.trust-k1-card').forEach(div => {
+            const stateAllocations = [];
+            div.querySelectorAll('.state-sale-row').forEach(row => {
+                stateAllocations.push({
+                    state: row.querySelector('.state-code').value || '',
+                    gross_receipts_usd: parseFloat(row.querySelector('.state-gross-receipts').value) || 0
+                });
+            });
+
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.trust-name').value || null,
@@ -5431,8 +6781,12 @@
                 ordinary_dividends_usd: parseFloat(div.querySelector('.trust-box6a').value) || null,
                 qualified_dividends_usd: parseFloat(div.querySelector('.trust-box6b').value) || null,
                 stcg_usd: parseFloat(div.querySelector('.trust-box8').value) || null,
-                ltcg_usd: parseFloat(div.querySelector('.trust-box9a').value) || null,
-                is_specified_service_trade: div.querySelector('.trust-sstb').checked
+                ltcg_usd: parseFloat(div.querySelector('.trust-ltcg').value) || null,
+                is_specified_service_trade: div.querySelector('.trust-sstb').checked,
+                active_rental_participant: div.querySelector('.trust-rental-active').checked,
+                net_rental_real_estate_usd: parseFloat(div.querySelector('.trust-box7').value) || null,
+                depreciation_allocation_usd: parseFloat(div.querySelector('.trust-box9a').value) || null,
+                state_allocations: stateAllocations
             });
         });
         usState.income_us_source.trusts_estates_k1 = list;
@@ -8460,6 +9814,71 @@
             }, s.t);
         });
     };
+
+    function openQbiSstbModal(tab) {
+        const modal = document.getElementById('modal-qbi-sstb-guide');
+        if (modal) {
+            modal.classList.remove('hidden');
+            switchQbiSstbTab(tab);
+        }
+    }
+    function closeQbiSstbModal() {
+        const modal = document.getElementById('modal-qbi-sstb-guide');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+    function switchQbiSstbTab(tab) {
+        const qbiTab = document.getElementById('tab-qbi');
+        const sstbTab = document.getElementById('tab-sstb');
+        const qbiContent = document.getElementById('content-qbi');
+        const sstbContent = document.getElementById('content-sstb');
+        
+        if (tab === 'qbi') {
+            qbiTab.classList.add('border-brandCyan', 'text-brandCyan');
+            qbiTab.classList.remove('border-transparent', 'text-white/40');
+            sstbTab.classList.remove('border-brandCyan', 'text-brandCyan');
+            sstbTab.classList.add('border-transparent', 'text-white/40');
+            
+            qbiContent.classList.remove('hidden');
+            sstbContent.classList.add('hidden');
+        } else {
+            sstbTab.classList.add('border-brandCyan', 'text-brandCyan');
+            sstbTab.classList.remove('border-transparent', 'text-white/40');
+            qbiTab.classList.remove('border-brandCyan', 'text-brandCyan');
+            qbiTab.classList.add('border-transparent', 'text-white/40');
+            
+            sstbContent.classList.remove('hidden');
+        }
+    }
+
+    function onIndustryCategoryChange(selectElem, prefix) {
+        const card = selectElem.closest(`.${prefix}-card`);
+        if (!card) return;
+        
+        const qbiCheckbox = card.querySelector(`.${prefix}-qbi`);
+        const sstbCheckbox = card.querySelector(`.${prefix}-sstb`);
+        const val = selectElem.value;
+        
+        if (!val) {
+            if (qbiCheckbox) qbiCheckbox.checked = false;
+            if (sstbCheckbox) sstbCheckbox.checked = false;
+        } else {
+            const sstbValues = [
+                'health', 'law', 'accounting', 'consulting', 'performing_arts', 
+                'athletics', 'financial_services', 'investing', 'trading', 'other_sstb'
+            ];
+            
+            if (qbiCheckbox) qbiCheckbox.checked = true;
+            if (sstbCheckbox) sstbCheckbox.checked = sstbValues.includes(val);
+        }
+        
+        if (prefix === 'se') syncSeState();
+        else if (prefix === 'farm') syncFarmState();
+        else if (prefix === 'part') syncPartK1State();
+        else if (prefix === 'scorp') syncScorpK1State();
+        else if (prefix === 'trust') syncTrustK1State();
+    }
 </script>
 
 <!-- Modal: W-2 OCR File Upload Simulator -->
@@ -8612,6 +10031,162 @@
                     <div>Waiting to start...</div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<!-- Modal: QBI & SSTB Eligibility Guide -->
+<div id="modal-qbi-sstb-guide" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+    <div class="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col h-[85vh] max-h-[650px]">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+            <div class="flex items-center gap-2">
+                <span class="text-brandCyan text-sm font-bold font-mono">§199A</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider font-display">QBI & SSTB Tax Guide</span>
+            </div>
+            <button onclick="closeQbiSstbModal()" class="text-white/60 hover:text-white text-xs font-bold font-sans">✕</button>
+        </div>
+        
+        <!-- Tab Bar -->
+        <div class="flex border-b border-white/5 bg-black/25">
+            <button id="tab-qbi" onclick="switchQbiSstbTab('qbi')" class="flex-1 py-3 text-center text-[10px] font-black uppercase tracking-widest border-b-2 border-brandCyan text-brandCyan transition-all focus:outline-none">
+                QBI Eligible Trades
+            </button>
+            <button id="tab-sstb" onclick="switchQbiSstbTab('sstb')" class="flex-grow py-3 text-center text-[10px] font-black uppercase tracking-widest border-b-2 border-transparent text-white/40 hover:text-white transition-all focus:outline-none">
+                SSTB Exclusions List
+            </button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 overflow-y-auto flex-grow flex flex-col gap-4 font-sans text-xs text-white/80 leading-relaxed">
+            
+            <!-- Tab 1: QBI Eligibility -->
+            <div id="content-qbi" class="flex flex-col gap-4">
+                <div class="p-3 bg-brandCyan/10 border border-brandCyan/20 rounded-xl">
+                    <p class="font-bold text-white mb-1">What is the Section 199A QBI Deduction?</p>
+                    <p class="text-[11px] text-brandCyan/90">It allows self-employed individuals and owners of pass-through businesses (sole proprietorships, partnerships, S-corps, and trusts) to deduct up to <strong>20% of their net business income</strong> from their personal income tax.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Core Eligibility Checklist</h4>
+                    <ul class="flex flex-col gap-2 pl-1">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brandCyan mt-0.5">✓</span>
+                            <div>
+                                <strong class="text-white">Active U.S. Business:</strong>
+                                <span class="block text-[11px] text-white/60">Must be a domestic U.S. trade or business operations (Schedule C, Schedule F, or K-1 pass-throughs).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brandCyan mt-0.5">✓</span>
+                            <div>
+                                <strong class="text-white">Positive Net Profit:</strong>
+                                <span class="block text-[11px] text-white/60">Calculated on the net business profit. If the business has a net loss, QBI is $0 (and is suspended/carried forward).</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-400 mt-0.5">✕</span>
+                            <div>
+                                <strong class="text-white">Not W-2 Employment:</strong>
+                                <span class="block text-[11px] text-white/60">Performing services as a W-2 employee is strictly ineligible.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="border-t border-white/5 pt-3">
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Standard Eligible Business Examples</h4>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] text-white/60 bg-black/20 p-3 border border-white/5 rounded-xl">
+                        <div>
+                            <span class="block font-bold text-white mb-1">Trades & General Operations:</span>
+                            • Retail Stores & E-Commerce<br>
+                            • Restaurants, Cafes & Food Services<br>
+                            • Manufacturing & Wholesaling<br>
+                            • Construction Contractors & Builders<br>
+                            • Real Estate Agents & Landlords (Active)<br>
+                            • Farms & Ranches (Schedule F)
+                        </div>
+                        <div>
+                            <span class="block font-bold text-white mb-1">Exempt Professional Services:</span>
+                            • Architects & Designers<br>
+                            • Engineering Firms & Inspectors<br>
+                            • Salons, Barber Shops & Personal Care<br>
+                            • Dry Cleaning, Garages & Repair Shops<br>
+                            • Tourism & Logistics Companies
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-400 block mb-1">⚠️ Income Threshold Alert</span>
+                    <p class="text-[11px] text-white/60 leading-normal">For high-income taxpayers (above <strong>$201,775</strong> Single / <strong>$403,500</strong> Joint in 2026), the QBI deduction is restricted or completely phased out if the business is a <strong>Specified Service Trade or Business (SSTB)</strong> or fails standard W-2 wage / UBIA property cap limits. Review the next tab to check if your business is an SSTB.</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: SSTB Exclusions -->
+            <div id="content-sstb" class="hidden flex flex-col gap-4">
+                <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <p class="font-bold text-white mb-1">What is a Specified Service Trade or Business (SSTB)?</p>
+                    <p class="text-[11px] text-white/60">An SSTB is any business where the principal asset is the <strong>reputation or skill</strong> of one or more of its owners or employees. If your business is an SSTB, your QBI deduction is phased down above the lower limit and **completely eliminated** above the upper limit.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-wider text-white mb-2">Exhaustive SSTB Categories (IRS §199A)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+                        <div class="flex flex-col gap-2">
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">1. Health Services</strong>
+                                <span class="block text-white/50 mt-0.5">Doctors, nurses, dentists, veterinarians, physical therapists, psychiatrists, etc.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">2. Law Firms</strong>
+                                <span class="block text-white/50 mt-0.5">Attorneys, paralegals, legal consultants, arbitrators.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">3. Accounting</strong>
+                                <span class="block text-white/50 mt-0.5">CPAs, enrolled agents, bookkeepers, tax preparers.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">4. Consulting</strong>
+                                <span class="block text-white/50 mt-0.5">Business consulting, strategic planning, lobbyists, policy advisors.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">5. Performing Arts</strong>
+                                <span class="block text-white/50 mt-0.5">Actors, singers, musicians, entertainers, stage directors.</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">6. Athletics</strong>
+                                <span class="block text-white/50 mt-0.5">Professional athletes, coaches, trainers, sports managers.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">7. Financial & Brokerage Services</strong>
+                                <span class="block text-white/50 mt-0.5">Investment bankers, portfolio managers, stockbrokers, trading consultants.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">8. Investing & Trading</strong>
+                                <span class="block text-white/50 mt-0.5">Dealing or trading in securities, commodities, or partnership interests.</span>
+                            </div>
+                            <div class="p-2 bg-white/5 border border-white/5 rounded-lg">
+                                <strong class="text-brandCyan font-mono">9. Reputation & Skill</strong>
+                                <span class="block text-white/50 mt-0.5">Receiving fees/royalties for endorsement, appearances, or licensing of name/image/voice.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-white/5 border border-white/10 rounded-xl text-[11px]">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-brandCyan block mb-1">📌 Rule of Thumb for Checklist Settings</span>
+                    • <strong class="text-white">Income Below $201,775 (Single) / $403,500 (MFJ):</strong> You can select <strong class="text-brandCyan">QBI Eligible</strong> regardless of whether your business is an SSTB.<br>
+                    • <strong class="text-white">Income Above $251,775 (Single) / $503,500 (MFJ):</strong> If your business falls under any SSTB category above, you **must NOT** check the QBI Eligible box (or if selected, the engine will disallow the deduction automatically).
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Footer -->
+        <div class="px-5 py-3 border-t border-white/5 bg-white/5 flex items-center justify-end">
+            <button onclick="closeQbiSstbModal()" class="px-4 py-1.5 bg-brandCyan hover:bg-brandCyan/80 text-black font-bold uppercase tracking-widest text-[9px] rounded-lg transition-all">Understood</button>
         </div>
     </div>
 </div>
