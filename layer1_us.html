@@ -4790,18 +4790,28 @@
 
     // Renders the 1099 panel HTML string for a given prefix and optionally pre-checked forms
     function render1099Panel(prefix, savedForms, cardId) {
-        // Backward compat: if old boolean flags were passed, synthesize an array
+        // Backward compat: if old boolean flags or non-arrays were passed, normalize
         if (!Array.isArray(savedForms)) savedForms = [];
-        const savedSet   = new Set(savedForms.map(f => f.form));
-        const filedSet   = new Set(savedForms.filter(f => f.filed).map(f => f.form));
+        
+        // Build a robust set of valid catalog forms (uppercase for safe comparison)
+        const validForms = new Set(FORMS_1099_CATALOG.map(c => c.form.trim().toUpperCase()));
+        
+        // Strip the 'none' sentinel, and any unrecognized/legacy forms (e.g. 1099-K if removed)
+        savedForms = savedForms.filter(f => {
+            if (!f || !f.form) return false;
+            const formName = f.form.trim().toUpperCase();
+            if (formName === 'NONE') return false;
+            return validForms.has(formName);
+        });
+
+        const savedSet   = new Set(savedForms.map(f => f.form.trim().toUpperCase()));
+        const filedSet   = new Set(savedForms.filter(f => f.filed).map(f => f.form.trim().toUpperCase()));
         const noneActive = savedForms.length === 0;
-        // cardId is stamped on every checkbox so event handlers can find the card
-        // without relying on closest() traversal through <details> elements
-        const cardRef = cardId ? ` data-card-id="${cardId}"` : '';
 
         const rows = FORMS_1099_CATALOG.map(c => {
-            const isChecked  = savedSet.has(c.form)  ? 'checked' : '';
-            const isFiled    = filedSet.has(c.form)   ? 'checked' : '';
+            const formKey = c.form.trim().toUpperCase();
+            const isChecked  = savedSet.has(formKey)  ? 'checked' : '';
+            const isFiled    = filedSet.has(formKey)   ? 'checked' : '';
             const subHidden  = isChecked              ? '' : 'hidden';
             const badge      = isChecked
                 ? (filedSet.has(c.form)
@@ -4811,12 +4821,12 @@
             const safeForm = c.form.replace('-', '_');
             return `
                 <div class="flex flex-col p-2 rounded-lg bg-black/20 border border-white/5 hover:border-white/10 transition-all">
-                    <label class="flex items-start gap-2 cursor-pointer w-full" for="${prefix}-1099-${safeForm}-${cardId}">
-                        <input type="checkbox" id="${prefix}-1099-${safeForm}-${cardId}" data-form-1099="${c.form}"${cardRef}
+                    <label class="flex items-start gap-2 cursor-pointer w-full">
+                        <input type="checkbox" id="${prefix}-1099-${safeForm}-${cardId}" data-form-1099="${c.form}"
                             class="${prefix}-1099-form-chk mt-0.5 rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan shrink-0"
-                            ${isChecked} onchange="toggle1099FormRow(this, '${prefix}')">
+                            ${isChecked} onchange="toggle1099FormRow(this, '${prefix}', '${cardId}')">
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-2 flex-wrap badge-host-1099">
                                 <span class="text-[11px] font-black text-white/95 font-mono">${c.form}</span>
                                 <span class="text-[10px] text-white/75 font-semibold">${c.label}</span>
                                 <span class="text-[10px] text-brandCyan/90 font-mono">${c.threshold}</span>
@@ -4828,7 +4838,7 @@
                     <div class="${prefix}-1099-sub-${safeForm} ${subHidden} mt-1.5 pl-6 flex items-center gap-3 border-t border-white/5 pt-1.5">
                         <span class="text-[10px] text-white/70 flex-1">${c.desc}</span>
                         <label class="flex items-center gap-1.5 shrink-0 cursor-pointer">
-                            <input type="checkbox" data-filed-for="${c.form}"${cardRef} class="${prefix}-1099-filed-chk rounded bg-[#121212] border-white/20 text-brandGreen focus:ring-brandGreen" ${isFiled} onchange="on1099FiledChange(this, '${prefix}')">
+                            <input type="checkbox" data-filed-for="${c.form}" class="${prefix}-1099-filed-chk rounded bg-[#121212] border-white/20 text-brandGreen focus:ring-brandGreen" ${isFiled} onchange="on1099FiledChange(this, '${prefix}', '${cardId}')">
                             <span class="text-[10px] font-black text-white/85">Filed by ${c.recipDeadline}</span>
                         </label>
                     </div>
@@ -4841,54 +4851,52 @@
         return `
             <div class="${prefix}-1099-panel flex flex-col gap-1.5">
                 ${rows}
-                <label class="flex items-center gap-2 p-2 rounded-lg border border-white/5 transition-all ${noneClasses}" for="${prefix}-1099-none-${cardId}">
-                    <input type="checkbox" id="${prefix}-1099-none-${cardId}" data-form-1099="none"${cardRef}
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-white/5 transition-all ${noneClasses}">
+                    <input type="checkbox" id="${prefix}-1099-none-${cardId}" data-form-1099="none"
                         class="${prefix}-1099-none-chk rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan shrink-0"
-                        ${noneChecked} ${noneDisabled} onchange="toggle1099None(this, '${prefix}')"
+                        ${noneChecked} ${noneDisabled} onchange="toggle1099None(this, '${prefix}', '${cardId}')"
                     >
                     <span class="text-[10px] text-white/75 font-bold">None — no 1099 filing obligations this year</span>
                 </label>
             </div>`;
     }
 
-    // Resolves the ancestor card element for a 1099 checkbox.
-    // Prefers data-card-id (stamped at render time) over DOM traversal,
-    // which can fail when the panel is nested inside a <details> element.
-    function _get1099Card(chk, prefix) {
-        if (chk.dataset.cardId) return document.getElementById(chk.dataset.cardId);
-        return chk.closest(`.${prefix}-card, .${prefix}-k1-card`);
-    }
-
-    // Toggle the expansion row when a form checkbox is clicked
-    function toggle1099FormRow(chk, prefix) {
-        const card = _get1099Card(chk, prefix);
-        if (!card) return;
-        const safeForm = chk.dataset.form1099.replace('-', '_');
+    // Toggle the expansion row when a form checkbox is clicked.
+    // cardId is passed directly from the onchange handler — no DOM traversal needed.
+    function toggle1099FormRow(chk, prefix, cardId) {
+        const card = document.getElementById(cardId);
+        if (!card) { console.error('[1099] card not found:', cardId); return; }
+        const safeForm = chk.getAttribute('data-form-1099').replace('-', '_');
         const subRow   = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
         if (subRow) subRow.classList.toggle('hidden', !chk.checked);
         // Update badge in the parent label
-        _refresh1099Badge(chk, prefix);
+        _refresh1099Badge(chk, card, prefix);
         // Update "None" checkbox disabled/blacked-out state
         _refresh1099NoneState(card, prefix);
         // Sync state
         _dispatch1099Sync(prefix);
     }
 
-    // Toggle the "None" checkbox (deselects all form rows)
-    function toggle1099None(chk, prefix) {
-        const card = _get1099Card(chk, prefix);
-        if (!card) return;
-        if (chk.checked) {
-            card.querySelectorAll(`.${prefix}-1099-form-chk`).forEach(fc => {
-                fc.checked = false;
-                const safeForm = fc.dataset.form1099.replace('-', '_');
-                const subRow = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
-                if (subRow) subRow.classList.add('hidden');
-                _refresh1099Badge(fc, prefix);
-            });
+    // Toggle the "None" checkbox (deselects all form rows).
+    // cardId is passed directly from the onchange handler.
+    function toggle1099None(chk, prefix, cardId) {
+        try {
+            const card = document.getElementById(cardId);
+            if (!card) { alert('[1099 Error] Card not found for None: ' + cardId); return; }
+            if (chk.checked) {
+                card.querySelectorAll(`.${prefix}-1099-form-chk`).forEach(fc => {
+                    fc.checked = false;
+                    const safeForm = fc.getAttribute('data-form-1099').replace('-', '_');
+                    const subRow = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
+                    if (subRow) subRow.classList.add('hidden');
+                    _refresh1099Badge(fc, card, prefix);
+                });
+            }
+            _refresh1099NoneState(card, prefix);
+            _dispatch1099Sync(prefix);
+        } catch (e) {
+            alert('JavaScript Error in toggle1099None: ' + e.message);
         }
-        _refresh1099NoneState(card, prefix);
-        _dispatch1099Sync(prefix);
     }
 
     function _refresh1099NoneState(card, prefix) {
@@ -4915,19 +4923,20 @@
         }
     }
 
-    // Refresh the filed/unfiled badge on a form row label after a filed-checkbox changes
-    function on1099FiledChange(chk, prefix) {
-        const card = _get1099Card(chk, prefix);
-        if (!card) return;
-        const formChk = card.querySelector(`[data-form-1099="${chk.dataset.filedFor}"]`);
-        if (formChk) _refresh1099Badge(formChk, prefix);
+    // Refresh the filed/unfiled badge on a form row label after a filed-checkbox changes.
+    // cardId is passed directly from the onchange handler.
+    function on1099FiledChange(chk, prefix, cardId) {
+        const card = document.getElementById(cardId);
+        if (!card) { console.error('[1099] card not found for filed change:', cardId); return; }
+        const formChk = card.querySelector(`[data-form-1099="${chk.getAttribute('data-filed-for')}"]`);
+        if (formChk) _refresh1099Badge(formChk, card, prefix);
         _dispatch1099Sync(prefix);
     }
 
-    function _refresh1099Badge(formChk, prefix) {
-        const form     = formChk.dataset.form1099;
+    // card is now passed in directly — no secondary lookup needed.
+    function _refresh1099Badge(formChk, card, prefix) {
+        const form     = formChk.getAttribute('data-form-1099');
         const safeForm = form.replace('-', '_');
-        const card     = _get1099Card(formChk, prefix);
         if (!card) return;
         const subRow   = card.querySelector(`.${prefix}-1099-sub-${safeForm}`);
         const catalog  = FORMS_1099_CATALOG.find(c => c.form === form);
@@ -4941,7 +4950,10 @@
             badge.className = 'badge-1099-status text-[8px] font-black ml-auto';
             badge.className += filedChk && filedChk.checked ? ' text-brandGreen' : ' text-amber-400';
             badge.textContent = filedChk && filedChk.checked ? '✓ Filed' : '⚠ Unfiled';
-            label.querySelector('.flex.items-center').appendChild(badge);
+            const container = label.querySelector('.badge-host-1099');
+            if (container) {
+                container.appendChild(badge);
+            }
         }
     }
 
@@ -4955,9 +4967,9 @@
         const forms = [];
         cardEl.querySelectorAll(`.${prefix}-1099-form-chk`).forEach(chk => {
             if (chk.checked) {
-                const form    = chk.dataset.form1099;
-                const safeF   = form.replace('-', '_');
-                const subRow  = cardEl.querySelector(`.${prefix}-1099-sub-${safeF}`);
+                const form    = chk.getAttribute('data-form-1099');
+                const safeForm   = form.replace('-', '_');
+                const subRow  = cardEl.querySelector(`.${prefix}-1099-sub-${safeForm}`);
                 const filed   = subRow ? !!subRow.querySelector(`.${prefix}-1099-filed-chk`)?.checked : false;
                 forms.push({ form, filed });
             }
@@ -5977,15 +5989,15 @@
                 </summary>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income (Box 1)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income</label>
                         <input type="number" class="part-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Real Estate Rental (Box 2)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Real Estate Rental</label>
                         <input type="number" class="part-box2 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179 (Box 12)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179</label>
                         <input type="number" class="part-box12 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
@@ -5995,23 +6007,23 @@
                         <input type="number" class="part-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest (Box 5)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest</label>
                         <input type="number" class="part-box5 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Div (Box 6a)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Div</label>
                         <input type="number" class="part-box6a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Qualified Div (Box 6b)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Qualified Div</label>
                         <input type="number" class="part-box6b w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">STCG (Box 8)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">STCG</label>
                         <input type="number" class="part-box8 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">LTCG (Box 9a)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">LTCG</label>
                         <input type="number" class="part-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
@@ -6060,11 +6072,11 @@
                         </label>
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">W-2 Wages (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">W-2 Wages</label>
                         <input type="number" class="part-qbi-wages w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">UBIA (Box 20V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">UBIA</label>
                         <input type="number" class="part-qbi-ubia w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
                     </div>
                 </div>
@@ -6396,37 +6408,37 @@
                 </summary>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income (Box 1)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income</label>
                         <input type="number" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Real Estate Rental (Box 2)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Real Estate Rental</label>
                         <input type="number" class="scorp-box2 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179 (Box 11)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Section 179</label>
                         <input type="number" class="scorp-box11 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3 font-sans">
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest (Box 4)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Interest</label>
                         <input type="number" class="scorp-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Div (Box 5a)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Div</label>
                         <input type="number" class="scorp-box5a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Qualified Div (Box 5b)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Qualified Div</label>
                         <input type="number" class="scorp-box5b w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">STCG (Box 7)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">STCG</label>
                         <input type="number" class="scorp-box7 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">LTCG (Box 8a)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">LTCG</label>
                         <input type="number" class="scorp-box8a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
@@ -6475,11 +6487,11 @@
                         </label>
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages (Box 17V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity W-2 Wages</label>
                         <input type="number" class="scorp-qbi-wages w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity UBIA (Box 17V)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Entity UBIA</label>
                         <input type="number" class="scorp-qbi-ubia w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
                     </div>
                 </div>
@@ -6956,7 +6968,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
                 <div>
-                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income (Box 1)</label>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income</label>
                     <input type="number" class="trust-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                 </div>
                 <div>
@@ -7006,11 +7018,11 @@
                         </label>
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Net Rental Real Estate (Box 7)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Net Rental Real Estate</label>
                         <input type="number" class="trust-box7 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Depreciation Allocation (Box 9a)</label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Depreciation Allocation</label>
                         <input type="number" class="trust-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
                     <div>
