@@ -1,3 +1,73 @@
+
+    function evaluateEntityOverrides() {
+        const entity = state.profile.entity_type;
+        const isInd = entity === 'individual';
+        const isHuf = entity === 'huf';
+        const isNonInd = !isInd;
+        const isCompany = entity === 'company';
+        
+        // --- SALARY MODULE ---
+        const salaryStepNav = document.getElementById('btn-step-income');
+        if (salaryStepNav) {
+            salaryStepNav.style.display = isInd ? 'flex' : 'none';
+        }
+        
+        // --- HOUSE PROPERTY ---
+        const hpTypes = document.querySelectorAll('select[onchange*="property_type"]');
+        hpTypes.forEach(sel => {
+            Array.from(sel.options).forEach(opt => {
+                if (opt.value === 'SOP') {
+                    opt.disabled = (!isInd && !isHuf);
+                    if (opt.disabled && sel.value === 'SOP') {
+                        sel.value = 'LOP'; // Force fallback if currently SOP
+                        sel.dispatchEvent(new Event('change'));
+                    }
+                }
+            });
+        });
+        
+        // --- CAPITAL GAINS ---
+        const cgSec54 = document.querySelectorAll('select[id^="cg-exemption-"]');
+        cgSec54.forEach(sel => {
+            Array.from(sel.options).forEach(opt => {
+                if (opt.value === 'sec54' || opt.value === 'sec54f') {
+                    opt.disabled = (!isInd && !isHuf);
+                    if (opt.disabled && sel.value === opt.value) {
+                        sel.value = ''; // Reset
+                    }
+                }
+            });
+        });
+        
+        // --- DEDUCTIONS ---
+        const d80c = document.getElementById('div-80c-related');
+        if (d80c) d80c.style.display = (!isInd && !isHuf) ? 'none' : 'block';
+        
+        const d80d = document.getElementById('div-80d-medical');
+        if (d80d) d80d.style.display = (!isInd && !isHuf) ? 'none' : 'block';
+        
+        document.querySelectorAll('label').forEach(lbl => {
+            const text = lbl.textContent;
+            if (text.includes('80DD') || text.includes('80U') || text.includes('80TTA') || text.includes('80TTB')) {
+                const parent = lbl.closest('.p-5.bg-white\\/5') || lbl.closest('div.p-5');
+                if (parent) parent.style.display = (!isInd && !isHuf) ? 'none' : 'block';
+            }
+        });
+
+        // --- AMT vs MAT ---
+        document.querySelectorAll('*').forEach(el => {
+            if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
+                if (el.textContent.includes('AMT Credit') || el.textContent.includes('Alternate Minimum Tax') || el.textContent.includes('MAT Credit') || el.textContent.includes('Minimum Alternate Tax')) {
+                    if (isCompany) {
+                        el.textContent = el.textContent.replace(/AMT/g, 'MAT').replace(/Alternate Minimum Tax/g, 'Minimum Alternate Tax').replace(/s\.115JC/g, 's.115JB').replace(/s\.115JD/g, 's.115JAA');
+                    } else {
+                        el.textContent = el.textContent.replace(/MAT/g, 'AMT').replace(/Minimum Alternate Tax/g, 'Alternate Minimum Tax').replace(/s\.115JB/g, 's.115JC').replace(/s\.115JAA/g, 's.115JD');
+                    }
+                }
+            }
+        });
+    }
+</div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -206,6 +276,12 @@
                 <span id="badge-step-output" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
         </nav>
+        <!-- ITR Form Display -->
+        <div class="mt-2 p-4 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-2">
+            <div class="text-[10px] font-black uppercase tracking-widest text-brandGold">Recommended ITR Form</div>
+            <div id="ui-itr-form" class="text-sm font-bold text-white tracking-widest font-display">Calculating...</div>
+            <div id="ui-itr-reason" class="text-[9px] text-white/50 leading-relaxed mt-1"></div>
+        </div>
     </aside>
 
     <!-- CENTER CONTENT AREA: INTERACTIVE PANEL WIZARD -->
@@ -219,6 +295,45 @@
             </div>
 
             <!-- Profile Parameters -->
+
+            <!-- Global Tax Entity & Profile -->
+            <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Your Tax Entity Type</label>
+                        <select id="biz-entity-type" onchange="updateBizEntityType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-3 focus:border-brandGold focus:outline-none transition-all">
+                            <option value="individual" selected>Individual</option>
+                            <option value="huf">Hindu Undivided Family (HUF)</option>
+                            <option value="firm">Partnership Firm (Ordinary)</option>
+                            <option value="llp">Limited Liability Partnership (LLP)</option>
+                            <option value="company">Company</option>
+                            <option value="aop">AOP / BOI</option>
+                            <option value="trust">Trust</option>
+                        </select>
+                        <div id="warn-entity-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-[10px] font-bold rounded-xl hidden items-start gap-2 mt-2 transition-all">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            <span id="warn-entity-text">Companies, LLPs, AOPs, and Trusts are NOT eligible for presumptive taxation under s.44AD.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Global PAN -->
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Permanent Account Number (PAN)</label>
+                        <input type="text" id="prof-pan" oninput="updateProfileField('pan', this.value.toUpperCase())" placeholder="AAAAA9999A" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono">
+                    </div>
+                </div>
+
+                <!-- Tax Regime Toggle -->
+                <div id="div-prof-regime" class="border-t border-white/10 pt-4 mt-2 transition-all">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Tax Regime</label>
+                    <select id="prof-regime" onchange="updateProfileField('tax_regime', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                        <option value="NEW" class="bg-[#121212]">New Tax Regime (Default u/s 115BAC)</option>
+                        <option value="OLD" class="bg-[#121212]">Old Tax Regime (With Deductions)</option>
+                    </select>
+                    <p class="text-[9px] text-white/40 mt-1.5">Only Individuals, HUFs, AOPs, and BOIs can opt for the New Regime.</p>
+                </div>
+            </div>
+
             
             <!-- Dual Residency Alert Container (Conditionally Visible) -->
             <div id="dual-residency-alert" class="hidden p-5 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex flex-col gap-4">
@@ -293,7 +408,57 @@
             <!-- Residency Core Parameters -->
             <div class="flex flex-col gap-4">
                 
-                <!-- Core India Days -->
+                
+                <!-- NON-INDIVIDUAL RESIDENCY QUESTIONS (Injected) -->
+                <div id="div-res-wholly-outside" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is the control and management of its affairs situated wholly outside India?</span>
+                            <span class="text-[9px] text-white/30">If even partially in India, the entity is considered Resident.</span>
+                        </div>
+                        <select id="res-wholly-outside" onchange="updateResidencyField('is_wholly_outside_india', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="div-res-indian-company" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is it an Indian Company?</span>
+                            <span class="text-[9px] text-white/30">An Indian Company is always considered Resident in India.</span>
+                        </div>
+                        <select id="res-indian-company" onchange="updateResidencyField('is_indian_company', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="div-res-poem" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is its Place of Effective Management (POEM) in India?</span>
+                            <span class="text-[9px] text-white/30">Applies to foreign companies with active business control in India.</span>
+                        </div>
+                        <select id="res-poem" onchange="updateResidencyField('is_poem_in_india', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="div-karta-alert" class="hidden mt-2 p-3 bg-brandCyan/10 border border-brandCyan/30 rounded-xl flex flex-col gap-1">
+                    <span class="text-[10px] font-black text-brandCyan uppercase tracking-widest">Karta Physical Presence Test Required</span>
+                    <span class="text-[10px] text-brandCyan/70">Because the HUF is Resident, please answer the questions below regarding the <strong>Karta's</strong> physical presence in India to determine if the HUF is Ordinarily Resident (ROR) or Not Ordinarily Resident (RNOR).</span>
+                </div>
+
+<div id="div-residency-individual-container" class="flex flex-col gap-4 transition-all">
+<!-- Core India Days -->
                 <div class="p-4 bg-white/5 border border-white/10 rounded-2xl border-l-2 border-l-brandGold">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex flex-col">
@@ -307,6 +472,10 @@
                     </div>
                     <input type="range" id="res-days-current" min="0" max="366" value="182" oninput="updateResidencySlider('days_in_india_current_year', this.value)" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-brandGold">
                 </div>
+
+
+
+
 
                 <!-- Preceding 4 Years >= 365 -->
                 <div class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden" id="div-p4y">
@@ -1164,9 +1333,36 @@
                             <input type="text" inputmode="numeric" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gifts > ₹50k (s.56)</label>
-                            <input type="text" inputmode="numeric" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Gifts > ₹50k (s.56)
+        <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors"><span class="font-bold text-[9px]">(i)</span></span>
+        <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+            Gifts received from specified relatives (spouse, siblings, lineal ascendants/descendants, and their spouses) or on the occasion of marriage are entirely exempt.
+        </div>
+    </label>
+    <input type="text" inputmode="numeric" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+</div>
+
+                        
+                        <div id="div-os-local-authority-10-20">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Local Authority Exemption (s.10(20))</label>
+                            <input type="text" inputmode="numeric" id="os-local-authority" oninput="updateOSField('local_authority_s10_20_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                            <p class="text-[8px] text-white/30 mt-1">Blanket exemption on income of a Local Authority.</p>
                         </div>
+<div id="div-os-spousal-clubbing">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Spousal Income Clubbing (s.64)</label>
+                            <input type="text" inputmode="numeric" id="os-spousal-clubbing" oninput="updateOSField('spousal_clubbing_s64_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                            <p class="text-[8px] text-white/30 mt-1">Income of spouse clubbed with your income under s.64.</p>
+                        </div>
+<div id="div-os-minor-child">
+    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Minor Child Income Exemption</label>
+    <input type="text" inputmode="numeric" id="os-minor-child" oninput="updateOSField('minor_child_exemption_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+    <p class="text-[8px] text-white/30 mt-1">s.10(32): ₹1,500 max per minor child whose income is clubbed.</p>
+</div>
+<div id="div-os-angel-tax" class="hidden">
+    <label class="block text-[9px] font-black uppercase tracking-widest text-brandRed mb-1">Angel Tax Premium (s.56(2)(viib))</label>
+    <input type="text" inputmode="numeric" id="os-angel-tax" oninput="updateOSField('angel_tax_premium_inr', this.value)" class="inr-input w-full bg-brandRed/5 border border-brandRed/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandRed focus:ring-0 font-mono" placeholder="₹ 0">
+    <p class="text-[8px] text-white/30 mt-1">For closely held companies issuing shares above FMV.</p>
+</div>
                     </div>
                 </div>
 
@@ -1198,7 +1394,13 @@
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Online Gaming Winnings</label>
                             <input type="text" inputmode="numeric" id="os-gaming" oninput="updateOSField('online_gaming_winnings_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-purple-400 focus:ring-0 font-mono" placeholder="₹ 0">
+                        
                         </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Unexplained Income (s.115BBE)</label>
+                            <input type="text" inputmode="numeric" id="os-unexplained" oninput="updateOSField('unexplained_income_115BBE_inr', this.value)" class="inr-input w-full bg-white/5 border border-red-500/50 rounded-xl text-xs text-white px-3 py-2 focus:border-red-500 focus:ring-0 font-mono" placeholder="₹ 0">
+                            <p class="text-[8px] text-red-400/80 mt-1">Taxed at flat 78% (60% tax + 25% surcharge + 4% cess).</p>
+
                     </div>
             <!-- Agricultural Income (s.10(1)) -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 mt-6">
@@ -1226,6 +1428,7 @@
                 <button onclick="switchStep('step-assets')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
                 <button onclick="switchStep('step-hp')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
             </div>
+        </div>
         </div>
 
         
@@ -1300,23 +1503,7 @@
                         </svg>
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
-<!-- Tax Entity Type -->
-                <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2 transition-all">
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">Your Tax Entity Type</label>
-                    <select id="biz-entity-type" onchange="updateBizEntityType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
-                        <option value="individual" selected>Individual</option>
-                        <option value="huf">Hindu Undivided Family (HUF)</option>
-                        <option value="firm">Partnership Firm (Ordinary)</option>
-                        <option value="llp">Limited Liability Partnership (LLP)</option>
-                        <option value="company">Company</option>
-                    </select>
-                    <div id="warn-entity-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-xs rounded-xl hidden items-center gap-2 mt-2 transition-all">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                        <span>LLPs and Companies are NOT eligible for s.44AD or s.44ADA presumptive taxation.</span>
-                    </div>
-                </div>
-
-                <!-- s.115BAC Opt-Out History -->
+<!-- s.115BAC Opt-Out History -->
                 <div id="div-115bac-box" class="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between transition-all">
                     <div class="flex flex-col">
                         <span id="text-115bac-title" class="text-xs font-bold text-white/80">Previously Opted Out of s.115BAC New Regime?</span>
@@ -1454,6 +1641,31 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Add Vehicle
                     </button>
+                </div>
+
+                <!-- Special Corporate Business Schemes (Tonnage Tax & 35AD) -->
+                <div id="div-special-corporate-biz" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Corporate Business Schemes</span>
+                    
+                    <div id="div-tonnage-tax" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tonnage Tax Scheme Income (s.115V)</label>
+                        <input type="text" inputmode="numeric" id="biz-tonnage-tax" oninput="updateBizNum('tonnage_tax_115V_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        <p class="text-[9px] text-white/30 mt-1">Special taxation for qualifying ships. For Indian Companies only.</p>
+                    </div>
+
+                    <div id="div-s35ad-pipeline" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Specified Business Deduction (s.35AD)</label>
+                        <input type="text" inputmode="numeric" id="biz-s35ad" oninput="updateBizNum('specified_business_s35AD_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        <p class="text-[9px] text-white/30 mt-1">100% deduction for capital expenditure on cross-country pipelines/hotels/etc. For Indian Companies only.</p>
+                    </div>
+                </div>
+
+                <!-- s.44BBB Presumptive Scheme -->
+                <div id="div-pres-s44bbb" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Civil Construction (s.44BBB)</span>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Amount Paid to Foreign Company (₹)</label>
+                    <input type="text" inputmode="numeric" id="biz-s44bbb-receipts" oninput="updateBizNum('s44bbb_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                    <p class="text-[9px] text-white/30 mt-1">Presumptive profit is 10% of gross amount. For Foreign Companies only.</p>
                 </div>
 
                 <!-- General Gross Receipts (For non-s.44ADA professionals) -->
@@ -1903,7 +2115,7 @@
 
                     <!-- Header -->
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">AMT Credit Brought Forward — s.115JC</span>
+                        <span id="text-amt-mat-title" class="text-xs font-black uppercase tracking-widest text-brandGold">AMT Credit Brought Forward — s.115JC</span>
                         <span class="text-[8px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-white/50 font-black uppercase tracking-wider">Old Regime Only</span>
                     </div>
 
@@ -1990,7 +2202,8 @@
                 <p class="text-xs text-white/40 mt-1">Available under Old Regime only. Enter eligible investments and expenses to reduce taxable income.</p>
             </div>
 
-            <!-- ── Section 80C, 80CCC, 80CCD(1): ₹1.5L cap ── -->
+            <div id="div-ded-80c" class="flex flex-col gap-4 w-full mb-4">
+<!-- ── Section 80C, 80CCC, 80CCD(1): ₹1.5L cap ── -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80C, 80CCC & 80CCD(1) — Tax-Saving Basket</span>
@@ -2065,7 +2278,9 @@
                 </div>
             </div>
 
-            <!-- ── Section 80D: Health Insurance ── -->
+            
+</div>
+<!-- ── Section 80D: Health Insurance ── -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80D — Medical Insurance & Preventive Checkup</span>
@@ -2246,6 +2461,39 @@
                 <div id="s80g-cards-container" class="flex flex-col gap-3"></div>
             </div>
 
+            <!-- ── Special Entity Deductions ── -->
+            <div id="div-ded-special-entities" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3 mb-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Special Entity Deductions (80-IAC / 80LA / 80P)</span>
+                
+                <div id="div-ded-80iac" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Eligible Startup Deduction (80-IAC)</label>
+                    <input type="text" inputmode="numeric" id="ded-80iac" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80IAC_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction of profits for 3 consecutive years for eligible startups (Companies/LLPs).</p>
+                </div>
+                
+                <div id="div-ded-80la" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">IFSC / Offshore Banking Unit (80LA)</label>
+                    <input type="text" inputmode="numeric" id="ded-80la" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80LA_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction for 10 consecutive years for units in IFSC/SEZ.</p>
+                </div>
+                
+                <div id="div-ded-80p" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cooperative Societies (80P)</label>
+                    <input type="text" inputmode="numeric" id="ded-80p" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80P_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deduction for income of Cooperative Societies from specified activities.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80GGB / 80GGC: Political Parties ── -->
+            <div id="div-ded-political" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span id="text-political-title" class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80GGC — Donations to Political Parties</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donations via Non-Cash Modes (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-political" oninput="if(typeof updatePoliticalDonation === 'function') updatePoliticalDonation(this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction for contributions to registered political parties or electoral trusts. Cash donations are strictly not allowed.</p>
+                </div>
+            </div>
+
             <!-- ── Section 80TTA / 80TTB: Savings & FD Interest ── -->
             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
                 <div class="flex items-center justify-between">
@@ -2270,6 +2518,33 @@
                 </div>
                 <div id="warn-80ttb-nr" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans leading-relaxed">
                     ⚠️ <strong>NRI Restriction:</strong> Non-residents are statutorily ineligible for s.80TTB benefits. Only s.80TTA applies to NRO savings interest (capped at ₹10,000).
+                </div>
+            </div>
+
+            <!-- ── Section 80M: Inter-Corporate Dividends (Domestic Companies Only) ── -->
+            <div id="div-ded-80m" class="hidden p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80M — Inter-Corporate Dividends</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividends Distributed (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80m" oninput="if(typeof update80M === 'function') update80M('dividend_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deduction available for domestic companies receiving dividends from another domestic company, foreign company, or business trust, and distributing dividends to their shareholders.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80QQB / 80RRB: Royalty ── -->
+            <div id="div-ded-royalty" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3 mb-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80QQB / 80RRB — Royalty from Books & Patents</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Books / Authors (80QQB)</label>
+                        <input type="text" inputmode="numeric" id="ded-80qqb" oninput="if(typeof updateRoyaltyDeduction === 'function') updateRoyaltyDeduction('s80QQB_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for authors of certain books.</p>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patents / Inventors (80RRB)</label>
+                        <input type="text" inputmode="numeric" id="ded-80rrb" oninput="if(typeof updateRoyaltyDeduction === 'function') updateRoyaltyDeduction('s80RRB_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for royalty on patents.</p>
+                    </div>
                 </div>
             </div>
 
@@ -2323,6 +2598,20 @@
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <button id="btn-loss-yes" onclick="toggleBroughtForwardLosses(true)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">Yes</button>
                         <button id="btn-loss-no" onclick="toggleBroughtForwardLosses(false)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">No</button>
+                    </div>
+                </div>
+
+                <!-- Section 79 Corporate Loss Restriction -->
+                <div id="div-s79-loss" class="hidden flex flex-col md:flex-row md:items-center justify-between gap-3 border border-brandRed/20 bg-brandRed/5 p-3 rounded-xl mb-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandRed font-display">s.79 — Corporate Shareholding Change > 51%</span>
+                        <span class="text-[9px] text-white/60 font-sans mt-0.5">If voting power has shifted by >51%, past losses (except unabsorbed depreciation) lapse.</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="loss-s79-triggered" onchange="if(typeof updateS79Loss === 'function') updateS79Loss(this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-brandRed/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandRed"></div>
+                        </label>
                     </div>
                 </div>
 
@@ -2480,7 +2769,7 @@
                 </div>
 
                 <!-- Advance Tax Quarters -->
-                <div class="flex flex-col gap-2">
+                <div id="div-advance-tax" class="flex flex-col gap-2">
                     <span class="block text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Quarterly Advance Tax Payments (u/s 234C)</span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
@@ -2698,12 +2987,16 @@
     const state = {
         profile: {
             full_name: null,
+            entity_type: 'individual',
             date_of_birth: null,
             pan: null,
             pan_aadhaar_linked: false,
             tax_regime: 'NEW'
         },
         residency_detail: {
+            is_wholly_outside_india: null,
+            is_indian_company: null,
+            is_poem_in_india: null,
             days_in_india_current_year: 182,
             days_in_india_preceding_4_years_gte_365: null,
             employment_or_crew_status: null,
@@ -3186,128 +3479,178 @@
     // RS-001 EXHAUSTIVE RESIDENCY SOLVER
     // ═══════════════════════════════════════════════════════════════════════
     function runResidencySolver() {
-        const days = state.residency_detail.days_in_india_current_year;
-        const p4y = state.residency_detail.days_in_india_preceding_4_years_gte_365;
-        const emp = state.residency_detail.employment_or_crew_status || 'none';
-        const visit = state.residency_detail.came_on_visit_to_india_pio_citizen;
-        const nr9 = state.residency_detail.nr_years_last_10_gte_9;
-        const d7_729 = state.residency_detail.days_in_india_last_7_years_lte_729;
-        const inc15 = state.residency_detail.india_source_income_above_15l;
+        const entity = state.profile.entity_type;
         
-        // Read prefill citizen flags from Layer 0 state if available
-        let citizen = true;
-        let liable_elsewhere = false;
-        const routerStr = localStorage.getItem('wising_router_state');
-        if (routerStr) {
-            const rData = JSON.parse(routerStr);
-            citizen = rData.is_indian_citizen === true;
-            liable_elsewhere = rData.liable_to_tax_in_another_country === true;
-        }
-
-        const ltac = (citizen && liable_elsewhere);
-        state.residency_detail.liable_to_tax_in_another_country_being_indian_citizen = ltac;
-
         let status = "NR";
         let path = "NR-Default: Standard Non-Resident";
-        let scope = "India-source income only (exemption for NRE interests).";
+        let scope = "India-source income only.";
 
-        // Evaluate top-down as requested by specification
-        if (days >= 182) {
-            if (nr9 === false && d7_729 === false) {
+        if (entity === 'company') {
+            const isIndian = state.residency_detail.is_indian_company;
+            const poem = state.residency_detail.is_poem_in_india;
+            
+            if (isIndian === true) {
                 status = "ROR";
-                path = "Path ROR-1: Standard Resident (&gt;182 days + not NR 9/10 + &gt;729 preceding days)";
-                scope = "Worldwide income. Deductions and treaty foreign tax credits fully unlocked.";
-            } else if (nr9 === true) {
-                status = "RNOR";
-                path = "Path RNOR-1: Resident but Not Ordinarily Resident (Condition A: NR in 9/10 years)";
-                scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
-            } else {
-                status = "RNOR";
-                path = "Path RNOR-2: Resident but Not Ordinarily Resident (Condition B: &lt;=729 days in 7 years)";
-                scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
+                path = "Path RES-1: Indian Company";
+                scope = "Worldwide income.";
+            } else if (poem === true) {
+                status = "ROR";
+                path = "Path RES-2: Foreign Company with POEM in India";
+                scope = "Worldwide income.";
+            } else if (isIndian === false && poem === false) {
+                status = "NR";
+                path = "Path NR-1: Foreign Company (POEM outside India)";
             }
-        } else if (days >= 60 && days < 182) {
-            if (p4y === true) {
-                if (emp !== 'none') {
-                    // Employment departure exception
-                    if (inc15 === true && ltac === false) {
-                        status = "RNOR";
-                        path = "Path RNOR-3: Deemed Resident s.6(1A) (Employment Exception, income &gt;15L)";
-                        scope = "Deemed resident scope: India-source income + India-controlled businesses.";
-                    } else if (inc15 === false) {
-                        status = "NR";
-                        path = "Path NR-7: Non-Resident (Employment departure exception + India income &lt;=15L)";
-                        scope = "India-source income only.";
-                    } else {
-                        status = "NR";
-                        path = "Path NR-8: Non-Resident (Employment exception, Deemed Resident blocked by tax liability elsewhere)";
-                        scope = "India-source income only.";
-                    }
-                } else if (visit === true) {
-                    // Visitor path
-                    if (days >= 120 && inc15 === true) {
-                        status = "RNOR";
-                        path = "Path RNOR-4: Condition C Visitor path (&gt;=120 days + s.6(6)(c) RNOR)";
-                        scope = "India-source income + India-controlled businesses. Foreign sources exempt.";
-                    } else if (days >= 120 && inc15 === false) {
-                        status = "NR";
-                        path = "Path NR-5: Non-Resident (Visitor &gt;=120 days but India income &lt;=15L)";
-                        scope = "India-source income only.";
-                    } else if (days < 120 && inc15 === true && ltac === false) {
-                        status = "RNOR";
-                        path = "Path RNOR-9: Deemed Resident s.6(1A) (Visitor &lt;120 days, income &gt;15L)";
-                        scope = "Deemed resident scope: India-source income + India-controlled businesses.";
-                    } else {
-                        status = "NR";
-                        path = "Path NR-6: Non-Resident (Visitor &lt;120 days + Deemed Resident blocked by liability elsewhere)";
-                        scope = "India-source income only.";
-                    }
-                } else {
-                    // Standard 60-day path
+        } else if (entity === 'firm' || entity === 'llp' || entity === 'aop' || entity === 'trust') {
+            const whollyOutside = state.residency_detail.is_wholly_outside_india;
+            if (whollyOutside === false) {
+                status = "ROR";
+                path = "Path RES-3: Control and Management partially or wholly in India";
+                scope = "Worldwide income.";
+            } else if (whollyOutside === true) {
+                status = "NR";
+                path = "Path NR-2: Control and Management wholly outside India";
+            }
+        } else if (entity === 'huf') {
+            const whollyOutside = state.residency_detail.is_wholly_outside_india;
+            if (whollyOutside === true) {
+                status = "NR";
+                path = "Path NR-3: HUF Control and Management wholly outside India";
+            } else if (whollyOutside === false) {
+                // If resident, check Karta's physical presence (same as Individual)
+                const days = state.residency_detail.days_in_india_current_year;
+                const p4y = state.residency_detail.days_in_india_preceding_4_years_gte_365;
+                const nr9 = state.residency_detail.nr_years_last_10_gte_9;
+                const d7_729 = state.residency_detail.days_in_india_last_7_years_lte_729;
+                
+                if (days >= 182) {
                     if (nr9 === false && d7_729 === false) {
                         status = "ROR";
-                        path = "Path ROR-2: Standard Resident (60-181 days + preceding 4yr + not NR 9/10)";
-                        scope = "Worldwide income. Deductions and treaty foreign tax credits fully unlocked.";
+                        path = "Path ROR-1: HUF Resident (Karta >182 days + not NR 9/10 + >729 preceding days)";
+                        scope = "Worldwide income.";
                     } else if (nr9 === true) {
                         status = "RNOR";
-                        path = "Path RNOR-5: 60-day resident + Condition A (NR in 9/10 years)";
-                        scope = "India-source income + India-controlled businesses. Foreign sources exempt.";
+                        path = "Path RNOR-1: HUF Resident but Not Ordinarily Resident (Karta NR in 9/10 years)";
+                        scope = "India-source income + business controlled in India.";
                     } else {
                         status = "RNOR";
-                        path = "Path RNOR-6: 60-day resident + Condition B (&lt;=729 days in 7 years)";
-                        scope = "India-source income + India-controlled businesses. Foreign sources exempt.";
+                        path = "Path RNOR-2: HUF Resident but Not Ordinarily Resident (Karta <=729 days in 7 years)";
+                        scope = "India-source income + business controlled in India.";
                     }
-                }
-            } else {
-                // 60-181 but preceding 4yr < 365
-                if (inc15 === true && ltac === false) {
-                    status = "RNOR";
-                    path = "Path RNOR-8: Deemed Resident s.6(1A) (preceding 4yr &lt; 365 days, income &gt;15L)";
-                    scope = "Deemed resident scope: India-source income + India-controlled businesses.";
-                } else if (inc15 === false) {
-                    status = "NR";
-                    path = "Path NR-4: Non-Resident (60-181 days + preceding 4yr &lt;365 + India income &lt;=15L)";
-                    scope = "India-source income only.";
+                } else if (days >= 60 && days < 182) {
+                    if (p4y === true) {
+                        if (nr9 === false && d7_729 === false) {
+                            status = "ROR";
+                            path = "Path ROR-2: HUF Resident (Karta >60 days & >=365 in 4 yrs + not NR 9/10 + >729 preceding days)";
+                            scope = "Worldwide income.";
+                        } else {
+                            status = "RNOR";
+                            path = "Path RNOR-5: HUF RNOR (Karta meets 60/365 but fails secondary conditions)";
+                            scope = "India-source income + business controlled in India.";
+                        }
+                    } else {
+                        status = "NR";
+                        path = "Path NR-6: HUF Non-Resident (Karta <182 days and <365 in 4 yrs)";
+                    }
                 } else {
                     status = "NR";
-                    path = "Path NR-3: Non-Resident (60-181 days + preceding 4yr &lt;365 + Deemed Resident blocked)";
-                    scope = "India-source income only.";
+                    path = "Path NR-9: HUF Non-Resident (Karta <60 days)";
                 }
             }
         } else {
-            // Days < 60
-            if (inc15 === true && ltac === false) {
-                status = "RNOR";
-                path = "Path RNOR-7: Deemed Resident s.6(1A) (present &lt;60 days, income &gt;15L)";
-                scope = "Deemed resident scope: India-source income + India-controlled businesses.";
-            } else if (inc15 === false) {
-                status = "NR";
-                path = "Path NR-2: Non-Resident (&lt;60 days + India income &lt;=15L)";
-                scope = "India-source income only.";
-            } else {
-                status = "NR";
-                path = "Path NR-1: Non-Resident (&lt;60 days + Deemed Resident blocked by liability elsewhere)";
-                scope = "India-source income only.";
+            // INDIVIDUAL LOGIC
+            const days = state.residency_detail.days_in_india_current_year;
+            const p4y = state.residency_detail.days_in_india_preceding_4_years_gte_365;
+            const emp = state.residency_detail.employment_or_crew_status || 'none';
+            const visit = state.residency_detail.came_on_visit_to_india_pio_citizen;
+            const nr9 = state.residency_detail.nr_years_last_10_gte_9;
+            const d7_729 = state.residency_detail.days_in_india_last_7_years_lte_729;
+            const inc15 = state.residency_detail.india_source_income_above_15l;
+            const ltac = state.residency_detail.liable_to_tax_in_another_country_being_indian_citizen || false;
+
+            if (days >= 182) {
+                if (nr9 === false && d7_729 === false) {
+                    status = "ROR";
+                    path = "Path ROR-1: Standard Resident (>182 days + not NR 9/10 + >729 preceding days)";
+                    scope = "Worldwide income. Deductions and treaty foreign tax credits fully unlocked.";
+                } else if (nr9 === true) {
+                    status = "RNOR";
+                    path = "Path RNOR-1: Resident but Not Ordinarily Resident (Condition A: NR in 9/10 years)";
+                    scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
+                } else {
+                    status = "RNOR";
+                    path = "Path RNOR-2: Resident but Not Ordinarily Resident (Condition B: <=729 days in 7 years)";
+                    scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
+                }
+            } else if (days >= 60 && days < 182) {
+                if (p4y === true) {
+                    if (emp !== 'none') {
+                        if (inc15 === true && ltac === false) {
+                            status = "RNOR";
+                            path = "Path RNOR-3: Deemed Resident s.6(1A) (Employment Exception, income >15L)";
+                            scope = "Deemed resident scope: India-source income + India-controlled businesses.";
+                        } else if (inc15 === false) {
+                            status = "NR";
+                            path = "Path NR-7: Non-Resident (Employment departure exception + India income <=15L)";
+                            scope = "India-source income only.";
+                        } else {
+                            status = "NR";
+                            path = "Path NR-8: Non-Resident (Employment exception, Deemed Resident blocked by tax liability elsewhere)";
+                            scope = "India-source income only.";
+                        }
+                    } else if (visit === true) {
+                        if (days >= 120 && inc15 === true) {
+                            status = "RNOR";
+                            path = "Path RNOR-4: Condition C Visitor path (>=120 days + s.6(6)(c) RNOR)";
+                            scope = "India-source income + India-controlled businesses. Foreign sources exempt.";
+                        } else if (days >= 120 && inc15 === false) {
+                            status = "NR";
+                            path = "Path NR-5: Non-Resident (Visitor >=120 days but India income <=15L)";
+                            scope = "India-source income only.";
+                        } else if (days < 120 && inc15 === true && ltac === false) {
+                            status = "RNOR";
+                            path = "Path RNOR-6: Deemed Resident s.6(1A) (Visitor <120 days, income >15L, not liable elsewhere)";
+                            scope = "Deemed resident scope: India-source income + India-controlled businesses.";
+                        } else {
+                            status = "NR";
+                            path = "Path NR-10: Non-Resident (Visitor <120 days)";
+                        }
+                    } else {
+                        if (nr9 === false && d7_729 === false) {
+                            status = "ROR";
+                            path = "Path ROR-2: Standard Resident (>60 days & >=365 in 4 yrs + not NR 9/10 + >729 preceding days)";
+                            scope = "Worldwide income. Deductions and treaty foreign tax credits fully unlocked.";
+                        } else if (nr9 === true) {
+                            status = "RNOR";
+                            path = "Path RNOR-5: RNOR (>60 days & >=365 in 4 yrs + NR in 9/10 years)";
+                            scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
+                        } else {
+                            status = "RNOR";
+                            path = "Path RNOR-6: RNOR (>60 days & >=365 in 4 yrs + <=729 days in 7 years)";
+                            scope = "India-source income + business controlled in India. Foreign salary/investments exempt.";
+                        }
+                    }
+                } else {
+                    if (inc15 === true && ltac === false) {
+                        status = "RNOR";
+                        path = "Path RNOR-7: Deemed Resident s.6(1A) (<182 days, <365 in 4 yrs, but income >15L & not liable elsewhere)";
+                        scope = "Deemed resident scope: India-source income + India-controlled businesses.";
+                    } else {
+                        status = "NR";
+                        path = "Path NR-6: Non-Resident (<182 days and <365 in 4 yrs)";
+                        scope = "India-source income only.";
+                    }
+                }
+            } else if (days < 60) {
+                if (inc15 === true && ltac === false) {
+                    status = "RNOR";
+                    path = "Path RNOR-8: Deemed Resident s.6(1A) (<60 days, income >15L, not liable elsewhere)";
+                    scope = "Deemed resident scope: India-source income + India-controlled businesses.";
+                } else {
+                    status = "NR";
+                    path = "Path NR-9: Non-Resident (<60 days)";
+                    scope = "India-source income only.";
+                }
             }
         }
 
@@ -5074,15 +5417,128 @@
         }
     }
 
-        function updateBizEntityType(val) {
-        state.domestic_income.business_income.entity_type = val;
-        validateEntityPresumptiveEligibility();
+            function updateBizEntityType(val) {
+        state.profile.entity_type = val;
+        state.domestic_income.business_income.entity_type = val; // keep for backward compat
+        
+        // Dynamic UI Morphing
+        const isInd = val === 'individual';
+        const isHuf = val === 'huf';
+        const isFirm = val === 'firm' || val === 'llp' || val === 'aop' || val === 'trust';
+        const isCompany = val === 'company';
+        const isNonInd = !isInd;
+
+        // 1. Profile Section Morphing
+        const panInput = document.getElementById('prof-pan');
+        if (panInput && panInput.parentElement) {
+            panInput.parentElement.style.display = isNonInd ? 'block' : 'none';
+        }
+        
+        const regimeDiv = document.getElementById('div-prof-regime');
+        if (isFirm || isCompany) {
+            if (regimeDiv) regimeDiv.style.display = 'none';
+            // Force Old Regime for Companies, Firms, LLPs, Trusts
+            state.profile.tax_regime = 'OLD';
+            const profRegime = document.getElementById('prof-regime');
+            if (profRegime) profRegime.value = 'OLD';
+        } else {
+            if (regimeDiv) regimeDiv.style.display = 'block';
+        }
+        
+        // 2. Module Visibility Morphing
+        const salaryAccordion = document.getElementById('btn-step-income') ? document.getElementById('btn-step-income').parentElement.querySelector('button[onclick="switchStep(\'step-income\')"]').closest('nav').children[4] : null;
+        if (salaryAccordion) salaryAccordion.style.display = isInd ? 'flex' : 'none';
+
+        // Deductions & Capital Gains overrides
+        if (typeof evaluateEntityOverrides === 'function') evaluateEntityOverrides();
+
+        // 3. Residency UI Morphing
+        const indContainer = document.getElementById('div-residency-individual-container');
+        const whollyOutside = document.getElementById('div-res-wholly-outside');
+        const indianCompany = document.getElementById('div-res-indian-company');
+        const poem = document.getElementById('div-res-poem');
+        const kartaAlert = document.getElementById('div-karta-alert');
+
+        if (isInd) {
+            if(indContainer) indContainer.style.display = 'flex';
+            if(whollyOutside) whollyOutside.style.display = 'none';
+            if(indianCompany) indianCompany.style.display = 'none';
+            if(poem) poem.style.display = 'none';
+            if(kartaAlert) kartaAlert.style.display = 'none';
+        } else if (isHuf) {
+            if(whollyOutside) whollyOutside.style.display = 'block';
+            if(indianCompany) indianCompany.style.display = 'none';
+            if(poem) poem.style.display = 'none';
+            const wo = state.residency_detail.is_wholly_outside_india;
+            if (wo === false) {
+                if(indContainer) indContainer.style.display = 'flex';
+                if(kartaAlert) kartaAlert.style.display = 'flex';
+            } else {
+                if(indContainer) indContainer.style.display = 'none';
+                if(kartaAlert) kartaAlert.style.display = 'none';
+            }
+        } else if (isFirm) {
+            if(indContainer) indContainer.style.display = 'none';
+            if(whollyOutside) whollyOutside.style.display = 'block';
+            if(indianCompany) indianCompany.style.display = 'none';
+            if(poem) poem.style.display = 'none';
+            if(kartaAlert) kartaAlert.style.display = 'none';
+        } else if (isCompany) {
+            if(indContainer) indContainer.style.display = 'none';
+            if(whollyOutside) whollyOutside.style.display = 'none';
+            if(indianCompany) indianCompany.style.display = 'block';
+            if(poem) poem.style.display = 'block';
+            if(kartaAlert) kartaAlert.style.display = 'none';
+        }
+        
+        if (typeof validateEntityPresumptiveEligibility === 'function') validateEntityPresumptiveEligibility();
+        if (typeof runResidencySolver === 'function') runResidencySolver();
     }
 
     function validateEntityPresumptiveEligibility() {
-        const entity = state.domestic_income.business_income.entity_type;
+        const entity = state.profile.entity_type;
         const ror = state.residency_detail.final_india_residency_status === 'ROR';
-        const eligible = ror && entity !== 'llp' && entity !== 'company';
+        
+        const eligible44AD = ror && entity !== 'llp' && entity !== 'company' && entity !== 'aop' && entity !== 'trust';
+        const eligible44ADA = eligible44AD && entity !== 'huf';
+        
+        const warnBanner = document.getElementById('warn-entity-presumptive');
+        const warnText = document.getElementById('warn-entity-text');
+        
+        let forceRevert = false;
+        const entries = state.domestic_income.business_income.business_entries || [];
+        entries.forEach(entry => {
+            if (entry.presumptive_scheme === 's44AD' && !eligible44AD) {
+                entry.presumptive_scheme = null;
+                forceRevert = true;
+            } else if (entry.presumptive_scheme === 's44ADA' && !eligible44ADA) {
+                entry.presumptive_scheme = null;
+                forceRevert = true;
+            }
+        });
+        
+        if (forceRevert) {
+            renderBusinessEntries();
+        }
+        
+        if (!eligible44AD) {
+            if(warnBanner) {
+                warnBanner.classList.remove('hidden');
+                warnBanner.classList.add('flex');
+                if(warnText) warnText.textContent = "Companies, LLPs, AOPs, and Trusts are NOT eligible for presumptive taxation under s.44AD/ADA.";
+            }
+        } else if (!eligible44ADA) {
+            if(warnBanner) {
+                warnBanner.classList.remove('hidden');
+                warnBanner.classList.add('flex');
+                if(warnText) warnText.textContent = "HUFs are eligible for s.44AD (Business), but NOT eligible for s.44ADA (Profession).";
+            }
+        } else {
+            if(warnBanner) {
+                warnBanner.classList.add('hidden');
+                warnBanner.classList.remove('flex');
+            }
+        }
         
         const warnBanner = document.getElementById('warn-entity-presumptive');
         const nriBanner = document.getElementById('warn-pres-nri');
@@ -6665,6 +7121,47 @@
         return age >= 60;
     }
 
+    function evaluateAdvanceTaxVisibility() {
+        const advDiv = document.getElementById('div-advance-tax');
+        if (!advDiv) return;
+        
+        const isSenior = isSeniorCitizen();
+        const residency = state.residency_detail.final_india_residency_status || 'ROR';
+        const isResident = residency === 'ROR' || residency === 'RNOR';
+        const hasBiz = state.business.has_business === true;
+        const isInd = (state.profile.entity_type || 'individual') === 'individual';
+        
+        if (isInd && isSenior && isResident && !hasBiz) {
+            advDiv.classList.add('hidden');
+            ['advance_tax_q1_15jun_inr', 'advance_tax_q2_15sep_inr', 'advance_tax_q3_15dec_inr', 'advance_tax_q4_15mar_inr'].forEach(f => state.tax_credits[f] = null);
+            ['crd-q1', 'crd-q2', 'crd-q3', 'crd-q4'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+        } else {
+            advDiv.classList.remove('hidden');
+        }
+    }
+    
+    function updateSpecialDeduction(field, val) {
+        if (!state.deductions) state.deductions = {};
+        state.deductions[field] = val === '' ? null : parseINRCurrency(val);
+    }
+    
+    function updateRoyaltyDeduction(field, val) {
+        if (!state.deductions) state.deductions = {};
+        state.deductions[field] = val === '' ? null : parseINRCurrency(val);
+    }
+    
+    function update80M(field, val) {
+        if (!state.deductions.s80M) state.deductions.s80M = {};
+        state.deductions.s80M[field] = val === '' ? null : parseINRCurrency(val);
+    }
+    
+    function updateS79Loss(checked) {
+        state.carry_forward_losses.s79_shareholding_change_triggered = checked;
+    }
+    
     function update80C(field, val) {
         state.deductions.s80C[field] = val === '' ? null : parseINRCurrency(val);
     }
