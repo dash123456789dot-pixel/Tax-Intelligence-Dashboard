@@ -5478,9 +5478,11 @@
         // PAN is required for all entity types so we leave it visible.
         
         const regimeDiv = document.getElementById('div-prof-regime');
-        if (isFirm || isCompany) {
+        const forceOldRegime = val === 'firm' || val === 'llp' || val === 'company' || val === 'trust' || val === 'local';
+        
+        if (forceOldRegime) {
             if (regimeDiv) regimeDiv.style.display = 'none';
-            // Force Old Regime for Companies, Firms, LLPs, Trusts
+            // Force Old Regime for Companies, Firms, LLPs, Trusts, Locals
             state.profile.tax_regime = 'OLD';
             const profRegime = document.getElementById('prof-regime');
             if (profRegime) profRegime.value = 'OLD';
