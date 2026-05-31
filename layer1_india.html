@@ -557,6 +557,36 @@
                     </div>
 
                     <!-- India source income above 15L -->
+                    
+                    <!-- HUF Historical 2 of 10 years Resident -->
+                    <div class="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl hidden" id="div-huf-nr9">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandCyan/90">Have you (the Karta) been a resident of India in at least 2 out of the 10 financial years immediately preceding the relevant financial year?</span>
+                            </div>
+                            <select id="res-huf-nr9" onchange="updateResidencyField('nr_years_last_10_gte_9', this.value === 'null' ? null : this.value === 'false')" class="w-32 bg-[#121212] border border-brandCyan/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandCyan focus:ring-0 focus:outline-none transition-all ml-4 flex-shrink-0">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- HUF Historical 7 years >= 730 -->
+                    <div class="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl hidden" id="div-huf-d7">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandCyan/90">Was your (the Karta's) total physical stay in India equal to or greater than 730 days during the 7 financial years immediately preceding the relevant financial year?</span>
+                            </div>
+                            <select id="res-huf-d7" onchange="updateResidencyField('days_in_india_last_7_years_lte_729', this.value === 'null' ? null : this.value === 'false')" class="w-32 bg-[#121212] border border-brandCyan/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandCyan focus:ring-0 focus:outline-none transition-all ml-4 flex-shrink-0">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- India source income above 15L -->
                     <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-inc15">
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
@@ -3719,28 +3749,27 @@
         const divNr9 = document.getElementById('div-nr9');
         const divD7 = document.getElementById('div-d7');
         const divInc15 = document.getElementById('div-inc15');
+        
+        const divHufNr9 = document.getElementById('div-huf-nr9');
+        const divHufD7 = document.getElementById('div-huf-d7');
 
         // Default everything to hidden
-        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15].forEach(el => {
-            if (el) {
-                el.classList.add('hidden');
-            }
+        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15, divHufNr9, divHufD7].forEach(el => {
+            if (el) el.classList.add('hidden');
         });
         
         if (entity === 'huf') {
-            // HUF Karta Rule logic
             if (divCoreDays) {
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
             if (wo === false) {
-                if (divNr9) divNr9.classList.remove('hidden');
+                if (divHufNr9) divHufNr9.classList.remove('hidden');
                 if (nr9 !== null) {
-                    if (divD7) divD7.classList.remove('hidden');
+                    if (divHufD7) divHufD7.classList.remove('hidden');
                 }
             }
         } else {
-            // Individual logic
             if (divCoreDays) {
                 divCoreDays.classList.remove('hidden');
                 divCoreDays.style.display = 'block';
@@ -5446,10 +5475,7 @@
         const isNonInd = !isInd;
 
         // 1. Profile Section Morphing
-        const panInput = document.getElementById('prof-pan');
-        if (panInput && panInput.parentElement) {
-            panInput.parentElement.style.display = isNonInd ? 'block' : 'none';
-        }
+        // PAN is required for all entity types so we leave it visible.
         
         const regimeDiv = document.getElementById('div-prof-regime');
         if (isFirm || isCompany) {
@@ -8424,8 +8450,17 @@
         document.getElementById('res-emp').value = state.residency_detail.employment_or_crew_status === null ? 'null' : state.residency_detail.employment_or_crew_status;
         document.getElementById('res-is-departure').value = state.residency_detail.is_departure_year === null ? 'null' : state.residency_detail.is_departure_year;
         document.getElementById('res-visitor').value = state.residency_detail.came_on_visit_to_india_pio_citizen === null ? 'null' : state.residency_detail.came_on_visit_to_india_pio_citizen;
-        document.getElementById('res-nr9').value = state.residency_detail.nr_years_last_10_gte_9 === null ? 'null' : state.residency_detail.nr_years_last_10_gte_9;
-        document.getElementById('res-d7').value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : state.residency_detail.days_in_india_last_7_years_lte_729;
+        const pNr9 = document.getElementById('res-nr9');
+        if (pNr9) pNr9.value = state.residency_detail.nr_years_last_10_gte_9 === null ? 'null' : state.residency_detail.nr_years_last_10_gte_9;
+        
+        const pD7 = document.getElementById('res-d7');
+        if (pD7) pD7.value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : state.residency_detail.days_in_india_last_7_years_lte_729;
+        
+        const pHufNr9 = document.getElementById('res-huf-nr9');
+        if (pHufNr9) pHufNr9.value = state.residency_detail.nr_years_last_10_gte_9 === null ? 'null' : state.residency_detail.nr_years_last_10_gte_9 ? 'false' : 'true';
+        
+        const pHufD7 = document.getElementById('res-huf-d7');
+        if (pHufD7) pHufD7.value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : state.residency_detail.days_in_india_last_7_years_lte_729 ? 'false' : 'true';
         document.getElementById('res-inc15').value = state.residency_detail.india_source_income_above_15l === null ? 'null' : state.residency_detail.india_source_income_above_15l;
 
         // Sync range slider display
@@ -8674,6 +8709,13 @@
         
         const d7 = document.getElementById('res-d7');
         if (d7) d7.value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : String(state.residency_detail.days_in_india_last_7_years_lte_729);
+        
+        const hufNr9 = document.getElementById('res-huf-nr9');
+        if (hufNr9) hufNr9.value = state.residency_detail.nr_years_last_10_gte_9 === null ? 'null' : state.residency_detail.nr_years_last_10_gte_9 ? 'false' : 'true';
+        
+        const hufD7 = document.getElementById('res-huf-d7');
+        if (hufD7) hufD7.value = state.residency_detail.days_in_india_last_7_years_lte_729 === null ? 'null' : state.residency_detail.days_in_india_last_7_years_lte_729 ? 'false' : 'true';
+
         
         const inc15 = document.getElementById('res-inc15');
         if (inc15) inc15.value = state.residency_detail.india_source_income_above_15l === null ? 'null' : String(state.residency_detail.india_source_income_above_15l);
