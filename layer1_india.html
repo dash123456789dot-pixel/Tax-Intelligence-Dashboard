@@ -451,7 +451,7 @@
 
 <div id="div-residency-individual-container" class="flex flex-col gap-4 transition-all">
 <!-- Core India Days -->
-                <div class="p-4 bg-white/5 border border-white/10 rounded-2xl border-l-2 border-l-brandGold">
+                <div id="div-res-core-days" class="p-4 bg-white/5 border border-white/10 rounded-2xl border-l-2 border-l-brandGold transition-all">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex flex-col">
                             <span class="text-xs font-bold text-white/90 uppercase tracking-widest">Days in India</span>
@@ -3703,12 +3703,15 @@
     }
 
     function syncResidencyUI() {
+        const entity = state.profile.entity_type;
         const days = state.residency_detail.days_in_india_current_year;
         const p4y = state.residency_detail.days_in_india_preceding_4_years_gte_365;
         const emp = state.residency_detail.employment_or_crew_status;
         const visit = state.residency_detail.came_on_visit_to_india_pio_citizen;
         const nr9 = state.residency_detail.nr_years_last_10_gte_9;
+        const wo = state.residency_detail.is_wholly_outside_india;
         
+        const divCoreDays = document.getElementById('div-res-core-days');
         const divP4Y = document.getElementById('div-p4y');
         const divEmp = document.getElementById('div-emp');
         const divDep = document.getElementById('div-departure');
@@ -3719,40 +3722,62 @@
 
         // Default everything to hidden
         [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15].forEach(el => {
-            if (el) el.classList.add('hidden');
-        });
-
-        if (days >= 182) {
-            if (divNr9) divNr9.classList.remove('hidden');
-            if (nr9 !== null) {
-                if (divD7) divD7.classList.remove('hidden');
+            if (el) {
+                el.classList.add('hidden');
             }
-        } else if (days >= 60) {
-            if (divP4Y) divP4Y.classList.remove('hidden');
-            
-            if (p4y === true) {
-                if (divEmp) divEmp.classList.remove('hidden');
-                
-                if (emp === 'none') {
-                    if (divVis) divVis.classList.remove('hidden');
-                    
-                    if (visit === true) {
-                        if (divInc15) divInc15.classList.remove('hidden');
-                    } else if (visit === false) {
-                        if (divNr9) divNr9.classList.remove('hidden');
-                        if (nr9 !== null) {
-                            if (divD7) divD7.classList.remove('hidden');
-                        }
-                    }
-                } else if (emp !== null) {
-                    if (divDep) divDep.classList.remove('hidden');
-                    if (divInc15) divInc15.classList.remove('hidden');
+        });
+        
+        if (entity === 'huf') {
+            // HUF Karta Rule logic
+            if (divCoreDays) {
+                divCoreDays.classList.add('hidden');
+                divCoreDays.style.display = 'none';
+            }
+            if (wo === false) {
+                if (divNr9) divNr9.classList.remove('hidden');
+                if (nr9 !== null) {
+                    if (divD7) divD7.classList.remove('hidden');
                 }
-            } else if (p4y === false) {
-                if (divInc15) divInc15.classList.remove('hidden');
             }
         } else {
-            if (divInc15) divInc15.classList.remove('hidden');
+            // Individual logic
+            if (divCoreDays) {
+                divCoreDays.classList.remove('hidden');
+                divCoreDays.style.display = 'block';
+            }
+            
+            if (days >= 182) {
+                if (divNr9) divNr9.classList.remove('hidden');
+                if (nr9 !== null) {
+                    if (divD7) divD7.classList.remove('hidden');
+                }
+            } else if (days >= 60) {
+                if (divP4Y) divP4Y.classList.remove('hidden');
+                
+                if (p4y === true) {
+                    if (divEmp) divEmp.classList.remove('hidden');
+                    
+                    if (emp === 'none') {
+                        if (divVis) divVis.classList.remove('hidden');
+                        
+                        if (visit === true) {
+                            if (divInc15) divInc15.classList.remove('hidden');
+                        } else if (visit === false) {
+                            if (divNr9) divNr9.classList.remove('hidden');
+                            if (nr9 !== null) {
+                                if (divD7) divD7.classList.remove('hidden');
+                            }
+                        }
+                    } else if (emp !== null) {
+                        if (divDep) divDep.classList.remove('hidden');
+                        if (divInc15) divInc15.classList.remove('hidden');
+                    }
+                } else if (p4y === false) {
+                    if (divInc15) divInc15.classList.remove('hidden');
+                }
+            } else {
+                if (divInc15) divInc15.classList.remove('hidden');
+            }
         }
     }
 
