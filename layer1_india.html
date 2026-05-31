@@ -4755,6 +4755,17 @@
         syncPropertyState();
     }
 
+    function toggleCgExemptionInputs(rowId, val) {
+        const div = document.getElementById('cg-invest-div-' + rowId);
+        if (div) {
+            if (val) {
+                div.classList.remove('hidden');
+            } else {
+                div.classList.add('hidden');
+            }
+        }
+    }
+
     function removePropertyRow(id) {
         const row = document.getElementById(id);
         if (row) row.remove();
