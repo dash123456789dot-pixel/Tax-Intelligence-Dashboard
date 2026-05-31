@@ -8291,8 +8291,51 @@
         });
         state.other_sources.deemed_dividend_from_buyback_inr = deemedBuyback;
 
+        // House Property Computation (for Layer 1 Preview Cards)
+        let hpNetIncome = 0;
+        if (state.domestic_income.house_property.has_house_property_income) {
+            let totalInterestSOP = 0;
+            const isIndHuf = state.profile.entity_type === 'individual' || state.profile.entity_type === 'huf';
+
+            state.domestic_income.house_property.properties.forEach(prop => {
+                let intCap = (prop.interest_on_borrowed_capital_inr || 0) + (prop.pre_construction_interest_inr || 0);
+                
+                // Adjust for co-ownership share if user entered total property values
+                if (prop.financial_values_represent === 'TOTAL_PROPERTY') {
+                    intCap = intCap * (prop.co_owner_share_percent / 100);
+                }
+                
+                if (prop.property_use === 'SOP') {
+                    totalInterestSOP += intCap;
+                } else {
+                    let gav = prop.gross_annual_value_inr || 0;
+                    let tax = prop.municipal_taxes_paid_inr || 0;
+                    
+                    if (prop.financial_values_represent === 'TOTAL_PROPERTY') {
+                        gav = gav * (prop.co_owner_share_percent / 100);
+                        tax = tax * (prop.co_owner_share_percent / 100);
+                    }
+                    
+                    const nav = Math.max(0, gav - tax);
+                    const stdDed = nav > 0 ? nav * 0.3 : 0;
+                    hpNetIncome += (nav - stdDed - intCap);
+                }
+            });
+
+            // Apply max ₹2L cap on Self-Occupied interest for Individuals/HUFs (Not allowed under New Regime)
+            if (isIndHuf && totalInterestSOP > 0 && state.profile.tax_regime !== 'NEW') {
+                const sopLossAllowed = Math.min(200000, totalInterestSOP);
+                hpNetIncome -= sopLossAllowed;
+            }
+            
+            // Limit inter-head set-off of House Property loss to max ₹2L overall per year (s.71(3A))
+            if (hpNetIncome < -200000) {
+                hpNetIncome = -200000;
+            }
+        }
+
         // Calculate surcharge buckets
-        const normalSlab = salary + business + savingsInt + fdInt + gifts + pensionNet + deemedBuyback;
+        const normalSlab = salary + hpNetIncome + business + savingsInt + fdInt + gifts + pensionNet + deemedBuyback;
         const stcg111A = 0; // standard lists
         const ltcg112A = 0; 
         const ltcg112 = 0;
