@@ -1,4 +1,12 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WISING Wealth Intelligence - India Specialist (Layer 1)</title>
+<meta name="description" content="Layer 1 specialist onboarding for Indian residency classification, domestic earnings, and cross-border compliance.">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
     function evaluateEntityOverrides() {
         const entity = state.profile.entity_type;
         const isInd = entity === 'individual';
@@ -67,15 +75,7 @@
             }
         });
     }
-</div>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>WISING Wealth Intelligence - India Specialist (Layer 1)</title>
-<meta name="description" content="Layer 1 specialist onboarding for Indian residency classification, domestic earnings, and cross-border compliance.">
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</script>
 <script>
 
     // Comma formatter utility
@@ -323,6 +323,18 @@
                     </div>
                 </div>
 
+                <!-- Aadhaar Link Toggle -->
+                <div class="flex items-center justify-between p-4 bg-[#121212] border border-white/10 rounded-2xl mb-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80">PAN Linked to Aadhaar?</span>
+                        <span class="text-[9px] text-white/30">If your PAN is not linked to Aadhaar, a higher tax rate will be deducted from your income.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-aadhaar-linked" onchange="updateProfileField('pan_aadhaar_linked', this.checked)" class="sr-only peer" checked>
+                        <div class="w-9 h-5 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
                 <!-- Tax Regime Toggle -->
                 <div id="div-prof-regime" class="border-t border-white/10 pt-4 mt-2 transition-all">
                     <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Tax Regime</label>
@@ -379,29 +391,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 pt-2">
-                <div>
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Permanent Account Number (PAN)</label>
-                    <input type="text" id="prof-pan" oninput="updateProfileField('pan', this.value.toUpperCase())" placeholder="AAAAA9999A" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono">
-                </div>
-                <div class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl">
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-white/80">PAN Linked to Aadhaar?</span>
-                        <span class="text-[9px] text-white/30">If your PAN is not linked to Aadhaar, a higher tax rate will be deducted from your income.</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="prof-aadhaar-linked" onchange="updateProfileField('pan_aadhaar_linked', this.checked)" class="sr-only peer" checked>
-                        <div class="w-9 h-5 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold"></div>
-                    </label>
-                </div>
-                <div>
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Tax Regime</label>
-                    <select id="prof-regime" onchange="updateProfileField('tax_regime', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
-                        <option value="NEW" class="bg-[#121212]">New Tax Regime (Default u/s 115BAC)</option>
-                        <option value="OLD" class="bg-[#121212]">Old Tax Regime (With Deductions)</option>
-                    </select>
-                </div>
-            </div>
+
 
             <hr class="border-white/5 my-2">
 
