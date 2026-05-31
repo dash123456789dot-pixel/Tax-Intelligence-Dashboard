@@ -34,14 +34,14 @@
             });
         });
         
-        // --- CAPITAL GAINS ---
-        const cgSec54 = document.querySelectorAll('select[id^="cg-exemption-"]');
-        cgSec54.forEach(sel => {
+        // --- CAPITAL GAINS EXEMPTIONS ---
+        const cgExemptionSelects = document.querySelectorAll('.prop-cg-exemption');
+        cgExemptionSelects.forEach(sel => {
             Array.from(sel.options).forEach(opt => {
-                if (opt.value === 'sec54' || opt.value === 'sec54f') {
+                if (opt.classList.contains('cg-opt-ind-only')) {
                     opt.disabled = (!isInd && !isHuf);
                     if (opt.disabled && sel.value === opt.value) {
-                        sel.value = ''; // Reset
+                        sel.value = ''; // Reset to None
                     }
                 }
             });
@@ -4667,6 +4667,23 @@
                                 <span class="text-brandRed font-black text-sm">!</span>
                             </div>
                             <span><strong class="text-brandRed uppercase tracking-widest text-[10px]">Section 50C Alert:</strong><br>Since the Stamp Duty Value exceeds the Sale Consideration by more than 10%, the Stamp Duty Value is deemed as your final Sale Consideration for calculating Capital Gains.</span>
+                        </div>
+                        
+                        <div class="md:col-span-2 mt-2 pt-4 border-t border-white/10">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Claim Capital Gains Exemption</label>
+                            <select class="prop-cg-exemption w-full bg-[#121212] border border-brandGold/30 rounded-lg text-xs text-brandGold px-3 py-2.5 focus:border-brandGold focus:outline-none" onchange="evaluateEntityOverrides()">
+                                <option value="">None (Pay Full Tax)</option>
+                                <option value="sec54" class="cg-opt-ind-only">Sec 54 (Res. House to Res. House)</option>
+                                <option value="sec54b" class="cg-opt-ind-only">Sec 54B (Agri Land to Agri Land)</option>
+                                <option value="sec54d">Sec 54D (Compulsory Acq. of Industrial Land)</option>
+                                <option value="sec54ec">Sec 54EC (Invest in NHAI/REC Bonds - Max ₹50L)</option>
+                                <option value="sec54ee">Sec 54EE (Invest in Specified Startup Fund)</option>
+                                <option value="sec54f" class="cg-opt-ind-only">Sec 54F (Any Asset to Res. House)</option>
+                                <option value="sec54g">Sec 54G (Shifting Industrial Undertaking)</option>
+                                <option value="sec54ga">Sec 54GA (Shifting to SEZ)</option>
+                                <option value="sec54gb" class="cg-opt-ind-only">Sec 54GB (Res. Property to Startup Equity)</option>
+                            </select>
+                            <p class="text-[8px] text-brandGold/50 mt-1.5 leading-relaxed">Note: Exemptions under Sections 54, 54B, 54F, and 54GB are strictly available only to Individuals and HUFs.</p>
                         </div>
                     </div>
                 </div>
