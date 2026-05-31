@@ -15,10 +15,7 @@
         const isCompany = entity === 'company';
         
         // --- SALARY MODULE ---
-        const salaryStepNav = document.getElementById('btn-step-income');
-        if (salaryStepNav) {
-            salaryStepNav.style.display = isInd ? 'flex' : 'none';
-        }
+        // (Visibility logic moved to updateBizEntityType to preserve Other Sources)
         
         // --- HOUSE PROPERTY ---
         const hpTypes = document.querySelectorAll('select[onchange*="property_type"]');
