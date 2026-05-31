@@ -9229,6 +9229,8 @@
         if (!list) return;
         list.innerHTML = '';
         const regime = state.profile.tax_regime;
+        const entity = state.profile.entity_type;
+        const isCorp = (entity !== 'individual' && entity !== 'huf');
 
         state.domestic_income.house_property.properties.forEach((prop, idx) => {
             const isSOP = prop.property_use === 'SOP';
@@ -9314,7 +9316,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-lg transition-all ${regime === 'NEW' ? 'opacity-30 pointer-events-none hidden' : ''}">
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-lg transition-all ${(regime === 'NEW' || isCorp) ? 'opacity-30 pointer-events-none hidden' : ''}">
                         <div class="flex flex-col">
                             <span class="text-xs font-bold text-white/80">Self-Occupied with active loan?</span>
                             <span class="text-[9px] text-brandGold/70">Required to claim max ₹2L deduction under Section 24(b).</span>
