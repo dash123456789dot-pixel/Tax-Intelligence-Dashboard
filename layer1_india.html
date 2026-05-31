@@ -3317,7 +3317,7 @@
                 isAllowed = true;
                 label = "Lock";
             } else if (step === 'step-deductions') {
-                isAllowed = (state.profile.tax_regime === 'OLD') || (lock === 'RNOR' || lock === 'ROR');
+                isAllowed = (state.profile.tax_regime === 'OLD');
                 label = isAllowed ? "Active" : "🔒";
             } else {
                 isAllowed = true;
