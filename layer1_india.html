@@ -4552,6 +4552,21 @@
                 </div>
             </div>
 
+            <!-- Address Block -->
+            <div class="flex flex-col gap-4 mt-2 mb-2 bg-white/5 p-4 rounded-lg border border-white/10">
+                <h5 class="text-[9px] font-bold text-white/60 uppercase tracking-widest mb-2">Property Address</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Full Address (As per Deed)</label>
+                        <input type="text" class="prop-address w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none" placeholder="Flat, Building, Street, City">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">PIN Code</label>
+                        <input type="text" inputmode="numeric" maxlength="6" class="prop-pincode w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none font-mono" placeholder="e.g. 400001">
+                    </div>
+                </div>
+            </div>
+
             <!-- Asset Status Toggle -->
             <div class="flex flex-col md:flex-row items-center gap-4 bg-white/5 p-3 rounded-lg border border-white/10 mt-2 mb-2">
                 <label class="text-[10px] font-black uppercase tracking-widest text-brandGold">Asset Status:</label>
@@ -4624,6 +4639,15 @@
                     </div>
                 </div>
 
+                <!-- Improvements Section -->
+                <div class="bg-white/5 p-4 rounded-lg border border-white/10 mb-4">
+                    <div class="flex items-center justify-between mb-2 border-b border-white/5 pb-2">
+                        <h5 class="text-[9px] font-bold text-white/60 uppercase tracking-widest">Cost of Improvement (Renovations/Additions)</h5>
+                        <button onclick="addImprovementRow('${rowId}')" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Improvement</button>
+                    </div>
+                    <div id="imp-list-${rowId}" class="flex flex-col gap-3"></div>
+                </div>
+
                 <div class="bg-white/5 p-3 rounded-lg border border-white/10 prop-sale-only-div">
                     <h5 class="text-[9px] font-bold text-white/60 uppercase tracking-widest mb-3">Sale Info</h5>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -4662,6 +4686,22 @@
                                 <input type="text" inputmode="numeric" class="inr-input prop-exp w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white pl-7 pr-3 py-2 focus:border-brandGold focus:outline-none font-mono" placeholder="0">
                             </div>
                         </div>
+                        
+                        <!-- Buyer Details -->
+                        <div class="md:col-span-2 p-4 mt-2 border border-brandGold/20 bg-brandGold/5 rounded-xl">
+                            <h5 class="text-[9px] font-bold text-brandGold uppercase tracking-widest mb-3">Buyer Details (Mandatory for ITR)</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold/80 mb-1.5">Buyer Name</label>
+                                    <input type="text" class="prop-buyer-name w-full bg-[#121212] border border-brandGold/30 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none" placeholder="Full Name">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold/80 mb-1.5">Buyer PAN</label>
+                                    <input type="text" maxlength="10" class="prop-buyer-pan uppercase w-full bg-[#121212] border border-brandGold/30 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none font-mono" placeholder="ABCDE1234F">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="prop-50c-warning hidden md:col-span-2 p-3 bg-[#121212] border-l-4 border-l-brandRed border-y border-r border-white/10 rounded-r-lg text-xs text-white/80 flex items-center gap-3 shadow-lg">
                             <div class="flex items-center justify-center w-6 h-6 rounded-full bg-brandRed/20 shrink-0">
                                 <span class="text-brandRed font-black text-sm">!</span>
@@ -4764,6 +4804,29 @@
                 div.classList.add('hidden');
             }
         }
+    }
+
+    function addImprovementRow(propRowId) {
+        const list = document.getElementById('imp-list-' + propRowId);
+        if (!list) return;
+        const impId = 'imp-' + Date.now();
+        const div = document.createElement('div');
+        div.id = impId;
+        div.className = "flex items-end gap-3 p-3 bg-[#1a1a1a] rounded-lg border border-white/10 relative";
+        div.innerHTML = `
+            <div class="flex-1">
+                <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Date of Improvement</label>
+                <input type="date" class="imp-date w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none font-mono">
+            </div>
+            <div class="flex-1">
+                <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Cost (INR)</label>
+                <input type="text" inputmode="numeric" class="inr-input imp-cost w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none font-mono" placeholder="0">
+            </div>
+            <button onclick="document.getElementById('${impId}').remove()" class="px-2 py-1.5 bg-brandRed/10 hover:bg-brandRed/20 text-brandRed rounded text-[9px] font-black uppercase tracking-widest transition-all">Del</button>
+        `;
+        list.appendChild(div);
+        
+        // Re-attach inr formatting if needed, though mostly handled globally via input delegates
     }
 
     function removePropertyRow(id) {
