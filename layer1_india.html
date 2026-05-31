@@ -18,13 +18,16 @@
         // (Visibility logic moved to updateBizEntityType to preserve Other Sources)
         
         // --- HOUSE PROPERTY ---
-        const hpTypes = document.querySelectorAll('select[onchange*="property_type"]');
+        const hpTypes = document.querySelectorAll('select[onchange*="property_use"]');
         hpTypes.forEach(sel => {
             Array.from(sel.options).forEach(opt => {
                 if (opt.value === 'SOP') {
                     opt.disabled = (!isInd && !isHuf);
                     if (opt.disabled && sel.value === 'SOP') {
-                        sel.value = 'LOP'; // Force fallback if currently SOP
+                        sel.value = 'DLOP'; // Force fallback to Deemed Let Out if currently SOP
+                        
+                        // We also need to manually trigger the updateHPField logic since inline events 
+                        // sometimes misfire with dispatchEvent, but dispatchEvent works for UI update
                         sel.dispatchEvent(new Event('change'));
                     }
                 }
