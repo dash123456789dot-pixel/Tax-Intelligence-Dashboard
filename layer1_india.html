@@ -6731,25 +6731,33 @@
             const isTransport = entry.nature === 'goods_transport';
             const scheme = entry.presumptive_scheme;
 
-            // Eligibility check: ROR and not LLP/Company
+            // Eligibility check: Strict s44AD vs s44ADA checks
             const ror = state.residency_detail.final_india_residency_status === 'ROR';
-            const entity = state.domestic_income.business_income.entity_type;
-            const eligible = ror && entity !== 'llp' && entity !== 'company';
+            const entity = state.profile.entity_type || state.domestic_income.business_income.entity_type;
+            const eligible44AD = ror && entity !== 'llp' && entity !== 'company' && entity !== 'aop' && entity !== 'trust' && entity !== 'local' && entity !== 'coop' && entity !== 'ajp';
+            const eligible44ADA = eligible44AD && entity !== 'huf';
 
             let schemeOptions;
             if (isTransport) {
                 schemeOptions = `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
                        <option value="s44AE" ${scheme === 's44AE' ? 'selected' : ''}>s.44AE — Presumptive (Vehicle basis)</option>`;
-            } else if (!eligible) {
-                schemeOptions = `<option value="">Regular Books (Presumptive NOT allowed for ${!ror ? 'NR/RNOR' : entity.toUpperCase()})</option>`;
+            } else if (isSmall) {
+                if (eligible44AD) {
+                    schemeOptions = `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44AD" ${scheme === 's44AD' ? 'selected' : ''}>s.44AD — Presumptive (6% digital / 8% cash)</option>`;
+                } else {
+                    schemeOptions = `<option value="">Regular Books (Presumptive NOT allowed for ${!ror ? 'NR/RNOR' : entity.toUpperCase()})</option>`;
+                }
+            } else if (isProf) {
+                if (eligible44ADA) {
+                    schemeOptions = `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
+                       <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`;
+                } else {
+                    let reason = !ror ? 'NR/RNOR' : (entity === 'huf' ? 'HUF' : entity.toUpperCase());
+                    schemeOptions = `<option value="">Regular Books (Presumptive NOT allowed for ${reason})</option>`;
+                }
             } else {
-                schemeOptions = isSmall
-                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
-                       <option value="s44AD" ${scheme === 's44AD' ? 'selected' : ''}>s.44AD — Presumptive (6% digital / 8% cash)</option>`
-                    : isProf
-                    ? `<option value="" ${!scheme ? 'selected' : ''}>Regular Books</option>
-                       <option value="s44ADA" ${scheme === 's44ADA' ? 'selected' : ''}>s.44ADA — Presumptive (50% of receipts)</option>`
-                    : `<option value="">Regular Books (Mandatory)</option>`;
+                schemeOptions = `<option value="">Regular Books (Mandatory)</option>`;
             }
 
             // Business Code Options
