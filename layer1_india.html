@@ -3526,44 +3526,18 @@
                 status = "NR";
                 path = "Path NR-3: HUF Control and Management wholly outside India";
             } else if (whollyOutside === false) {
-                // If resident, check Karta's physical presence (same as Individual)
-                const days = state.residency_detail.days_in_india_current_year;
-                const p4y = state.residency_detail.days_in_india_preceding_4_years_gte_365;
+                // If resident, check Karta's physical presence in PRECEDING years ONLY (Section 6(6)(b))
                 const nr9 = state.residency_detail.nr_years_last_10_gte_9;
                 const d7_729 = state.residency_detail.days_in_india_last_7_years_lte_729;
                 
-                if (days >= 182) {
-                    if (nr9 === false && d7_729 === false) {
-                        status = "ROR";
-                        path = "Path ROR-1: HUF Resident (Karta >182 days + not NR 9/10 + >729 preceding days)";
-                        scope = "Worldwide income.";
-                    } else if (nr9 === true) {
-                        status = "RNOR";
-                        path = "Path RNOR-1: HUF Resident but Not Ordinarily Resident (Karta NR in 9/10 years)";
-                        scope = "India-source income + business controlled in India.";
-                    } else {
-                        status = "RNOR";
-                        path = "Path RNOR-2: HUF Resident but Not Ordinarily Resident (Karta <=729 days in 7 years)";
-                        scope = "India-source income + business controlled in India.";
-                    }
-                } else if (days >= 60 && days < 182) {
-                    if (p4y === true) {
-                        if (nr9 === false && d7_729 === false) {
-                            status = "ROR";
-                            path = "Path ROR-2: HUF Resident (Karta >60 days & >=365 in 4 yrs + not NR 9/10 + >729 preceding days)";
-                            scope = "Worldwide income.";
-                        } else {
-                            status = "RNOR";
-                            path = "Path RNOR-5: HUF RNOR (Karta meets 60/365 but fails secondary conditions)";
-                            scope = "India-source income + business controlled in India.";
-                        }
-                    } else {
-                        status = "NR";
-                        path = "Path NR-6: HUF Non-Resident (Karta <182 days and <365 in 4 yrs)";
-                    }
+                if (nr9 === true || d7_729 === true) {
+                    status = "RNOR";
+                    path = "Path RNOR-HUF: HUF Resident but Not Ordinarily Resident (Karta meets RNOR conditions)";
+                    scope = "India-source income + business controlled in India.";
                 } else {
-                    status = "NR";
-                    path = "Path NR-9: HUF Non-Resident (Karta <60 days)";
+                    status = "ROR";
+                    path = "Path ROR-HUF: HUF Resident and Ordinarily Resident";
+                    scope = "Worldwide income.";
                 }
             }
         } else {
