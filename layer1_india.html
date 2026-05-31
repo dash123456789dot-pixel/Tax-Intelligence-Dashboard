@@ -8249,6 +8249,11 @@
                 business += (firm.interest_on_capital_from_entity_inr || 0);
             });
             
+            // Deduct s.40(b) Partner Remuneration Expense (if acting as a Firm/LLP)
+            if (state.profile.entity_type === 'firm' || state.profile.entity_type === 'llp') {
+                business -= (state.domestic_income.business_income.partner_remuneration_s40b_inr || 0);
+            }
+            
             // Check presumptive transport s44AE
             const hasS44AE = (state.domestic_income.business_income.business_entries || []).some(e => e.presumptive_scheme === 's44AE');
             if (hasS44AE) {
