@@ -3833,6 +3833,9 @@
             }
         }
         runResidencySolver();
+        // Force UI re-evaluation of entity-specific container visibility 
+        // (like Karta physical presence alert and individual container)
+        updateBizEntityType(state.profile.entity_type);
     }
 
     function toggleUSResidentDtaa(val) {
