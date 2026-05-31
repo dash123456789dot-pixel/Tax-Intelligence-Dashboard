@@ -309,7 +309,10 @@
                             <option value="company">Company</option>
                             <option value="aop">AOP / BOI</option>
                             <option value="trust">Trust</option>
-                        </select>
+                            <option value="local">Local Authority</option>
+                        <option value="coop">Co-operative Society</option>
+                        <option value="ajp">Artificial Juridical Person</option>
+                    </select>
                         <div id="warn-entity-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-[10px] font-bold rounded-xl hidden items-start gap-2 mt-2 transition-all">
                             <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                             <span id="warn-entity-text">Companies, LLPs, AOPs, and Trusts are NOT eligible for presumptive taxation under s.44AD.</span>
@@ -5489,11 +5492,12 @@
         const entity = state.profile.entity_type;
         const ror = state.residency_detail.final_india_residency_status === 'ROR';
         
-        const eligible44AD = ror && entity !== 'llp' && entity !== 'company' && entity !== 'aop' && entity !== 'trust';
+        const eligible44AD = ror && entity !== 'llp' && entity !== 'company' && entity !== 'aop' && entity !== 'trust' && entity !== 'local' && entity !== 'coop' && entity !== 'ajp';
         const eligible44ADA = eligible44AD && entity !== 'huf';
         
         const warnBanner = document.getElementById('warn-entity-presumptive');
         const warnText = document.getElementById('warn-entity-text');
+        const nriBanner = document.getElementById('warn-pres-nri');
         
         let forceRevert = false;
         const entries = state.domestic_income.business_income.business_entries || [];
@@ -5508,65 +5512,47 @@
         });
         
         if (forceRevert) {
+            alert("Presumptive Taxation Disabled:\n\nOnly Resident & Ordinarily Resident (ROR) taxpayers (excluding LLPs, Companies, and similar entities) can opt for s.44AD or s.44ADA.");
             renderBusinessEntries();
+            evaluateSurchargeBuckets();
         }
         
-        if (!eligible44AD) {
+        // Handle Entity Warning text (if ROR but wrong entity)
+        if (ror && !eligible44AD) {
             if(warnBanner) {
                 warnBanner.classList.remove('hidden');
                 warnBanner.classList.add('flex');
-                if(warnText) warnText.textContent = "Companies, LLPs, AOPs, and Trusts are NOT eligible for presumptive taxation under s.44AD/ADA.";
+                warnBanner.style.display = 'flex';
+                if(warnText) warnText.textContent = "Companies, LLPs, AOPs, Trusts, Local Authorities, and Co-ops are NOT eligible for presumptive taxation under s.44AD/ADA.";
             }
-        } else if (!eligible44ADA) {
+        } else if (ror && !eligible44ADA) {
             if(warnBanner) {
                 warnBanner.classList.remove('hidden');
                 warnBanner.classList.add('flex');
+                warnBanner.style.display = 'flex';
                 if(warnText) warnText.textContent = "HUFs are eligible for s.44AD (Business), but NOT eligible for s.44ADA (Profession).";
             }
         } else {
             if(warnBanner) {
                 warnBanner.classList.add('hidden');
                 warnBanner.classList.remove('flex');
+                warnBanner.style.display = 'none';
             }
         }
         
-        const warnBanner = document.getElementById('warn-entity-presumptive');
-        const nriBanner = document.getElementById('warn-pres-nri');
-        let forceRevert = false;
-
-        // Force revert any business_entries if ineligible
-        if (!eligible) {
-            const entries = state.domestic_income.business_income.business_entries || [];
-            entries.forEach(entry => {
-                if (entry.presumptive_scheme === 's44AD' || entry.presumptive_scheme === 's44ADA') {
-                    entry.presumptive_scheme = null;
-                    forceRevert = true;
-                }
-            });
-            if (forceRevert) {
-                alert("Presumptive Taxation Disabled:\n\nOnly Resident & Ordinarily Resident (ROR) taxpayers (excluding LLPs and Companies) can opt for s.44AD or s.44ADA.");
-                renderBusinessEntries(); // Ensure UI reflects the reset scheme
+        // Handle NRI warning
+        if (!ror) {
+            if (nriBanner) { 
+                nriBanner.classList.remove('hidden'); 
+                nriBanner.style.display = 'flex'; 
+            }
+        } else {
+            if (nriBanner) { 
+                nriBanner.classList.add('hidden'); 
+                nriBanner.style.display = 'none'; 
             }
         }
 
-        // Entity Warning Banner
-        if ((entity === 'llp' || entity === 'company') && !eligible) {
-            if (warnBanner) { warnBanner.classList.remove('hidden'); warnBanner.style.display = 'flex'; }
-        } else {
-            if (warnBanner) { warnBanner.classList.add('hidden'); warnBanner.style.display = 'none'; }
-        }
-
-        // NRI Warning Banner
-        if (!ror && !eligible) {
-            if (nriBanner) { nriBanner.classList.remove('hidden'); nriBanner.style.display = 'flex'; }
-        } else {
-            if (nriBanner) { nriBanner.classList.add('hidden'); nriBanner.style.display = 'none'; }
-        }
-
-        if (forceRevert) {
-            renderBusinessEntries();
-            evaluateSurchargeBuckets();
-        }
         syncExpensesWarning();
     }
 
