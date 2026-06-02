@@ -2619,7 +2619,7 @@
                 const indiaState = JSON.parse(indiaStateStr);
                 const indRes = indiaState?.residency_detail?.final_india_residency_status;
                 const isTreatyUS = indiaState?.dtaa?.dtaa_treaty_residence === 'us';
-                isIndiaDomesticResident = (indRes === "ROR" || indRes === "RNOR" || isTreatyUS);
+                isIndiaDomesticResident = (indRes === "ROR" || indRes === "RNOR" || isTreatyUS) && (!indiaState.profile || indiaState.profile.entity_type === 'individual');
             }
         } catch (e) {
             console.error("Error evaluating India residency conflict state:", e);
@@ -11125,3 +11125,4 @@
 </style>
 </body>
 </html>
+
