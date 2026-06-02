@@ -3746,34 +3746,34 @@
             const isIndian = state.residency_detail.is_indian_company;
             const poem = state.residency_detail.is_poem_in_india;
             
-            if (isIndian === true) {
-                status = "ROR";
-                path = "Path RES-1: Indian Company";
-                scope = "Worldwide income.";
+            if (isIndian === false && poem === false) {
+                status = "NR";
+                path = "Path NR-1: Foreign Company (POEM outside India)";
             } else if (poem === true) {
                 status = "ROR";
                 path = "Path RES-2: Foreign Company with POEM in India";
                 scope = "Worldwide income.";
-            } else if (isIndian === false && poem === false) {
-                status = "NR";
-                path = "Path NR-1: Foreign Company (POEM outside India)";
+            } else {
+                status = "ROR";
+                path = "Path RES-1: Indian Company";
+                scope = "Worldwide income.";
             }
         } else if (entity === 'firm' || entity === 'llp' || entity === 'aop' || entity === 'trust') {
             const whollyOutside = state.residency_detail.is_wholly_outside_india;
-            if (whollyOutside === false) {
+            if (whollyOutside === true) {
+                status = "NR";
+                path = "Path NR-2: Control and Management wholly outside India";
+            } else {
                 status = "ROR";
                 path = "Path RES-3: Control and Management partially or wholly in India";
                 scope = "Worldwide income.";
-            } else if (whollyOutside === true) {
-                status = "NR";
-                path = "Path NR-2: Control and Management wholly outside India";
             }
         } else if (entity === 'huf') {
             const whollyOutside = state.residency_detail.is_wholly_outside_india;
             if (whollyOutside === true) {
                 status = "NR";
                 path = "Path NR-3: HUF Control and Management wholly outside India";
-            } else if (whollyOutside === false) {
+            } else {
                 // If resident, check Karta's physical presence in PRECEDING years ONLY (Section 6(6)(b))
                 const nr9 = state.residency_detail.nr_years_last_10_gte_9;
                 const d7_729 = state.residency_detail.days_in_india_last_7_years_lte_729;
@@ -10431,8 +10431,9 @@
             const hasHighAgriIncome = (inc.agricultural_income_inr || 0) > 5000;
             const hasLotteryOrGaming = (sb.income_special_115BB_115BBJ_inr || 0) > 0;
             const hasBFLosses = state.carry_forward_losses?.has_brought_forward_losses === true;
+            const hasSpeculativeOrFNO = !!biz.speculative_income_inr || !!biz.non_speculative_income_inr || !!biz.fno_turnover_inr || !!biz.speculative_turnover_inr;
             
-            const isDisqualifiedFromSimpleForms = totalInc > 5000000 || !isROR || hasCapitalGains || hasForeignIncome || hasForeignAssets || isDirector || hasCrypto || multipleHP || hasHighAgriIncome || hasLotteryOrGaming || hasBFLosses;
+            const isDisqualifiedFromSimpleForms = totalInc > 5000000 || !isROR || hasCapitalGains || hasForeignIncome || hasForeignAssets || isDirector || hasCrypto || multipleHP || hasHighAgriIncome || hasLotteryOrGaming || hasBFLosses || hasSpeculativeOrFNO;
 
             let itr = 'Unknown';
             let explanation = '';
