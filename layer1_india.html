@@ -56,7 +56,6 @@
             'card-80e',            // 80E Education Loan
             'card-80eea',          // 80EEA/80EE Affordable Housing
             'card-80tta',          // 80TTA / 80TTB Savings Interest
-            'div-ded-royalty',     // 80QQB / 80RRB Royalty (Individual only)
         ];
         const showPersonal = (isInd || isHuf);
         personalDedIds.forEach(id => {
@@ -77,17 +76,128 @@
             const el = document.getElementById(id);
             if (el) el.style.display = showResidentOnlyDed ? '' : 'none';
         });
+
+        // --- RESIDENT INDIVIDUAL-ONLY DEDUCTIONS (80QQB / 80RRB) ---
+        const showResIndOnlyDed = isInd && !isNRStatus;
+        ['div-ded-royalty'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = showResIndOnlyDed ? 'flex' : 'none';
+        });
+
+        // --- FOREIGN COMPANY PRESUMPTIVE (s.44BBB) ---
+        const divS44bbb = document.getElementById('div-pres-s44bbb');
+        if (divS44bbb) {
+            const isForeignCompany = (isCompany && isNRStatus);
+            if (isForeignCompany) {
+                divS44bbb.classList.remove('hidden');
+                divS44bbb.classList.add('flex');
+            } else {
+                divS44bbb.classList.add('hidden');
+                divS44bbb.classList.remove('flex');
+            }
+        }
+
+        // --- TONNAGE TAX (s.115V) & SPECIFIED PIPELINE (s.35AD) ---
+        // Exclusively restricted to Indian Companies (Company + ROR)
+        const isIndianCompany = isCompany && !isNRStatus;
+        const divTonnage = document.getElementById('div-tonnage-tax');
+        const divS35ad = document.getElementById('div-s35ad-pipeline');
+        const divSpecialCorpBiz = document.getElementById('div-special-corporate-biz');
+        
+        let hasVisibleSpecialCorpBiz = false;
+
+        if (divTonnage) {
+            if (isIndianCompany) {
+                divTonnage.classList.remove('hidden');
+                hasVisibleSpecialCorpBiz = true;
+            } else {
+                divTonnage.classList.add('hidden');
+            }
+        }
+        if (divS35ad) {
+            if (isIndianCompany) {
+                divS35ad.classList.remove('hidden');
+                hasVisibleSpecialCorpBiz = true;
+            } else {
+                divS35ad.classList.add('hidden');
+            }
+        }
+
+        if (divSpecialCorpBiz) {
+            if (hasVisibleSpecialCorpBiz) {
+                divSpecialCorpBiz.classList.remove('hidden');
+            } else {
+                divSpecialCorpBiz.classList.add('hidden');
+            }
+        }
+
+        // --- IFSC / Offshore Banking (s.80LA) ---
+        // Hidden for Individuals and HUFs
+        const div80LA = document.getElementById('div-ded-80la');
+        if (div80LA) {
+            if (!(isInd || isHuf)) {
+                div80LA.classList.remove('hidden');
+                div80LA.classList.add('block');
+            } else {
+                div80LA.classList.add('hidden');
+                div80LA.classList.remove('block');
+            }
+        }
+
+        // --- Inter-Corporate Dividends (s.80M) ---
+        const div80M = document.getElementById('div-ded-80m');
+        if (div80M) {
+            if (isIndianCompany) {
+                div80M.classList.remove('hidden');
+                div80M.classList.add('flex');
+            } else {
+                div80M.classList.add('hidden');
+                div80M.classList.remove('flex');
+            }
+        }
+
+        // --- Corporate Losses (s.79) ---
+        const divS79Loss = document.getElementById('div-s79-loss');
+        if (divS79Loss) {
+            if (isCompany) {
+                divS79Loss.classList.remove('hidden');
+                divS79Loss.classList.add('flex');
+            } else {
+                divS79Loss.classList.add('hidden');
+                divS79Loss.classList.remove('flex');
+            }
+        }
+
         // 80G is visible to ALL entities — no gating needed.
 
+
+        // --- ADVANCE TAX EXEMPTION (s.207) ---
+        const banner207 = document.getElementById('banner-s207-exempt');
+        if (banner207) {
+            let age = 0;
+            if (state.profile.date_of_birth) {
+                const d = new Date(state.profile.date_of_birth);
+                age = new Date().getFullYear() - d.getFullYear();
+            }
+            const businessInc = state.domestic_income.business_income;
+            const hasBusinessIncome = (businessInc.business_entries && businessInc.business_entries.length > 0) || 
+                                      (businessInc.partner_firms && businessInc.partner_firms.length > 0) || 
+                                      businessInc.presumptive_tax_gross_receipts_inr > 0;
+            if (isInd && isResident && age >= 60 && !hasBusinessIncome) {
+                banner207.classList.remove('hidden');
+            } else {
+                banner207.classList.add('hidden');
+            }
+        }
 
         // --- AMT vs MAT ---
         document.querySelectorAll('*').forEach(el => {
             if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
-                if (el.textContent.includes('AMT Credit') || el.textContent.includes('Alternate Minimum Tax') || el.textContent.includes('MAT Credit') || el.textContent.includes('Minimum Alternate Tax')) {
+                if (el.textContent.includes('AMT Credit') || el.textContent.includes('Alternate Minimum Tax') || el.textContent.includes('MAT Credit') || el.textContent.includes('Minimum Alternate Tax') || el.textContent.includes('18.5%') || el.textContent.includes('15%')) {
                     if (isCompany) {
-                        el.textContent = el.textContent.replace(/AMT/g, 'MAT').replace(/Alternate Minimum Tax/g, 'Minimum Alternate Tax').replace(/s\.115JC/g, 's.115JB').replace(/s\.115JD/g, 's.115JAA');
+                        el.textContent = el.textContent.replace(/AMT/g, 'MAT').replace(/Alternate Minimum Tax/g, 'Minimum Alternate Tax').replace(/s\.115JC/g, 's.115JB').replace(/s\.115JD/g, 's.115JAA').replace(/18\.5%/g, '15%');
                     } else {
-                        el.textContent = el.textContent.replace(/MAT/g, 'AMT').replace(/Minimum Alternate Tax/g, 'Alternate Minimum Tax').replace(/s\.115JB/g, 's.115JC').replace(/s\.115JAA/g, 's.115JD');
+                        el.textContent = el.textContent.replace(/MAT/g, 'AMT').replace(/Minimum Alternate Tax/g, 'Alternate Minimum Tax').replace(/s\.115JB/g, 's.115JC').replace(/s\.115JAA/g, 's.115JD').replace(/15%/g, '18.5%');
                     }
                 }
             }
@@ -1401,14 +1511,28 @@
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividend Income</label>
                             <input type="text" inputmode="numeric" id="os-dividend" oninput="updateOSField('dividend_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
                         </div>
-                        <div>
+                        <div id="div-os-gifts-wrapper">
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Gifts > ₹50k (s.56)
         <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors"><span class="font-bold text-[9px]">(i)</span></span>
-        <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+        <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left" id="tooltip-relative-definition">
             Gifts received from specified relatives (spouse, siblings, lineal ascendants/descendants, and their spouses) or on the occasion of marriage are entirely exempt.
         </div>
     </label>
-    <input type="text" inputmode="numeric" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+    <input type="text" inputmode="numeric" id="os-gifts" oninput="updateOSField('gifts_above_50k_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono mb-2" placeholder="₹ 0">
+    <div id="div-os-gifts-exemptions" class="flex flex-col gap-1 mt-1">
+        <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" id="os-gifts-marriage" class="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3">
+            <span class="text-[9px] uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Exempt: Received on occasion of marriage</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" id="os-gifts-relative" class="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3">
+            <span class="text-[9px] uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Exempt: Received from specified relative</span>
+        </label>
+    </div>
+</div>
+<div id="banner-trust-gifts" class="hidden p-3 bg-brandGold/10 border border-brandGold/20 rounded-xl items-center gap-3">
+    <span class="text-xl text-brandGold/80">🤝</span>
+    <span class="text-[10px] text-brandGold/80"><strong>Fully Exempt:</strong> Gifts/Contributions are fully exempt u/s 11 / 13A.</span>
 </div>
 
                         
@@ -1427,6 +1551,11 @@
     <input type="text" inputmode="numeric" id="os-minor-child" oninput="updateOSField('minor_child_exemption_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
     <p class="text-[8px] text-white/30 mt-1">s.10(32): ₹1,500 max per minor child whose income is clubbed.</p>
 </div>
+<div id="div-os-lic-maturity">
+    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Taxable LIC Maturity (s.10(10D))</label>
+    <input type="text" inputmode="numeric" id="os-lic-maturity" oninput="updateOSField('lic_maturity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+    <p class="text-[8px] text-white/30 mt-1">Amount received from life insurance policies not exempt u/s 10(10D).</p>
+</div>
 <div id="div-os-angel-tax" class="hidden">
     <label class="block text-[9px] font-black uppercase tracking-widest text-brandRed mb-1">Angel Tax Premium (s.56(2)(viib))</label>
     <input type="text" inputmode="numeric" id="os-angel-tax" oninput="updateOSField('angel_tax_premium_inr', this.value)" class="inr-input w-full bg-brandRed/5 border border-brandRed/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandRed focus:ring-0 font-mono" placeholder="₹ 0">
@@ -1436,7 +1565,7 @@
                 </div>
 
                 <!-- Family Pension Card -->
-                <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                <div id="card-os-family-pension" class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="flex items-center gap-2 mb-4 relative">
                         <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">2. Family Pension</h3>
@@ -1573,6 +1702,30 @@
                     </summary>
                     <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
 
+                        <!-- Corporate Specific Settings -->
+                        <!-- Section 8 Company Toggle -->
+                        <div id="div-prof-section-8" class="hidden items-center justify-between p-4 bg-white/5 border border-brandGold/20 rounded-2xl mb-2">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandGold">Section 8 Company?</span>
+                                <span class="text-[9px] text-white/40">Is this a non-profit company claiming exemptions u/s 11 or 10(23C)?</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="prof-section-8" onchange="updateProfileField('is_section_8', this.checked)" class="sr-only peer">
+                                <div class="w-9 h-5 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
+                        </div>
+
+                        <!-- Turnover <= 400 Cr Toggle -->
+                        <div id="div-prof-turnover-400" class="hidden items-center justify-between p-4 bg-white/5 border border-brandGold/20 rounded-2xl mb-2">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandGold">Previous Year Turnover &lt;= ₹400 Cr?</span>
+                                <span class="text-[9px] text-white/40">Determines if standard company base tax rate is 25% instead of 30%.</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="prof-turnover-400" onchange="updateProfileField('turnover_lte_400cr', this.checked)" class="sr-only peer">
+                                <div class="w-9 h-5 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
+                        </div>
 
                 <!-- Classifications and Presumptive Schemes (Array of enums v5.1 changes) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1683,11 +1836,1117 @@
                 <!-- s.44AE Goods Transport Vehicles -->
                 <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-pres-s44ae">
                     <div class="flex justify-between items-center">
-                        <span class="text-[10px] text-white/50 font-sans">Declare all foreign bank accounts, shares, property, and income.</span>
-                        <button onclick="addLrsRow()" class="px-3 py-1 bg-brandGold/20 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold">+ Add Asset</button>
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Goods Transport Vehicles (s.44AE Scheme)</span>
+                        <span id="s44ae-count" class="text-[10px] text-white/50 font-mono bg-white/5 px-2 py-1 rounded">0 / 10 Vehicles</span>
                     </div>
                     
-                    <div id="lrs-cards-container" class="flex flex-col gap-4 mt-4">
+                    <div id="warn-s44ae-limit" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-xs rounded-xl hidden items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <span>You cannot opt for s.44AE if you owned more than 10 goods vehicles at any time during the year.</span>
+                    </div>
+
+                    <div id="s44ae-vehicles-container" class="space-y-3">
+                        <!-- Vehicles will be injected here -->
+                    </div>
+
+                    <button id="btn-add-vehicle" onclick="addGoodsVehicle()" class="mt-2 w-full py-2.5 rounded-xl border border-white/10 hover:border-brandGold/50 hover:bg-white/5 text-xs text-white/70 hover:text-brandGold transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Add Vehicle
+                    </button>
+                </div>
+
+                <!-- Special Corporate Business Schemes (Tonnage Tax & 35AD) -->
+                <div id="div-special-corporate-biz" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Special Corporate Business Schemes</span>
+                    
+                    <div id="div-tonnage-tax" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tonnage Tax Scheme Income (s.115V)</label>
+                        <input type="text" inputmode="numeric" id="biz-tonnage-tax" oninput="updateBizNum('tonnage_tax_115V_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        <p class="text-[9px] text-white/30 mt-1">Special taxation for qualifying ships. For Indian Companies only.</p>
+                    </div>
+
+                    <div id="div-s35ad-pipeline" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Specified Business Deduction (s.35AD)</label>
+                        <input type="text" inputmode="numeric" id="biz-s35ad" oninput="updateBizNum('specified_business_s35AD_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        <p class="text-[9px] text-white/30 mt-1">100% deduction for capital expenditure on cross-country pipelines/hotels/etc. For Indian Companies only.</p>
+                    </div>
+                </div>
+
+                <!-- s.44BBB Presumptive Scheme -->
+                <div id="div-pres-s44bbb" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Civil Construction (s.44BBB)</span>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Amount Paid to Foreign Company (₹)</label>
+                    <input type="text" inputmode="numeric" id="biz-s44bbb-receipts" oninput="updateBizNum('s44bbb_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                    <p class="text-[9px] text-white/30 mt-1">Presumptive profit is 10% of gross amount. For Foreign Companies only.</p>
+                </div>
+
+                <!-- General Gross Receipts (For non-s.44ADA professionals) -->
+                <div id="div-general-gross-receipts" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Professional Gross Receipts (Regular)</span>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Gross Receipts (₹)</label>
+                    <input type="text" inputmode="numeric" id="biz-general-gross-receipts" oninput="updateBizNum('gross_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                </div>
+
+                <!-- Profession Type (Rule 6F) -->
+                <div id="div-profession-type" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold">Select Profession Type (Rule 6F)</label>
+                    <select id="biz-profession-type" onchange="updateProfessionType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="">-- Select Profession --</option>
+                        <option value="legal">Legal</option>
+                        <option value="medical">Medical</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="architecture">Architecture</option>
+                        <option value="accountancy">Accountancy</option>
+                        <option value="technical_consultancy">Technical Consultancy</option>
+                        <option value="interior_decoration">Interior Decoration</option>
+                        <option value="authorised_representative">Authorised Representative</option>
+                        <option value="film_artist">Film Artist</option>
+                        <option value="it_services">IT Services</option>
+                        <option value="other">Other Profession</option>
+                    </select>
+                    <div id="warn-pres-s44ada-ineligible" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-xs rounded-xl hidden items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        <span>s.44ADA is available ONLY for notified professions per Rule 6F. "Other" must use regular computation.</span>
+                    </div>
+                </div>
+
+                <!-- ROR Presumptive Ineligibility Warning (s.44AD / s.44ADA) -->
+                <div id="warn-pres-nri" class="p-4 bg-brandRed/10 border border-brandRed/30 rounded-2xl hidden flex flex-col gap-2 transition-all">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandRed flex items-center space-x-2">
+                        <span>⚠️ NOT ELIGIBLE (MUST BE ROR)</span>
+                    </span>
+                    <p class="text-[10px] text-white/70 leading-relaxed">
+                        Only Resident & Ordinarily Resident (ROR) taxpayers can legally choose the simplified tax schemes for small businesses or professionals (s.44AD / s.44ADA). Please untick these options or update your residency status in Step 1.
+                    </p>
+                </div>
+
+                <!-- s.44AD Eligibility Warning (Turnover / 5-Year Lock-in) -->
+                <div id="warn-pres-s44ad-ineligible" class="p-4 bg-brandRed/10 border border-brandRed/30 rounded-2xl hidden flex flex-col gap-2 transition-all mt-4">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandRed flex items-center space-x-2">
+                        <span>❌ NOT ELIGIBLE FOR s.44AD</span>
+                    </span>
+                    <p id="warn-pres-s44ad-text" class="text-[10px] text-white/70 leading-relaxed">
+                        Reason for ineligibility goes here.
+                    </p>
+                </div>
+
+                <!-- Presumptive schemes forms -->
+                <!-- s.44AD 5-Year Lock-in details -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-pres-s44ad">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">s.44AD 5-Year Lock-in Details</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">s.44AD Last Exit AY (if opted out)</label>
+                            <input type="text" id="biz-s44ad-exit" oninput="updateBizField('s44AD_last_exit_ay', this.value)" placeholder="AY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">s.44AD Opted Current Year?</span>
+                                <span class="text-[9px] text-white/30">Determines 5-year lock-in consequence.</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="biz-s44ad-opted" onchange="state.domestic_income.business_income.s44AD_opted_current_year = this.checked" class="sr-only peer">
+                                <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- s.44AE Goods Carriage dynamic fleet template -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-pres-s44ae">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold">Goods Transport Details (Max 10 Vehicles)</span>
+                        <button onclick="addVehicleRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Vehicle</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-white/80" id="vehicle-table">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                    <th class="p-3">Vehicle Type</th>
+                                    <th class="p-3">GVW (Tonnes)</th>
+                                    <th class="p-3">Months Owned</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                
+                    </div>
+                </details>
+
+                <!-- ACCORDION: Expenses & Deductions -->
+                <details id="acc-expenses-deductions" class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors transition-opacity" >
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">💸</span>
+                            <span>Expenses & Deductions</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                <!-- Presumptive Expenses Warning -->
+                <div id="note-presumptive-expenses" class="hidden bg-amber-400/10 border border-amber-400/25 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed"></div>
+
+                <!-- Partner + Other Business Warning -->
+                <div id="note-partner-expenses" class="hidden bg-brandGold/10 border border-brandGold/25 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                    <strong class="text-brandGold">⚠️ Partnership Income Excluded:</strong> You are a partner in a firm/LLP. The firm handles its own expenses — do <strong>not</strong> enter those here. Only enter expenses relating to your <strong>other businesses</strong> in this section.
+                </div>
+<!-- Regular Business Inputs (Stock, Expenses, TDS Default disallowances, Scientific research, VRS, Preliminary) -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all" id="div-expense-section">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Regular Business Expenses (Non-Presumptive Only)</span>
+                    <!-- Partner Remuneration Expense (s.40(b)) -->
+                    <div id="div-firm-remuneration-expense" class="hidden transition-all bg-white/5 border border-brandGold/20 p-4 rounded-xl mb-4">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">Partner Remuneration & Interest (s.40(b))</label>
+                        <input type="text" inputmode="numeric" id="biz-partner-remun" oninput="updateBizExpense('partner_remuneration_s40b_inr', this.value)" class="inr-input w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+                        <p class="text-[9px] text-white/40 mt-2 leading-relaxed">Enter total remuneration and interest paid to partners. Deductible subject to the statutory limits specified under Section 40(b) of the Income Tax Act.</p>
+                    </div>
+                    
+                    <!-- Opening / Closing Stock — own row, conditional on regular_business + no presumptive -->
+                    <div id="div-regular-biz" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Opening Stock (1 April)</label>
+                            <input type="text" inputmode="numeric" id="biz-open-stock" oninput="updateBizNum('opening_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Closing Stock (31 March)</label>
+                            <input type="text" inputmode="numeric" id="biz-close-stock" oninput="updateBizNum('closing_stock_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Rent for Business Premises</label>
+                            <input type="text" inputmode="numeric" id="biz-rent-prem" oninput="updateBizExpense('rent_for_business_premises_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Repairs & Maintenance (s.30/31)</label>
+                            <input type="text" inputmode="numeric" id="biz-repairs" oninput="updateBizExpense('repairs_maintenance_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Insurance Premium (s.36(1)(i))</label>
+                            <input type="text" inputmode="numeric" id="biz-insurance" oninput="updateBizExpense('insurance_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+
+                        <!-- Employee Costs -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Employee & Labour Costs</span>
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employee Salary & Wages (s.36(1)(ii))</label>
+                            <input type="text" inputmode="numeric" id="biz-salary" oninput="updateBizExpense('employee_salary_wages_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employee Bonus / Commission (s.36(1)(ii))</label>
+                            <input type="text" inputmode="numeric" id="biz-bonus" oninput="updateBizExpense('employee_bonus_commission_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Employer PF / ESI Contribution (s.43B)</label>
+                            <input type="text" inputmode="numeric" id="biz-pf-esi" oninput="updateBizExpense('employer_pf_esi_contribution_inr', this.value); togglePfEsiPaidField();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div id="div-pf-esi-paid" class="hidden md:col-span-3">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="biz-pf-esi-paid" onchange="updateBizExpense('employer_pf_esi_paid_before_due_date', this.checked)" class="w-4 h-4 rounded bg-white/5 border-white/20 text-brandGold focus:ring-brandGold/30">
+                                <span class="text-[10px] font-bold text-white/60 group-hover:text-white/80 transition-colors">PF/ESI contribution was paid before the due date of return filing</span>
+                            </label>
+                        </div>
+
+                        <!-- Finance & Interest -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Finance & Interest Costs</span>
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Borrowed Capital (s.36(1)(iii))</label>
+                            <input type="text" inputmode="numeric" id="biz-interest-cap" oninput="updateBizExpense('interest_on_borrowed_capital_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Bad Debts Written Off (s.36(1)(vii))</label>
+                            <input type="text" inputmode="numeric" id="biz-bad-debts" oninput="updateBizExpense('bad_debts_written_off_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+
+                        <!-- Trading-Specific Expenses — ENABLED IF intraday_trader OR fno_trader -->
+                        <div id="div-trading-expenses" class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 hidden transition-all">
+                            <div class="md:col-span-3 border-t border-white/5 pt-2">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Trading / F&O Specific Expenses</span>
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Brokerage on F&O Trades</label>
+                                <input type="text" inputmode="numeric" id="biz-brokerage-fno" oninput="updateBizExpense('brokerage_on_fno_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Margin Interest / Pledge Facility</label>
+                                <input type="text" inputmode="numeric" id="biz-margin-int" oninput="updateBizExpense('margin_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Exchange / Clearing Charges</label>
+                                <input type="text" inputmode="numeric" id="biz-exchange-chg" oninput="updateBizExpense('exchange_charges_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Advisory & Data Subscriptions</label>
+                                <input type="text" inputmode="numeric" id="biz-advisory" oninput="updateBizExpense('advisory_and_data_subscriptions_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Internet (Business Proportion)</label>
+                                <input type="text" inputmode="numeric" id="biz-internet" oninput="updateBizExpense('internet_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Office (Business Proportion)</label>
+                                <input type="text" inputmode="numeric" id="biz-home-office" oninput="updateBizExpense('home_office_proportion_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CA / Professional Fees for Tax Filing</label>
+                                <input type="text" inputmode="numeric" id="biz-ca-fees" oninput="updateBizExpense('ca_professional_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">STT Paid (Deductible for Trading)</label>
+                                <input type="text" inputmode="numeric" id="biz-stt-paid" oninput="updateBizExpense('stt_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">CTT Paid (Deductible for Trading)</label>
+                                <input type="text" inputmode="numeric" id="biz-ctt-paid" oninput="updateBizExpense('ctt_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- Catch-all & Related Party -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Other Expenses & Flags</span>
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Other Business Expenses (s.37(1) residual)</label>
+                            <input type="text" inputmode="numeric" id="biz-other-exp" oninput="updateBizExpense('other_business_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="md:col-span-2 flex items-center">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" id="biz-related-party" onchange="updateBizExpense('has_related_party_payments', this.checked)" class="w-4 h-4 rounded bg-white/5 border-white/20 text-brandGold focus:ring-brandGold/30">
+                                <span class="text-[10px] font-bold text-white/60 group-hover:text-white/80 transition-colors">Has payments to related parties (s.40A(2)) — flags CA review</span>
+                            </label>
+                        </div>
+
+                        <!-- TDS Disallowances s.40(a)(i), s.40(a)(ia) & Transaction Taxes (STT/CTT) -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">TDS Defaults & Stock Trading Taxes</span>
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Payments made abroad without deducting TDS (Fully disallowed)</label>
+                            <input type="text" inputmode="numeric" id="biz-tds-nonres" oninput="updateBizExpense('payments_to_non_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div class="flex flex-col justify-end h-full">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Payments made in India without deducting TDS (30% disallowed)</label>
+                            <input type="text" inputmode="numeric" id="biz-tds-res" oninput="updateBizExpense('payments_to_residents_no_tds_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label id="label-cash-limit" class="block text-[9px] font-black uppercase tracking-widest text-white/40">Cash payments over ₹10,000 in a single day (Fully disallowed)</label>
+                                <select id="select-cash-type" onchange="document.getElementById('label-cash-limit').innerText = this.value === 'transporter' ? 'Cash payments over ₹35,000 in a single day (Fully disallowed)' : (this.value === 'both' ? 'Aggregate of cash payments over their respective limits (Fully disallowed)' : 'Cash payments over ₹10,000 in a single day (Fully disallowed)')" class="bg-transparent border-none text-[9px] font-bold text-brandGold focus:ring-0 cursor-pointer p-0">
+                                    <option value="other" class="bg-[#121212]">General Limit (₹10k)</option>
+                                    <option value="transporter" class="bg-[#121212]">Transporter Limit (₹35k)</option>
+                                    <option value="both" class="bg-[#121212]">Both Types</option>
+                                </select>
+                            </div>
+                            <input type="text" inputmode="numeric" id="biz-cash-exceed" oninput="updateBizExpense('total_cash_payments_exceeding_limit_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+
+
+
+                        <!-- ── SCIENTIFIC RESEARCH (s.35) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Scientific Research (s.35)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
+                        </div>
+                        <div id="grid-s35" class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Revenue Expenses</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-own-rev" oninput="updateBizExpense('s35_own_revenue_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">In-house Capital Expenses</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-own-cap" oninput="updateBizExpense('s35_own_capital_research_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donation to Approved Body</label>
+                                <input type="text" inputmode="numeric" id="biz-s35-donation" oninput="updateBizExpense('s35_donation_to_approved_body_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- ── PRELIMINARY EXPENSES (s.35D) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Preliminary Expenses (s.35D)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35d').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
+                        </div>
+                        <div id="grid-s35d" class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Expenses (Claimed over 5 yrs)</label>
+                                <input type="text" inputmode="numeric" id="biz-s35d-total" oninput="updateBizExpense('s35D_total_preliminary_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Year of commencement (e.g. FY2023-24)</label>
+                                <input type="text" id="biz-s35d-year" oninput="updateBizStringExpense('s35D_year_of_commencement', this.value)" placeholder="FY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- ── VRS AMORTISATION (s.35DDA) ── -->
+                        <div class="md:col-span-3 border-t border-white/5 pt-4 pb-2 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">VRS Amortisation (s.35DDA)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="document.getElementById('grid-s35dda').classList.toggle('hidden', !this.checked)" class="sr-only peer">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                            </label>
+                        </div>
+                        <div id="grid-s35dda" class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 hidden transition-all">
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total VRS Payments (Claimed over 5 yrs)</label>
+                                <input type="text" inputmode="numeric" id="biz-s35dda-total" oninput="updateBizExpense('s35DDA_vrs_payments_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                            <div class="flex flex-col justify-end h-full">
+                                <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">First year of payment (e.g. FY2023-24)</label>
+                                <input type="text" id="biz-s35dda-year" oninput="updateBizStringExpense('s35DDA_first_year_of_payment', this.value)" placeholder="FY2023-24" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MSME Payables s.43B(h) dynamic ledger -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-msme-section">
+
+                    <!-- Header -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-black uppercase tracking-widest text-brandGold">MSME Payables — s.43B(h)</span>
+                            <span class="text-[8px] px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-amber-400 font-black uppercase tracking-wider">Finance Act 2023</span>
+                        </div>
+                        <button onclick="addMsmeRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Invoice</button>
+                    </div>
+
+                    <!-- Explainer -->
+                    <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[10px] text-white/70 leading-relaxed">
+                        <strong class="text-amber-400">⚠️ Section 43B(h) — Mandatory Timely Payment to MSMEs:</strong>
+                        Amounts payable to <strong>Micro &amp; Small enterprises</strong> registered under Udyam must be paid within:
+                        <ul class="mt-1.5 ml-3 space-y-0.5 list-disc text-white/60">
+                            <li><strong class="text-white/80">15 days</strong> — if no written agreement exists</li>
+                            <li><strong class="text-white/80">45 days max</strong> — if a written agreement specifies a date</li>
+                        </ul>
+                        <p class="mt-1.5">Any overdue amount is <strong class="text-brandRed">disallowed</strong> in the year of accrual and deferred to the year of actual payment. Additionally, compound interest at <strong>3× RBI bank rate</strong> (monthly rests) is payable to the supplier — but this interest is <strong class="text-brandRed">not tax-deductible</strong>. Medium enterprises, wholesale/retail traders, and presumptive taxpayers (s.44AD/ADA/AE) are <strong>exempt</strong>.</p>
+                    </div>
+
+                    <!-- Summary banner (shown when overdue invoices exist) -->
+                    <div id="msme-overdue-banner" class="hidden p-3 bg-brandRed/10 border border-brandRed/30 rounded-xl flex items-start gap-3">
+                        <span class="text-xl mt-0.5">🚨</span>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-xs font-black text-brandRed uppercase tracking-widest">Overdue MSME Payments Detected</span>
+                            <p id="msme-overdue-summary" class="text-[10px] text-white/70"></p>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Cards -->
+                    <div id="msme-cards-container" class="flex flex-col gap-3"></div>
+
+                    <!-- Totals row -->
+                    <div id="msme-totals" class="hidden grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-white/10 text-[10px]">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Total Payable</span>
+                            <span id="msme-total-amt" class="font-mono text-white font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Amount Disallowed</span>
+                            <span id="msme-total-disallowed" class="font-mono text-brandRed font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Amount Allowed</span>
+                            <span id="msme-total-allowed" class="font-mono text-green-400 font-bold">₹0</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-white/40 uppercase tracking-widest font-black text-[8px]">Est. Interest Payable</span>
+                            <span id="msme-total-interest" class="font-mono text-amber-400 font-bold">₹0</span>
+                            <span class="text-[8px] text-white/30">3× RBI rate — not deductible</span>
+                        </div>
+                    </div>
+                </div>
+
+                
+                    </div>
+                </details>
+
+                <!-- ACCORDION: Assets & Depreciation (s.32) -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" id="acc-assets-depreciation">
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🏗️</span>
+                            <span>Assets & Depreciation (s.32)</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                        <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black uppercase tracking-widest text-brandGold">Depreciable Asset Blocks</span>
+                                <button onclick="addAssetBlock()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">+ Add Asset Block</button>
+                            </div>
+                            <div class="bg-brandGold/10 border border-brandGold/20 rounded-xl p-3 text-[10px] text-white/70 leading-relaxed">
+                                <strong class="text-brandGold">💡 Note on Asset Additions:</strong> The Income Tax Act mandates depreciation on a <strong>"Block of Assets"</strong> basis. You do not need to list individual items. If you buy a new asset for an existing class (e.g. a second computer), simply add its cost to the <strong>Additions During Year</strong> field of your existing Computer block. For a completely new class, add a new block with a ₹0 Opening WDV.
+                            </div>
+                            <div id="asset-blocks-container" class="flex flex-col gap-4">
+                                <!-- Cards injected here by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- ACCORDION: Special Business Incomes (Trading & Firm) -->
+                <details class="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4 hover:bg-white/10 transition-colors" >
+                    <summary class="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">📈</span>
+                            <span>Special Business Incomes (Trading & Firm)</span>
+                        </div>
+                        <svg class="w-4 h-4 transform transition-transform group-open:rotate-180 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+                    <div class="p-4 md:p-5 border-t border-white/10 flex flex-col gap-4 bg-transparent">
+                <!-- Deemed Business Income (s.41) -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Deemed Business Income (s.41)</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business liabilities you no longer have to pay</label>
+                            <input type="text" inputmode="numeric" id="biz-s41-1" oninput="updateBizNum('s41_remission_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Old bad debts that you have now recovered</label>
+                            <input type="text" inputmode="numeric" id="biz-s41-4" oninput="updateBizNum('s41_bad_debt_recovery_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </details>
+
+                <!-- Special Tax Credits — AMT s.115JC -->
+                <div class="hidden p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-amt-credit-section">
+
+                    <!-- Header -->
+                    <div class="flex items-center gap-2">
+                        <span id="text-amt-mat-title" class="text-xs font-black uppercase tracking-widest text-brandGold">AMT Credit Brought Forward — s.115JC</span>
+                        <span class="text-[8px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-white/50 font-black uppercase tracking-wider">Old Regime Only</span>
+                    </div>
+
+                    <!-- New Regime Lock Banner -->
+                    <div id="amt-regime-lock" class="hidden p-3 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3">
+                        <svg class="w-4 h-4 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span class="text-[10px] text-white/40">AMT credit is <strong class="text-white/60">not applicable</strong> under the New Regime (s.115BAC). Switch to Old Regime to enter AMT credit carried forward.</span>
+                    </div>
+
+                    <!-- Explainer -->
+                    <div class="p-3 bg-white/5 border border-white/10 rounded-xl text-[10px] text-white/60 leading-relaxed">
+                        <strong class="text-white/80">What is AMT Credit?</strong> If in a prior year your Alternate Minimum Tax (18.5% of Adjusted Total Income) exceeded your normal income tax, you paid the higher AMT. The excess paid over normal tax is accumulated as <em>AMT credit</em> under s.115JD. This credit can be carried forward for <strong class="text-white/80">up to 15 assessment years</strong> and set off in any future year where your normal tax exceeds AMT. Unused credit that exceeds the 15-year window <strong class="text-brandRed">lapses permanently</strong>.
+                    </div>
+
+                    <!-- Expiry Warning (shown dynamically) -->
+                    <div id="amt-expiry-warning" class="hidden p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-3">
+                        <span class="text-lg mt-0.5">⏳</span>
+                        <div>
+                            <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest">AMT Credit Expiring Soon</p>
+                            <p id="amt-expiry-text" class="text-[10px] text-white/60 mt-0.5"></p>
+                        </div>
+                    </div>
+
+                    <!-- Inputs (locked when New Regime) -->
+                    <div id="amt-inputs-wrap" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">AMT Credit Carried Forward (₹)</label>
+                            <input type="text" inputmode="numeric" id="biz-amt-bf" oninput="updateBizNum('amt_credit_bf_inr', this.value); evaluateAmtCreditExpiry();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                            <p class="text-[9px] text-white/30 mt-1">Aggregate credit across all eligible prior AYs still within the 15-year window.</p>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Oldest AMT Credit Origin AY</label>
+                            <input type="text" id="biz-amt-ay" oninput="updateBizField('amt_credit_bf_origin_ay', this.value); evaluateAmtCreditExpiry();" placeholder="e.g. AY2015-16" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <p class="text-[9px] text-white/30 mt-1">Enter the AY in which the <em>oldest</em> portion of your unabsorbed AMT credit was generated. Format: AY2015-16</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GST Registration Status -->
+                <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4" id="div-gst-section">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">GST Registration Status</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Registration Status</label>
+                            <select id="biz-gst-status" onchange="syncGstSection(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                                <option value="unregistered">Unregistered</option>
+                                <option value="regular">Regular Taxpayer (GSTIN issued)</option>
+                                <option value="composition">Composition Scheme (s.10 CGST)</option>
+                            </select>
+                        </div>
+
+                        <!-- Context note — changes based on selection -->
+                        <div class="md:col-span-2 p-3 bg-white/5 border border-white/10 rounded-xl text-[10px] text-white/60 leading-relaxed" id="gst-context-note">
+                            <!-- filled by syncGstSection() -->
+                        </div>
+
+                        <!-- GST Collected — only shown for Regular -->
+                        <div id="div-gst-collected" class="hidden md:col-span-2">
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Collected from Customers — Output Tax (₹)</label>
+                            <input type="text" inputmode="numeric" id="biz-gst-collected" oninput="updateBizNum('gst_collected_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                            <p class="text-[9px] text-white/30 mt-1">This is a liability, not income. It will be subtracted from gross receipts to arrive at taxable turnover.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+<div class="flex justify-between mt-4">
+                <button onclick="switchStep('step-deductions')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-deductions')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+            </div>
+        </div>
+
+        
+        <!-- STEP 9: DEDUCTIONS -->
+        <div id="panel-step-deductions" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2L — Tax Deductions (Chapter VI-A)</h2>
+                <p class="text-xs text-white/40 mt-1">Available under Old Regime only. Enter eligible investments and expenses to reduce taxable income.</p>
+            </div>
+
+            <div id="section-80c-group" class="flex flex-col gap-4 w-full mb-4">
+<!-- ── Section 80C, 80CCC, 80CCD(1): ₹1.5L cap ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80C, 80CCC & 80CCD(1) — Tax-Saving Basket</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Combined cap ₹1,50,000</span>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">EPF (Employee Provident Fund)</label>
+                        <input type="text" inputmode="numeric" id="ded-epf" oninput="update80C('epf_employee_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1" id="label-ppf">PPF (Public Provident Fund)</label>
+                        <input type="text" inputmode="numeric" id="ded-ppf" oninput="update80C('ppf_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-ppf-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh PPF contributions blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">ELSS (Mutual Funds)</label>
+                        <input type="text" inputmode="numeric" id="ded-elss" oninput="update80C('elss_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Life Insurance Premium</label>
+                        <input type="text" inputmode="numeric" id="ded-lic" oninput="update80C('life_insurance_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Loan Principal Repayment</label>
+                        <input type="text" inputmode="numeric" id="ded-home-loan" oninput="update80C('principal_home_loan_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NSC (National Savings Cert.)</label>
+                        <input type="text" inputmode="numeric" id="ded-nsc" oninput="update80C('nsc_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-nsc-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh NSC investments blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Children's Tuition Fees</label>
+                        <input type="text" inputmode="numeric" id="ded-tuition" oninput="update80C('tuition_fees_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Sukanya Samriddhi Yojana (SSY)</label>
+                        <input type="text" inputmode="numeric" id="ded-sukanya" oninput="update80C('sukanya_samriddhi_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span id="warn-ssy-nri" class="text-[8px] text-brandRed font-bold tracking-wider hidden uppercase mt-1 block">⚠️ Fresh SSY accounts blocked for NRIs</span>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax-Saving Fixed Deposit (5-year)</label>
+                        <input type="text" inputmode="numeric" id="ded-taxfd" oninput="update80C('tax_saving_fd_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Stamp Duty & Registration</label>
+                        <input type="text" inputmode="numeric" id="ded-stamp" oninput="update80C('stamp_duty_registration_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">LIC Annuity Premium (s.80CCC)</label>
+                        <input type="text" inputmode="numeric" id="ded-lic-annuity" oninput="update80CCC_80CCD1('lic_annuity_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Employee Contribution (s.80CCD(1))</label>
+                        <input type="text" inputmode="numeric" id="ded-nps-employee" oninput="update80CCC_80CCD1('nps_employee_contribution_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 80CCD(1B): Extra NPS contribution ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80CCD(1B) — Additional NPS Contribution</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Additional limit ₹50,000</span>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Voluntary Contribution u/s 80CCD(1B)</label>
+                    <input type="text" inputmode="numeric" id="ded-nps-add" oninput="updateNpsAdd('nps_additional_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">This is an additional deduction exclusively for NPS contributions, over and above the ₹1.5L cap of s.80C.</p>
+                </div>
+            </div>
+
+            
+</div>
+<!-- ── Section 80D: Health Insurance ── -->
+            <div id="card-80d" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80D — Medical Insurance & Preventive Checkup</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/15 border border-brandGold/25 text-brandGold/80 font-black uppercase tracking-wider">Self: ₹25K | Parents: ₹25K - ₹50K</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Self, Spouse & Children</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-self" oninput="update80D('self_family_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Self & Family (Max ₹5,000 sub-limit)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-checkup" oninput="update80D('self_family_preventive_checkup_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Parents</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents" oninput="update80D('parents_premium_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Parents (Max ₹5,000 sub-limit)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents-checkup" oninput="update80D('parents_preventive_checkup_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80 font-display">Are Parents Senior Citizens?</span>
+                            <span class="text-[9px] text-white/30 font-sans">Increases parent deduction cap from ₹25,000 to ₹50,000.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="ded-80d-senior" onchange="update80DBool('parents_are_senior', this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80 font-display">Parents Have Health Insurance Policy?</span>
+                            <span class="text-[9px] text-white/30 font-sans">If false, allows parents' medical expenditures to be claimed.</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="ded-80d-parents-has-insurance" onchange="update80DBool('parents_has_health_insurance', this.checked)" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                        </label>
+                    </div>
+
+                    <div id="div-parents-med" class="hidden md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Medical Expenditure — Parents (Only if Seniors & No Policy in force)</label>
+                        <input type="text" inputmode="numeric" id="ded-80d-parents-med" oninput="update80D('parents_medical_expenditure_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Deductible up to ₹50,000 for senior citizen parents who do not have any active health insurance coverage.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 80DD: Disabled Dependents ── -->
+            <div id="card-80dd" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80DD — Maintenance & Medical Treatment of Disabled Dependent</span>
+                    <span id="warn-80dd-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80DD Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For expenses on medical treatment/rehabilitation of a disabled dependent.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80dd-has" onchange="update80DDBool('s80DD', 'has_disabled_dependents', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80dd-details" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
+                    <select id="ded-80dd-percent" onchange="update80DDField('s80DD', 'disability_percentage', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="">-- Select Disability Level --</option>
+                        <option value="standard">Standard Disability (>= 40% but < 80%) — Flat ₹75,000 deduction</option>
+                        <option value="severe">Severe Disability (>= 80%) — Flat ₹1,25,000 deduction</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ── Section 80DDB: Specified Diseases Treatment ── -->
+            <div id="card-80ddb" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80DDB — Medical Treatment Expenses for Specified Diseases</span>
+                    <span id="warn-80ddb-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80DDB Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For expenses incurred on treatment of self/dependents for specified ailments.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80ddb-has" onchange="update80DDBool('s80DDB', 'has_specified_diseases_treatment', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80ddb-details" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patient Category</label>
+                        <select id="ded-80ddb-cat" onchange="update80DDField('s80DDB', 'patient_category', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                            <option value="">-- Select Category --</option>
+                            <option value="normal">Normal Individual (Cap: ₹40,000)</option>
+                            <option value="senior">Senior Citizen (Cap: ₹1,00,000)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Actual Medical Expenses Incurred (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80ddb-expenses" oninput="update80DDNum('s80DDB', 'medical_expenses_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 80U: Self Disability ── -->
+            <div id="card-80u" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80U — Deduction in Case of Person with Disability (Self)</span>
+                    <span id="warn-80u-nri" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ NRI Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80U Self-Disability?</span>
+                        <span class="text-[9px] text-white/30 font-sans">For tax resident individuals who are certified to have a physical/mental disability.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80u-has" onchange="update80DDBool('s80U', 'has_self_disability', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80u-details" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
+                    <select id="ded-80u-percent" onchange="update80DDField('s80U', 'disability_percentage', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                        <option value="">-- Select Disability Level --</option>
+                        <option value="standard">Standard Disability (>= 40% but < 80%) — Flat ₹75,000 deduction</option>
+                        <option value="severe">Severe Disability (>= 80%) — Flat ₹1,25,000 deduction</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ── Section 80GG: House Rent Paid (No HRA) ── -->
+            <div id="card-80gg" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80GG — House Rent Paid (No HRA Received)</span>
+                    <span id="warn-80gg-block" class="text-[8px] px-1.5 py-0.5 rounded bg-brandRed/20 border border-brandRed/30 text-brandRed font-black uppercase tracking-wider hidden">⚠️ Blocked</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80 font-display">Claim s.80GG Rent Deduction?</span>
+                        <span class="text-[9px] text-white/30 font-sans">Available only if you do not receive House Rent Allowance (HRA) from an employer.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="ded-80gg-has" onchange="update80GGBool('has_rent_paid_no_hra', this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 peer-checked:bg-brandGold peer-checked:after:bg-black"></div>
+                    </label>
+                </div>
+                
+                <div id="div-80gg-rent-input" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Rent Paid During the FY (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80gg-rent" oninput="update80GGNum('rent_paid_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                </div>
+            </div>
+
+            <!-- ── Section 80G: Donations cards container ── -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80G — Donations to Charities / Approved Funds</span>
+                    <button onclick="add80GRow()" class="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold font-sans font-bold font-sans font-bold font-sans font-bold font-sans font-bold">+ Add Donation</button>
+                </div>
+                <p class="text-[10px] text-white/40 -mt-2">Cash donations exceeding ₹2,000, and donations in kind or other modes are legally ineligible for tax deductions.</p>
+                
+                <!-- Dynamic cards stack -->
+                <div id="s80g-cards-container" class="flex flex-col gap-3"></div>
+            </div>
+
+            <!-- ── Special Entity Deductions ── -->
+            <div id="div-ded-special-entities" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3 mb-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Special Entity Deductions (80-IAC / 80LA / 80P)</span>
+                
+                <div id="div-ded-80iac" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Eligible Startup Deduction (80-IAC)</label>
+                    <input type="text" inputmode="numeric" id="ded-80iac" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80IAC_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction of profits for 3 consecutive years for eligible startups (Companies/LLPs).</p>
+                </div>
+                
+                <div id="div-ded-80la" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">IFSC / Offshore Banking Unit (80LA)</label>
+                    <input type="text" inputmode="numeric" id="ded-80la" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80LA_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction for 10 consecutive years for units in IFSC/SEZ.</p>
+                </div>
+                
+                <div id="div-ded-80p" class="hidden">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cooperative Societies (80P)</label>
+                    <input type="text" inputmode="numeric" id="ded-80p" oninput="if(typeof updateSpecialDeduction === 'function') updateSpecialDeduction('s80P_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deduction for income of Cooperative Societies from specified activities.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80GGB / 80GGC: Political Parties ── -->
+            <div id="div-ded-political" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span id="text-political-title" class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80GGC — Donations to Political Parties</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donations via Non-Cash Modes (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-political" oninput="if(typeof updatePoliticalDonation === 'function') updatePoliticalDonation(this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">100% deduction for contributions to registered political parties or electoral trusts. Cash donations are strictly not allowed.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80TTA / 80TTB: Savings & FD Interest ── -->
+            <div id="card-80tta" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80TTA / s.80TTB — Interest on Savings & Fixed Deposits</span>
+                    <span id="badge-80tta" class="text-[8px] px-1.5 py-0.5 rounded bg-brandGold/20 border border-brandGold/30 text-brandGold font-black uppercase font-sans">80TTA</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Account Interest (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80tta-savings" oninput="update80TTA('savings_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div id="div-80tta-fd" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest (₹, s.80TTB Senior only)</label>
+                        <input type="text" inputmode="numeric" id="ded-80tta-fd" oninput="update80TTA('fd_rd_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Derived Gating Category</label>
+                        <div id="ded-80tta-display" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white/70 px-3 py-2.5 font-mono">s.80TTA (Non-Senior / NRI — NRO Savings only, ₹10,000 cap)</div>
+                        <input type="hidden" id="ded-80tta-section">
+                    </div>
+                </div>
+                <div id="warn-80ttb-nr" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans leading-relaxed">
+                    ⚠️ <strong>NRI Restriction:</strong> Non-residents are statutorily ineligible for s.80TTB benefits. Only s.80TTA applies to NRO savings interest (capped at ₹10,000).
+                </div>
+            </div>
+
+            <!-- ── Section 80M: Inter-Corporate Dividends (Domestic Companies Only) ── -->
+            <div id="div-ded-80m" class="hidden p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80M — Inter-Corporate Dividends</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividends Distributed (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80m" oninput="if(typeof update80M === 'function') update80M('dividend_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deduction available for domestic companies receiving dividends from another domestic company, foreign company, or business trust, and distributing dividends to their shareholders.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80QQB / 80RRB: Royalty ── -->
+            <div id="div-ded-royalty" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3 mb-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80QQB / 80RRB — Royalty from Books & Patents</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Books / Authors (80QQB)</label>
+                        <input type="text" inputmode="numeric" id="ded-80qqb" oninput="if(typeof updateRoyaltyDeduction === 'function') updateRoyaltyDeduction('s80QQB_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for authors of certain books.</p>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patents / Inventors (80RRB)</label>
+                        <input type="text" inputmode="numeric" id="ded-80rrb" oninput="if(typeof updateRoyaltyDeduction === 'function') updateRoyaltyDeduction('s80RRB_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <p class="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for royalty on patents.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Section 80E: Education Loan Interest ── -->
+            <div id="card-80e" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-3">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80E — Interest on Education Loan</span>
+                <div>
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Education Loan Interest Repaid (₹)</label>
+                    <input type="text" inputmode="numeric" id="ded-80e" oninput="update80E('education_loan_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    <p class="text-[9px] text-white/30 mt-1">Deductible for interest paid on loans taken for higher education of self, spouse, children, or students for whom you are the legal guardian. No upper limit on deduction; valid for up to 8 years.</p>
+                </div>
+            </div>
+
+            <!-- ── Section 80EEA / 80EE: Affordable Housing Loan Interest ── -->
+            <div id="card-80eea" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">s.80EEA / s.80EE — Additional Home Loan Interest</span>
+                <p class="text-[10px] text-white/40 -mt-2">Additional interest deduction over and above Section 24(b). Derived automatically based on loan sanction date window.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Additional Home Loan Interest (₹)</label>
+                        <input type="text" inputmode="numeric" id="ded-80eea" oninput="update80EEA('affordable_home_loan_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loan Sanction Date</label>
+                        <input type="date" id="ded-80eea-date" oninput="update80EEA('loan_sanction_date', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:ring-0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="switchStep('step-income')" class="px-4 py-2.5 bg-white/5 text-white/60 font-bold uppercase text-[9px] tracking-widest rounded-xl hover:bg-white/10 transition-all border border-white/5">← Back</button>
+                <button onclick="switchStep('step-credits')" class="px-6 py-2.5 bg-brandGold text-black font-black uppercase text-[10px] tracking-widest rounded-xl hover:brightness-110 transition-all">Next Step</button>
+            </div>
+        </div>
+
+        <!-- STEP 8: LOSSES & TAX CREDITS -->
+        <div id="panel-step-credits" class="glass-card p-6 lg:p-8 flex flex-col gap-6 hidden">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2M, 2N, 2O — Past Losses, Foreign Assets & Tax Credits</h2>
+                <p class="text-xs text-white/40 mt-1">Enter details about past losses you want to carry forward, your foreign assets, and taxes you have already paid.</p>
+            </div>
+
+            <!-- Brought forward losses -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Brought Forward Past Losses (Schedule BFLA/CFL)</span>
+                        <span class="text-[9px] text-white/40 font-sans mt-0.5">Do you have any unused past years' losses to claim or carry forward?</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button id="btn-loss-yes" onclick="toggleBroughtForwardLosses(true)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">Yes</button>
+                        <button id="btn-loss-no" onclick="toggleBroughtForwardLosses(false)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">No</button>
+                    </div>
+                </div>
+
+                <!-- Section 79 Corporate Loss Restriction -->
+                <div id="div-s79-loss" class="hidden flex flex-col md:flex-row md:items-center justify-between gap-3 border border-brandRed/20 bg-brandRed/5 p-3 rounded-xl mb-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandRed font-display">s.79 — Corporate Shareholding Change > 51%</span>
+                        <span class="text-[9px] text-white/60 font-sans mt-0.5">If voting power has shifted by >51%, past losses (except unabsorbed depreciation) lapse.</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="loss-s79-triggered" onchange="if(typeof updateS79Loss === 'function') updateS79Loss(this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-brandRed/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandRed"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="div-loss-table-container" class="hidden flex flex-col gap-4">
+                    <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                        <span class="text-[10px] text-white/50 font-sans">Add each loss entry separately by category and origin year.</span>
+                        <button onclick="addLossRow()" class="px-3 py-1 bg-brandGold/20 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold">+ Add Loss Card</button>
+                    </div>
+                    
+                    <!-- Dynamic Loss Cards Stack -->
+                    <div id="loss-cards-container" class="flex flex-col gap-3"></div>
+                </div>
+            </div>
+
+            <!-- Unabsorbed Depreciation -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Brought-Forward Unabsorbed Depreciation</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="div-unadep-total-container">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Unabsorbed Depreciation (₹)</label>
+                        <input type="text" inputmode="numeric" id="loss-unadep" oninput="updateUnabsorbedDep('unabsorbed_depreciation_cf', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span class="text-[8px] text-white/30 mt-1 block">Can be adjusted against any income head except salary, with no expiry period.</span>
+                    </div>
+                    <div id="div-unadep-additional-container" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Portion from Additional Depreciation (₹)</label>
+                        <input type="text" inputmode="numeric" id="loss-unadep-additional" oninput="updateUnabsorbedDep('unabsorbed_depreciation_attributable_to_additional_dep_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="0">
+                        <span class="text-[8px] text-white/30 mt-1 block">Attributable to additional depreciation under Section 32(1)(iia) .</span>
+                    </div>
+                </div>
+                
+                <div id="warn-unadep-lapsed" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-normal">
+                    ⚠️ NEW REGIME RESTRICTION: The portion of unabsorbed depreciation attributable to additional (₹<span id="warn-unadep-lapsed-amt">0</span>) lapses and cannot be adjusted under the New Tax Regime.
+                </div>
+            </div>
+
+                        <!-- Schedule FA (LRS Outbound) -->
+            <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden" id="div-lrs-section">
+                <!-- Gating Question 1: Foreign Assets -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Foreign Assets Disclosure (Schedule FA)</span>
+                        <span class="text-[9px] text-white/40 font-sans mt-0.5">Do you hold any foreign bank accounts, equity, property, or other assets abroad?</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button id="btn-fa-yes" onclick="toggleForeignAssets(true)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">Yes</button>
+                        <button id="btn-fa-no" onclick="toggleForeignAssets(false)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">No</button>
+                    </div>
+                </div>
+
+                <!-- BMA Penalty Warning Callout -->
+                <div id="warn-fa-bma-penalty" class="hidden p-3 bg-brandRed/10 border border-brandRed/20 rounded-xl text-[10px] text-brandRed font-sans font-bold leading-relaxed">
+                    ⚠️ MANDATORY DISCLOSURE: Under Section 43 of the Black Money Act (BMA), a flat penalty of ₹10,00,000 (₹10 Lakhs) per year applies for failure to disclose, or inaccurate disclosure of, foreign assets in Schedule FA.
+                </div>
+
+                <!-- Gate Question 2: Foreign Income (Conditional on Yes to FA) -->
+                <div id="div-fa-income-gate" class="hidden flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black uppercase tracking-widest text-brandGold font-display">Foreign Income Disclosure (Schedule FSI)</span>
+                        <span class="text-[9px] text-white/40 font-sans mt-0.5">Have you received any income from these or other foreign sources during the FY?</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button id="btn-fa-inc-yes" onclick="toggleReceivedForeignIncome(true)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">Yes</button>
+                        <button id="btn-fa-inc-no" onclick="toggleReceivedForeignIncome(false)" class="px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10">No</button>
+                    </div>
+                </div>
+
+                <!-- FTC Callout -->
+                <div id="warn-fa-income-fsi" class="hidden p-3 bg-brandGold/10 border border-brandGold/20 rounded-xl text-[10px] text-brandGold font-sans font-bold leading-relaxed">
+                    ℹ️ FTC FORM 67 REQUIRED: Declaring foreign income requires filing Schedule FSI. You must also file Form 67 on the ITR portal before the filing due date to claim Foreign Tax Credit (FTC) u/s 90/91.
+                </div>
+
+                <!-- Table Container -->
+                <div id="div-fa-table-container" class="hidden flex flex-col gap-4">
+                    <!-- LRS aggregate fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total money sent abroad this year (₹) — for TCS tracking</label>
+                            <input type="text" inputmode="numeric" id="lrs-total" oninput="state.lrs_outbound.total_lrs_remitted_this_fy_inr = (this.value === '' ? null : parseINRCurrency(this.value)); updateLrsTcs();" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                            <span class="text-[8px] text-white/30 mt-1 block">Base LRS threshold is ₹10 Lakhs (except for tour packages). TCS rates vary from 0%, 2%, to 20% depending on purpose.</span>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Purpose of LRS Remittance</label>
+                            <select id="lrs-purpose" onchange="state.lrs_outbound.lrs_purpose = this.value; updateLrsTcs();" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                                <option value="">-- Select Purpose --</option>
+                                <option value="investment">Investment (Equity/Property)</option>
+                                <option value="education_own_funds">Overseas Education (Own Funds)</option>
+                                <option value="education_loan">Overseas Education (Loan u/s 80E)</option>
+                                <option value="medical">Medical Treatment Abroad</option>
+                                <option value="travel">International Travel (Overseas Tour Packages)</option>
+                                <option value="gift_donation">Gift or Donation to Non-Resident</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="lrs-tcs-display" class="hidden"></div>
+
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-white/50 font-sans">Declare all foreign bank accounts, shares, property, and income.</span>
+                        <button onclick="addLrsRow()" class="px-3 py-1 bg-brandGold/20 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all font-sans font-bold">+ Add Asset Row</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-white/80" id="lrs-table">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/5 text-[9px] font-black uppercase tracking-widest text-white/40">
+                                    <th class="p-2 text-center">Country</th>
+                                    <th class="p-2">Asset Nature</th>
+                                    <th class="p-2 text-right">Peak Balance (₹)</th>
+                                    <th class="p-2 text-right">Closing Balance (₹)</th>
+                                    <th class="p-2 text-right">Gross Income (₹)</th>
+                                    <th class="p-2 text-right">Gross Proceeds (₹)</th>
+                                    <th class="p-2 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1729,6 +2988,10 @@
                 <!-- Advance Tax Quarters -->
                 <div id="div-advance-tax" class="flex flex-col gap-2">
                     <span class="block text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">Quarterly Advance Tax Payments (u/s 234C)</span>
+                    <div id="banner-s207-exempt" class="hidden p-3 bg-brandGold/10 border border-brandGold/20 rounded-xl flex items-center gap-3 mb-2">
+                        <span class="text-xl text-brandGold/80">✨</span>
+                        <span class="text-[10px] text-brandGold/80"><strong>Exempt from Advance Tax (s.207):</strong> As a Resident Senior Citizen without business income, you are legally exempt from advance tax. No s.234B or s.234C interest penalties are applicable.</span>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Q1 (By 15 June) — 15%</label>
@@ -2036,9 +3299,6 @@
             has_buyback_transaction: false,
             transactions: []
         },
-        capital_gains: {
-            has_capital_gains: false
-        },
         domestic_income: {
             salary: {
                 has_salary_income: false,
@@ -2217,7 +3477,7 @@
             }
         },
         carry_forward_losses: {
-            has_brought_forward_losses: false,
+            has_brought_forward_losses: null,
             business_loss_cf: [],
             speculative_loss_cf: [],
             stcg_loss_cf: [],
@@ -2229,10 +3489,9 @@
         lrs_outbound: {
             total_lrs_remitted_this_fy_inr: null,
             lrs_purpose: null,
-            has_lrs_transactions: false,
-            has_foreign_assets: false,
+            has_foreign_assets: null,
             foreign_assets: [],
-            has_received_foreign_income: false
+            has_received_foreign_income: null
         },
         tax_credits: {
             advance_tax_q1_15jun_inr: null,
@@ -2464,7 +3723,7 @@
                 state.lrs_outbound.has_foreign_assets = false;
                 state.lrs_outbound.has_received_foreign_income = false;
                 state.lrs_outbound.foreign_assets = [];
-                const tbody = document.getElementById('lrs-cards-container');
+                const tbody = document.querySelector('#lrs-table tbody');
                 if (tbody) tbody.innerHTML = '';
             }
         }
@@ -2475,6 +3734,9 @@
     // ═══════════════════════════════════════════════════════════════════════
     function runResidencySolver() {
         const entity = state.profile.entity_type;
+        
+        // Ensure tax regime dropdown is synced with residency changes (for Domestic vs Foreign Company)
+        if (typeof updateTaxRegimeDropdown === 'function') updateTaxRegimeDropdown();
         
         let status = "NR";
         let path = "NR-Default: Standard Non-Resident";
@@ -2630,10 +3892,7 @@
         }
 
         // Apply derived lock
-        const isManualLockActive = state.residency_detail.manual_lock_active || false;
-        if (!isManualLockActive) {
-            state.residency_detail.final_india_residency_status = status;
-        }
+        state.residency_detail.final_india_residency_status = status;
         
         // Render lock card UI
         const badge = document.getElementById('badge-lock-status');
@@ -2663,6 +3922,7 @@
         // Evaluate NR fields for Unlisted Equity
         if (typeof evaluateUnlistedNRStatus === 'function') evaluateUnlistedNRStatus();
         checkDualResidencyConflict();
+        if (typeof evaluateEntityOverrides === 'function') evaluateEntityOverrides();
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -2702,18 +3962,10 @@
         
         const divHufNr9 = document.getElementById('div-huf-nr9');
         const divHufD7 = document.getElementById('div-huf-d7');
-        
-        const divWhollyOutside = document.getElementById('div-res-wholly-outside');
-        const divIndianCompany = document.getElementById('div-res-indian-company');
-        const divPoem = document.getElementById('div-res-poem');
-        const divKartaAlert = document.getElementById('div-karta-alert');
 
         // Default everything to hidden
-        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15, divHufNr9, divHufD7, divWhollyOutside, divIndianCompany, divPoem, divKartaAlert].forEach(el => {
-            if (el) {
-                el.classList.add('hidden');
-                el.style.display = ''; // Clear inline block from previous code
-            }
+        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15, divHufNr9, divHufD7].forEach(el => {
+            if (el) el.classList.add('hidden');
         });
         
         if (entity === 'huf') {
@@ -2721,9 +3973,7 @@
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
-            if (divWhollyOutside) divWhollyOutside.classList.remove('hidden');
             if (wo === false) {
-                if (divKartaAlert) divKartaAlert.classList.remove('hidden');
                 if (divHufNr9) divHufNr9.classList.remove('hidden');
                 if (nr9 !== null) {
                     if (divHufD7) divHufD7.classList.remove('hidden');
@@ -2772,19 +4022,21 @@
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
-            if (divIndianCompany) divIndianCompany.classList.remove('hidden');
-            if (state.residency_detail.is_indian_company === false) {
-                if (divPoem) divPoem.classList.remove('hidden');
+            const poemDiv = document.getElementById('div-res-poem');
+            if (poemDiv) {
+                if (state.residency_detail.is_indian_company === false) {
+                    poemDiv.style.display = 'block';
+                } else {
+                    poemDiv.style.display = 'none';
+                }
             }
         } else {
             if (divCoreDays) {
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
-            if (divWhollyOutside) divWhollyOutside.classList.remove('hidden');
         }
     }
-
 
     function updateManualDays(val) {
         const manual = parseInt(val) || 0;
@@ -4696,6 +5948,43 @@
         // 1. Profile Section Morphing
         // PAN is required for all entity types so we leave it visible.
         
+        const section8Div = document.getElementById('div-prof-section-8');
+        const turnover400Div = document.getElementById('div-prof-turnover-400');
+        if (section8Div) {
+            if (isCompany) {
+                section8Div.classList.remove('hidden');
+                section8Div.classList.add('flex');
+                if(turnover400Div) {
+                    turnover400Div.classList.remove('hidden');
+                    turnover400Div.classList.add('flex');
+                }
+            } else {
+                section8Div.classList.add('hidden');
+                section8Div.classList.remove('flex');
+                state.profile.is_section_8 = false;
+                const cb = document.getElementById('prof-section-8');
+                if (cb) cb.checked = false;
+
+                if(turnover400Div) {
+                    turnover400Div.classList.add('hidden');
+                    turnover400Div.classList.remove('flex');
+                    state.profile.turnover_lte_400cr = false;
+                    const cb2 = document.getElementById('prof-turnover-400');
+                    if (cb2) cb2.checked = false;
+                }
+            }
+        }
+
+        const politicalTitle = document.getElementById('text-political-title');
+        if (politicalTitle) {
+            politicalTitle.textContent = isCompany ? 's.80GGB - Donations to Political Parties' : 's.80GGC - Donations to Political Parties';
+        }
+
+        const familyPensionCard = document.getElementById('card-os-family-pension');
+        if (familyPensionCard) {
+            familyPensionCard.style.display = isInd ? 'block' : 'none';
+        }
+
         const regimeDiv = document.getElementById('div-prof-regime');
         const forceOldRegime = val === 'firm' || val === 'llp' || val === 'company' || val === 'trust' || val === 'local';
         
@@ -4724,6 +6013,86 @@
         const titleSpan = document.getElementById('title-step-income');
         if (titleSpan) {
             titleSpan.textContent = isInd ? 'Screen 2J & 2K — Salary & Other Sources' : 'Screen 2K — Other Sources';
+        }
+
+        // Minor Child Income (s.10(32))
+        const divMinorChild = document.getElementById('div-os-minor-child');
+        if (divMinorChild) divMinorChild.style.display = isInd ? 'block' : 'none';
+
+        // Angel Tax Premium (s.56(2)(viib))
+        const divAngelTax = document.getElementById('div-os-angel-tax');
+        if (divAngelTax) {
+            if (isCompany) {
+                divAngelTax.classList.remove('hidden');
+                divAngelTax.classList.add('block');
+            } else {
+                divAngelTax.classList.add('hidden');
+                divAngelTax.classList.remove('block');
+                const atInput = document.getElementById('os-angel-tax');
+                if (atInput) {
+                    atInput.value = '';
+                    state.other_sources.angel_tax_premium_inr = null;
+                }
+            }
+        }
+
+        // LIC Maturity (s.10(10D))
+        const divLicMaturity = document.getElementById('div-os-lic-maturity');
+        if (divLicMaturity) {
+            divLicMaturity.style.display = (isInd || isHuf) ? 'block' : 'none';
+            if (!(isInd || isHuf)) {
+                const licInput = document.getElementById('os-lic-maturity');
+                if (licInput) {
+                    licInput.value = '';
+                    state.other_sources.lic_maturity_inr = null;
+                }
+            }
+        }
+
+        // Gifts (s.56(2)(x)) Exemptions and Tooltips
+        const divGiftsExemptions = document.getElementById('div-os-gifts-exemptions');
+        if (divGiftsExemptions) {
+            divGiftsExemptions.style.display = (isInd || isHuf) ? 'flex' : 'none';
+        }
+        const tooltipRelative = document.getElementById('tooltip-relative-definition');
+        if (tooltipRelative) {
+            tooltipRelative.textContent = isInd ? 
+                'Gifts received from specified relatives (spouse, siblings, lineal ascendants/descendants, and their spouses) or on the occasion of marriage are entirely exempt.' : 
+                'Gifts received from any member of the HUF are entirely exempt.';
+        }
+        
+        // NGO / Political Party (Trust) fully exempt Gifts automation
+        const divGiftsWrapper = document.getElementById('div-os-gifts-wrapper');
+        const bannerTrustGifts = document.getElementById('banner-trust-gifts');
+        if (val === 'trust') {
+            if (divGiftsWrapper) divGiftsWrapper.style.display = 'none';
+            if (bannerTrustGifts) bannerTrustGifts.style.display = 'flex';
+            state.other_sources.gifts_above_50k_inr = 0; // automated exemption
+            const giftsInput = document.getElementById('os-gifts');
+            if (giftsInput) giftsInput.value = '';
+        } else {
+            if (divGiftsWrapper) divGiftsWrapper.style.display = 'block';
+            if (bannerTrustGifts) bannerTrustGifts.style.display = 'none';
+        }
+
+        // Spousal Clubbing (s.64)
+        const divSpousal = document.getElementById('div-os-spousal-clubbing');
+        if (divSpousal) divSpousal.style.display = isInd ? 'block' : 'none';
+
+        // Local Authority (s.10(20))
+        const divLocalAuth = document.getElementById('div-os-local-authority-10-20');
+        if (divLocalAuth) divLocalAuth.style.display = (val === 'local') ? 'block' : 'none';
+
+        // Eligible Startup Deduction (80-IAC)
+        const div80IAC = document.getElementById('div-ded-80iac');
+        if (div80IAC) {
+            if (val === 'company' || val === 'llp') {
+                div80IAC.classList.remove('hidden');
+                div80IAC.classList.add('block');
+            } else {
+                div80IAC.classList.add('hidden');
+                div80IAC.classList.remove('block');
+            }
         }
 
         // Deductions & Capital Gains overrides
@@ -4813,7 +6182,7 @@
                 warnBanner.classList.remove('hidden');
                 warnBanner.classList.add('flex');
                 warnBanner.style.display = 'flex';
-                if(warnText) warnText.textContent = "Companies, LLPs, AOPs, Trusts, Local Authorities, and Co-ops are NOT eligible for presumptive taxation under s.44AD/ADA.";
+                if(warnText) warnText.textContent = "Companies, LLPs, AOPs, Trusts, Local Authorities, and Co-ops are NOT eligible for s.44AD/ADA. (However, s.44AE for Goods Transport remains available).";
             }
         } else if (ror && !eligible44ADA) {
             if(warnBanner) {
@@ -4908,7 +6277,7 @@
         `;
         tbody.appendChild(tr);
 
-        card.querySelectorAll('input, select').forEach(el => {
+        tr.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', () => {
                 syncVehiclesState();
                 evaluateSurchargeBuckets();
@@ -5251,12 +6620,18 @@
     function syncAmtCreditRegimeLock() {
         const isNewRegime = (state.profile.tax_regime || 'NEW') === 'NEW';
         const section = document.getElementById('div-amt-credit-section');
+        const lockBanner = document.getElementById('amt-regime-lock');
+        const inputsWrap = document.getElementById('amt-inputs-wrap');
         if (!section) return;
 
+        section.classList.remove('hidden');
+
         if (isNewRegime) {
-            section.classList.add('hidden');
+            if(lockBanner) lockBanner.classList.remove('hidden');
+            if(inputsWrap) inputsWrap.classList.add('hidden');
         } else {
-            section.classList.remove('hidden');
+            if(lockBanner) lockBanner.classList.add('hidden');
+            if(inputsWrap) inputsWrap.classList.remove('hidden');
             evaluateAmtCreditExpiry();
         }
     }
@@ -6572,7 +7947,7 @@
             state.deductions.s80TTA_TTB.fd_rd_interest_inr = null;
             const fdInput = document.getElementById('ded-80tta-fd');
             if (fdInput) fdInput.value = '';
-        } else if (isSenior) {
+        } else if (isSenior && state.profile.entity_type === 'individual') {
             section = '80TTB';
             displayText = 's.80TTB (Senior Citizen — Savings & FD/RD Interest, cap ₹50,000)';
             if (nrWarn) nrWarn.classList.add('hidden');
@@ -6772,6 +8147,11 @@
             const input = document.getElementById('loss-unadep-additional');
             if (input) input.value = '';
         }
+    }
+
+    function updateS79Loss(val) {
+        if (!state.brought_forward_losses) state.brought_forward_losses = { entries: [] };
+        state.brought_forward_losses.s79_shareholding_change = val;
     }
 
     function addLossRow() {
@@ -7114,7 +8494,7 @@
             if (btnYes) btnYes.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
             if (btnNo) btnNo.className = "px-4 py-2 bg-brandRed text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all";
             // Clear assets and income
-            const tbody = document.getElementById('lrs-cards-container');
+            const tbody = document.querySelector('#lrs-table tbody');
             if (tbody) tbody.innerHTML = '';
             toggleReceivedForeignIncome(false);
             syncLrsState();
@@ -7124,7 +8504,7 @@
             if (bmaWarn) bmaWarn.classList.add('hidden');
             if (btnYes) btnYes.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
             if (btnNo) btnNo.className = "px-4 py-2 bg-white/5 text-white/60 font-bold text-xs uppercase tracking-wider rounded-xl transition-all hover:bg-white/10";
-            const tbody = document.getElementById('lrs-cards-container');
+            const tbody = document.querySelector('#lrs-table tbody');
             if (tbody) tbody.innerHTML = '';
             toggleReceivedForeignIncome(null);
             syncLrsState();
@@ -7153,72 +8533,32 @@
     }
 
     function addLrsRow() {
-          const rowId = 'lrs-' + Date.now() + Math.random().toString(36).substring(2, 5);
-          const container = document.getElementById('lrs-cards-container');
-          if (!container) return;
-          const card = document.createElement('div');
-          card.id = rowId;
-          card.className = "lrs-card bg-[#1a1a1a] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 relative transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)]";
-          card.innerHTML = `
-              <div class="absolute top-4 right-4">
-                  <button onclick="removeLrsRow('${rowId}')" class="text-brandRed hover:text-brandRed font-bold hover:bg-brandRed/10 rounded px-2 py-1 text-[10px] uppercase tracking-wider transition-all">Remove</button>
-              </div>
-              
-              <div class="grid grid-cols-12 gap-3 md:gap-4 pr-16 md:pr-20">
-                  <div class="col-span-12 md:col-span-2">
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Country</label>
-                      <input type="text" placeholder="US" maxlength="2" class="lrs-country bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono uppercase focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div class="col-span-12 md:col-span-4">
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Asset Nature</label>
-                      <select class="lrs-nature bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white w-full focus:border-brandGold focus:outline-none">
-                          <option value="bank">Foreign Depository (Bank)</option>
-                          <option value="equity">Unlisted / Listed Equity</option>
-                          <option value="property">Immovable Property</option>
-                          <option value="bond">Debt Securities / Bonds</option>
-                          <option value="other">Other Assets</option>
-                      </select>
-                  </div>
-                  <div class="col-span-12 md:col-span-3">
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Date Acquired</label>
-                      <input type="date" class="lrs-date bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white/80 focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div class="col-span-12 md:col-span-3">
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Acct / Asset ID</label>
-                      <input type="text" placeholder="ID / Acct No." class="lrs-acct bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div class="col-span-12">
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Institution Name & Address</label>
-                      <input type="text" placeholder="Bank Name, City, ZIP" class="lrs-inst bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white focus:border-brandGold focus:outline-none">
-                  </div>
-              </div>
-              
-              <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 border-t border-white/5 pt-4 mt-2">
-                  <div>
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Initial Val (₹)</label>
-                      <input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-initial bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono text-left md:text-right focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div>
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Peak Bal (₹)</label>
-                      <input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-peak bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono text-left md:text-right focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div>
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Closing Bal (₹)</label>
-                      <input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-close bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono text-left md:text-right focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div>
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Inc (₹)</label>
-                      <input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-interest bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono text-left md:text-right focus:border-brandGold focus:outline-none">
-                  </div>
-                  <div>
-                      <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Proceeds (₹)</label>
-                      <input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-proceeds bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs w-full text-white font-mono text-left md:text-right focus:border-brandGold focus:outline-none">
-                  </div>
-              </div>
-          `;
-          container.appendChild(card);
+        const rowId = 'lrs-' + Date.now() + Math.random().toString(36).substring(2, 5);
+        const tbody = document.querySelector('#lrs-table tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        tr.id = rowId;
+        tr.className = "border-b border-white/5 hover:bg-white/5 transition-all text-xs";
+        tr.innerHTML = `
+            <td class="p-2"><input type="text" placeholder="US" maxlength="2" class="lrs-country bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs w-full text-white font-mono uppercase text-center"></td>
+            <td class="p-2">
+                <select class="lrs-nature bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white w-full">
+                    <option value="bank">Foreign Depository (Bank)</option>
+                    <option value="equity">Unlisted / Listed Equity</option>
+                    <option value="property">Immovable Property</option>
+                    <option value="bond">Debt Securities / Bonds</option>
+                    <option value="other">Other Assets</option>
+                </select>
+            </td>
+            <td class="p-2"><input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-peak bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs w-full text-white font-mono text-right"></td>
+            <td class="p-2"><input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-close bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs w-full text-white font-mono text-right"></td>
+            <td class="p-2"><input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-interest bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs w-full text-white font-mono text-right"></td>
+            <td class="p-2"><input type="text" inputmode="numeric" placeholder="0" class="inr-input lrs-proceeds bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs w-full text-white font-mono text-right"></td>
+            <td class="p-2 text-right"><button onclick="removeLrsRow('${rowId}')" class="text-brandRed font-bold hover:brightness-110 font-sans px-2 py-1">Remove</button></td>
+        `;
+        tbody.appendChild(tr);
 
-        card.querySelectorAll('input, select').forEach(el => {
+        tr.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', syncLrsState);
             el.addEventListener('change', syncLrsState);
         });
@@ -7237,18 +8577,14 @@
     function syncLrsState() {
         const items = [];
         if (state.lrs_outbound.has_foreign_assets === true) {
-            document.querySelectorAll('#lrs-cards-container .lrs-card').forEach(card => {
+            document.querySelectorAll('#lrs-table tbody tr').forEach(tr => {
                 items.push({
-                    country: (card.querySelector('.lrs-country').value || '').toUpperCase() || null,
-                    nature_of_asset: card.querySelector('.lrs-nature').value || null,
-                    institution_details: card.querySelector('.lrs-inst') ? card.querySelector('.lrs-inst').value : null,
-                    account_id: card.querySelector('.lrs-acct') ? card.querySelector('.lrs-acct').value : null,
-                    date_acquired: card.querySelector('.lrs-date') ? card.querySelector('.lrs-date').value : null,
-                    initial_value_inr: card.querySelector('.lrs-initial') ? parseINRCurrency(card.querySelector('.lrs-initial').value) : null,
-                    peak_balance_inr: parseINRCurrency(card.querySelector('.lrs-peak').value) || null,
-                    closing_balance_inr: parseINRCurrency(card.querySelector('.lrs-close').value) || null,
-                    gross_interest_inr: parseINRCurrency(card.querySelector('.lrs-interest').value) || null,
-                    gross_proceeds_inr: parseINRCurrency(card.querySelector('.lrs-proceeds').value) || null
+                    country: (tr.querySelector('.lrs-country').value || '').toUpperCase() || null,
+                    nature_of_asset: tr.querySelector('.lrs-nature').value || null,
+                    peak_balance_inr: parseINRCurrency(tr.querySelector('.lrs-peak').value) || null,
+                    closing_balance_inr: parseINRCurrency(tr.querySelector('.lrs-close').value) || null,
+                    gross_interest_inr: parseINRCurrency(tr.querySelector('.lrs-interest').value) || null,
+                    gross_proceeds_inr: parseINRCurrency(tr.querySelector('.lrs-proceeds').value) || null
                 });
             });
         }
@@ -7256,7 +8592,7 @@
     }
 
     function renderLrsRows() {
-        const tbody = document.getElementById('lrs-cards-container');
+        const tbody = document.querySelector('#lrs-table tbody');
         if (!tbody) return;
         tbody.innerHTML = '';
         
@@ -7285,7 +8621,7 @@
             `;
             tbody.appendChild(tr);
 
-            card.querySelectorAll('input, select').forEach(el => {
+            tr.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('input', syncLrsState);
                 el.addEventListener('change', syncLrsState);
             });
@@ -7406,7 +8742,7 @@
         `;
         tbody.appendChild(tr);
 
-        card.querySelectorAll('input, select').forEach(el => {
+        tr.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', syncFtcState);
             el.addEventListener('change', syncFtcState);
         });
@@ -7440,7 +8776,7 @@
             const derivedTax = (taxVal !== null && conv !== null) ? Math.round(taxVal * conv) : null;
 
             items.push({
-                country: (card.querySelector('.ftc-country').value || '').toUpperCase() || null,
+                country: (tr.querySelector('.ftc-country').value || '').toUpperCase() || null,
                 income_type: tr.querySelector('.ftc-type').value || null,
                 foreign_income_in_foreign_ccy: incVal,
                 foreign_tax_in_foreign_ccy: taxVal,
@@ -7496,7 +8832,7 @@
             `;
             tbody.appendChild(tr);
 
-            card.querySelectorAll('input, select').forEach(el => {
+            tr.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('input', syncFtcState);
                 el.addEventListener('change', syncFtcState);
             });
@@ -7671,6 +9007,26 @@
             if (hasAnyRegularEntry && (closingStock || openingStock)) {
                 business += (closingStock - openingStock);
             }
+
+            // Foreign Company Presumptive Projects (s.44BBB) - 10% of gross receipts
+            const s44bbbReceipts = state.domestic_income.business_income.s44bbb_receipts_inr || 0;
+            if (s44bbbReceipts > 0 && entity === 'company') {
+                const companyResidency = (state.residency_detail && state.residency_detail.final_india_residency_status) || 'ROR';
+                if (companyResidency === 'NR') {
+                    business += Math.round(s44bbbReceipts * 0.10);
+                }
+            }
+
+            // Indian Company specific business rules
+            if (entity === 'company') {
+                const companyResidency = (state.residency_detail && state.residency_detail.final_india_residency_status) || 'ROR';
+                if (companyResidency !== 'NR') {
+                    // Tonnage Tax Scheme Income (s.115V)
+                    business += (state.domestic_income.business_income.tonnage_tax_115V_inr || 0);
+                    // Specified Business Deduction (s.35AD)
+                    business -= (state.domestic_income.business_income.specified_business_s35AD_inr || 0);
+                }
+            }
         }
 
         // ── OTHER SOURCES (Head: Income from Other Sources) ──────────
@@ -7682,6 +9038,13 @@
         const gifts        = state.other_sources.gifts_above_50k_inr        || 0;
         const gaming       = state.other_sources.online_gaming_winnings_inr || 0;
         const lotteryWin   = state.other_sources.winnings_lottery_gaming_inr || 0;
+        const spousalClub  = state.other_sources.spousal_clubbing_s64_inr   || 0;
+        const minorExempt  = state.other_sources.minor_child_exemption_inr  || 0;
+        const licMaturity  = state.other_sources.lic_maturity_inr           || 0;
+        const angelTax     = state.other_sources.angel_tax_premium_inr      || 0;
+        const localAuthExe = state.other_sources.local_authority_s10_20_inr || 0;
+
+        const otherSourcesAdditions = spousalClub - minorExempt + licMaturity + angelTax - localAuthExe;
 
         // Family pension: 1/3rd of gross OR ₹15,000 standard deduction (whichever lower) u/s 57(iia)
         const pensionGross = state.other_sources.family_pension_gross_inr || 0;
@@ -7729,16 +9092,29 @@
         // ── GROSS TOTAL INCOME ───────────────────────────────────────
         // lotteryWin is taxed at flat 30% u/s 115BB (same as online gaming post Apr-2023).
         // itRefundInt is taxable u/s 234D / s.244A — included in normal slab.
-        const normalSlab  = salary + hpNetIncome + business + savingsInt + fdInt + bondInt + itRefundInt + gifts + pensionNet + deemedBuyback;
-        const totalIncome = normalSlab + divInt + stcg111A + ltcg112A + ltcg112 + gaming + lotteryWin;
+        const normalSlab  = salary + hpNetIncome + business + savingsInt + fdInt + bondInt + itRefundInt + gifts + pensionNet + deemedBuyback + otherSourcesAdditions;
+        
+        // Non-Resident Deduction Wall (s.115A): 
+        // If NR/Foreign Company earns Dividend, Royalty, or FTS, they cannot claim Chapter VI-A deductions against it.
+        const residencyStatusEval = (state.residency_detail && state.residency_detail.final_india_residency_status) || 'ROR';
+        let activeDivInt = divInt;
+        let special115AIncome = 0;
+        
+        if (residencyStatusEval === 'NR') {
+            special115AIncome = activeDivInt;
+            activeDivInt = 0;
+        }
+
+        const totalIncome = normalSlab + activeDivInt + stcg111A + ltcg112A + ltcg112 + gaming + lotteryWin + special115AIncome;
 
         // Update state buckets
         state.surcharge_buckets.income_normal_slab_inr         = normalSlab;
-        state.surcharge_buckets.income_dividend_inr            = divInt;
+        state.surcharge_buckets.income_dividend_inr            = activeDivInt;
         state.surcharge_buckets.income_stcg_111A_inr           = stcg111A;
         state.surcharge_buckets.income_ltcg_112A_inr           = ltcg112A;
         state.surcharge_buckets.income_ltcg_112_inr            = ltcg112;
         state.surcharge_buckets.income_special_115BB_115BBJ_inr = gaming + lotteryWin; // both taxed @30% flat
+        state.surcharge_buckets.income_special_115A_inr        = special115AIncome; // Walled off NR income (no VI-A)
 
         // ─────────────────────────────────────────────────────────────
         // 2. SURCHARGE RATE (entity-aware)
@@ -7868,17 +9244,20 @@
             baseTax += Math.max(0, ltcg112A)  * 0.125; // LTCG s.112A
             baseTax += Math.max(0, ltcg112)   * 0.20;  // Other LTCG s.112
             baseTax += Math.max(0, gaming)    * 0.30;  // Online gaming s.115BBJ
-            // Rebate u/s 87A under New Regime (if total income ≤ ₹7L, rebate = full tax)
-            if (regime === 'NEW' && totalIncome <= 700000) baseTax = 0;
-            // Old Regime rebate: total income ≤ ₹5L
-            if (regime === 'OLD' && totalIncome <= 500000) baseTax = 0;
+            // Rebate u/s 87A under New Regime (if total income <= ₹7L, rebate = full tax)
+            const isResident = state.residency_detail?.final_india_residency_status === 'ROR' || state.residency_detail?.final_india_residency_status === 'RNOR' || state.residency_detail?.status === 'ROR' || state.residency_detail?.status === 'RNOR';
+            if (entity === 'individual' && isResident) {
+                if (regime === 'NEW' && totalIncome <= 700000) baseTax = 0;
+                // Old Regime rebate: total income <= ₹5L
+                if (regime === 'OLD' && totalIncome <= 500000) baseTax = 0;
+            }
         } else if (isFirmClass) {
             // Firms / LLPs: Flat 30%
             baseTax = Math.max(0, totalIncome) * 0.30;
         } else if (isDomesticCompany) {
-            // Companies: 22% (s.115BAA) or 25%/30%; use 25% as default indicator
-            baseTax = Math.max(0, totalIncome) * 0.25;
-            surchargeBasis += ' · Co. rate: 25% (default)';
+            const is25Rate = state.profile.turnover_lte_400cr === true;
+            baseTax = Math.max(0, totalIncome) * (is25Rate ? 0.25 : 0.30);
+            surchargeBasis += ` · Co. rate: ${is25Rate ? '25%' : '30%'}`;
         } else {
             baseTax = Math.max(0, totalIncome) * 0.30;
         }
@@ -9036,7 +10415,7 @@
                                     cm.has_commodity_trades === true || (Array.isArray(cm.trades) && cm.trades.length > 0) ||
                                     ue.has_unlisted_transactions === true || (Array.isArray(ue.transactions) && ue.transactions.length > 0);
                                     
-            const hasForeignIncome = state.lrs_outbound?.has_received_foreign_income === true;
+            const hasForeignIncome = state.foreign_income?.has_foreign_income === true;
             const hasCrypto = cg.vda_gains_inr > 0 || (Array.isArray(fh.transactions) && fh.transactions.some(t => t.asset_class === 'vda_crypto'));
             const multipleHP = Array.isArray(hp.properties) && hp.properties.length > 1;
             
@@ -9047,7 +10426,7 @@
             const hasRegularEntry = entries.some(e => ['regular', null, undefined, ''].includes(e.presumptive_scheme));
             
             const hasPartnerIncome = (biz.partner_remuneration_inr > 0 || biz.partner_interest_inr > 0);
-            const hasForeignAssets = state.lrs_outbound?.has_foreign_assets === true; 
+            const hasForeignAssets = state.foreign_assets?.has_foreign_assets === true; 
             const isDirector = state.profile?.is_company_director === true;
             const hasHighAgriIncome = (inc.agricultural_income_inr || 0) > 5000;
             const hasLotteryOrGaming = (sb.income_special_115BB_115BBJ_inr || 0) > 0;
@@ -9061,38 +10440,38 @@
             if (entity === 'company') {
                 if (state.profile?.is_section_8) {
                     itr = 'ITR-7';
-                    explanation = 'For Section 8 Companies claiming exemptions under Sections 11 or 10(23C).';
+                    explanation = 'For NGOs, Public Charitable Trusts, registered Societies, and Section 8 Companies claiming tax exemptions under Sections 11 or 10(23C).';
                 } else {
                     itr = 'ITR-6';
                     explanation = 'For Corporate Companies (Private Limited, Public Limited, OPCs).';
                 }
             } else if (entity === 'trust' || entity === 'ngo' || entity === 'society') {
                 itr = 'ITR-7';
-                explanation = 'For NGOs, Public Charitable Trusts, registered Societies, and Section 8 Companies claiming tax exemptions.';
+                explanation = 'For NGOs, Public Charitable Trusts, registered Societies, and Section 8 Companies claiming tax exemptions under Sections 11 or 10(23C).';
             } else if (['firm', 'aop', 'boi', 'ajp', 'local'].includes(entity) || entity === 'aop_boi' || entity === 'local_authority') {
                 if (entity === 'firm' && !isDisqualifiedFromSimpleForms && isPresumptive && !hasRegularEntry) {
                     itr = 'ITR-4 (SUGAM)';
-                    explanation = 'For Resident Partnership Firms opting for the Presumptive Taxation Scheme (s.44AD/44ADA) with income up to ₹50 Lakhs.';
+                    explanation = 'For Resident Individuals, HUFs, and Partnership Firms (excluding LLPs) with total income up to ₹50 Lakhs who opt for the Presumptive Taxation Scheme (s.44AD/44ADA).';
                 } else {
                     itr = 'ITR-5';
                     explanation = 'For Partnership Firms, LLPs, commercial AOPs, BOIs, AJPs, and Local Authorities.';
                 }
             } else if (entity === 'llp') {
                 itr = 'ITR-5';
-                explanation = 'For LLPs (Cannot use ITR-4 Presumptive scheme).';
+                explanation = 'For Partnership Firms, LLPs, commercial AOPs, BOIs, AJPs, and Local Authorities.';
             } else if (isInd || isHuf) {
                 if (hasBusiness || hasPartnerIncome) {
                     if (!isDisqualifiedFromSimpleForms && isPresumptive && !hasRegularEntry && !hasPartnerIncome && entity !== 'llp') {
                         itr = 'ITR-4 (SUGAM)';
-                        explanation = 'For Resident Individuals/HUFs with total income up to ₹50 Lakhs opting for Presumptive Taxation (s.44AD/44ADA).';
+                        explanation = 'For Resident Individuals, HUFs, and Partnership Firms (excluding LLPs) with total income up to ₹50 Lakhs who opt for the Presumptive Taxation Scheme (s.44AD/44ADA).';
                     } else {
                         itr = 'ITR-3';
-                        explanation = 'For Individuals and HUFs with Business or Professional Income. Also mandatory for individuals who are partners in a partnership firm.';
+                        explanation = 'For Individuals and HUFs with Business or Professional Income (acting as sole proprietors/freelancers, maintaining formal books/audit). Also mandatory for individuals who are partners in a partnership firm (receiving remuneration/interest).';
                     }
                 } else {
                     if (isInd && !isDisqualifiedFromSimpleForms) {
                         itr = 'ITR-1 (SAHAJ)';
-                        explanation = 'For Resident Salaried Individuals with total income up to ₹50 Lakhs (Salary/Pension, one house property, basic other sources).';
+                        explanation = 'For Resident Salaried Individuals with total income up to ₹50 Lakhs (Salary/Pension, one house property, basic other sources). Restrictions: Cannot be used by HUFs, or if there are foreign assets, capital gains, or company directorships.';
                     } else {
                         itr = 'ITR-2';
                         explanation = 'For Individuals and HUFs not having business/profession income but having Capital Gains, Foreign Income/Assets, multiple properties, or not qualifying for ITR-1.';
