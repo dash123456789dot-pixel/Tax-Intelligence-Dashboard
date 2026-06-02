@@ -2702,10 +2702,18 @@
         
         const divHufNr9 = document.getElementById('div-huf-nr9');
         const divHufD7 = document.getElementById('div-huf-d7');
+        
+        const divWhollyOutside = document.getElementById('div-res-wholly-outside');
+        const divIndianCompany = document.getElementById('div-res-indian-company');
+        const divPoem = document.getElementById('div-res-poem');
+        const divKartaAlert = document.getElementById('div-karta-alert');
 
         // Default everything to hidden
-        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15, divHufNr9, divHufD7].forEach(el => {
-            if (el) el.classList.add('hidden');
+        [divP4Y, divEmp, divDep, divVis, divNr9, divD7, divInc15, divHufNr9, divHufD7, divWhollyOutside, divIndianCompany, divPoem, divKartaAlert].forEach(el => {
+            if (el) {
+                el.classList.add('hidden');
+                el.style.display = ''; // Clear inline block from previous code
+            }
         });
         
         if (entity === 'huf') {
@@ -2713,7 +2721,9 @@
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
+            if (divWhollyOutside) divWhollyOutside.classList.remove('hidden');
             if (wo === false) {
+                if (divKartaAlert) divKartaAlert.classList.remove('hidden');
                 if (divHufNr9) divHufNr9.classList.remove('hidden');
                 if (nr9 !== null) {
                     if (divHufD7) divHufD7.classList.remove('hidden');
@@ -2762,21 +2772,19 @@
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
-            const poemDiv = document.getElementById('div-res-poem');
-            if (poemDiv) {
-                if (state.residency_detail.is_indian_company === false) {
-                    poemDiv.style.display = 'block';
-                } else {
-                    poemDiv.style.display = 'none';
-                }
+            if (divIndianCompany) divIndianCompany.classList.remove('hidden');
+            if (state.residency_detail.is_indian_company === false) {
+                if (divPoem) divPoem.classList.remove('hidden');
             }
         } else {
             if (divCoreDays) {
                 divCoreDays.classList.add('hidden');
                 divCoreDays.style.display = 'none';
             }
+            if (divWhollyOutside) divWhollyOutside.classList.remove('hidden');
         }
     }
+
 
     function updateManualDays(val) {
         const manual = parseInt(val) || 0;
