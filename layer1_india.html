@@ -8856,9 +8856,9 @@
         // u/s 16: Standard deduction (16(ia)) + Professional tax (16(iii))
         // are deducted from gross before arriving at "Income under Head Salaries".
         const isIndividual = entity === 'individual';
-        const grossSalary  = state.domestic_income.salary.has_salary_income
+        const grossSalary  = (isIndividual && state.domestic_income.salary.has_salary_income)
             ? (state.domestic_income.salary.gross_salary_inr || 0) : 0;
-        const priorSalary  = state.domestic_income.salary.has_salary_income
+        const priorSalary  = (isIndividual && state.domestic_income.salary.has_salary_income)
             ? (state.domestic_income.salary.prior_employer_salary_inr || 0) : 0;
         const totalGrossSalary = grossSalary + priorSalary;
 
@@ -10427,13 +10427,19 @@
             
             const hasPartnerIncome = (biz.partner_remuneration_inr > 0 || biz.partner_interest_inr > 0);
             const hasForeignAssets = state.foreign_assets?.has_foreign_assets === true; 
-            const isDirector = state.profile?.is_company_director === true;
+            const isDirector = isInd && (state.profile?.is_company_director === true);
             const hasHighAgriIncome = (inc.agricultural_income_inr || 0) > 5000;
             const hasLotteryOrGaming = (sb.income_special_115BB_115BBJ_inr || 0) > 0;
             const hasBFLosses = state.carry_forward_losses?.has_brought_forward_losses === true;
             const hasSpeculativeOrFNO = !!biz.speculative_income_inr || !!biz.non_speculative_income_inr || !!biz.fno_turnover_inr || !!biz.speculative_turnover_inr;
             
-            const isDisqualifiedFromSimpleForms = totalInc > 5000000 || !isROR || hasCapitalGains || hasForeignIncome || hasForeignAssets || isDirector || hasCrypto || multipleHP || hasHighAgriIncome || hasLotteryOrGaming || hasBFLosses || hasSpeculativeOrFNO;
+            // Mask out state contamination for non-individuals to prevent incorrect disqualification
+            const hasForeignIncomeEval = (isInd || isHuf) ? hasForeignIncome : false;
+            const hasForeignAssetsEval = (isInd || isHuf) ? hasForeignAssets : false;
+            const hasCryptoEval = (isInd || isHuf) ? hasCrypto : false;
+            const hasLotteryEval = (isInd || isHuf) ? hasLotteryOrGaming : false;
+
+            const isDisqualifiedFromSimpleForms = totalInc > 5000000 || !isROR || hasCapitalGains || hasForeignIncomeEval || hasForeignAssetsEval || isDirector || hasCryptoEval || multipleHP || hasHighAgriIncome || hasLotteryEval || hasBFLosses || hasSpeculativeOrFNO;
 
             let itr = 'Unknown';
             let explanation = '';
