@@ -357,6 +357,10 @@
     </div>
 </header>
 
+<div id="global-tax-year-banner" class="w-full bg-brandGold/10 border-b border-brandGold/20 py-2 text-center text-[10px] font-bold text-brandGold uppercase tracking-widest hidden">
+    <!-- Injected via JS -->
+</div>
+
 <main class="max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-8 flex-1 flex flex-col lg:flex-row gap-8">
     
     <!-- LEFT SIDEBAR: STEP PROGRESS -->
@@ -392,15 +396,15 @@
                 <span id="badge-step-business" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-deductions')" id="btn-step-deductions" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>9. Deductions</span>
+                <span>8. Deductions</span>
                 <span id="badge-step-deductions" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-credits')" id="btn-step-credits" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>8. Losses & Credits</span>
+                <span>9. Losses & Credits</span>
                 <span id="badge-step-credits" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
             <button onclick="switchStep('step-output')" id="btn-step-output" class="step-btn text-left px-4 py-3 rounded-lg text-xs font-bold tracking-wider uppercase text-white/70 transition-all flex items-center justify-between">
-                <span>9. Schema JSON</span>
+                <span>10. Schema JSON</span>
                 <span id="badge-step-output" class="text-[8px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-white/40 font-mono">🔒</span>
             </button>
         </nav>
@@ -1564,11 +1568,42 @@
                     </div>
                 </div>
 
+                <!-- Retirement & Exempt Receipts Card -->
+                <div id="card-os-retirement" class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-2 mb-4 relative">
+                        <h3 class="text-xs font-black uppercase tracking-widest text-emerald-400">2. Retirement & Exempt Receipts</h3>
+                        <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">Section 10</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-emerald-400/80 mb-1">Exempt Interest (PPF/EPF)</label>
+                            <input type="text" inputmode="numeric" id="os-exempt-pf-interest" oninput="updateOSField('exempt_interest_ppf_epf_inr', this.value)" class="inr-input w-full bg-white/5 border border-emerald-500/30 rounded-xl text-xs text-white px-3 py-2 focus:border-emerald-400 focus:ring-0 font-mono" placeholder="? 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Taxable EPF Interest (> ?2.5L)</label>
+                            <input type="text" inputmode="numeric" id="os-taxable-epf-interest" oninput="updateOSField('taxable_epf_interest_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="? 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-emerald-400/80 mb-1">Exempt PF Withdrawal</label>
+                            <input type="text" inputmode="numeric" id="os-exempt-pf-with" oninput="updateOSField('exempt_pf_withdrawal_inr', this.value)" class="inr-input w-full bg-white/5 border border-emerald-500/30 rounded-xl text-xs text-white px-3 py-2 focus:border-emerald-400 focus:ring-0 font-mono" placeholder="? 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-emerald-400/80 mb-1">Exempt NPS Withdrawal (60%)</label>
+                            <input type="text" inputmode="numeric" id="os-exempt-nps" oninput="updateOSField('exempt_nps_withdrawal_inr', this.value)" class="inr-input w-full bg-white/5 border border-emerald-500/30 rounded-xl text-xs text-white px-3 py-2 focus:border-emerald-400 focus:ring-0 font-mono" placeholder="? 0">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Taxable NPS Withdrawal</label>
+                            <input type="text" inputmode="numeric" id="os-taxable-nps" oninput="updateOSField('taxable_nps_withdrawal_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="? 0">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Family Pension Card -->
                 <div id="card-os-family-pension" class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="flex items-center gap-2 mb-4 relative">
-                        <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">2. Family Pension</h3>
+                        <h3 class="text-xs font-black uppercase tracking-widest text-blue-400">3. Family Pension</h3>
                         <span class="text-[9px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Auto 1/3 Deduction</span>
                     </div>
                     <div>
@@ -1581,7 +1616,7 @@
                 <div class="p-5 bg-[#161616] border border-white/10 rounded-2xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="flex items-center gap-2 mb-4 relative">
-                        <h3 class="text-xs font-black uppercase tracking-widest text-purple-400">3. Special Rate Streams</h3>
+                        <h3 class="text-xs font-black uppercase tracking-widest text-purple-400">4. Special Rate Streams</h3>
                         <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full font-bold">Flat 30% Tax</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
@@ -3411,7 +3446,12 @@
             family_pension_standard_deduction_inr: null,
             winnings_lottery_gaming_inr: null,
             online_gaming_winnings_inr: null,
-            deemed_dividend_from_buyback_inr: null
+            deemed_dividend_from_buyback_inr: null,
+            exempt_interest_ppf_epf_inr: null,
+            taxable_epf_interest_inr: null,
+            exempt_nps_withdrawal_inr: null,
+            taxable_nps_withdrawal_inr: null,
+            exempt_pf_withdrawal_inr: null
         },
         deductions: {
             s80C: {
@@ -3887,6 +3927,13 @@
 
         if (state.dtaa.dtaa_treaty_residence === 'us') {
             status = "NR";
+            path = "DTAA Article 4 Treaty Tie-Breaker to United States";
+            scope = "India-source income only (DTAA Article 4 non-resident status).";
+        }
+
+        // DTAA Tie Breaker Override
+        if (state.dtaa.dtaa_forced_nr === true || state.dtaa.dtaa_treaty_residence === 'us') {
+            status = 'NR';
             path = "DTAA Article 4 Treaty Tie-Breaker to United States";
             scope = "India-source income only (DTAA Article 4 non-resident status).";
         }
@@ -6018,6 +6065,10 @@
         // Minor Child Income (s.10(32))
         const divMinorChild = document.getElementById('div-os-minor-child');
         if (divMinorChild) divMinorChild.style.display = isInd ? 'block' : 'none';
+
+        // Retirement & Exempt Receipts
+        const cardRetirement = document.getElementById('card-os-retirement');
+        if (cardRetirement) cardRetirement.style.display = isInd ? 'block' : 'none';
 
         // Angel Tax Premium (s.56(2)(viib))
         const divAngelTax = document.getElementById('div-os-angel-tax');
@@ -9043,8 +9094,10 @@
         const licMaturity  = state.other_sources.lic_maturity_inr           || 0;
         const angelTax     = state.other_sources.angel_tax_premium_inr      || 0;
         const localAuthExe = state.other_sources.local_authority_s10_20_inr || 0;
+        const taxableEpf   = state.other_sources.taxable_epf_interest_inr   || 0;
+        const taxableNps   = state.other_sources.taxable_nps_withdrawal_inr || 0;
 
-        const otherSourcesAdditions = spousalClub - minorExempt + licMaturity + angelTax - localAuthExe;
+        const otherSourcesAdditions = spousalClub - minorExempt + licMaturity + angelTax - localAuthExe + taxableEpf + taxableNps;
 
         // Family pension: 1/3rd of gross OR ₹15,000 standard deduction (whichever lower) u/s 57(iia)
         const pensionGross = state.other_sources.family_pension_gross_inr || 0;
@@ -9850,6 +9903,37 @@
         const compXiia = document.getElementById('comp-xiia');
         if (compXiia) compXiia.checked = state.compliance_docs.chapter_xiia_elected || false;
 
+        // Other Sources Step
+        const os = state.other_sources;
+        if (os) {
+            const elIdMap = {
+                'os-interest-savings': os.interest_savings_inr,
+                'os-interest-fd': os.interest_fd_rd_inr,
+                'os-bonds': os.interest_bonds_inr,
+                'os-it-refund': os.interest_on_it_refund_inr,
+                'os-dividend': os.dividend_inr,
+                'os-gifts': os.gifts_above_50k_inr,
+                'os-local-authority': os.local_authority_s10_20_inr,
+                'os-spousal-clubbing': os.spousal_clubbing_s64_inr,
+                'os-minor-child': os.minor_child_exemption_inr,
+                'os-lic-maturity': os.lic_maturity_inr,
+                'os-angel-tax': os.angel_tax_premium_inr,
+                'os-pension': os.family_pension_gross_inr,
+                'os-lottery': os.winnings_lottery_gaming_inr,
+                'os-gaming': os.online_gaming_winnings_inr,
+                'os-unexplained': os.unexplained_income_115BBE_inr,
+                'os-exempt-pf-interest': os.exempt_interest_ppf_epf_inr,
+                'os-taxable-epf-interest': os.taxable_epf_interest_inr,
+                'os-exempt-pf-with': os.exempt_pf_withdrawal_inr,
+                'os-exempt-nps': os.exempt_nps_withdrawal_inr,
+                'os-taxable-nps': os.taxable_nps_withdrawal_inr
+            };
+            for (const [id, val] of Object.entries(elIdMap)) {
+                const el = document.getElementById(id);
+                if (el) el.value = val || '';
+            }
+        }
+
         // Deductions Step
         const ded80c = state.deductions.s80C;
         if (ded80c) {
@@ -10007,6 +10091,19 @@
         }
         
         const rData = JSON.parse(routerStr);
+        
+        // Extract base year and update global banner
+        const baseYear = parseInt(rData.base_tax_year) || 2023;
+        state.config = state.config || {};
+        state.config.base_year = baseYear;
+        
+        const indiaStart = `Apr 1, ${baseYear}`;
+        const indiaEnd = `Mar 31, ${baseYear + 1}`;
+        const banner = document.getElementById('global-tax-year-banner');
+        if (banner) {
+            banner.innerHTML = `Base Tax Year: ${baseYear} &nbsp;|&nbsp; Indian Financial Year: ${indiaStart} - ${indiaEnd} &nbsp;|&nbsp; Assessment Year: ${baseYear+1}-${String(baseYear+2).slice(-2)}`;
+            banner.classList.remove('hidden');
+        }
 
         // Load saved L1 India state if exists
         const savedIndiaStateStr = localStorage.getItem('wising_layer1_india_state');
@@ -10048,6 +10145,7 @@
                         }
                     }
                 }
+                if (savedState.other_sources) Object.assign(state.other_sources, savedState.other_sources);
                 if (savedState.lrs_outbound) Object.assign(state.lrs_outbound, savedState.lrs_outbound);
                 if (savedState.gift_received) Object.assign(state.gift_received, savedState.gift_received);
                 if (savedState.salary_exemptions) Object.assign(state.salary_exemptions, savedState.salary_exemptions);
@@ -10090,6 +10188,23 @@
         }
         if (rData.is_indian_citizen === true && !savedIndiaStateStr) {
             state.residency_detail.india_source_income_above_15l = rData.has_india_source_income_or_assets === true;
+        }
+        
+        // DTAA Tie Breaker Sync
+        if (rData.tie_breaker_winner === 'us') {
+            state.dtaa = state.dtaa || {};
+            state.dtaa.dtaa_forced_nr = true;
+            state.dtaa.tax_residency_country = 'US';
+            state.dtaa.is_us_resident_for_dtaa = true;
+            state.dtaa.dtaa_treaty_residence = 'us';
+            
+            if (!state.dtaa.treaty_elections || state.dtaa.treaty_elections.length === 0) {
+                 state.dtaa.treaty_elections = [
+                    { income_type: 'interest', elected_rate: 0.15, treaty_article: 'Art 11(2)(b)' },
+                    { income_type: 'royalty', elected_rate: 0.15, treaty_article: 'Art 12(2)(a)(ii)' },
+                    { income_type: 'fts', elected_rate: 0.15, treaty_article: 'Art 12(2)(a)(ii)' }
+                ];
+            }
         }
 
         // Restore DOM inputs from the merged state

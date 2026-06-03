@@ -188,6 +188,31 @@
         <!-- Dynamic Questions Container -->
         <div id="questions-viewport" class="flex-grow relative min-h-[280px]">
             
+            <!-- Q0: Base Tax Year -->
+            <div data-question-id="base_tax_year" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 00</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Which Tax Year are you filing for?</h2>
+                <p class="text-xs text-white/40 mb-8 leading-relaxed">This establishes the baseline calendar for both the US (Jan-Dec) and Indian (Apr-Mar) tax engines.</p>
+                <div class="relative max-w-sm">
+                    <select id="base-year-select" onchange="handleIntInput('base_tax_year', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-2xl font-black text-white focus:border-brandGold/50 outline-none transition-colors appearance-none cursor-pointer">
+                        <option value="2022" class="bg-[#121212] text-white">2022 (US TY22 / India FY22-23)</option>
+                        <option value="2023" class="bg-[#121212] text-white" selected>2023 (US TY23 / India FY23-24)</option>
+                        <option value="2024" class="bg-[#121212] text-white">2024 (US TY24 / India FY24-25)</option>
+                        <option value="2025" class="bg-[#121212] text-white">2025 (US TY25 / India FY25-26)</option>
+                        <option value="2026" class="bg-[#121212] text-white">2026 (US TY26 / India FY26-27)</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+                        <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-8">
+                    <button onclick="advanceQuestion()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                        <kbd class="hidden sm:inline px-1.5 py-0.5 bg-black/10 rounded text-[9px] font-mono text-black/50 border border-black/5">Enter</kbd>
+                    </button>
+                </div>
+            </div>
+
             <!-- Q0a: Full Name -->
             <div data-question-id="full_name" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 01a</span>
@@ -261,8 +286,8 @@
             <!-- Q3: India Days -->
             <div data-question-id="india_days" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 03</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">How many days were you physically present in India this tax year?</h2>
-                <p class="text-xs text-white/40 mb-6 uppercase tracking-widest font-mono">1 April 2025 – 31 March 2026</p>
+                <h2 id="q-india-days-h2" class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">How many days were you physically present in India this tax year?</h2>
+                <p id="q-india-days-p" class="text-xs text-white/40 mb-6 uppercase tracking-widest font-mono">1 April 2025 – 31 March 2026</p>
                 <div class="space-y-6">
                     <div class="relative max-w-sm">
                         <input type="number" min="0" max="366" placeholder="0" id="india-days-input" oninput="handleIntInput('india_days', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-3xl font-black text-white focus:border-brandGold/50 outline-none transition-colors">
@@ -282,7 +307,7 @@
             <!-- Q4: India Source Income or Assets -->
             <div data-question-id="has_india_source_income_or_assets" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 04</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Do you have any India-source income or Indian-situs assets this year?</h2>
+                <h2 id="q-india-assets-h2" class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Do you have any India-source income or Indian-situs assets this year?</h2>
                 <p class="text-xs text-white/40 mb-8 leading-relaxed">INCLUDES: NRO/NRE interest, Indian dividends, rental income, capital gains, salary/pension, property, bank accounts, demat holdings, or mutual funds.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="handleBoolInput('has_india_source_income_or_assets', true)" class="bool-btn-yes flex-1 py-4 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold flex items-center justify-between px-6">
@@ -334,8 +359,8 @@
             <!-- Q7: Was in US this year -->
             <div data-question-id="was_in_us_this_year" class="question-slide flex flex-col justify-center">
                 <span class="text-brandCyan font-bold text-xs uppercase tracking-widest mb-3">Question 07</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Were you physically present in the United States at any point this calendar year?</h2>
-                <p class="text-xs text-white/40 mb-8 uppercase tracking-widest font-mono">1 January 2026 – 31 December 2026</p>
+                <h2 id="q-us-was-h2" class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Were you physically present in the United States at any point this calendar year?</h2>
+                <p id="q-us-was-p" class="text-xs text-white/40 mb-8 uppercase tracking-widest font-mono">1 January 2026 – 31 December 2026</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="handleBoolInput('was_in_us_this_year', true)" class="bool-btn-yes flex-1 py-4 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold flex items-center justify-between px-6">
                         <span>Yes</span>
@@ -352,8 +377,8 @@
             <!-- Q7b: US Days -->
             <div data-question-id="us_days" class="question-slide flex flex-col justify-center">
                 <span class="text-brandCyan font-bold text-xs uppercase tracking-widest mb-3">Question 07b (Conditional)</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">Exactly how many days were you in the US this calendar year?</h2>
-                <p class="text-xs text-white/40 mb-6 uppercase tracking-widest font-mono">1 January 2026 – 31 December 2026</p>
+                <h2 id="q-us-days-h2" class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">Exactly how many days were you in the US this calendar year?</h2>
+                <p id="q-us-days-p" class="text-xs text-white/40 mb-6 uppercase tracking-widest font-mono">1 January 2026 – 31 December 2026</p>
                 <div class="space-y-6">
                     <div class="relative max-w-sm">
                         <input type="number" min="0" max="365" placeholder="0" id="us-days-input" oninput="handleIntInput('us_days', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-3xl font-black text-white focus:border-brandCyan/50 outline-none transition-colors">
@@ -373,7 +398,7 @@
             <!-- Q7c: US Source Income or Assets -->
             <div data-question-id="has_us_source_income_or_assets" class="question-slide flex flex-col justify-center">
                 <span class="text-brandCyan font-bold text-xs uppercase tracking-widest mb-3">Question 07c</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Do you have any US-source income or US-situs assets this year?</h2>
+                <h2 id="q-us-assets-h2" class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Do you have any US-source income or US-situs assets this year?</h2>
                 <p class="text-xs text-white/40 mb-8 leading-relaxed">INCLUDES: US salary, RSU vesting, US rental, US dividends, US bank interest, US brokerage accounts, or US real estate holdings.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="handleBoolInput('has_us_source_income_or_assets', true)" class="bool-btn-yes flex-1 py-4 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold flex items-center justify-between px-6">
@@ -391,7 +416,7 @@
             <!-- Q8: Liable to Tax in Another Country -->
             <div data-question-id="liable_to_tax_in_another_country" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 08 (Pass-Through)</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Are you personally liable to pay income tax in any other country this year?</h2>
+                <h2 id="q-liable-h2" class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Are you personally liable to pay income tax in any other country this year?</h2>
                 <p class="text-xs text-white/40 mb-8 leading-relaxed font-semibold">Note: collected to pre-fill Deemed Resident path s.6(1A). UAE personal income tax is 0% -> answer False.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="handleBoolInput('liable_to_tax_in_another_country', true)" class="bool-btn-yes flex-1 py-4 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold flex items-center justify-between px-6">
@@ -409,7 +434,7 @@
             <!-- Q9: Left India for Employment -->
             <div data-question-id="left_india_for_employment_this_year" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 09 (Pass-Through)</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-8 tracking-tight font-display">Did you leave India this year specifically for employment abroad or as a ship crew member?</h2>
+                <h2 id="q-left-india-h2" class="text-2xl lg:text-3xl font-bold text-white mb-8 tracking-tight font-display">Did you leave India this year specifically for employment abroad or as a ship crew member?</h2>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="handleBoolInput('left_india_for_employment_this_year', true)" class="bool-btn-yes flex-1 py-4 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold flex items-center justify-between px-6">
                         <span>Yes</span>
@@ -421,6 +446,62 @@
                     </button>
                 </div>
                 <p class="text-[11px] text-white/30 uppercase tracking-widest mt-6">Pre-filled to gate employment_or_crew_status inside layer1_india. Enabled for: Indian Citizens.</p>
+            </div>
+            </div>
+
+            <!-- --- TIE BREAKER QUESTIONS --- -->
+            <!-- Q10: Permanent Home -->
+            <div data-question-id="tb_permanent_home" class="question-slide flex flex-col justify-center">
+                <div class="mb-4 p-4 bg-brandGold/10 border border-brandGold/30 rounded-xl">
+                    <span class="text-brandGold font-bold text-xs uppercase tracking-widest block mb-1">DTAA Tie-Breaker Activated</span>
+                    <p class="text-xs text-brandGold/80 leading-relaxed">Based on your responses, you qualify as a Tax Resident of BOTH India and the US for the 9-month overlapping period (April 1 to Dec 31). We must apply the Tax Treaty (DTAA) Tie-Breaker rules to determine your final residency for this period.</p>
+                </div>
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">Question 10</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Where was your permanent home available to you during this period?</h2>
+                <div class="flex flex-col gap-3">
+                    <button onclick="handleStringInput('tb_permanent_home', 'india')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="india">India Only</button>
+                    <button onclick="handleStringInput('tb_permanent_home', 'us')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="us">US Only</button>
+                    <button onclick="handleStringInput('tb_permanent_home', 'both')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="both">Both India and US</button>
+                    <button onclick="handleStringInput('tb_permanent_home', 'neither')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left text-white/50" data-val="neither">Neither</button>
+                </div>
+            </div>
+
+            <!-- Q11: Center of Vital Interests -->
+            <div data-question-id="tb_vital_interests" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 11 (Tie-Breaker)</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">Where was your Center of Vital Interests?</h2>
+                <p class="text-sm text-white/50 mb-6">Since you had a home in both countries (or neither), where were your personal and economic relations closer? (e.g., family, main business, primary bank accounts)</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="handleStringInput('tb_vital_interests', 'india')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="india">India</button>
+                    <button onclick="handleStringInput('tb_vital_interests', 'us')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="us">US</button>
+                    <button onclick="handleStringInput('tb_vital_interests', 'undetermined')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left text-white/50" data-val="undetermined">Cannot be determined</button>
+                </div>
+            </div>
+
+            <!-- Q12: Habitual Abode -->
+            <div data-question-id="tb_habitual_abode" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 12 (Tie-Breaker)</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">Where did you have an habitual abode?</h2>
+                <p class="text-sm text-white/50 mb-6">Since your vital interests could not be determined, in which country did you usually live or spend more time habitually?</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="handleStringInput('tb_habitual_abode', 'india')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="india">India</button>
+                    <button onclick="handleStringInput('tb_habitual_abode', 'us')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="us">US</button>
+                    <button onclick="handleStringInput('tb_habitual_abode', 'both')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="both">Both</button>
+                    <button onclick="handleStringInput('tb_habitual_abode', 'neither')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left text-white/50" data-val="neither">Neither</button>
+                </div>
+            </div>
+
+            <!-- Q13: Nationality -->
+            <div data-question-id="tb_nationality" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 13 (Tie-Breaker)</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-2 tracking-tight font-display">What is your Nationality?</h2>
+                <p class="text-sm text-white/50 mb-6">As a last resort before Mutual Agreement Procedure, residency goes to your country of nationality.</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="handleStringInput('tb_nationality', 'india')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="india">Indian Citizen</button>
+                    <button onclick="handleStringInput('tb_nationality', 'us')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="us">US Citizen</button>
+                    <button onclick="handleStringInput('tb_nationality', 'both')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="both">Dual Citizen (Both)</button>
+                    <button onclick="handleStringInput('tb_nationality', 'other')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left text-white/50" data-val="other">Neither (Third Country)</button>
+                </div>
             </div>
 
             <!-- Refactored Flow Complete Screen showing final jurisdiction determination report -->
@@ -514,6 +595,9 @@
     // STATE ENGINE
     // ═══════════════════════════════════════════════════════════════════════
     const routerState = {
+        // Configuration
+        base_tax_year: 2023,
+
         // Inputs
         full_name: null,
         date_of_birth: null,
@@ -528,14 +612,25 @@
         has_us_source_income_or_assets: null,
         liable_to_tax_in_another_country: null,
         left_india_for_employment_this_year: null,
+        
+        // Tie-Breaker Inputs
+        tb_permanent_home: null,
+        tb_vital_interests: null,
+        tb_habitual_abode: null,
+        tb_nationality: null,
 
         // Derived Outputs
         india_flag: false,
         us_flag: false,
-        jurisdiction: "none"
+        jurisdiction: "none",
+        
+        // Tie-Breaker Derived
+        is_statutory_dual_resident: false,
+        tie_breaker_winner: null
     };
 
     const allQuestionIds = [
+        "base_tax_year",
         "full_name",
         "date_of_birth",
         "is_indian_citizen",
@@ -548,7 +643,11 @@
         "us_days",
         "has_us_source_income_or_assets",
         "liable_to_tax_in_another_country",
-        "left_india_for_employment_this_year"
+        "left_india_for_employment_this_year",
+        "tb_permanent_home",
+        "tb_vital_interests",
+        "tb_habitual_abode",
+        "tb_nationality"
     ];
 
     let activeQuestions = [];
@@ -582,13 +681,91 @@
         } else {
             routerState.jurisdiction = "none";
         }
+        
+        // 4. Evaluate Statutory Dual Residency (For Tie-Breaker)
+        let isIndiaResident = false;
+        if (routerState.india_days !== null && routerState.india_days >= 182) {
+            isIndiaResident = true;
+        } else if (routerState.india_days !== null && routerState.india_days >= 120 && routerState.is_indian_citizen && routerState.has_india_source_income_or_assets) {
+            isIndiaResident = true;
+        }
+        
+        let isUsResident = false;
+        if (routerState.is_us_citizen || routerState.has_green_card) {
+            isUsResident = true;
+        } else if (routerState.us_days !== null && routerState.us_days >= 183) {
+            isUsResident = true;
+        }
+        
+        routerState.is_statutory_dual_resident = (isIndiaResident && isUsResident);
+        
+        // Resolve Tie-Breaker Winner
+        if (routerState.is_statutory_dual_resident) {
+            if (routerState.tb_permanent_home === 'india') routerState.tie_breaker_winner = 'india';
+            else if (routerState.tb_permanent_home === 'us') routerState.tie_breaker_winner = 'us';
+            else if (routerState.tb_vital_interests === 'india') routerState.tie_breaker_winner = 'india';
+            else if (routerState.tb_vital_interests === 'us') routerState.tie_breaker_winner = 'us';
+            else if (routerState.tb_habitual_abode === 'india') routerState.tie_breaker_winner = 'india';
+            else if (routerState.tb_habitual_abode === 'us') routerState.tie_breaker_winner = 'us';
+            else if (routerState.tb_nationality === 'india') routerState.tie_breaker_winner = 'india';
+            else if (routerState.tb_nationality === 'us') routerState.tie_breaker_winner = 'us';
+            else routerState.tie_breaker_winner = null;
+        } else {
+            routerState.tie_breaker_winner = null;
+        }
 
         localStorage.setItem('wising_router_state', JSON.stringify(routerState));
+    }
+
+    function updateDynamicDates() {
+        const year = parseInt(routerState.base_tax_year) || 2023;
+        
+        // India dates (Apr 1, YYYY - Mar 31, YYYY+1)
+        const indiaStart = `1 April ${year}`;
+        const indiaEnd = `31 March ${year + 1}`;
+        const indiaRange = `${indiaStart} – ${indiaEnd}`;
+        
+        // US dates (Jan 1, YYYY - Dec 31, YYYY)
+        const usStart = `1 January ${year}`;
+        const usEnd = `31 December ${year}`;
+        const usRange = `${usStart} – ${usEnd}`;
+        
+        // Update texts
+        const idH2 = document.getElementById('q-india-days-h2');
+        if(idH2) idH2.textContent = `How many days were you physically present in India during the Financial Year?`;
+        
+        const idP = document.getElementById('q-india-days-p');
+        if(idP) idP.textContent = indiaRange;
+        
+        const iaH2 = document.getElementById('q-india-assets-h2');
+        if(iaH2) iaH2.textContent = `Do you have any India-source income or Indian-situs assets during the Financial Year (${indiaStart} – ${indiaEnd})?`;
+        
+        const uwH2 = document.getElementById('q-us-was-h2');
+        if(uwH2) uwH2.textContent = `Were you physically present in the United States at any point during the Tax Year?`;
+        
+        const uwP = document.getElementById('q-us-was-p');
+        if(uwP) uwP.textContent = usRange;
+        
+        const udH2 = document.getElementById('q-us-days-h2');
+        if(udH2) udH2.textContent = `Exactly how many days were you in the US during the Tax Year?`;
+        
+        const udP = document.getElementById('q-us-days-p');
+        if(udP) udP.textContent = usRange;
+        
+        const uaH2 = document.getElementById('q-us-assets-h2');
+        if(uaH2) uaH2.textContent = `Do you have any US-source income or US-situs assets during the Tax Year (${usStart} – ${usEnd})?`;
+        
+        const qlH2 = document.getElementById('q-liable-h2');
+        if(qlH2) qlH2.textContent = `Are you personally liable to pay income tax in any other country during the Financial Year (${indiaStart} – ${indiaEnd})?`;
+        
+        const qliH2 = document.getElementById('q-left-india-h2');
+        if(qliH2) qliH2.textContent = `Did you leave India during the Financial Year (${indiaStart} – ${indiaEnd}) specifically for employment abroad or as a ship crew member?`;
     }
 
     function getQuestionsToShow() {
         const list = [];
         
+        list.push("base_tax_year");
         list.push("full_name");
         list.push("date_of_birth");
         
@@ -635,6 +812,20 @@
             list.push("left_india_for_employment_this_year");
         }
         
+        // --- Tie Breaker Questions ---
+        if (routerState.is_statutory_dual_resident) {
+            list.push("tb_permanent_home");
+            if (routerState.tb_permanent_home === 'both' || routerState.tb_permanent_home === 'neither') {
+                list.push("tb_vital_interests");
+                if (routerState.tb_vital_interests === 'undetermined') {
+                    list.push("tb_habitual_abode");
+                    if (routerState.tb_habitual_abode === 'both' || routerState.tb_habitual_abode === 'neither') {
+                        list.push("tb_nationality");
+                    }
+                }
+            }
+        }
+        
         return list;
     }
 
@@ -651,6 +842,7 @@
 
     function renderQuestionnaireSlide() {
         updateActiveQuestionsList();
+        updateDynamicDates();
         
         // Hide all questions first
         const allSlides = document.querySelectorAll('.question-slide');
@@ -876,6 +1068,10 @@
         const intVal = value === '' ? null : parseInt(value);
         routerState[questionId] = intVal;
         
+        if (questionId === 'base_tax_year') {
+            updateDynamicDates();
+        }
+        
         const sliderId = `${questionId.replace('_', '-')}-slider`;
         const slider = document.getElementById(sliderId);
         if (slider) {
@@ -926,8 +1122,14 @@
             const usDays = routerState.us_days || 0;
             
             if (indiaDays >= usDays) {
-                resultDesc.innerHTML = "Exposure detected under **both India and US tax codes**.<br><span class='text-brandGold font-bold animate-pulse mt-3 inline-block'>Redirecting to India Specialist (higher presence) automatically...</span>";
-                setTimeout(() => {
+            if (routerState.tie_breaker_winner) {
+                const winner = routerState.tie_breaker_winner.toUpperCase();
+                resultDesc.innerHTML = `Exposure detected under **both India and US tax codes**.<br><span class='text-brandGold font-bold mt-2 inline-block'>DTAA Tie-Breaker Applied: Tax Resident of ${winner}</span><br><span class='text-white/40 animate-pulse mt-3 inline-block'>Redirecting to specialist module automatically...</span>`;
+            } else {
+                resultDesc.innerHTML = "Exposure detected under **both India and US tax codes**.<br><span class='text-brandGold font-bold animate-pulse mt-3 inline-block'>Redirecting to specialist module automatically...</span>";
+            }
+            
+            setTimeout(() => {
                     window.location.href = 'layer1_india.html';
                 }, 1800);
             } else {
