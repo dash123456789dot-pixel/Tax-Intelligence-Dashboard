@@ -7269,9 +7269,13 @@
             business_name: null, ein: null, naics_code: null, industry_category: null, partner_type: 'limited',
             material_participation: 'active', tax_basis_usd: null,
             at_risk_basis_usd: null, active_rental_participant: false,
-            ordinary_income_usd: null, net_rental_real_estate_usd: null, sec179_deduction_usd: null,
+            ordinary_income_usd: null, net_rental_real_estate_usd: null, other_rental_income_usd: null, sec179_deduction_usd: null,
             interest_income_usd: null, ordinary_dividends_usd: null, qualified_dividends_usd: null,
-            stcg_usd: null, ltcg_usd: null, qbi_eligible: false, is_specified_service_trade: false,
+            stcg_usd: null, ltcg_usd: null, collectibles_gain_usd: null, unrecaptured_1250_gain_usd: null, net_sec1231_gain_usd: null,
+            royalties_usd: null, other_income_usd: null,
+            charitable_contributions_usd: null, investment_interest_usd: null, credits_usd: null, foreign_transactions_usd: null, amt_items_usd: null, tax_exempt_income_usd: null, nondeductible_expenses_usd: null,
+            self_employment_earnings_usd: null, distributions_usd: null,
+            qbi_eligible: false, is_specified_service_trade: false,
             qbi_wages_usd: null, qbi_ubia_usd: null, guaranteed_payments_usd: null,
             partner_ein: null, partnership_ein: null,
             profit_percentage_beg: null, profit_percentage_end: null,
@@ -7423,71 +7427,40 @@
                     <span>Partnership Ledger & QBI Details</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 1: Ordinary Income</label>
-                        <input type="text" inputmode="numeric" class="part-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 2: Real Estate Rental</label>
-                        <input type="text" inputmode="numeric" class="part-box2 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 12: Section 179</label>
-                        <input type="text" inputmode="numeric" class="part-box12 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="part-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Real Estate Profit</label><input type="text" class="part-box2 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Rental Profit</label><input type="text" class="part-box3 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc Income</label><input type="text" class="part-box11 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-2 mt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 4: Guaranteed Pay</label>
-                        <input type="text" inputmode="numeric" class="part-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 5: Interest</label>
-                        <input type="text" inputmode="numeric" class="part-box5 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 6A: Ordinary Div</label>
-                        <input type="text" inputmode="numeric" class="part-box6a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 6B: Qualified Div</label>
-                        <input type="text" inputmode="numeric" class="part-box6b w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 8: STCG</label>
-                        <input type="text" inputmode="numeric" class="part-box8 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 9A: LTCG</label>
-                        <input type="text" inputmode="numeric" class="part-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
+
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Investments & Asset Sales</div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bank Interest</label><input type="text" class="part-box5 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Standard Divs</label><input type="text" class="part-box6a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Qualified Divs</label><input type="text" class="part-box6b w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Royalty Income</label><input type="text" class="part-box7 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Short-Term Inv Sold</label><input type="text" class="part-box8 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Long-Term Inv Sold</label><input type="text" class="part-box9a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Art/Collectibles Sold</label><input type="text" class="part-box9b w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Depr Real Estate Sold</label><input type="text" class="part-box9c w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Business Assets Sold</label><input type="text" class="part-box10 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Foreign Income</label><input type="text" class="part-box16 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-2 mt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 7: Royalties</label>
-                        <input type="text" inputmode="numeric" class="part-box7 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 10: Sec 1231 Gain</label>
-                        <input type="text" inputmode="numeric" class="part-box10 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 11: Other Income</label>
-                        <input type="text" inputmode="numeric" class="part-box11 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 13: Other Deductions</label>
-                        <input type="text" inputmode="numeric" class="part-box13 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 14: SE Earnings</label>
-                        <input type="text" inputmode="numeric" class="part-box14 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 19: Distributions</label>
-                        <input type="text" inputmode="numeric" class="part-box19 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()">
-                    </div>
+
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Deductions, Adjustments & Owner Distributions</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Guaranteed Pay</label><input type="text" class="part-box4 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Major Equipment (179)</label><input type="text" class="part-box12 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="part-box13a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Investment Interest</label><input type="text" class="part-box13h w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Tax Credits Earned</label><input type="text" class="part-box15 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Alternative Tax Adj</label><input type="text" class="part-box17 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Tax-Free Income</label><input type="text" class="part-box18a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Non-Deductibles</label><input type="text" class="part-box18c w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">SE Earnings (Self-Emp)</label><input type="text" class="part-box14 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cash Distributed</label><input type="text" class="part-box19 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncPartK1State()"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans">
                     
@@ -7624,18 +7597,27 @@
             div.querySelector('.part-at-risk-basis').value = data.at_risk_basis_usd || '';
             div.querySelector('.part-box1').value = data.ordinary_income_usd || '';
             div.querySelector('.part-box2').value = data.net_rental_real_estate_usd || '';
-            div.querySelector('.part-box12').value = data.sec179_deduction_usd || '';
+            div.querySelector('.part-box3').value = data.other_rental_income_usd || '';
             div.querySelector('.part-box4').value = data.guaranteed_payments_usd || '';
             div.querySelector('.part-box5').value = data.interest_income_usd || '';
             div.querySelector('.part-box6a').value = data.ordinary_dividends_usd || '';
             div.querySelector('.part-box6b').value = data.qualified_dividends_usd || '';
+            div.querySelector('.part-box7').value = data.royalties_usd || '';
             div.querySelector('.part-box8').value = data.stcg_usd || '';
             div.querySelector('.part-box9a').value = data.ltcg_usd || '';
-            div.querySelector('.part-box7').value = data.royalties_usd || '';
+            div.querySelector('.part-box9b').value = data.collectibles_gain_usd || '';
+            div.querySelector('.part-box9c').value = data.unrecaptured_1250_gain_usd || '';
             div.querySelector('.part-box10').value = data.net_sec1231_gain_usd || '';
             div.querySelector('.part-box11').value = data.other_income_usd || '';
-            div.querySelector('.part-box13').value = data.other_deductions_usd || '';
+            div.querySelector('.part-box12').value = data.sec179_deduction_usd || '';
+            div.querySelector('.part-box13a').value = data.charitable_contributions_usd || '';
+            div.querySelector('.part-box13h').value = data.investment_interest_usd || '';
             div.querySelector('.part-box14').value = data.self_employment_earnings_usd || '';
+            div.querySelector('.part-box15').value = data.credits_usd || '';
+            div.querySelector('.part-box16').value = data.foreign_transactions_usd || '';
+            div.querySelector('.part-box17').value = data.amt_items_usd || '';
+            div.querySelector('.part-box18a').value = data.tax_exempt_income_usd || '';
+            div.querySelector('.part-box18c').value = data.nondeductible_expenses_usd || '';
             div.querySelector('.part-box19').value = data.distributions_usd || '';
             div.querySelector('.part-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.part-sstb').checked = !!data.is_specified_service_trade;
@@ -7707,18 +7689,27 @@
                 at_risk_basis_usd: parseFormattedNumber(div.querySelector('.part-at-risk-basis').value) || null,
                 ordinary_income_usd: parseFormattedNumber(div.querySelector('.part-box1').value) || null,
                 net_rental_real_estate_usd: parseFormattedNumber(div.querySelector('.part-box2').value) || null,
-                sec179_deduction_usd: parseFormattedNumber(div.querySelector('.part-box12').value) || null,
+                other_rental_income_usd: parseFormattedNumber(div.querySelector('.part-box3').value) || null,
                 guaranteed_payments_usd: parseFormattedNumber(div.querySelector('.part-box4').value) || null,
                 interest_income_usd: parseFormattedNumber(div.querySelector('.part-box5').value) || null,
                 ordinary_dividends_usd: parseFormattedNumber(div.querySelector('.part-box6a').value) || null,
                 qualified_dividends_usd: parseFormattedNumber(div.querySelector('.part-box6b').value) || null,
+                royalties_usd: parseFormattedNumber(div.querySelector('.part-box7').value) || null,
                 stcg_usd: parseFormattedNumber(div.querySelector('.part-box8').value) || null,
                 ltcg_usd: parseFormattedNumber(div.querySelector('.part-box9a').value) || null,
-                royalties_usd: parseFormattedNumber(div.querySelector('.part-box7').value) || null,
+                collectibles_gain_usd: parseFormattedNumber(div.querySelector('.part-box9b').value) || null,
+                unrecaptured_1250_gain_usd: parseFormattedNumber(div.querySelector('.part-box9c').value) || null,
                 net_sec1231_gain_usd: parseFormattedNumber(div.querySelector('.part-box10').value) || null,
                 other_income_usd: parseFormattedNumber(div.querySelector('.part-box11').value) || null,
-                other_deductions_usd: parseFormattedNumber(div.querySelector('.part-box13').value) || null,
+                sec179_deduction_usd: parseFormattedNumber(div.querySelector('.part-box12').value) || null,
+                charitable_contributions_usd: parseFormattedNumber(div.querySelector('.part-box13a').value) || null,
+                investment_interest_usd: parseFormattedNumber(div.querySelector('.part-box13h').value) || null,
                 self_employment_earnings_usd: parseFormattedNumber(div.querySelector('.part-box14').value) || null,
+                credits_usd: parseFormattedNumber(div.querySelector('.part-box15').value) || null,
+                foreign_transactions_usd: parseFormattedNumber(div.querySelector('.part-box16').value) || null,
+                amt_items_usd: parseFormattedNumber(div.querySelector('.part-box17').value) || null,
+                tax_exempt_income_usd: parseFormattedNumber(div.querySelector('.part-box18a').value) || null,
+                nondeductible_expenses_usd: parseFormattedNumber(div.querySelector('.part-box18c').value) || null,
                 distributions_usd: parseFormattedNumber(div.querySelector('.part-box19').value) || null,
                 qbi_eligible: div.querySelector('.part-qbi').checked,
                 is_specified_service_trade: div.querySelector('.part-sstb').checked,
@@ -7885,63 +7876,38 @@
                     <span>S-Corp Ledger & QBI Details (Form 1120-S K-1)</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 border-t border-white/5 pt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 1: Ordinary Income</label>
-                        <input type="text" inputmode="numeric" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 2: Real Estate Rental</label>
-                        <input type="text" inputmode="numeric" class="scorp-box2 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 11: Section 179</label>
-                        <input type="text" inputmode="numeric" class="scorp-box11 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Real Estate Profit</label><input type="text" class="scorp-box2 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Rental Profit</label><input type="text" class="scorp-box3 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc Income</label><input type="text" class="scorp-box10 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 4: Interest</label>
-                        <input type="text" inputmode="numeric" class="scorp-box4 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 5a: Ordinary Div</label>
-                        <input type="text" inputmode="numeric" class="scorp-box5a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 5b: Qualified Div</label>
-                        <input type="text" inputmode="numeric" class="scorp-box5b w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 7: STCG</label>
-                        <input type="text" inputmode="numeric" class="scorp-box7 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 8a: LTCG</label>
-                        <input type="text" inputmode="numeric" class="scorp-box8a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
+
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Investments & Asset Sales</div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bank Interest</label><input type="text" class="scorp-box4 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Standard Divs</label><input type="text" class="scorp-box5a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Qualified Divs</label><input type="text" class="scorp-box5b w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Royalty Income</label><input type="text" class="scorp-box6 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Short-Term Inv Sold</label><input type="text" class="scorp-box7 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Long-Term Inv Sold</label><input type="text" class="scorp-box8a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Art/Collectibles Sold</label><input type="text" class="scorp-box8b w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Depr Real Estate Sold</label><input type="text" class="scorp-box8c w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Business Assets Sold</label><input type="text" class="scorp-box9 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Foreign Income</label><input type="text" class="scorp-box14 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mt-3 font-sans">
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 12A: Charitable</label>
-                        <input type="text" inputmode="numeric" class="scorp-box12a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 12H: Inv Interest</label>
-                        <input type="text" inputmode="numeric" class="scorp-box12h w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 13: Credits</label>
-                        <input type="text" inputmode="numeric" class="scorp-box13 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 15: AMT Items</label>
-                        <input type="text" inputmode="numeric" class="scorp-box15 w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
-                    <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Box 16D: Distributions</label>
-                        <input type="text" inputmode="numeric" class="scorp-box16d w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()">
-                    </div>
+
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Deductions, Adjustments & Owner Distributions</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Major Equipment (179)</label><input type="text" class="scorp-box11 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="scorp-box12a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Investment Interest</label><input type="text" class="scorp-box12h w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Tax Credits Earned</label><input type="text" class="scorp-box13 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Alternative Tax Adj</label><input type="text" class="scorp-box15 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Tax-Free Income</label><input type="text" class="scorp-box16a w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Non-Deductibles</label><input type="text" class="scorp-box16c w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cash Distributed</label><input type="text" class="scorp-box16d w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mt-3 font-sans border-t border-white/5 pt-3">
                     <div>
@@ -7994,16 +7960,25 @@
             div.querySelector('.scorp-at-risk-basis').value = data.at_risk_basis_usd || '';
             div.querySelector('.scorp-box1').value = data.ordinary_income_usd || '';
             div.querySelector('.scorp-box2').value = data.net_rental_real_estate_usd || '';
-            div.querySelector('.scorp-box11').value = data.sec179_deduction_usd || '';
+            div.querySelector('.scorp-box3').value = data.other_rental_income_usd || '';
             div.querySelector('.scorp-box4').value = data.interest_income_usd || '';
             div.querySelector('.scorp-box5a').value = data.ordinary_dividends_usd || '';
             div.querySelector('.scorp-box5b').value = data.qualified_dividends_usd || '';
+            div.querySelector('.scorp-box6').value = data.royalties_usd || '';
             div.querySelector('.scorp-box7').value = data.stcg_usd || '';
             div.querySelector('.scorp-box8a').value = data.ltcg_usd || '';
+            div.querySelector('.scorp-box8b').value = data.collectibles_gain_usd || '';
+            div.querySelector('.scorp-box8c').value = data.unrecaptured_1250_gain_usd || '';
+            div.querySelector('.scorp-box9').value = data.sec1231_gain_usd || '';
+            div.querySelector('.scorp-box10').value = data.other_income_usd || '';
+            div.querySelector('.scorp-box11').value = data.sec179_deduction_usd || '';
             div.querySelector('.scorp-box12a').value = data.charitable_contributions_usd || '';
             div.querySelector('.scorp-box12h').value = data.investment_interest_usd || '';
             div.querySelector('.scorp-box13').value = data.credits_usd || '';
+            div.querySelector('.scorp-box14').value = data.foreign_transactions_usd || '';
             div.querySelector('.scorp-box15').value = data.amt_items_usd || '';
+            div.querySelector('.scorp-box16a').value = data.tax_exempt_income_usd || '';
+            div.querySelector('.scorp-box16c').value = data.nondeductible_expenses_usd || '';
             div.querySelector('.scorp-box16d').value = data.distributions_usd || '';
             div.querySelector('.scorp-qbi').checked = !!data.qbi_eligible;
             div.querySelector('.scorp-sstb').checked = !!data.is_specified_service_trade;
@@ -8060,16 +8035,25 @@
                 at_risk_basis_usd: parseFormattedNumber(div.querySelector('.scorp-at-risk-basis').value) || null,
                 ordinary_income_usd: parseFormattedNumber(div.querySelector('.scorp-box1').value) || null,
                 net_rental_real_estate_usd: parseFormattedNumber(div.querySelector('.scorp-box2').value) || null,
-                sec179_deduction_usd: parseFormattedNumber(div.querySelector('.scorp-box11').value) || null,
+                other_rental_income_usd: parseFormattedNumber(div.querySelector('.scorp-box3').value) || null,
                 interest_income_usd: parseFormattedNumber(div.querySelector('.scorp-box4').value) || null,
                 ordinary_dividends_usd: parseFormattedNumber(div.querySelector('.scorp-box5a').value) || null,
                 qualified_dividends_usd: parseFormattedNumber(div.querySelector('.scorp-box5b').value) || null,
+                royalties_usd: parseFormattedNumber(div.querySelector('.scorp-box6').value) || null,
                 stcg_usd: parseFormattedNumber(div.querySelector('.scorp-box7').value) || null,
                 ltcg_usd: parseFormattedNumber(div.querySelector('.scorp-box8a').value) || null,
+                collectibles_gain_usd: parseFormattedNumber(div.querySelector('.scorp-box8b').value) || null,
+                unrecaptured_1250_gain_usd: parseFormattedNumber(div.querySelector('.scorp-box8c').value) || null,
+                sec1231_gain_usd: parseFormattedNumber(div.querySelector('.scorp-box9').value) || null,
+                other_income_usd: parseFormattedNumber(div.querySelector('.scorp-box10').value) || null,
+                sec179_deduction_usd: parseFormattedNumber(div.querySelector('.scorp-box11').value) || null,
                 charitable_contributions_usd: parseFormattedNumber(div.querySelector('.scorp-box12a').value) || null,
                 investment_interest_usd: parseFormattedNumber(div.querySelector('.scorp-box12h').value) || null,
                 credits_usd: parseFormattedNumber(div.querySelector('.scorp-box13').value) || null,
+                foreign_transactions_usd: parseFormattedNumber(div.querySelector('.scorp-box14').value) || null,
                 amt_items_usd: parseFormattedNumber(div.querySelector('.scorp-box15').value) || null,
+                tax_exempt_income_usd: parseFormattedNumber(div.querySelector('.scorp-box16a').value) || null,
+                nondeductible_expenses_usd: parseFormattedNumber(div.querySelector('.scorp-box16c').value) || null,
                 distributions_usd: parseFormattedNumber(div.querySelector('.scorp-box16d').value) || null,
                 qbi_eligible: div.querySelector('.scorp-qbi').checked,
                 is_specified_service_trade: div.querySelector('.scorp-sstb').checked,
