@@ -2835,12 +2835,7 @@
                 </div>
 
                 <!-- s.44BBB Presumptive Scheme -->
-                <div id="div-pres-s44bbb" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
-                    <span class="text-xs font-black uppercase tracking-widest text-brandGold">Civil Construction (s.44BBB)</span>
-                    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Amount Paid to Foreign Company (₹)</label>
-                    <input type="text" inputmode="numeric" id="biz-s44bbb-receipts" oninput="updateBizNum('s44bbb_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
-                    <p class="text-[9px] text-white/30 mt-1">Presumptive profit is 10% of gross amount. For Foreign Companies only.</p>
-                </div>
+                
 
                 <!-- General Gross Receipts (For non-s.44ADA professionals) -->
                 <div id="div-general-gross-receipts" class="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 hidden transition-all">
@@ -6686,6 +6681,43 @@
     }
 
 
+    function validateS44BBEligibility() {
+        const entries = state.domestic_income.business_income.business_entries || [];
+        const isNR = state.residency_detail.final_india_residency_status === 'NR' || state.residency_detail.status === 'NR';
+        let reverted = false;
+        entries.forEach((entry, idx) => {
+            if (entry.presumptive_scheme === 's44BB') {
+                if (!isNR) {
+                    entry.presumptive_scheme = '';
+                    reverted = true;
+                }
+            }
+        });
+        if (reverted) {
+            setTimeout(() => renderBusinessEntries(), 50);
+            if (typeof showToast === 'function') showToast('Section 44BB reverted: Only applicable to Non-Residents.', 'error');
+        }
+    }
+
+    function validateS44BBBEligibility() {
+        const entries = state.domestic_income.business_income.business_entries || [];
+        const entity = state.profile.entity_type || state.domestic_income.business_income.entity_type;
+        const isForeignCo = entity === 'company' && state.residency_detail.is_indian_company === false;
+        let reverted = false;
+        entries.forEach((entry, idx) => {
+            if (entry.presumptive_scheme === 's44BBB') {
+                if (!isForeignCo) {
+                    entry.presumptive_scheme = '';
+                    reverted = true;
+                }
+            }
+        });
+        if (reverted) {
+            setTimeout(() => renderBusinessEntries(), 50);
+            if (typeof showToast === 'function') showToast('Section 44BBB reverted: Only applicable to Foreign Companies.', 'error');
+        }
+    }
+
     function validateS44ADEligibility() {
         const entries = state.domestic_income.business_income.business_entries || [];
         let ineligibleReason = null;
@@ -8999,6 +9031,8 @@
         validateS44ADEligibility();
         validateS44ADAEligibility();
         validateS44AEEligibility();
+        validateS44BBEligibility();
+        validateS44BBBEligibility();
         evaluateSurchargeBuckets();
         syncExpensesWarning();
         syncTotalReceipts();
@@ -9100,6 +9134,18 @@
                 }
             } else {
                 schemeOptions = `<option value="">Regular Books (Mandatory)</option>`;
+            }
+            
+            // Append Non-Resident Presumptive Options globally
+            const isForeignCo = entity === 'company' && state.residency_detail.is_indian_company === false;
+            const isNR = state.residency_detail.final_india_residency_status === 'NR' || state.residency_detail.status === 'NR';
+            if (isNR || isForeignCo) {
+                if (isNR) {
+                    schemeOptions += `<option value="s44BB" ${scheme === 's44BB' ? 'selected' : ''}>s.44BB - Presumptive (10% Mineral Oils)</option>`;
+                }
+                if (isForeignCo) {
+                    schemeOptions += `<option value="s44BBB" ${scheme === 's44BBB' ? 'selected' : ''}>s.44BBB - Presumptive (10% Power Projects)</option>`;
+                }
             }
 
             // Business Code Options
@@ -9231,7 +9277,27 @@
                 </div>`;
             }
 
-            const receiptsHTML = isSmall && scheme === 's44AD'
+            const receiptsHTML = (scheme === 's44BB' || scheme === 's44BBB')
+                ? `<div class="md:col-span-2 p-4 bg-white/5 border border-brandGold/20 rounded-xl flex flex-col gap-4 mt-2">
+                      <div class="text-[10px] font-bold text-brandGold uppercase tracking-widest">${scheme === 's44BB' ? 'Section 44BB (Mineral Oils) Receipts' : 'Section 44BBB (Power Projects) Receipts'}</div>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                              <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts in India (₹)</label>
+                              <input type="text" inputmode="numeric" value="${entry.turnover_inr != null ? entry.turnover_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'turnover_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                          </div>
+                          <div>
+                              <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts Outside India for Indian Project (₹)</label>
+                              <input type="text" inputmode="numeric" value="${entry.cash_receipts_inr != null ? entry.cash_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'cash_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                          </div>
+                      </div>
+                      <div class="p-3 bg-[#1a1a1a] border border-brandGold/30 rounded-xl mt-2 flex gap-3 items-start">
+                          <input type="checkbox" id="biz-${idx}-44bb-decl" onchange="updateBusinessEntry(${idx}, 's44bb_declaration', this.checked)" ${entry.s44bb_declaration ? 'checked' : ''} class="mt-0.5 rounded border-white/10 bg-white/5 text-brandGold focus:ring-0 cursor-pointer">
+                          <label for="biz-${idx}-44bb-decl" class="text-[10px] text-white/70 leading-relaxed cursor-pointer select-none">
+                              <strong>Mandatory Declaration:</strong> ${scheme === 's44BB' ? 'I declare that this business is engaged in providing services, facilities, or supplying plant/machinery on hire for the prospecting, extraction, or production of mineral oils.' : 'I declare that this business is engaged in civil construction or erection/testing of plant and machinery for an approved turnkey power project.'} I confirm the above declaration under penalty of perjury.
+                          </label>
+                      </div>
+                  </div>`
+                : isSmall && scheme === 's44AD'
                 ? `<div>
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Receipts via Banking Channels (₹)</label>
                         <input type="text" inputmode="numeric" value="${entry.digital_receipts_inr != null ? entry.digital_receipts_inr.toLocaleString('en-IN') : ''}" oninput="updateBusinessEntry(${idx}, 'digital_receipts_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
@@ -9337,7 +9403,7 @@ ${isProf ? '' : `
                     </div>
                     ` : ''}`}
                     </div>
-                    <div class="${isRegular ? 'hidden' : ''}">
+                    <div class="${(isRegular && !isNR && !isForeignCo) ? 'hidden' : ''}">
                         <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax Scheme</label>
                         <select onchange="updateBusinessEntry(${idx}, 'presumptive_scheme', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                             ${schemeOptions}
@@ -10830,6 +10896,9 @@ ${isProf ? '' : `
                 } else if (entry.presumptive_scheme === 's44ADA') {
                     // Deemed profit: 50% of gross receipts
                     business += Math.round(((entry.ada_digital_receipts_inr || 0) + (entry.ada_cash_receipts_inr || 0)) * 0.5);
+                } else if (entry.presumptive_scheme === 's44BB' || entry.presumptive_scheme === 's44BBB') {
+                    // Deemed profit: 10% of gross receipts inside and outside India
+                    business += Math.round(((entry.turnover_inr || 0) + (entry.cash_receipts_inr || 0)) * 0.1);
                 } else {
                     // Regular Books: accumulate gross; expenses deducted below as a lump sum
                     regularBooksGross += (entry.turnover_inr || entry.gross_receipts_inr || 0);
