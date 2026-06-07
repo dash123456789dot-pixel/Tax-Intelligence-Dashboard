@@ -253,7 +253,7 @@
 
         const bCode = bizEntry.business_code || '';
         
-        const showInventory = ['01000', 'power_gen', '02000', '04000', 'mining', 'agriculture'].includes(bCode);
+        const showInventory = ['01000', 'power_gen', '02000', '04000', 'mining', 'agriculture', 'restaurants', 'hospitality'].includes(bCode);
         const invHTML = showInventory ? `
             <div class="flex flex-col gap-3">
                 <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Inventory & COGS</h4>
@@ -267,6 +267,54 @@
 
         let dynamicCostsHTML = '';
         switch(bCode) {
+            case 'restaurants':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Cloud Kitchen / Premise Rent', 'cloud_kitchen_rent_inr')}
+                            ${makeInput('Platform Delivery Commissions', 'platform_delivery_commissions_inr')}
+                            ${makeInput('Kitchen Staff / Chef Wages', 'kitchen_staff_wages_inr')}
+                            ${makeInput('Packaging Materials', 'packaging_materials_inr')}
+                        </div>
+                    </div>`;
+                break;
+            case 'hospitality':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Property Lease / Rent', 'property_lease_rent_inr')}
+                            ${makeInput('OTA / Travel Agent Commissions', 'ota_agent_commissions_inr')}
+                            ${makeInput('Housekeeping & Room Wages', 'housekeeping_wages_inr')}
+                            ${makeInput('Linen, Laundry & Toiletries', 'linen_laundry_toiletries_inr')}
+                        </div>
+                    </div>`;
+                break;
+            case 'restaurants':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Cloud Kitchen / Premise Rent', 'cloud_kitchen_rent_inr')}
+                            ${makeInput('Platform Delivery Commissions', 'platform_delivery_commissions_inr')}
+                            ${makeInput('Kitchen Staff / Chef Wages', 'kitchen_staff_wages_inr')}
+                            ${makeInput('Packaging Materials', 'packaging_materials_inr')}
+                        </div>
+                    </div>`;
+                break;
+            case 'hospitality':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Property Lease / Rent', 'property_lease_rent_inr')}
+                            ${makeInput('OTA / Travel Agent Commissions', 'ota_agent_commissions_inr')}
+                            ${makeInput('Housekeeping & Room Wages', 'housekeeping_wages_inr')}
+                            ${makeInput('Linen, Laundry & Toiletries', 'linen_laundry_toiletries_inr')}
+                        </div>
+                    </div>`;
+                break;
             case 'saas':
                 dynamicCostsHTML = `
                     <div class="flex flex-col gap-3">
@@ -9043,6 +9091,8 @@
 
     
     const revenueLineItems = {
+        'hospitality': { label: 'Hospitality & Hotels', items: { room_revenue: 'Room / Accommodation Revenue', fb_inhouse_revenue: 'Food & Beverage Revenue (In-house)', events_banquets: 'Events & Banquet Receipts', other_ops: 'Other Operating Revenue' } },
+        'restaurants': { label: 'Restaurants & Cafes', items: { dine_in_receipts: 'Dine-in / Walk-in Receipts', takeaway_delivery: 'Takeaway & Platform Delivery Receipts', catering_income: 'Catering Income', other_ops: 'Other Operating Revenue' } },
         'saas': { label: 'SaaS / AI / Tech Startup', items: { software_subscriptions: 'Software / SaaS Subscriptions', cloud_compute: 'Cloud Services & API Revenue', professional_services: 'Professional Services / Onboarding', other_ops: 'Other Operating Revenue' } },
         '01000': { label: 'Manufacturing Industry', items: { mfg_sales: 'Sale of Manufactured Goods', traded_sales: 'Sale of Traded Goods', job_work: 'Job Work Receipts', scrap_sales: 'Sale of Scrap', other_ops: 'Other Operating Revenue' } },
         'power_gen': { label: 'Power Generation', items: { power_sales: 'Sale of Power/Energy', transmission: 'Transmission Charges', other_ops: 'Other Operating Revenue' } },
@@ -9155,6 +9205,8 @@
             const codeOptions = `
                 <option value="">-- Select Business Code --</option>
                 <optgroup label="Eligible for s.44AD">
+                    <option value="hospitality" ${bCode === 'hospitality' ? 'selected' : ''} ${disableCode('hospitality')}>Hospitality, Hotels & Accommodation</option>
+                    <option value="restaurants" ${bCode === 'restaurants' ? 'selected' : ''} ${disableCode('restaurants')}>Restaurants, Cafes & Cloud Kitchens</option>
                     <option value="saas" ${bCode === 'saas' ? 'selected' : ''}>SaaS / AI / Tech Startup</option>
                     <option value="01000" ${bCode === '01000' ? 'selected' : ''}>Manufacturing Industry</option>
                     <option value="power_gen" ${bCode === 'power_gen' ? 'selected' : ''}>Power Generation & Distribution</option>
@@ -12802,7 +12854,7 @@ ${isProf ? '' : `
 
         const bCode = bizEntry.business_code || '';
         
-        const showInventory = ['01000', 'power_gen', '02000', '04000', 'mining', 'agriculture'].includes(bCode);
+        const showInventory = ['01000', 'power_gen', '02000', '04000', 'mining', 'agriculture', 'restaurants', 'hospitality'].includes(bCode);
         const invHTML = showInventory ? `
             <div class="flex flex-col gap-3">
                 <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Inventory & COGS</h4>
@@ -12816,6 +12868,30 @@ ${isProf ? '' : `
 
         let dynamicCostsHTML = '';
         switch(bCode) {
+            case 'restaurants':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Cloud Kitchen / Premise Rent', 'cloud_kitchen_rent_inr')}
+                            ${makeInput('Platform Delivery Commissions', 'platform_delivery_commissions_inr')}
+                            ${makeInput('Kitchen Staff / Chef Wages', 'kitchen_staff_wages_inr')}
+                            ${makeInput('Packaging Materials', 'packaging_materials_inr')}
+                        </div>
+                    </div>`;
+                break;
+            case 'hospitality':
+                dynamicCostsHTML = `
+                    <div class="flex flex-col gap-3">
+                        <h4 class="text-[10px] text-white/70 font-black uppercase tracking-widest border-b border-white/10 pb-1">Direct Operational Costs</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            ${makeInput('Property Lease / Rent', 'property_lease_rent_inr')}
+                            ${makeInput('OTA / Travel Agent Commissions', 'ota_agent_commissions_inr')}
+                            ${makeInput('Housekeeping & Room Wages', 'housekeeping_wages_inr')}
+                            ${makeInput('Linen, Laundry & Toiletries', 'linen_laundry_toiletries_inr')}
+                        </div>
+                    </div>`;
+                break;
             case 'saas':
                 dynamicCostsHTML = `
                     <div class="flex flex-col gap-3">
