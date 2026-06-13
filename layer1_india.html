@@ -2547,6 +2547,16 @@
     <input type="text" inputmode="numeric" id="os-lic-maturity" oninput="updateOSField('lic_maturity_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
     <p class="text-[8px] text-white/30 mt-1">Amount received from life insurance policies not exempt u/s 10(10D).</p>
 </div>
+<div id="div-os-misc">
+    <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 group relative w-fit">Miscellaneous / Other Income
+        <span class="cursor-help text-brandGold/70 hover:text-brandGold transition-colors"><span class="font-bold text-[9px]">(i)</span></span>
+        <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-[#1A1A1A] border border-brandGold/20 rounded-xl shadow-2xl text-[9px] text-white/80 normal-case tracking-normal leading-relaxed z-20 text-left">
+            Any other residual taxable income not covered elsewhere (e.g. Director fees, commissions, agricultural land rent, etc.).
+        </div>
+    </label>
+    <input type="text" inputmode="numeric" id="os-misc" oninput="updateOSField('miscellaneous_income_inr', this.value)" class="inr-input w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono" placeholder="₹ 0">
+    <p class="text-[8px] text-white/30 mt-1">Any other miscellaneous or residual income taxed at standard slab rates.</p>
+</div>
 <div id="div-os-angel-tax" class="hidden">
     <label class="block text-[9px] font-black uppercase tracking-widest text-brandRed mb-1">Angel Tax Premium (s.56(2)(viib))</label>
     <input type="text" inputmode="numeric" id="os-angel-tax" oninput="updateOSField('angel_tax_premium_inr', this.value)" class="inr-input w-full bg-brandRed/5 border border-brandRed/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandRed focus:ring-0 font-mono" placeholder="₹ 0">
@@ -4199,7 +4209,8 @@
             taxable_epf_interest_inr: null,
             exempt_nps_withdrawal_inr: null,
             taxable_nps_withdrawal_inr: null,
-            exempt_pf_withdrawal_inr: null
+            exempt_pf_withdrawal_inr: null,
+            miscellaneous_income_inr: null
         },
         deductions: {
             s80C: {
@@ -11041,6 +11052,7 @@ ${isProf ? '' : `
         const localAuthExe = state.other_sources.local_authority_s10_20_inr || 0;
         const taxableEpf   = state.other_sources.taxable_epf_interest_inr   || 0;
         const taxableNps   = state.other_sources.taxable_nps_withdrawal_inr || 0;
+        const miscIncome   = state.other_sources.miscellaneous_income_inr   || 0;
 
         const otherSourcesAdditions = spousalClub - minorExempt + licMaturity + angelTax - localAuthExe + taxableEpf + taxableNps;
 
@@ -11090,7 +11102,7 @@ ${isProf ? '' : `
         // ── GROSS TOTAL INCOME ───────────────────────────────────────
         // lotteryWin is taxed at flat 30% u/s 115BB (same as online gaming post Apr-2023).
         // itRefundInt is taxable u/s 234D / s.244A — included in normal slab.
-        const normalSlab  = salary + hpNetIncome + business + savingsInt + fdInt + bondInt + itRefundInt + gifts + pensionNet + deemedBuyback + otherSourcesAdditions;
+        const normalSlab  = salary + hpNetIncome + business + savingsInt + fdInt + bondInt + itRefundInt + gifts + pensionNet + deemedBuyback + otherSourcesAdditions + miscIncome;
         
         // Non-Resident Deduction Wall (s.115A): 
         // If NR/Foreign Company earns Dividend, Royalty, or FTS, they cannot claim Chapter VI-A deductions against it.
@@ -12003,6 +12015,7 @@ ${isProf ? '' : `
                 'os-minor-child': os.minor_child_exemption_inr,
                 'os-lic-maturity': os.lic_maturity_inr,
                 'os-angel-tax': os.angel_tax_premium_inr,
+                'os-misc': os.miscellaneous_income_inr,
                 'os-pension': os.family_pension_gross_inr,
                 'os-lottery': os.winnings_lottery_gaming_inr,
                 'os-gaming': os.online_gaming_winnings_inr,
