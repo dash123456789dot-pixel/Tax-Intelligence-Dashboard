@@ -599,6 +599,9 @@ function testIndiaSpecialist() {
     console.log("  state.deductions.s80C.ppf_inr:", sandbox.state.deductions.s80C.ppf_inr);
     console.log("  state.deductions.s80D.parents_are_senior:", sandbox.state.deductions.s80D.parents_are_senior);
     console.log("  state.bank_accounts length:", sandbox.state.bank_accounts.length);
+    console.log("  DEBUG: state.other_sources =", JSON.stringify(sandbox.state.other_sources));
+    console.log("  DEBUG: doc.getElementById('os-misc') =", doc.getElementById('os-misc') ? { id: doc.getElementById('os-misc').id, value: doc.getElementById('os-misc').value } : null);
+    
     
     if (sandbox.state.profile.full_name !== 'Rohan Sharma') {
         throw new Error("Full name not synced from router state");
@@ -2069,7 +2072,148 @@ function testScorpCcorpBranches() {
     if (biz.cCorpTax !== 9702) {
         throw new Error(`C-Corp branch tax mismatch: expected 9702, got ${biz.cCorpTax}`);
     }
-    console.log("  ✓ C-Corp branch tax: " + biz.cCorpTax);
+        console.log("  ✓ C-Corp branch tax: " + biz.cCorpTax);
+}
+
+function testItemizedCalculations() {
+    console.log("\n--- Testing Entity-Level Itemized Recalculations ---");
+    const code = getScriptCode('C:/Users/saarthak/.gemini/antigravity/scratch/tax-dashboard/layer1_us.html');
+    
+    const doc = new MockDocument();
+    const win = Object.assign({}, mockWindow);
+    const storage = Object.assign({}, mockStorage);
+    storage.clear();
+    
+    const sandbox = {
+        document: doc,
+        window: win,
+        localStorage: storage,
+        crypto: crypto,
+        alert: function(msg) {},
+        console: console,
+        setTimeout: setTimeout,
+        setInterval: setInterval,
+        Number: Number,
+        parseInt: parseInt,
+        parseFloat: parseFloat,
+        Math: Math,
+        Date: Date,
+        String: String,
+        Object: Object,
+        Array: Array,
+        RegExp: RegExp,
+        tailwind: { config: {} }
+    };
+    Object.assign(sandbox, win);
+    sandbox.window = sandbox;
+    sandbox.self = sandbox;
+    sandbox.globalThis = sandbox;
+    
+    vm.createContext(sandbox);
+    const codeWithExports = code + "\n; globalThis.calculatePartCoreProfit = calculatePartCoreProfit; globalThis.calculateScorpCoreProfit = calculateScorpCoreProfit; globalThis.calculateCcorpCoreProfit = calculateCcorpCoreProfit;";
+    vm.runInContext(codeWithExports, sandbox, { filename: 'layer1_us.html [Script]' });
+    
+    doc.dispatchEvent('DOMContentLoaded');
+    if (sandbox.window.onload) sandbox.window.onload();
+
+    // 1. Test Partnership (calculatePartCoreProfit)
+    const partCard = doc.createElement('div');
+    partCard.id = 'part-card-1';
+    doc.body.appendChild(partCard);
+    
+    const partGross = doc.createElement('input'); partGross.classList.add('part-gross-revenue'); partGross.value = '100,000'; partCard.appendChild(partGross);
+    const partReturns = doc.createElement('input'); partReturns.classList.add('part-returns-allowances'); partReturns.value = '5,000'; partCard.appendChild(partReturns);
+    const partCogs = doc.createElement('input'); partCogs.classList.add('part-cogs-itemized'); partCogs.value = '15,000'; partCard.appendChild(partCogs);
+    const partMisc = doc.createElement('input'); partMisc.classList.add('part-misc-income'); partMisc.value = '2,000'; partCard.appendChild(partMisc);
+    
+    const partWages = doc.createElement('input'); partWages.classList.add('part-exp-wages'); partWages.value = '20,000'; partCard.appendChild(partWages);
+    const partRent = doc.createElement('input'); partRent.classList.add('part-exp-rent'); partRent.value = '10,000'; partCard.appendChild(partRent);
+    
+    const partTotalExp = doc.createElement('input'); partTotalExp.classList.add('part-total-expenses'); partCard.appendChild(partTotalExp);
+    const partBox1 = doc.createElement('input'); partBox1.classList.add('part-box1'); partCard.appendChild(partBox1);
+    
+    sandbox.calculatePartCoreProfit('part-card-1');
+    
+    if (Number(partTotalExp.value) !== 45000) {
+        throw new Error(`Partnership itemized total expenses mismatch: expected 45000, got ${partTotalExp.value}`);
+    }
+    if (Number(partBox1.value) !== 52000) {
+        throw new Error(`Partnership itemized core profit mismatch: expected 52000, got ${partBox1.value}`);
+    }
+    console.log("  ✓ Partnership itemized calculation verified successfully!");
+
+    // 2. Test S-Corp (calculateScorpCoreProfit)
+    const scorpCard = doc.createElement('div');
+    scorpCard.id = 'scorp-card-1';
+    doc.body.appendChild(scorpCard);
+    
+    const scorpGross = doc.createElement('input'); scorpGross.classList.add('scorp-gross-revenue'); scorpGross.value = '150,000'; scorpCard.appendChild(scorpGross);
+    const scorpReturns = doc.createElement('input'); scorpReturns.classList.add('scorp-returns-allowances'); scorpReturns.value = '10,000'; scorpCard.appendChild(scorpReturns);
+    const scorpCogs = doc.createElement('input'); scorpCogs.classList.add('scorp-cogs-itemized'); scorpCogs.value = '25,000'; scorpCard.appendChild(scorpCogs);
+    const scorpMisc = doc.createElement('input'); scorpMisc.classList.add('scorp-misc-income'); scorpMisc.value = '5,000'; scorpCard.appendChild(scorpMisc);
+    
+    const scorpOfficer = doc.createElement('input'); scorpOfficer.classList.add('scorp-exp-officer'); scorpOfficer.value = '30,000'; scorpCard.appendChild(scorpOfficer);
+    const scorpRent = doc.createElement('input'); scorpRent.classList.add('scorp-exp-rent'); scorpRent.value = '15,000'; scorpCard.appendChild(scorpRent);
+    
+    const scorpTotalExp = doc.createElement('input'); scorpTotalExp.classList.add('scorp-total-expenses'); scorpCard.appendChild(scorpTotalExp);
+    const scorpBox1 = doc.createElement('input'); scorpBox1.classList.add('scorp-box1'); scorpCard.appendChild(scorpBox1);
+    
+    sandbox.calculateScorpCoreProfit('scorp-card-1');
+    
+    if (Number(scorpTotalExp.value) !== 70000) {
+        throw new Error(`S-Corp itemized total expenses mismatch: expected 70000, got ${scorpTotalExp.value}`);
+    }
+    if (Number(scorpBox1.value) !== 75000) {
+        throw new Error(`S-Corp itemized core profit mismatch: expected 75000, got ${scorpBox1.value}`);
+    }
+    console.log("  ✓ S-Corp itemized calculation verified successfully!");
+
+    // 3. Test C-Corp (calculateCcorpCoreProfit)
+    const ccorpCard = doc.createElement('div');
+    ccorpCard.id = 'ccorp-card-1';
+    doc.body.appendChild(ccorpCard);
+    
+    const ccorpGross = doc.createElement('input'); ccorpGross.classList.add('ccorp-gross-revenue'); ccorpGross.value = '200,000'; ccorpCard.appendChild(ccorpGross);
+    const ccorpReturns = doc.createElement('input'); ccorpReturns.classList.add('ccorp-returns-allowances'); ccorpReturns.value = '8,000'; ccorpCard.appendChild(ccorpReturns);
+    const ccorpCogs = doc.createElement('input'); ccorpCogs.classList.add('ccorp-cogs-itemized'); ccorpCogs.value = '40,000'; ccorpCard.appendChild(ccorpCogs);
+    const ccorpMisc = doc.createElement('input'); ccorpMisc.classList.add('ccorp-misc-income'); ccorpMisc.value = '10,000'; ccorpCard.appendChild(ccorpMisc);
+    
+    const ccorpWages = doc.createElement('input'); ccorpWages.classList.add('ccorp-exp-wages'); ccorpWages.value = '50,000'; ccorpCard.appendChild(ccorpWages);
+    const ccorpRent = doc.createElement('input'); ccorpRent.classList.add('ccorp-exp-rent'); ccorpRent.value = '20,000'; ccorpCard.appendChild(ccorpRent);
+    
+    const ccorpMainGross = doc.createElement('input'); ccorpMainGross.classList.add('ccorp-gross'); ccorpCard.appendChild(ccorpMainGross);
+    const ccorpMainReturns = doc.createElement('input'); ccorpMainReturns.classList.add('ccorp-returns'); ccorpCard.appendChild(ccorpMainReturns);
+    const ccorpMainCogs = doc.createElement('input'); ccorpMainCogs.classList.add('ccorp-cogs'); ccorpCard.appendChild(ccorpMainCogs);
+    const ccorpMainMisc = doc.createElement('input'); ccorpMainMisc.classList.add('ccorp-misc'); ccorpCard.appendChild(ccorpMainMisc);
+    const ccorpMainOpex = doc.createElement('input'); ccorpMainOpex.classList.add('ccorp-opex'); ccorpCard.appendChild(ccorpMainOpex);
+    const ccorpMainWages = doc.createElement('input'); ccorpMainWages.classList.add('ccorp-wages'); ccorpCard.appendChild(ccorpMainWages);
+    const ccorpMainRent = doc.createElement('input'); ccorpMainRent.classList.add('ccorp-rent'); ccorpCard.appendChild(ccorpMainRent);
+    
+    const ccorpTotalExp = doc.createElement('input'); ccorpTotalExp.classList.add('ccorp-total-expenses'); ccorpCard.appendChild(ccorpTotalExp);
+    
+    sandbox.calculateCcorpCoreProfit('ccorp-card-1');
+    
+    const parseVal = (val) => Number(String(val).replace(/,/g, '')) || 0;
+    
+    if (parseVal(ccorpTotalExp.value) !== 110000) {
+        throw new Error(`C-Corp itemized total expenses mismatch: expected 110000, got ${ccorpTotalExp.value}`);
+    }
+    if (parseVal(ccorpMainGross.value) !== 200000) {
+        throw new Error(`C-Corp main gross receipts mismatch: expected 200000, got ${ccorpMainGross.value}`);
+    }
+    if (parseVal(ccorpMainCogs.value) !== 40000) {
+        throw new Error(`C-Corp main COGS mismatch: expected 40000, got ${ccorpMainCogs.value}`);
+    }
+    if (parseVal(ccorpMainOpex.value) !== 70000) {
+        throw new Error(`C-Corp main operating expenses mismatch: expected 70000, got ${ccorpMainOpex.value}`);
+    }
+    if (parseVal(ccorpMainWages.value) !== 50000) {
+        throw new Error(`C-Corp main wages mismatch: expected 50000, got ${ccorpMainWages.value}`);
+    }
+    if (parseVal(ccorpMainRent.value) !== 20000) {
+        throw new Error(`C-Corp main rent mismatch: expected 20000, got ${ccorpMainRent.value}`);
+    }
+    console.log("  ✓ C-Corp itemized calculation verified successfully!");
 }
 
 try {
@@ -2080,6 +2224,7 @@ try {
     testBusinessTaxation();
     test1099Compliance();
     testScorpCcorpBranches();
+    testItemizedCalculations();
     testDtaaBridge();
     console.log("\n=========================================");
     console.log("ALL FEATURES VERIFIED SUCCESSFULLY!");

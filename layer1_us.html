@@ -5285,6 +5285,214 @@
         return '$' + (val || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+
+
+    function populateItemizedFields(container, prefix, data) {
+        if (!data) return;
+        const fields = [
+            'gross_revenue', 'returns_allowances', 'cogs_itemized', 'misc_income',
+            'exp_wages', 'exp_officer', 'exp_labor', 'exp_rent', 'exp_repairs',
+            'exp_bad_debts', 'exp_taxes', 'exp_interest_paid', 'exp_charity',
+            'exp_adv', 'exp_benefits', 'exp_pension', 'exp_depletion',
+            'exp_legal', 'exp_utilities', 'exp_insurance', 'exp_travel_meals',
+            'exp_office_supplies', 'exp_other'
+        ];
+        fields.forEach(field => {
+            const input = container.querySelector(`.${prefix}-${field.replace(/_/g, '-')}`);
+            if (input) {
+                input.value = (data[field] !== undefined && data[field] !== null) ? data[field] : '';
+            }
+        });
+        if (prefix === 'part') {
+            calculatePartCoreProfit(container.id);
+        } else if (prefix === 'scorp') {
+            calculateScorpCoreProfit(container.id);
+        } else if (prefix === 'ccorp') {
+            calculateCcorpCoreProfit(container.id);
+        }
+    }
+
+    window.calculatePartCoreProfit = function(rowId) {
+        const card = document.getElementById(rowId);
+        if (!card) return;
+        const gross = parseFormattedNumber(card.querySelector('.part-gross-revenue')?.value || '') || 0;
+        const returns = parseFormattedNumber(card.querySelector('.part-returns-allowances')?.value || '') || 0;
+        const cogs = parseFormattedNumber(card.querySelector('.part-cogs-itemized')?.value || '') || 0;
+        const misc = parseFormattedNumber(card.querySelector('.part-misc-income')?.value || '') || 0;
+
+        const expenses = [
+            '.part-exp-wages', '.part-exp-officer', '.part-exp-labor', '.part-exp-rent',
+            '.part-exp-repairs', '.part-exp-bad-debts', '.part-exp-taxes', '.part-exp-interest-paid',
+            '.part-exp-charity', '.part-exp-adv', '.part-exp-benefits', '.part-exp-pension',
+            '.part-exp-depletion', '.part-exp-legal', '.part-exp-utilities', '.part-exp-insurance',
+            '.part-exp-travel-meals', '.part-exp-office-supplies', '.part-exp-other'
+        ];
+        let totalExpenses = cogs;
+        let hasAnyInput = false;
+        if ((card.querySelector('.part-gross-revenue')?.value || '') !== '' ||
+            (card.querySelector('.part-returns-allowances')?.value || '') !== '' ||
+            (card.querySelector('.part-cogs-itemized')?.value || '') !== '' ||
+            (card.querySelector('.part-misc-income')?.value || '') !== '') {
+            hasAnyInput = true;
+        }
+        expenses.forEach(cls => {
+            const valStr = card.querySelector(cls)?.value || '';
+            if (valStr !== '') {
+                hasAnyInput = true;
+            }
+            totalExpenses += parseFormattedNumber(valStr) || 0;
+        });
+
+        const totalExpInput = card.querySelector('.part-total-expenses');
+        if (totalExpInput) {
+            totalExpInput.value = hasAnyInput ? totalExpenses : '';
+        }
+
+        if (hasAnyInput) {
+            const coreProfit = (gross - returns + misc) - totalExpenses;
+            const box1 = card.querySelector('.part-box1');
+            if (box1) {
+                box1.value = coreProfit;
+            }
+        }
+        if (card.classList.contains('us-branch-card')) {
+            syncBranchState('part');
+        } else {
+            syncPartK1State();
+        }
+    };
+
+    window.calculateScorpCoreProfit = function(rowId) {
+        const card = document.getElementById(rowId);
+        if (!card) return;
+        const gross = parseFormattedNumber(card.querySelector('.scorp-gross-revenue')?.value || '') || 0;
+        const returns = parseFormattedNumber(card.querySelector('.scorp-returns-allowances')?.value || '') || 0;
+        const cogs = parseFormattedNumber(card.querySelector('.scorp-cogs-itemized')?.value || '') || 0;
+        const misc = parseFormattedNumber(card.querySelector('.scorp-misc-income')?.value || '') || 0;
+
+        const expenses = [
+            '.scorp-exp-wages', '.scorp-exp-officer', '.scorp-exp-labor', '.scorp-exp-rent',
+            '.scorp-exp-repairs', '.scorp-exp-bad-debts', '.scorp-exp-taxes', '.scorp-exp-interest-paid',
+            '.scorp-exp-charity', '.scorp-exp-adv', '.scorp-exp-benefits', '.scorp-exp-pension',
+            '.scorp-exp-depletion', '.scorp-exp-legal', '.scorp-exp-utilities', '.scorp-exp-insurance',
+            '.scorp-exp-travel-meals', '.scorp-exp-office-supplies', '.scorp-exp-other'
+        ];
+        let totalExpenses = cogs;
+        let hasAnyInput = false;
+        if ((card.querySelector('.scorp-gross-revenue')?.value || '') !== '' ||
+            (card.querySelector('.scorp-returns-allowances')?.value || '') !== '' ||
+            (card.querySelector('.scorp-cogs-itemized')?.value || '') !== '' ||
+            (card.querySelector('.scorp-misc-income')?.value || '') !== '') {
+            hasAnyInput = true;
+        }
+        expenses.forEach(cls => {
+            const valStr = card.querySelector(cls)?.value || '';
+            if (valStr !== '') {
+                hasAnyInput = true;
+            }
+            totalExpenses += parseFormattedNumber(valStr) || 0;
+        });
+
+        const totalExpInput = card.querySelector('.scorp-total-expenses');
+        if (totalExpInput) {
+            totalExpInput.value = hasAnyInput ? totalExpenses : '';
+        }
+
+        if (hasAnyInput) {
+            const coreProfit = (gross - returns + misc) - totalExpenses;
+            const box1 = card.querySelector('.scorp-box1');
+            if (box1) {
+                box1.value = coreProfit;
+            }
+        }
+        if (card.classList.contains('us-branch-card')) {
+            syncBranchState('scorp');
+        } else {
+            syncScorpK1State();
+        }
+    };
+
+    window.calculateCcorpCoreProfit = function(rowId) {
+        const card = document.getElementById(rowId);
+        if (!card) return;
+        const gross = parseFormattedNumber(card.querySelector('.ccorp-gross-revenue')?.value || '') || 0;
+        const returns = parseFormattedNumber(card.querySelector('.ccorp-returns-allowances')?.value || '') || 0;
+        const cogs = parseFormattedNumber(card.querySelector('.ccorp-cogs-itemized')?.value || '') || 0;
+        const misc = parseFormattedNumber(card.querySelector('.ccorp-misc-income')?.value || '') || 0;
+
+        const expenses = [
+            '.ccorp-exp-wages', '.ccorp-exp-officer', '.ccorp-exp-labor', '.ccorp-exp-rent',
+            '.ccorp-exp-repairs', '.ccorp-exp-bad-debts', '.ccorp-exp-taxes', '.ccorp-exp-interest-paid',
+            '.ccorp-exp-charity', '.ccorp-exp-adv', '.ccorp-exp-benefits', '.ccorp-exp-pension',
+            '.ccorp-exp-depletion', '.ccorp-exp-legal', '.ccorp-exp-utilities', '.ccorp-exp-insurance',
+            '.ccorp-exp-travel-meals', '.ccorp-exp-office-supplies', '.ccorp-exp-other'
+        ];
+        let totalExpenses = 0;
+        let hasAnyInput = false;
+        if ((card.querySelector('.ccorp-gross-revenue')?.value || '') !== '' ||
+            (card.querySelector('.ccorp-returns-allowances')?.value || '') !== '' ||
+            (card.querySelector('.ccorp-cogs-itemized')?.value || '') !== '' ||
+            (card.querySelector('.ccorp-misc-income')?.value || '') !== '') {
+            hasAnyInput = true;
+        }
+        expenses.forEach(cls => {
+            const valStr = card.querySelector(cls)?.value || '';
+            if (valStr !== '') {
+                hasAnyInput = true;
+            }
+            totalExpenses += parseFormattedNumber(valStr) || 0;
+        });
+
+        const totalExpInput = card.querySelector('.ccorp-total-expenses');
+        if (totalExpInput) {
+            totalExpInput.value = hasAnyInput ? (totalExpenses + cogs) : '';
+        }
+
+        if (hasAnyInput) {
+            const grossInput = card.querySelector('.ccorp-gross');
+            if (grossInput) grossInput.value = card.querySelector('.ccorp-gross-revenue')?.value || '';
+
+            const returnsInput = card.querySelector('.ccorp-returns');
+            if (returnsInput) returnsInput.value = card.querySelector('.ccorp-returns-allowances')?.value || '';
+
+            const cogsInput = card.querySelector('.ccorp-cogs');
+            if (cogsInput) cogsInput.value = card.querySelector('.ccorp-cogs-itemized')?.value || '';
+
+            const miscInput = card.querySelector('.ccorp-misc');
+            if (miscInput) miscInput.value = card.querySelector('.ccorp-misc-income')?.value || '';
+
+            const opexInput = card.querySelector('.ccorp-opex');
+            if (opexInput) opexInput.value = totalExpenses;
+
+            const mappings = [
+                { itemized: '.ccorp-exp-wages', main: '.ccorp-wages' },
+                { itemized: '.ccorp-exp-officer', main: '.ccorp-officer-comp' },
+                { itemized: '.ccorp-exp-repairs', main: '.ccorp-repairs' },
+                { itemized: '.ccorp-exp-bad-debts', main: '.ccorp-bad-debts' },
+                { itemized: '.ccorp-exp-rent', main: '.ccorp-rent' },
+                { itemized: '.ccorp-exp-taxes', main: '.ccorp-taxes' },
+                { itemized: '.ccorp-exp-adv', main: '.ccorp-adv' },
+                { itemized: '.ccorp-exp-benefits', main: '.ccorp-benefits' },
+                { itemized: '.ccorp-exp-pension', main: '.ccorp-pension' },
+                { itemized: '.ccorp-exp-depletion', main: '.ccorp-depletion' },
+                { itemized: '.ccorp-exp-charity', main: '.ccorp-charitable' },
+                { itemized: '.ccorp-exp-interest-paid', main: '.ccorp-interest-paid' }
+            ];
+            mappings.forEach(m => {
+                const mInput = card.querySelector(m.main);
+                if (mInput) {
+                    mInput.value = card.querySelector(m.itemized)?.value || '';
+                }
+            });
+        }
+
+        if (card.classList.contains('us-branch-card')) {
+            syncBranchState('ccorp');
+        } else {
+            syncCcorpState();
+        }
+    };
+
     function updateUsConsolidatedSummary(rowId, type, headOfficeData, branches, ratio = 100.0) {
         const panel = document.getElementById('consolidated-summary-' + rowId);
         if (!panel) return;
@@ -7308,6 +7516,43 @@
                         <span class="text-brandCyan group-open:rotate-180 transition-transform">▼</span>
                     </summary>
                     <div class="p-4 border-t border-white/5">
+                        <!-- Optional Entity Operating Revenue & Expenses Panel -->
+                        <details class="group mt-2 mb-4 bg-black/30 rounded-lg p-3 border border-white/5">
+                            <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/60 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                                <span>Entity Operating Revenue & Expenses (Optional)</span>
+                                <span class="transition-transform group-open:rotate-180">▼</span>
+                            </summary>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="part-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="part-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="part-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="part-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                            </div>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Itemized Operating Expenses</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="part-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="part-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="part-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="part-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="part-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="part-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="part-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="part-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="part-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="part-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="part-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="part-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="part-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="part-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="part-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="part-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="part-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="part-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="part-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                            </div>
+                        </details>
+
                         <div class="text-[8px] font-bold text-white/50 uppercase mb-1 border-b border-white/5 pb-1">Core Business Operations</div>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
                             <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="part-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="validatePartK1Card(this); syncBranchState('${type}')"></div>
@@ -7407,6 +7652,44 @@
                         <span class="text-brandCyan group-open:rotate-180 transition-transform">▼</span>
                     </summary>
                     <div class="p-4 border-t border-white/5">
+                        <!-- Optional Entity Operating Revenue & Expenses Panel -->
+                        <details class="group mt-2 mb-4 bg-black/30 rounded-lg p-3 border border-white/5">
+                            <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/60 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                                <span>Entity Operating Revenue & Expenses (Optional)</span>
+                                <span class="transition-transform group-open:rotate-180">▼</span>
+                            </summary>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="scorp-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="scorp-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="scorp-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="scorp-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                            </div>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pb-1">Itemized Operating Expenses</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="scorp-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Officer Compensation</label><input type="text" class="scorp-exp-officer w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="scorp-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="scorp-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="scorp-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="scorp-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="scorp-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="scorp-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="scorp-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="scorp-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="scorp-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="scorp-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="scorp-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="scorp-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="scorp-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="scorp-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="scorp-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="scorp-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="scorp-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="scorp-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                            </div>
+                        </details>
+
                         <div class="text-[8px] font-bold text-white/50 uppercase mb-1 border-b border-white/5 pb-1">Core Business Operations</div>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
                             <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncBranchState('${type}')"></div>
@@ -7504,6 +7787,44 @@
                         <span class="text-brandCyan group-open:rotate-180 transition-transform">▼</span>
                     </summary>
                     <div class="p-4 border-t border-white/5">
+                        <!-- Optional Entity Operating Revenue & Expenses Panel -->
+                        <details class="group mt-2 mb-4 bg-black/30 rounded-lg p-3 border border-white/5">
+                            <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/60 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                                <span>Entity Operating Revenue & Expenses (Optional)</span>
+                                <span class="transition-transform group-open:rotate-180">▼</span>
+                            </summary>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="ccorp-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="ccorp-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="ccorp-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="ccorp-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                            </div>
+                            <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Itemized Operating Expenses</div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="ccorp-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Officer Compensation</label><input type="text" class="ccorp-exp-officer w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="ccorp-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="ccorp-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="ccorp-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="ccorp-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="ccorp-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="ccorp-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="ccorp-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="ccorp-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="ccorp-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="ccorp-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="ccorp-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="ccorp-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="ccorp-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="ccorp-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="ccorp-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="ccorp-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="ccorp-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${branchId}')"></div>
+                                <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="ccorp-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                            </div>
+                        </details>
+
                         <div class="text-[8px] font-bold text-white/50 uppercase mb-1 border-b border-white/5 pb-1">Core Business Operations</div>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans mb-3">
                             <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Revenue</label><input type="text" class="ccorp-gross w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncBranchState('${type}')"></div>
@@ -7683,6 +8004,7 @@
                 div.querySelector('.part-qbi-wages').value = branchData.qbi_wages_usd !== undefined ? branchData.qbi_wages_usd : '';
                 div.querySelector('.part-qbi-ubia').value = branchData.qbi_ubia_usd !== undefined ? branchData.qbi_ubia_usd : '';
                 validatePartK1Card(div.querySelector('.part-box1'));
+                populateItemizedFields(div, 'part', branchData);
             } else if (type === 'scorp') {
                 div.querySelector('.scorp-box1').value = branchData.ordinary_income_usd !== undefined ? branchData.ordinary_income_usd : '';
                 div.querySelector('.scorp-box2').value = branchData.net_rental_real_estate_usd !== undefined ? branchData.net_rental_real_estate_usd : '';
@@ -7711,6 +8033,7 @@
                 div.querySelector('.scorp-rental-active').checked = !!branchData.active_rental_participant;
                 div.querySelector('.scorp-qbi-wages').value = branchData.qbi_wages_usd !== undefined ? branchData.qbi_wages_usd : '';
                 div.querySelector('.scorp-qbi-ubia').value = branchData.qbi_ubia_usd !== undefined ? branchData.qbi_ubia_usd : '';
+                populateItemizedFields(div, 'scorp', branchData);
             } else if (type === 'ccorp') {
                 div.querySelector('.ccorp-gross').value = branchData.gross_receipts_usd !== undefined ? branchData.gross_receipts_usd : '';
                 div.querySelector('.ccorp-returns').value = branchData.returns_and_allowances_usd !== undefined ? branchData.returns_and_allowances_usd : '';
@@ -7736,6 +8059,7 @@
                 div.querySelector('.ccorp-charitable').value = branchData.charitable_donations_usd !== undefined ? branchData.charitable_donations_usd : '';
                 div.querySelector('.ccorp-interest-paid').value = branchData.interest_paid_usd !== undefined ? branchData.interest_paid_usd : '';
                 div.querySelector('.ccorp-nol').value = branchData.nol_carryover_usd !== undefined ? branchData.nol_carryover_usd : '';
+                populateItemizedFields(div, 'ccorp', branchData);
             } else {
                 div.querySelector('.branch-gross').value = branchData.gross_receipts_usd !== undefined ? branchData.gross_receipts_usd : '';
                 if (branchData.itemized_expenses) {
@@ -9189,6 +9513,29 @@
             industry_category: item.industry_category || null,
             partner_type: item.partner_type || 'limited',
             material_participation: item.material_participation || 'active',
+            gross_revenue: item.gross_revenue !== undefined ? item.gross_revenue : null,
+            returns_allowances: item.returns_allowances !== undefined ? item.returns_allowances : null,
+            cogs_itemized: item.cogs_itemized !== undefined ? item.cogs_itemized : null,
+            misc_income: item.misc_income !== undefined ? item.misc_income : null,
+            exp_wages: item.exp_wages !== undefined ? item.exp_wages : null,
+            exp_officer: item.exp_officer !== undefined ? item.exp_officer : null,
+            exp_labor: item.exp_labor !== undefined ? item.exp_labor : null,
+            exp_rent: item.exp_rent !== undefined ? item.exp_rent : null,
+            exp_repairs: item.exp_repairs !== undefined ? item.exp_repairs : null,
+            exp_bad_debts: item.exp_bad_debts !== undefined ? item.exp_bad_debts : null,
+            exp_taxes: item.exp_taxes !== undefined ? item.exp_taxes : null,
+            exp_interest_paid: item.exp_interest_paid !== undefined ? item.exp_interest_paid : null,
+            exp_charity: item.exp_charity !== undefined ? item.exp_charity : null,
+            exp_adv: item.exp_adv !== undefined ? item.exp_adv : null,
+            exp_benefits: item.exp_benefits !== undefined ? item.exp_benefits : null,
+            exp_pension: item.exp_pension !== undefined ? item.exp_pension : null,
+            exp_depletion: item.exp_depletion !== undefined ? item.exp_depletion : null,
+            exp_legal: item.exp_legal !== undefined ? item.exp_legal : null,
+            exp_utilities: item.exp_utilities !== undefined ? item.exp_utilities : null,
+            exp_insurance: item.exp_insurance !== undefined ? item.exp_insurance : null,
+            exp_travel_meals: item.exp_travel_meals !== undefined ? item.exp_travel_meals : null,
+            exp_office_supplies: item.exp_office_supplies !== undefined ? item.exp_office_supplies : null,
+            exp_other: item.exp_other !== undefined ? item.exp_other : null,
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
             at_risk_basis_usd: item.at_risk_basis_usd !== undefined ? item.at_risk_basis_usd : null,
             active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
@@ -9360,12 +9707,49 @@
 
             <div class="part-warning-banner hidden p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-[10px] text-amber-200 flex flex-col gap-1 mt-2 mb-2"></div>
 
+            <!-- Optional Entity Operating Revenue & Expenses Panel -->
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5" open>
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Entity Operating Revenue & Expenses (Optional)</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="part-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="part-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="part-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="part-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Itemized Operating Expenses</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="part-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="part-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="part-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="part-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="part-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="part-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="part-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="part-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="part-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="part-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="part-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="part-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="part-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="part-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="part-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="part-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="part-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="part-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculatePartCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="part-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                </div>
+            </details>
+
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
                 <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
                     <span>Partnership Ledger & QBI Details</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
+<div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="part-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="validatePartK1Card(this); syncPartK1State()"></div>
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Real Estate Profit</label><input type="text" class="part-box2 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="validatePartK1Card(this); syncPartK1State()"></div>
@@ -9545,6 +9929,7 @@
             div.querySelector('.part-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.part-qbi-wages').value = data.qbi_wages_usd || '';
             div.querySelector('.part-qbi-ubia').value = data.qbi_ubia_usd || '';
+            populateItemizedFields(div, 'part', data);
 
             // Populate advanced partner details
             if (data.partners && data.partners.length > 0) {
@@ -9742,6 +10127,28 @@
                         id: brDiv.id,
                         branch_name: brDiv.querySelector('.branch-name').value || null,
                         state: brDiv.querySelector('.branch-state').value || '',
+                        gross_revenue: parseFormattedNumber(brDiv.querySelector('.part-gross-revenue')?.value) || null,
+                        returns_allowances: parseFormattedNumber(brDiv.querySelector('.part-returns-allowances')?.value) || null,
+                        cogs_itemized: parseFormattedNumber(brDiv.querySelector('.part-cogs-itemized')?.value) || null,
+                        misc_income: parseFormattedNumber(brDiv.querySelector('.part-misc-income')?.value) || null,
+                        exp_wages: parseFormattedNumber(brDiv.querySelector('.part-exp-wages')?.value) || null,
+                        exp_labor: parseFormattedNumber(brDiv.querySelector('.part-exp-labor')?.value) || null,
+                        exp_rent: parseFormattedNumber(brDiv.querySelector('.part-exp-rent')?.value) || null,
+                        exp_repairs: parseFormattedNumber(brDiv.querySelector('.part-exp-repairs')?.value) || null,
+                        exp_bad_debts: parseFormattedNumber(brDiv.querySelector('.part-exp-bad-debts')?.value) || null,
+                        exp_taxes: parseFormattedNumber(brDiv.querySelector('.part-exp-taxes')?.value) || null,
+                        exp_interest_paid: parseFormattedNumber(brDiv.querySelector('.part-exp-interest-paid')?.value) || null,
+                        exp_charity: parseFormattedNumber(brDiv.querySelector('.part-exp-charity')?.value) || null,
+                        exp_adv: parseFormattedNumber(brDiv.querySelector('.part-exp-adv')?.value) || null,
+                        exp_benefits: parseFormattedNumber(brDiv.querySelector('.part-exp-benefits')?.value) || null,
+                        exp_pension: parseFormattedNumber(brDiv.querySelector('.part-exp-pension')?.value) || null,
+                        exp_depletion: parseFormattedNumber(brDiv.querySelector('.part-exp-depletion')?.value) || null,
+                        exp_legal: parseFormattedNumber(brDiv.querySelector('.part-exp-legal')?.value) || null,
+                        exp_utilities: parseFormattedNumber(brDiv.querySelector('.part-exp-utilities')?.value) || null,
+                        exp_insurance: parseFormattedNumber(brDiv.querySelector('.part-exp-insurance')?.value) || null,
+                        exp_travel_meals: parseFormattedNumber(brDiv.querySelector('.part-exp-travel-meals')?.value) || null,
+                        exp_office_supplies: parseFormattedNumber(brDiv.querySelector('.part-exp-office-supplies')?.value) || null,
+                        exp_other: parseFormattedNumber(brDiv.querySelector('.part-exp-other')?.value) || null,
                         ordinary_income_usd: parseFormattedNumber(brDiv.querySelector('.part-box1').value) || null,
                         net_rental_real_estate_usd: parseFormattedNumber(brDiv.querySelector('.part-box2').value) || null,
                         other_rental_income_usd: parseFormattedNumber(brDiv.querySelector('.part-box3').value) || null,
@@ -9856,6 +10263,28 @@
                 industry_category: div.querySelector('.part-industry-category').value || null,
                 has_part_income: toggleChecked,
                 branches: branches,
+                gross_revenue: parseFormattedNumber(div.querySelector('.part-gross-revenue')?.value) || null,
+                returns_allowances: parseFormattedNumber(div.querySelector('.part-returns-allowances')?.value) || null,
+                cogs_itemized: parseFormattedNumber(div.querySelector('.part-cogs-itemized')?.value) || null,
+                misc_income: parseFormattedNumber(div.querySelector('.part-misc-income')?.value) || null,
+                exp_wages: parseFormattedNumber(div.querySelector('.part-exp-wages')?.value) || null,
+                exp_labor: parseFormattedNumber(div.querySelector('.part-exp-labor')?.value) || null,
+                exp_rent: parseFormattedNumber(div.querySelector('.part-exp-rent')?.value) || null,
+                exp_repairs: parseFormattedNumber(div.querySelector('.part-exp-repairs')?.value) || null,
+                exp_bad_debts: parseFormattedNumber(div.querySelector('.part-exp-bad-debts')?.value) || null,
+                exp_taxes: parseFormattedNumber(div.querySelector('.part-exp-taxes')?.value) || null,
+                exp_interest_paid: parseFormattedNumber(div.querySelector('.part-exp-interest-paid')?.value) || null,
+                exp_charity: parseFormattedNumber(div.querySelector('.part-exp-charity')?.value) || null,
+                exp_adv: parseFormattedNumber(div.querySelector('.part-exp-adv')?.value) || null,
+                exp_benefits: parseFormattedNumber(div.querySelector('.part-exp-benefits')?.value) || null,
+                exp_pension: parseFormattedNumber(div.querySelector('.part-exp-pension')?.value) || null,
+                exp_depletion: parseFormattedNumber(div.querySelector('.part-exp-depletion')?.value) || null,
+                exp_legal: parseFormattedNumber(div.querySelector('.part-exp-legal')?.value) || null,
+                exp_utilities: parseFormattedNumber(div.querySelector('.part-exp-utilities')?.value) || null,
+                exp_insurance: parseFormattedNumber(div.querySelector('.part-exp-insurance')?.value) || null,
+                exp_travel_meals: parseFormattedNumber(div.querySelector('.part-exp-travel-meals')?.value) || null,
+                exp_office_supplies: parseFormattedNumber(div.querySelector('.part-exp-office-supplies')?.value) || null,
+                exp_other: parseFormattedNumber(div.querySelector('.part-exp-other')?.value) || null,
                 partner_type: div.querySelector('.part-partner-type').value || 'limited',
                 material_participation: div.querySelector('.part-participation').value || 'active',
                 tax_basis_usd: parseFormattedNumber(div.querySelector('.part-basis').value) || null,
@@ -9948,6 +10377,29 @@
             industry_category: item.industry_category || null,
             ownership_percent: item.ownership_percent !== undefined ? item.ownership_percent : null,
             material_participation: item.material_participation || 'active',
+            gross_revenue: item.gross_revenue !== undefined ? item.gross_revenue : null,
+            returns_allowances: item.returns_allowances !== undefined ? item.returns_allowances : null,
+            cogs_itemized: item.cogs_itemized !== undefined ? item.cogs_itemized : null,
+            misc_income: item.misc_income !== undefined ? item.misc_income : null,
+            exp_wages: item.exp_wages !== undefined ? item.exp_wages : null,
+            exp_officer: item.exp_officer !== undefined ? item.exp_officer : null,
+            exp_labor: item.exp_labor !== undefined ? item.exp_labor : null,
+            exp_rent: item.exp_rent !== undefined ? item.exp_rent : null,
+            exp_repairs: item.exp_repairs !== undefined ? item.exp_repairs : null,
+            exp_bad_debts: item.exp_bad_debts !== undefined ? item.exp_bad_debts : null,
+            exp_taxes: item.exp_taxes !== undefined ? item.exp_taxes : null,
+            exp_interest_paid: item.exp_interest_paid !== undefined ? item.exp_interest_paid : null,
+            exp_charity: item.exp_charity !== undefined ? item.exp_charity : null,
+            exp_adv: item.exp_adv !== undefined ? item.exp_adv : null,
+            exp_benefits: item.exp_benefits !== undefined ? item.exp_benefits : null,
+            exp_pension: item.exp_pension !== undefined ? item.exp_pension : null,
+            exp_depletion: item.exp_depletion !== undefined ? item.exp_depletion : null,
+            exp_legal: item.exp_legal !== undefined ? item.exp_legal : null,
+            exp_utilities: item.exp_utilities !== undefined ? item.exp_utilities : null,
+            exp_insurance: item.exp_insurance !== undefined ? item.exp_insurance : null,
+            exp_travel_meals: item.exp_travel_meals !== undefined ? item.exp_travel_meals : null,
+            exp_office_supplies: item.exp_office_supplies !== undefined ? item.exp_office_supplies : null,
+            exp_other: item.exp_other !== undefined ? item.exp_other : null,
             tax_basis_usd: item.tax_basis_usd !== undefined ? item.tax_basis_usd : null,
             at_risk_basis_usd: item.at_risk_basis_usd !== undefined ? item.at_risk_basis_usd : null,
             active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
@@ -10079,12 +10531,50 @@
                     <div class="scorp-shareholders-list-${rowId} flex flex-col gap-2"></div>
                 </div>
             </details>
+            <!-- Optional Entity Operating Revenue & Expenses Panel -->
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5" open>
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Entity Operating Revenue & Expenses (Optional)</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="scorp-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="scorp-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="scorp-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="scorp-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Itemized Operating Expenses</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="scorp-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Officer Compensation</label><input type="text" class="scorp-exp-officer w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="scorp-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="scorp-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="scorp-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="scorp-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="scorp-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="scorp-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="scorp-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="scorp-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="scorp-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="scorp-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="scorp-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="scorp-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="scorp-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="scorp-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="scorp-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="scorp-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="scorp-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateScorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="scorp-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                </div>
+            </details>
+
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
                 <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
                     <span>S-Corp Ledger & QBI Details (Form 1120-S K-1)</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
+<div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Core Profit (Loss)</label><input type="text" class="scorp-box1 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Real Estate Profit</label><input type="text" class="scorp-box2 w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncScorpK1State()"></div>
@@ -10225,6 +10715,7 @@
             div.querySelector('.scorp-rental-active').checked = !!data.active_rental_participant;
             div.querySelector('.scorp-qbi-wages').value = data.qbi_wages_usd || '';
             div.querySelector('.scorp-qbi-ubia').value = data.qbi_ubia_usd || '';
+            populateItemizedFields(div, 'scorp', data);
 
             // Populate State Allocations
             const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
@@ -10342,6 +10833,29 @@
                         id: brDiv.id,
                         branch_name: brDiv.querySelector('.branch-name').value || null,
                         state: brDiv.querySelector('.branch-state').value || '',
+                        gross_revenue: parseFormattedNumber(brDiv.querySelector('.scorp-gross-revenue')?.value) || null,
+                        returns_allowances: parseFormattedNumber(brDiv.querySelector('.scorp-returns-allowances')?.value) || null,
+                        cogs_itemized: parseFormattedNumber(brDiv.querySelector('.scorp-cogs-itemized')?.value) || null,
+                        misc_income: parseFormattedNumber(brDiv.querySelector('.scorp-misc-income')?.value) || null,
+                        exp_wages: parseFormattedNumber(brDiv.querySelector('.scorp-exp-wages')?.value) || null,
+                        exp_officer: parseFormattedNumber(brDiv.querySelector('.scorp-exp-officer')?.value) || null,
+                        exp_labor: parseFormattedNumber(brDiv.querySelector('.scorp-exp-labor')?.value) || null,
+                        exp_rent: parseFormattedNumber(brDiv.querySelector('.scorp-exp-rent')?.value) || null,
+                        exp_repairs: parseFormattedNumber(brDiv.querySelector('.scorp-exp-repairs')?.value) || null,
+                        exp_bad_debts: parseFormattedNumber(brDiv.querySelector('.scorp-exp-bad-debts')?.value) || null,
+                        exp_taxes: parseFormattedNumber(brDiv.querySelector('.scorp-exp-taxes')?.value) || null,
+                        exp_interest_paid: parseFormattedNumber(brDiv.querySelector('.scorp-exp-interest-paid')?.value) || null,
+                        exp_charity: parseFormattedNumber(brDiv.querySelector('.scorp-exp-charity')?.value) || null,
+                        exp_adv: parseFormattedNumber(brDiv.querySelector('.scorp-exp-adv')?.value) || null,
+                        exp_benefits: parseFormattedNumber(brDiv.querySelector('.scorp-exp-benefits')?.value) || null,
+                        exp_pension: parseFormattedNumber(brDiv.querySelector('.scorp-exp-pension')?.value) || null,
+                        exp_depletion: parseFormattedNumber(brDiv.querySelector('.scorp-exp-depletion')?.value) || null,
+                        exp_legal: parseFormattedNumber(brDiv.querySelector('.scorp-exp-legal')?.value) || null,
+                        exp_utilities: parseFormattedNumber(brDiv.querySelector('.scorp-exp-utilities')?.value) || null,
+                        exp_insurance: parseFormattedNumber(brDiv.querySelector('.scorp-exp-insurance')?.value) || null,
+                        exp_travel_meals: parseFormattedNumber(brDiv.querySelector('.scorp-exp-travel-meals')?.value) || null,
+                        exp_office_supplies: parseFormattedNumber(brDiv.querySelector('.scorp-exp-office-supplies')?.value) || null,
+                        exp_other: parseFormattedNumber(brDiv.querySelector('.scorp-exp-other')?.value) || null,
                         ordinary_income_usd: parseFormattedNumber(brDiv.querySelector('.scorp-box1').value) || null,
                         net_rental_real_estate_usd: parseFormattedNumber(brDiv.querySelector('.scorp-box2').value) || null,
                         other_rental_income_usd: parseFormattedNumber(brDiv.querySelector('.scorp-box3').value) || null,
@@ -10426,6 +10940,29 @@
                 naics_code: div.querySelector('.scorp-naics').value || null,
                 industry_category: div.querySelector('.scorp-industry-category').value || null,
                 has_scorp_income: toggleChecked,
+                gross_revenue: parseFormattedNumber(div.querySelector('.scorp-gross-revenue')?.value) || null,
+                returns_allowances: parseFormattedNumber(div.querySelector('.scorp-returns-allowances')?.value) || null,
+                cogs_itemized: parseFormattedNumber(div.querySelector('.scorp-cogs-itemized')?.value) || null,
+                misc_income: parseFormattedNumber(div.querySelector('.scorp-misc-income')?.value) || null,
+                exp_wages: parseFormattedNumber(div.querySelector('.scorp-exp-wages')?.value) || null,
+                exp_officer: parseFormattedNumber(div.querySelector('.scorp-exp-officer')?.value) || null,
+                exp_labor: parseFormattedNumber(div.querySelector('.scorp-exp-labor')?.value) || null,
+                exp_rent: parseFormattedNumber(div.querySelector('.scorp-exp-rent')?.value) || null,
+                exp_repairs: parseFormattedNumber(div.querySelector('.scorp-exp-repairs')?.value) || null,
+                exp_bad_debts: parseFormattedNumber(div.querySelector('.scorp-exp-bad-debts')?.value) || null,
+                exp_taxes: parseFormattedNumber(div.querySelector('.scorp-exp-taxes')?.value) || null,
+                exp_interest_paid: parseFormattedNumber(div.querySelector('.scorp-exp-interest-paid')?.value) || null,
+                exp_charity: parseFormattedNumber(div.querySelector('.scorp-exp-charity')?.value) || null,
+                exp_adv: parseFormattedNumber(div.querySelector('.scorp-exp-adv')?.value) || null,
+                exp_benefits: parseFormattedNumber(div.querySelector('.scorp-exp-benefits')?.value) || null,
+                exp_pension: parseFormattedNumber(div.querySelector('.scorp-exp-pension')?.value) || null,
+                exp_depletion: parseFormattedNumber(div.querySelector('.scorp-exp-depletion')?.value) || null,
+                exp_legal: parseFormattedNumber(div.querySelector('.scorp-exp-legal')?.value) || null,
+                exp_utilities: parseFormattedNumber(div.querySelector('.scorp-exp-utilities')?.value) || null,
+                exp_insurance: parseFormattedNumber(div.querySelector('.scorp-exp-insurance')?.value) || null,
+                exp_travel_meals: parseFormattedNumber(div.querySelector('.scorp-exp-travel-meals')?.value) || null,
+                exp_office_supplies: parseFormattedNumber(div.querySelector('.scorp-exp-office-supplies')?.value) || null,
+                exp_other: parseFormattedNumber(div.querySelector('.scorp-exp-other')?.value) || null,
                 ownership_percent: taxpayer ? taxpayer.percent : null,
                 material_participation: div.querySelector('.scorp-participation').value || 'active',
                 tax_basis_usd: parseFormattedNumber(div.querySelector('.scorp-basis').value) || null,
@@ -10497,6 +11034,29 @@
             business_name: item.business_name || null,
             ein: item.ein || null,
             industry_category: item.industry_category || null,
+            gross_revenue: item.gross_revenue !== undefined ? item.gross_revenue : null,
+            returns_allowances: item.returns_allowances !== undefined ? item.returns_allowances : null,
+            cogs_itemized: item.cogs_itemized !== undefined ? item.cogs_itemized : null,
+            misc_income: item.misc_income !== undefined ? item.misc_income : null,
+            exp_wages: item.exp_wages !== undefined ? item.exp_wages : null,
+            exp_officer: item.exp_officer !== undefined ? item.exp_officer : null,
+            exp_labor: item.exp_labor !== undefined ? item.exp_labor : null,
+            exp_rent: item.exp_rent !== undefined ? item.exp_rent : null,
+            exp_repairs: item.exp_repairs !== undefined ? item.exp_repairs : null,
+            exp_bad_debts: item.exp_bad_debts !== undefined ? item.exp_bad_debts : null,
+            exp_taxes: item.exp_taxes !== undefined ? item.exp_taxes : null,
+            exp_interest_paid: item.exp_interest_paid !== undefined ? item.exp_interest_paid : null,
+            exp_charity: item.exp_charity !== undefined ? item.exp_charity : null,
+            exp_adv: item.exp_adv !== undefined ? item.exp_adv : null,
+            exp_benefits: item.exp_benefits !== undefined ? item.exp_benefits : null,
+            exp_pension: item.exp_pension !== undefined ? item.exp_pension : null,
+            exp_depletion: item.exp_depletion !== undefined ? item.exp_depletion : null,
+            exp_legal: item.exp_legal !== undefined ? item.exp_legal : null,
+            exp_utilities: item.exp_utilities !== undefined ? item.exp_utilities : null,
+            exp_insurance: item.exp_insurance !== undefined ? item.exp_insurance : null,
+            exp_travel_meals: item.exp_travel_meals !== undefined ? item.exp_travel_meals : null,
+            exp_office_supplies: item.exp_office_supplies !== undefined ? item.exp_office_supplies : null,
+            exp_other: item.exp_other !== undefined ? item.exp_other : null,
             gross_receipts_usd: item.gross_receipts_usd !== undefined ? item.gross_receipts_usd : null,
             returns_and_allowances_usd: item.returns_and_allowances_usd !== undefined ? item.returns_and_allowances_usd : null,
             cogs_usd: item.cogs_usd !== undefined ? item.cogs_usd : null,
@@ -10600,13 +11160,50 @@
                     </select>
                 </div>
             </div>
+            <!-- Optional Entity Operating Revenue & Expenses Panel -->
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5" open>
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Entity Operating Revenue & Expenses (Optional)</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="ccorp-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="ccorp-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="ccorp-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="ccorp-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Itemized Operating Expenses</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="ccorp-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Officer Compensation</label><input type="text" class="ccorp-exp-officer w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="ccorp-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="ccorp-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="ccorp-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="ccorp-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="ccorp-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="ccorp-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="ccorp-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="ccorp-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="ccorp-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="ccorp-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="ccorp-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="ccorp-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="ccorp-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="ccorp-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="ccorp-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="ccorp-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="ccorp-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateCcorpCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="ccorp-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                </div>
+            </details>
+
             <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
                 <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
                     <span>C-Corp Ledger Details (Form 1120)</span>
                     <span class="transition-transform group-open:rotate-180">▼</span>
                 </summary>
-                
-                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
+<div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Core Business Operations</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Revenue</label><input type="text" class="ccorp-gross w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncCcorpState()"></div>
                     <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="ccorp-returns w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncCcorpState()"></div>
@@ -10761,6 +11358,7 @@
             div.querySelector('.ccorp-divs').value = data.dividends_paid_usd || '';
             div.querySelector('.ccorp-div-type').value = data.dividend_type || 'qualified';
             div.querySelector('.ccorp-qsbs').checked = !!data.is_qsbs;
+            populateItemizedFields(div, 'ccorp', data);
             
             const assetContainer = div.querySelector(`.asset-list-${rowId}`);
             const assets = data.assets || [];
@@ -10919,6 +11517,29 @@
                         id: brDiv.id,
                         branch_name: brDiv.querySelector('.branch-name').value || null,
                         state: brDiv.querySelector('.branch-state').value || '',
+                        gross_revenue: parseFormattedNumber(brDiv.querySelector('.ccorp-gross-revenue')?.value) || null,
+                        returns_allowances: parseFormattedNumber(brDiv.querySelector('.ccorp-returns-allowances')?.value) || null,
+                        cogs_itemized: parseFormattedNumber(brDiv.querySelector('.ccorp-cogs-itemized')?.value) || null,
+                        misc_income: parseFormattedNumber(brDiv.querySelector('.ccorp-misc-income')?.value) || null,
+                        exp_wages: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-wages')?.value) || null,
+                        exp_officer: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-officer')?.value) || null,
+                        exp_labor: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-labor')?.value) || null,
+                        exp_rent: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-rent')?.value) || null,
+                        exp_repairs: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-repairs')?.value) || null,
+                        exp_bad_debts: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-bad-debts')?.value) || null,
+                        exp_taxes: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-taxes')?.value) || null,
+                        exp_interest_paid: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-interest-paid')?.value) || null,
+                        exp_charity: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-charity')?.value) || null,
+                        exp_adv: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-adv')?.value) || null,
+                        exp_benefits: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-benefits')?.value) || null,
+                        exp_pension: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-pension')?.value) || null,
+                        exp_depletion: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-depletion')?.value) || null,
+                        exp_legal: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-legal')?.value) || null,
+                        exp_utilities: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-utilities')?.value) || null,
+                        exp_insurance: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-insurance')?.value) || null,
+                        exp_travel_meals: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-travel-meals')?.value) || null,
+                        exp_office_supplies: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-office-supplies')?.value) || null,
+                        exp_other: parseFormattedNumber(brDiv.querySelector('.ccorp-exp-other')?.value) || null,
                         gross_receipts_usd: parseFormattedNumber(brDiv.querySelector('.ccorp-gross').value) || null,
                         returns_and_allowances_usd: parseFormattedNumber(brDiv.querySelector('.ccorp-returns').value) || null,
                         cogs_usd: parseFormattedNumber(brDiv.querySelector('.ccorp-cogs').value) || null,
@@ -11054,6 +11675,29 @@
                 ein: div.querySelector('.ccorp-ein').value || null,
                 industry_category: div.querySelector('.ccorp-industry-category').value || null,
                 has_ccorp: toggleChecked,
+                gross_revenue: parseFormattedNumber(div.querySelector('.ccorp-gross-revenue')?.value) || null,
+                returns_allowances: parseFormattedNumber(div.querySelector('.ccorp-returns-allowances')?.value) || null,
+                cogs_itemized: parseFormattedNumber(div.querySelector('.ccorp-cogs-itemized')?.value) || null,
+                misc_income: parseFormattedNumber(div.querySelector('.ccorp-misc-income')?.value) || null,
+                exp_wages: parseFormattedNumber(div.querySelector('.ccorp-exp-wages')?.value) || null,
+                exp_officer: parseFormattedNumber(div.querySelector('.ccorp-exp-officer')?.value) || null,
+                exp_labor: parseFormattedNumber(div.querySelector('.ccorp-exp-labor')?.value) || null,
+                exp_rent: parseFormattedNumber(div.querySelector('.ccorp-exp-rent')?.value) || null,
+                exp_repairs: parseFormattedNumber(div.querySelector('.ccorp-exp-repairs')?.value) || null,
+                exp_bad_debts: parseFormattedNumber(div.querySelector('.ccorp-exp-bad-debts')?.value) || null,
+                exp_taxes: parseFormattedNumber(div.querySelector('.ccorp-exp-taxes')?.value) || null,
+                exp_interest_paid: parseFormattedNumber(div.querySelector('.ccorp-exp-interest-paid')?.value) || null,
+                exp_charity: parseFormattedNumber(div.querySelector('.ccorp-exp-charity')?.value) || null,
+                exp_adv: parseFormattedNumber(div.querySelector('.ccorp-exp-adv')?.value) || null,
+                exp_benefits: parseFormattedNumber(div.querySelector('.ccorp-exp-benefits')?.value) || null,
+                exp_pension: parseFormattedNumber(div.querySelector('.ccorp-exp-pension')?.value) || null,
+                exp_depletion: parseFormattedNumber(div.querySelector('.ccorp-exp-depletion')?.value) || null,
+                exp_legal: parseFormattedNumber(div.querySelector('.ccorp-exp-legal')?.value) || null,
+                exp_utilities: parseFormattedNumber(div.querySelector('.ccorp-exp-utilities')?.value) || null,
+                exp_insurance: parseFormattedNumber(div.querySelector('.ccorp-exp-insurance')?.value) || null,
+                exp_travel_meals: parseFormattedNumber(div.querySelector('.ccorp-exp-travel-meals')?.value) || null,
+                exp_office_supplies: parseFormattedNumber(div.querySelector('.ccorp-exp-office-supplies')?.value) || null,
+                exp_other: parseFormattedNumber(div.querySelector('.ccorp-exp-other')?.value) || null,
                 gross_receipts_usd: gross || null,
                 returns_and_allowances_usd: returns || null,
                 cogs_usd: cogs || null,
