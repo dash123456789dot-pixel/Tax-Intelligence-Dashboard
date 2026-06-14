@@ -5309,8 +5309,62 @@
             calculateScorpCoreProfit(container.id);
         } else if (prefix === 'ccorp') {
             calculateCcorpCoreProfit(container.id);
+        } else if (prefix === 'trust') {
+            calculateTrustCoreProfit(container.id);
         }
     }
+
+    window.calculateTrustCoreProfit = function(rowId) {
+        const card = document.getElementById(rowId);
+        if (!card) return;
+        const gross = parseFormattedNumber(card.querySelector('.trust-gross-revenue')?.value || '') || 0;
+        const returns = parseFormattedNumber(card.querySelector('.trust-returns-allowances')?.value || '') || 0;
+        const cogs = parseFormattedNumber(card.querySelector('.trust-cogs-itemized')?.value || '') || 0;
+        const misc = parseFormattedNumber(card.querySelector('.trust-misc-income')?.value || '') || 0;
+        const fidFees = parseFormattedNumber(card.querySelector('.trust-fiduciary-fees')?.value || '') || 0;
+        const profFees = parseFormattedNumber(card.querySelector('.trust-professional-fees')?.value || '') || 0;
+        const adminExp = parseFormattedNumber(card.querySelector('.trust-admin-expenses')?.value || '') || 0;
+
+        const expenses = [
+            '.trust-exp-wages', '.trust-exp-officer', '.trust-exp-labor', '.trust-exp-rent',
+            '.trust-exp-repairs', '.trust-exp-bad-debts', '.trust-exp-taxes', '.trust-exp-interest-paid',
+            '.trust-exp-charity', '.trust-exp-adv', '.trust-exp-benefits', '.trust-exp-pension',
+            '.trust-exp-depletion', '.trust-exp-legal', '.trust-exp-utilities', '.trust-exp-insurance',
+            '.trust-exp-travel-meals', '.trust-exp-office-supplies', '.trust-exp-other'
+        ];
+        let totalExpenses = cogs + fidFees + profFees + adminExp;
+        let hasAnyInput = false;
+        if ((card.querySelector('.trust-gross-revenue')?.value || '') !== '' ||
+            (card.querySelector('.trust-returns-allowances')?.value || '') !== '' ||
+            (card.querySelector('.trust-cogs-itemized')?.value || '') !== '' ||
+            (card.querySelector('.trust-misc-income')?.value || '') !== '' ||
+            (card.querySelector('.trust-fiduciary-fees')?.value || '') !== '' ||
+            (card.querySelector('.trust-professional-fees')?.value || '') !== '' ||
+            (card.querySelector('.trust-admin-expenses')?.value || '') !== '') {
+            hasAnyInput = true;
+        }
+        expenses.forEach(cls => {
+            const valStr = card.querySelector(cls)?.value || '';
+            if (valStr !== '') {
+                hasAnyInput = true;
+            }
+            totalExpenses += parseFormattedNumber(valStr) || 0;
+        });
+
+        const totalExpInput = card.querySelector('.trust-total-expenses');
+        if (totalExpInput) {
+            totalExpInput.value = hasAnyInput ? totalExpenses : '';
+        }
+
+        if (hasAnyInput) {
+            const ordinaryIncome = (gross - returns + misc) - totalExpenses;
+            const box1 = card.querySelector('.trust-box1');
+            if (box1) {
+                box1.value = ordinaryIncome;
+            }
+        }
+        syncTrustK1State();
+    };
 
     window.calculatePartCoreProfit = function(rowId) {
         const card = document.getElementById(rowId);
@@ -11748,16 +11802,53 @@
     function normalizeTrustK1Item(item) {
         if (!item) return {
             id: 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
-            business_name: null, ein: null, industry_category: null, ordinary_income_usd: null, interest_income_usd: null,
+            business_name: null, ein: null, industry_category: null, trust_type: 'simple',
+            fiduciary_fees: null, professional_fees: null, admin_expenses: null,
+            gross_revenue: null, returns_allowances: null, cogs_itemized: null, misc_income: null,
+            exp_wages: null, exp_officer: null, exp_labor: null, exp_rent: null, exp_repairs: null,
+            exp_bad_debts: null, exp_taxes: null, exp_interest_paid: null, exp_charity: null,
+            exp_adv: null, exp_benefits: null, exp_pension: null, exp_depletion: null,
+            exp_legal: null, exp_utilities: null, exp_insurance: null, exp_travel_meals: null,
+            exp_office_supplies: null, exp_other: null,
+            ordinary_income_usd: null, interest_income_usd: null,
             ordinary_dividends_usd: null, qualified_dividends_usd: null, stcg_usd: null, ltcg_usd: null,
             qbi_eligible: false, is_specified_service_trade: false, material_participation: 'active',
-            active_rental_participant: false, net_rental_real_estate_usd: null, depreciation_allocation_usd: null
+            active_rental_participant: false, net_rental_real_estate_usd: null, depreciation_allocation_usd: null,
+            beneficiaries: [],
+            state_allocations: []
         };
         return {
             id: item.id || 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5),
             business_name: item.business_name || null,
             ein: item.ein || null,
             industry_category: item.industry_category || null,
+            trust_type: item.trust_type || 'simple',
+            fiduciary_fees: item.fiduciary_fees !== undefined ? item.fiduciary_fees : null,
+            professional_fees: item.professional_fees !== undefined ? item.professional_fees : null,
+            admin_expenses: item.admin_expenses !== undefined ? item.admin_expenses : null,
+            gross_revenue: item.gross_revenue !== undefined ? item.gross_revenue : null,
+            returns_allowances: item.returns_allowances !== undefined ? item.returns_allowances : null,
+            cogs_itemized: item.cogs_itemized !== undefined ? item.cogs_itemized : null,
+            misc_income: item.misc_income !== undefined ? item.misc_income : null,
+            exp_wages: item.exp_wages !== undefined ? item.exp_wages : null,
+            exp_officer: item.exp_officer !== undefined ? item.exp_officer : null,
+            exp_labor: item.exp_labor !== undefined ? item.exp_labor : null,
+            exp_rent: item.exp_rent !== undefined ? item.exp_rent : null,
+            exp_repairs: item.exp_repairs !== undefined ? item.exp_repairs : null,
+            exp_bad_debts: item.exp_bad_debts !== undefined ? item.exp_bad_debts : null,
+            exp_taxes: item.exp_taxes !== undefined ? item.exp_taxes : null,
+            exp_interest_paid: item.exp_interest_paid !== undefined ? item.exp_interest_paid : null,
+            exp_charity: item.exp_charity !== undefined ? item.exp_charity : null,
+            exp_adv: item.exp_adv !== undefined ? item.exp_adv : null,
+            exp_benefits: item.exp_benefits !== undefined ? item.exp_benefits : null,
+            exp_pension: item.exp_pension !== undefined ? item.exp_pension : null,
+            exp_depletion: item.exp_depletion !== undefined ? item.exp_depletion : null,
+            exp_legal: item.exp_legal !== undefined ? item.exp_legal : null,
+            exp_utilities: item.exp_utilities !== undefined ? item.exp_utilities : null,
+            exp_insurance: item.exp_insurance !== undefined ? item.exp_insurance : null,
+            exp_travel_meals: item.exp_travel_meals !== undefined ? item.exp_travel_meals : null,
+            exp_office_supplies: item.exp_office_supplies !== undefined ? item.exp_office_supplies : null,
+            exp_other: item.exp_other !== undefined ? item.exp_other : null,
             ordinary_income_usd: item.ordinary_income_usd !== undefined ? item.ordinary_income_usd : null,
             interest_income_usd: item.interest_income_usd !== undefined ? item.interest_income_usd : null,
             ordinary_dividends_usd: item.ordinary_dividends_usd !== undefined ? item.ordinary_dividends_usd : null,
@@ -11769,7 +11860,9 @@
             material_participation: item.material_participation || 'active',
             active_rental_participant: item.active_rental_participant !== undefined ? !!item.active_rental_participant : false,
             net_rental_real_estate_usd: item.net_rental_real_estate_usd !== undefined ? item.net_rental_real_estate_usd : null,
-            depreciation_allocation_usd: item.depreciation_allocation_usd !== undefined ? item.depreciation_allocation_usd : null
+            depreciation_allocation_usd: item.depreciation_allocation_usd !== undefined ? item.depreciation_allocation_usd : null,
+            beneficiaries: item.beneficiaries || [],
+            state_allocations: item.state_allocations || []
         };
     }
     function toggleTrustK1Section(checked) {
@@ -11781,6 +11874,9 @@
         syncTrustK1State();
     }
     function addTrustK1Row(data = null) {
+        if (data) {
+            data = normalizeTrustK1Item(data);
+        }
         const rowId = (data && data.id) ? data.id : 'trust-k1-' + Date.now() + Math.random().toString(36).substring(2, 5);
         const list = document.getElementById('div-trust-k1-list');
         if (!list) return;
@@ -11831,6 +11927,69 @@
                     </select>
                 </div>
             </div>
+            
+            <!-- Trust Type Selection & Fiduciary Deductions -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 font-sans">
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Trust/Estate Type</label>
+                    <select class="trust-type w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-sans" onchange="syncTrustK1State()">
+                        <option value="simple">Simple Trust ($300 Exempt)</option>
+                        <option value="complex">Complex Trust ($100 Exempt)</option>
+                        <option value="grantor">Grantor Trust ($0 Exempt)</option>
+                        <option value="estate">Estate ($600 Exempt)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Fiduciary Fees (USD)</label>
+                    <input type="text" class="trust-fiduciary-fees w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Attorney / Preparer Fees (USD)</label>
+                    <input type="text" class="trust-professional-fees w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')">
+                </div>
+                <div>
+                    <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Other Admin Expenses (USD)</label>
+                    <input type="text" class="trust-admin-expenses w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')">
+                </div>
+            </div>
+
+            <!-- Optional Entity Operating Revenue & Expenses Panel -->
+            <details class="group mt-1 bg-black/20 rounded-xl p-3 border border-white/5">
+                <summary class="text-[9px] font-black uppercase tracking-widest text-brandCyan/80 group-open:text-brandCyan cursor-pointer list-none flex items-center justify-between">
+                    <span>Entity Operating Revenue & Expenses (Optional)</span>
+                    <span class="transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Revenue & Cost of Goods Sold</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Gross Receipts / Sales</label><input type="text" class="trust-gross-revenue w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Returns & Allowances</label><input type="text" class="trust-returns-allowances w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Cost of Goods Sold (COGS)</label><input type="text" class="trust-cogs-itemized w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Misc / Other Income</label><input type="text" class="trust-misc-income w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                </div>
+                <div class="text-[8px] font-bold text-white/50 uppercase mt-3 mb-1 border-b border-white/5 pt-3 pb-1">Itemized Operating Expenses</div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2 font-sans">
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Salaries & Wages</label><input type="text" class="trust-exp-wages w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Contract Labor</label><input type="text" class="trust-exp-labor w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Rent / Lease</label><input type="text" class="trust-exp-rent w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Repairs & Maintenance</label><input type="text" class="trust-exp-repairs w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Bad Debts</label><input type="text" class="trust-exp-bad-debts w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Taxes & Licenses</label><input type="text" class="trust-exp-taxes w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Interest Paid</label><input type="text" class="trust-exp-interest-paid w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Charitable Donations</label><input type="text" class="trust-exp-charity w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Advertising</label><input type="text" class="trust-exp-adv w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Employee Benefits</label><input type="text" class="trust-exp-benefits w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Pension & Profit-Sharing</label><input type="text" class="trust-exp-pension w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Resource Depletion</label><input type="text" class="trust-exp-depletion w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Legal & Professional</label><input type="text" class="trust-exp-legal w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Utilities</label><input type="text" class="trust-exp-utilities w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Insurance</label><input type="text" class="trust-exp-insurance w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Travel & Meals</label><input type="text" class="trust-exp-travel-meals w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Office Expenses & Supplies</label><input type="text" class="trust-exp-office-supplies w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Other Expenses</label><input type="text" class="trust-exp-other w-full bg-[#121212] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="calculateTrustCoreProfit('${rowId}')"></div>
+                    <div><label class="block text-[8px] font-black uppercase text-white/40 mb-1">Total Expenses (Computed)</label><input type="text" class="trust-total-expenses w-full bg-[#1c1c1c] border border-white/10 rounded text-xs text-white px-2 py-1.5 focus:outline-none font-mono" placeholder="0" readonly></div>
+                </div>
+            </details>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Ordinary Income</label>
@@ -11838,13 +11997,13 @@
                 </div>
                 <div>
                     <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Material Participation</label>
-                    <select class="trust-participation w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none" onchange="syncTrustK1State()">
+                    <select class="trust-participation w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-sans" onchange="syncTrustK1State()">
                         <option value="active">Active (Materially Participates)</option>
                         <option value="passive">Passive (Form 8582 limits)</option>
                     </select>
                 </div>
                 <div class="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded-lg h-[34px] mt-3">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1 text-[9px] font-normal font-sans">ⓘ</span></span>
+                    <span class="text-[8px] font-black uppercase tracking-widest text-white/60 font-sans">QBI Eligible? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('qbi')" class="text-brandCyan hover:text-white cursor-pointer ml-1 text-[9px] font-normal font-sans font-sans">ⓘ</span></span>
                     <input type="checkbox" class="trust-qbi rounded bg-[#121212] border border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
                 </div>
             </div>
@@ -11891,7 +12050,7 @@
                         <input type="text" inputmode="numeric" class="trust-box9a w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-1.5 focus:border-brandCyan focus:outline-none font-mono" placeholder="0" oninput="syncTrustK1State()">
                     </div>
                     <div>
-                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1">ⓘ</span></label>
+                        <label class="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">SSTB (Specified Trade)? <span onclick="event.preventDefault(); event.stopPropagation(); openQbiSstbModal('sstb')" class="text-brandCyan hover:text-white cursor-pointer ml-1 font-sans">ⓘ</span></label>
                         <label class="flex items-center justify-center bg-black/20 border border-white/10 rounded-lg h-[29px] cursor-pointer hover:border-white/20 transition-all">
                             <input type="checkbox" class="trust-sstb rounded bg-[#121212] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
                         </label>
@@ -11902,29 +12061,46 @@
                 <div class="md:col-span-4 mt-3 border-t border-white/5 pt-3">
                     <div class="flex items-center justify-between pb-2 mb-2">
                         <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Gross Receipts by State (Apportionment)</span>
-                        <button type="button" onclick="addStateSaleRow('${rowId}', 'trust')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all">+ Add State Sale</button>
+                        <button type="button" onclick="addStateSaleRow('${rowId}', 'trust')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all font-sans">+ Add State Sale</button>
                     </div>
                     <div class="state-sales-list-${rowId} flex flex-col gap-2"></div>
                 </div>
             </details>
+
+            <!-- Nested Beneficiaries Section -->
+            <div class="mt-2 bg-black/20 rounded-xl p-3 border border-white/5">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 mb-3">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-brandCyan">Trust Beneficiaries (Schedule K-1 distributions)</span>
+                    <button type="button" onclick="addTrustBeneficiaryRow('${rowId}')" class="px-2.5 py-1 bg-brandCyan/10 hover:bg-brandCyan/20 text-brandCyan border border-brandCyan/30 rounded text-[8px] font-black uppercase tracking-widest transition-all font-sans">+ Add Beneficiary</button>
+                </div>
+                <div class="trust-beneficiaries-list-${rowId} flex flex-col gap-2"></div>
+            </div>
         `;
         list.appendChild(div);
+
         if (data) {
             div.querySelector('.trust-name').value = data.business_name || '';
             div.querySelector('.trust-ein').value = data.ein || '';
             div.querySelector('.trust-industry-category').value = data.industry_category || '';
-            div.querySelector('.trust-box1').value = data.ordinary_income_usd || '';
+            div.querySelector('.trust-type').value = data.trust_type || 'simple';
+            div.querySelector('.trust-fiduciary-fees').value = data.fiduciary_fees !== null ? data.fiduciary_fees : '';
+            div.querySelector('.trust-professional-fees').value = data.professional_fees !== null ? data.professional_fees : '';
+            div.querySelector('.trust-admin-expenses').value = data.admin_expenses !== null ? data.admin_expenses : '';
+
+            populateItemizedFields(div, 'trust', data);
+
+            div.querySelector('.trust-box1').value = data.ordinary_income_usd !== null ? data.ordinary_income_usd : '';
             div.querySelector('.trust-participation').value = data.material_participation || 'active';
             div.querySelector('.trust-qbi').checked = !!data.qbi_eligible;
-            div.querySelector('.trust-box5').value = data.interest_income_usd || '';
-            div.querySelector('.trust-box6a').value = data.ordinary_dividends_usd || '';
-            div.querySelector('.trust-box6b').value = data.qualified_dividends_usd || '';
-            div.querySelector('.trust-box8').value = data.stcg_usd || '';
-            div.querySelector('.trust-ltcg').value = data.ltcg_usd || '';
+            div.querySelector('.trust-box5').value = data.interest_income_usd !== null ? data.interest_income_usd : '';
+            div.querySelector('.trust-box6a').value = data.ordinary_dividends_usd !== null ? data.ordinary_dividends_usd : '';
+            div.querySelector('.trust-box6b').value = data.qualified_dividends_usd !== null ? data.qualified_dividends_usd : '';
+            div.querySelector('.trust-box8').value = data.stcg_usd !== null ? data.stcg_usd : '';
+            div.querySelector('.trust-ltcg').value = data.ltcg_usd !== null ? data.ltcg_usd : '';
             div.querySelector('.trust-sstb').checked = !!data.is_specified_service_trade;
             div.querySelector('.trust-rental-active').checked = !!data.active_rental_participant;
-            div.querySelector('.trust-box7').value = data.net_rental_real_estate_usd || '';
-            div.querySelector('.trust-box9a').value = data.depreciation_allocation_usd || '';
+            div.querySelector('.trust-box7').value = data.net_rental_real_estate_usd !== null ? data.net_rental_real_estate_usd : '';
+            div.querySelector('.trust-box9a').value = data.depreciation_allocation_usd !== null ? data.depreciation_allocation_usd : '';
 
             // Populate State Allocations
             const stateContainer = div.querySelector(`.state-sales-list-${rowId}`);
@@ -11932,8 +12108,64 @@
             stateAllocations.forEach(stateAlloc => {
                 addStateSaleRow(rowId, 'trust', stateAlloc);
             });
+
+            // Populate Beneficiaries
+            const beneList = data.beneficiaries || [];
+            beneList.forEach(bene => {
+                addTrustBeneficiaryRow(rowId, bene);
+            });
+        } else {
+            // Default check is_taxpayer for first row when created empty
+            addTrustBeneficiaryRow(rowId);
         }
         syncTrustK1State();
+    }
+
+    function addTrustBeneficiaryRow(trustCardId, data = null) {
+        const card = document.getElementById(trustCardId);
+        if (!card) return;
+        const container = card.querySelector(`.trust-beneficiaries-list-${trustCardId}`);
+        if (!container) return;
+
+        const beneId = (data && data.id) ? data.id : 'beneficiary-' + Date.now() + Math.random().toString(36).substring(2, 5);
+        const row = document.createElement('div');
+        row.id = beneId;
+        row.className = "trust-beneficiary-row p-3 bg-[#121212] border border-white/5 rounded-lg grid grid-cols-1 md:grid-cols-12 gap-2 font-sans relative mb-2";
+        row.innerHTML = `
+            <div class="md:col-span-4">
+                <label class="block text-[7px] font-black uppercase text-white/40 mb-0.5">Beneficiary Name</label>
+                <input type="text" class="bene-name w-full bg-[#181818] border border-white/10 rounded text-xs text-white px-2 py-1 focus:border-brandCyan focus:outline-none" placeholder=" Jane Doe" oninput="syncTrustK1State()">
+            </div>
+            <div class="md:col-span-3">
+                <label class="block text-[7px] font-black uppercase text-white/40 mb-0.5">SSN / TIN</label>
+                <input type="text" class="bene-tin w-full bg-[#181818] border border-white/10 rounded text-xs text-white px-2 py-1 focus:border-brandCyan focus:outline-none font-mono" placeholder="000-00-0000" oninput="syncTrustK1State()">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-[7px] font-black uppercase text-white/40 mb-0.5">Distribution Share %</label>
+                <input type="text" inputmode="numeric" class="bene-percent w-full bg-[#181818] border border-white/10 rounded text-xs text-white px-2 py-1 focus:border-brandCyan focus:outline-none font-mono" placeholder="100.0" oninput="syncTrustK1State()">
+            </div>
+            <div class="md:col-span-2 flex items-center gap-1.5 pt-3 font-sans">
+                <input type="checkbox" class="bene-is-taxpayer rounded bg-[#181818] border-white/20 text-brandCyan focus:ring-brandCyan" onchange="syncTrustK1State()">
+                <label class="text-[8px] font-black uppercase text-white/60 cursor-pointer">Taxpayer (You)</label>
+            </div>
+            <div class="md:col-span-1 flex justify-end pt-3 md:pt-0">
+                <button type="button" onclick="this.closest('.trust-beneficiary-row').remove(); syncTrustK1State();" class="text-brandRed/60 hover:text-brandRed font-bold font-sans text-xs px-2 py-1 bg-brandRed/5 hover:bg-brandRed/10 rounded">✕</button>
+            </div>
+        `;
+        container.appendChild(row);
+
+        if (data) {
+            row.querySelector('.bene-name').value = data.name || '';
+            row.querySelector('.bene-tin').value = data.tin || '';
+            row.querySelector('.bene-percent').value = data.percent !== null && data.percent !== undefined ? data.percent : '';
+            row.querySelector('.bene-is-taxpayer').checked = !!data.is_taxpayer;
+        } else {
+            // Default check is_taxpayer for first row when created empty
+            const rows = container.querySelectorAll('.trust-beneficiary-row');
+            if (rows.length === 1) {
+                row.querySelector('.bene-is-taxpayer').checked = true;
+            }
+        }
     }
     function removeTrustK1Row(rowId) {
         const card = document.getElementById(rowId);
@@ -11957,13 +12189,52 @@
                 });
             });
 
+            const beneficiaries = [];
+            div.querySelectorAll('.trust-beneficiary-row').forEach(row => {
+                beneficiaries.push({
+                    id: row.id,
+                    name: row.querySelector('.bene-name').value || '',
+                    tin: row.querySelector('.bene-tin').value || '',
+                    percent: parseFormattedNumber(row.querySelector('.bene-percent').value) || 0,
+                    is_taxpayer: row.querySelector('.bene-is-taxpayer').checked
+                });
+            });
+
             list.push({
                 id: div.id,
                 business_name: div.querySelector('.trust-name').value || null,
                 ein: div.querySelector('.trust-ein').value || null,
                 industry_category: div.querySelector('.trust-industry-category').value || null,
-                industry_category: div.querySelector('.trust-industry-category').value || null,
+                trust_type: div.querySelector('.trust-type').value || 'simple',
+                fiduciary_fees: parseFormattedNumber(div.querySelector('.trust-fiduciary-fees').value) || null,
+                professional_fees: parseFormattedNumber(div.querySelector('.trust-professional-fees').value) || null,
+                admin_expenses: parseFormattedNumber(div.querySelector('.trust-admin-expenses').value) || null,
                 has_trust_income: toggleChecked,
+
+                gross_revenue: parseFormattedNumber(div.querySelector('.trust-gross-revenue')?.value) || null,
+                returns_allowances: parseFormattedNumber(div.querySelector('.trust-returns-allowances')?.value) || null,
+                cogs_itemized: parseFormattedNumber(div.querySelector('.trust-cogs-itemized')?.value) || null,
+                misc_income: parseFormattedNumber(div.querySelector('.trust-misc-income')?.value) || null,
+                exp_wages: parseFormattedNumber(div.querySelector('.trust-exp-wages')?.value) || null,
+                exp_officer: parseFormattedNumber(div.querySelector('.trust-exp-officer')?.value) || null,
+                exp_labor: parseFormattedNumber(div.querySelector('.trust-exp-labor')?.value) || null,
+                exp_rent: parseFormattedNumber(div.querySelector('.trust-exp-rent')?.value) || null,
+                exp_repairs: parseFormattedNumber(div.querySelector('.trust-exp-repairs')?.value) || null,
+                exp_bad_debts: parseFormattedNumber(div.querySelector('.trust-exp-bad-debts')?.value) || null,
+                exp_taxes: parseFormattedNumber(div.querySelector('.trust-exp-taxes')?.value) || null,
+                exp_interest_paid: parseFormattedNumber(div.querySelector('.trust-exp-interest-paid')?.value) || null,
+                exp_charity: parseFormattedNumber(div.querySelector('.trust-exp-charity')?.value) || null,
+                exp_adv: parseFormattedNumber(div.querySelector('.trust-exp-adv')?.value) || null,
+                exp_benefits: parseFormattedNumber(div.querySelector('.trust-exp-benefits')?.value) || null,
+                exp_pension: parseFormattedNumber(div.querySelector('.trust-exp-pension')?.value) || null,
+                exp_depletion: parseFormattedNumber(div.querySelector('.trust-exp-depletion')?.value) || null,
+                exp_legal: parseFormattedNumber(div.querySelector('.trust-exp-legal')?.value) || null,
+                exp_utilities: parseFormattedNumber(div.querySelector('.trust-exp-utilities')?.value) || null,
+                exp_insurance: parseFormattedNumber(div.querySelector('.trust-exp-insurance')?.value) || null,
+                exp_travel_meals: parseFormattedNumber(div.querySelector('.trust-exp-travel-meals')?.value) || null,
+                exp_office_supplies: parseFormattedNumber(div.querySelector('.trust-exp-office-supplies')?.value) || null,
+                exp_other: parseFormattedNumber(div.querySelector('.trust-exp-other')?.value) || null,
+
                 ordinary_income_usd: parseFormattedNumber(div.querySelector('.trust-box1').value) || null,
                 material_participation: div.querySelector('.trust-participation').value || 'active',
                 qbi_eligible: div.querySelector('.trust-qbi').checked,
@@ -11976,8 +12247,8 @@
                 active_rental_participant: div.querySelector('.trust-rental-active').checked,
                 net_rental_real_estate_usd: parseFormattedNumber(div.querySelector('.trust-box7').value) || null,
                 depreciation_allocation_usd: parseFormattedNumber(div.querySelector('.trust-box9a').value) || null,
-                industry_category: div.querySelector('.trust-industry-category').value || null,
-                state_allocations: stateAllocations
+                state_allocations: stateAllocations,
+                beneficiaries: beneficiaries
             });
         });
         usState.income_us_source.trusts_estates_k1 = list;

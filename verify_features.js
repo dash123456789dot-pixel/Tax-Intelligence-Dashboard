@@ -2110,7 +2110,7 @@ function testItemizedCalculations() {
     sandbox.globalThis = sandbox;
     
     vm.createContext(sandbox);
-    const codeWithExports = code + "\n; globalThis.calculatePartCoreProfit = calculatePartCoreProfit; globalThis.calculateScorpCoreProfit = calculateScorpCoreProfit; globalThis.calculateCcorpCoreProfit = calculateCcorpCoreProfit;";
+    const codeWithExports = code + "\n; globalThis.calculatePartCoreProfit = calculatePartCoreProfit; globalThis.calculateScorpCoreProfit = calculateScorpCoreProfit; globalThis.calculateCcorpCoreProfit = calculateCcorpCoreProfit; globalThis.calculateTrustCoreProfit = calculateTrustCoreProfit;";
     vm.runInContext(codeWithExports, sandbox, { filename: 'layer1_us.html [Script]' });
     
     doc.dispatchEvent('DOMContentLoaded');
@@ -2214,6 +2214,36 @@ function testItemizedCalculations() {
         throw new Error(`C-Corp main rent mismatch: expected 20000, got ${ccorpMainRent.value}`);
     }
     console.log("  ✓ C-Corp itemized calculation verified successfully!");
+
+    // 4. Test Trust & Estate (calculateTrustCoreProfit)
+    const trustCard = doc.createElement('div');
+    trustCard.id = 'trust-card-1';
+    doc.body.appendChild(trustCard);
+    
+    const trustGross = doc.createElement('input'); trustGross.classList.add('trust-gross-revenue'); trustGross.value = '120,000'; trustCard.appendChild(trustGross);
+    const trustReturns = doc.createElement('input'); trustReturns.classList.add('trust-returns-allowances'); trustReturns.value = '2,000'; trustCard.appendChild(trustReturns);
+    const trustCogs = doc.createElement('input'); trustCogs.classList.add('trust-cogs-itemized'); trustCogs.value = '10,000'; trustCard.appendChild(trustCogs);
+    const trustMisc = doc.createElement('input'); trustMisc.classList.add('trust-misc-income'); trustMisc.value = '4,000'; trustCard.appendChild(trustMisc);
+    
+    const trustFidFees = doc.createElement('input'); trustFidFees.classList.add('trust-fiduciary-fees'); trustFidFees.value = '3,000'; trustCard.appendChild(trustFidFees);
+    const trustProfFees = doc.createElement('input'); trustProfFees.classList.add('trust-professional-fees'); trustProfFees.value = '2,000'; trustCard.appendChild(trustProfFees);
+    const trustAdminExp = doc.createElement('input'); trustAdminExp.classList.add('trust-admin-expenses'); trustAdminExp.value = '1,500'; trustCard.appendChild(trustAdminExp);
+    
+    const trustWages = doc.createElement('input'); trustWages.classList.add('trust-exp-wages'); trustWages.value = '15,000'; trustCard.appendChild(trustWages);
+    const trustRent = doc.createElement('input'); trustRent.classList.add('trust-exp-rent'); trustRent.value = '8,000'; trustCard.appendChild(trustRent);
+    
+    const trustTotalExp = doc.createElement('input'); trustTotalExp.classList.add('trust-total-expenses'); trustCard.appendChild(trustTotalExp);
+    const trustBox1 = doc.createElement('input'); trustBox1.classList.add('trust-box1'); trustCard.appendChild(trustBox1);
+    
+    sandbox.calculateTrustCoreProfit('trust-card-1');
+    
+    if (parseVal(trustTotalExp.value) !== 39500) {
+        throw new Error(`Trust/Estate itemized total expenses mismatch: expected 39500, got ${trustTotalExp.value}`);
+    }
+    if (parseVal(trustBox1.value) !== 82500) {
+        throw new Error(`Trust/Estate itemized ordinary income mismatch: expected 82500, got ${trustBox1.value}`);
+    }
+    console.log("  ✓ Trust/Estate itemized calculation verified successfully!");
 }
 
 try {
