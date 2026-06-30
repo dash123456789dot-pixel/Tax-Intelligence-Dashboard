@@ -825,7 +825,7 @@
         const entries = state.domestic_income.business_income.business_entries || [];
         
         // Filter only regular businesses (presumptive businesses don't claim expenses)
-        console.log(\'DEBUG EXPENSES:\', JSON.parse(JSON.stringify(entries))); const regularEntries = entries.map((e, idx) => ({entry: e, idx: idx})).filter(e => !e.entry.presumptive_scheme);
+        console.log('DEBUG EXPENSES:', JSON.parse(JSON.stringify(entries))); const regularEntries = entries.map((e, idx) => ({entry: e, idx: idx})).filter(e => !e.entry.presumptive_scheme);
 
         if (regularEntries.length === 0) {
             container.innerHTML = `<div class="p-6 text-center text-white/30 text-xs uppercase tracking-widest font-black border-2 border-dashed border-white/5 rounded-2xl">No Regular Books Businesses Found</div>`;
@@ -1189,6 +1189,7 @@
                         <div id="sidebar-switcher-separator" class="h-[1px] bg-white/5 my-2 mx-10"></div>
                         <a id="sidebar-link-india" href="layer1_india.html" class="flex items-center px-10 py-5 hover:bg-[#121212] transition-colors text-brandGold">India Specialist L1</a>
                         <a id="sidebar-link-us" href="layer1_us.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors text-brandCyan/80 hover:text-brandCyan font-bold">US Specialist L1</a>
+                        <a href="dtaa_bridge.html" class="flex items-center px-10 py-5 hover:bg-white/5 transition-colors text-brandGold font-bold">DTAA Bridge Compiler</a>
                     </div>
                 </div>
             </div>
@@ -1198,6 +1199,29 @@
             </a>
         </div>
         <div class="flex items-center space-x-4 lg:space-x-6">
+            <!-- Quarter Switcher -->
+            <div class="hidden md:flex items-center bg-[#0a0a0a] border border-white/10 rounded-xl p-1 shadow-inner gap-1 quarter-switcher">
+                <button id="btn-q-q1" onclick="switchQuarter('Q1')" class="px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]">
+                    Q1 <span class="hidden lg:inline text-[8px] opacity-70 ml-1">APR-JUN</span>
+                </button>
+                <button id="btn-q-q2" onclick="switchQuarter('Q2')" class="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
+                    Q2 <span class="hidden lg:inline text-[8px] opacity-50 ml-1">JUL-SEP</span>
+                </button>
+                <button id="btn-q-q3" onclick="switchQuarter('Q3')" class="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
+                    Q3 <span class="hidden lg:inline text-[8px] opacity-50 ml-1">OCT-DEC</span>
+                </button>
+                <button id="btn-q-q4" onclick="switchQuarter('Q4')" class="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
+                    Q4 <span class="hidden lg:inline text-[8px] opacity-50 ml-1">JAN-MAR</span>
+                </button>
+                <button id="btn-q-annual" onclick="switchQuarter('ANNUAL')" class="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5 ml-2">
+                    ANNUAL
+                </button>
+                <div class="w-px h-6 bg-white/10 mx-1"></div>
+                <button id="btn-q-autofill" onclick="autoFillYear()" class="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-brandCyan border border-brandCyan/30 bg-brandCyan/10 hover:bg-brandCyan/20 flex items-center gap-1" title="Copy current quarter to all other quarters">
+                    <span>🪄 Auto-Fill Year</span>
+                </button>
+            </div>
+            
             <!-- Workspace Switcher -->
             <div id="workspace-switcher" class="flex items-center bg-white/5 border border-white/10 p-0.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
                 <span class="px-3 py-1.5 bg-brandGold text-black rounded-lg shadow-sm">India L1</span>
@@ -1278,6 +1302,13 @@
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2A — Your Profile & Time in India</h2>
                 <p class="text-xs text-white/40 mt-1">Tell us about yourself and your time spent in India to automatically determine your tax residency status.</p>
+                <div class="mt-4 p-4 bg-brandCyan/10 border border-brandCyan/20 rounded-xl flex items-start gap-3">
+                    <span class="text-lg">💡</span>
+                    <div>
+                        <div class="text-[11px] font-black tracking-widest text-brandCyan uppercase mb-1">Global Annual Application</div>
+                        <div class="text-xs text-white/70 leading-relaxed">Unlike income which is strictly tracked per quarter, your tax residency status and age profile apply to the entire financial year. Any information entered here is treated as global for the year and cannot be different across quarters.</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Profile Parameters -->
@@ -1759,6 +1790,22 @@
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2B — Tax Treaties (Avoid Paying Tax Twice)</h2>
                 <p class="text-xs text-white/40 mt-1">If you are a Non-Resident, configure your home country details to claim lower tax rates under international treaties.</p>
+            </div>
+
+            <!-- DTAA Bridge Sync Banner -->
+            <div id="dtaa-bridge-banner" class="flex flex-col sm:flex-row items-center justify-between p-4 bg-brandGold/10 border border-brandGold/30 rounded-2xl gap-4">
+                <div class="flex items-start space-x-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brandGold mt-1 shrink-0 animate-pulse"></span>
+                    <div class="flex flex-col gap-0.5 text-left">
+                        <span class="text-xs font-black uppercase text-brandGold tracking-wider">Cross-Border DTAA Reconciler Active</span>
+                        <span class="text-[11px] text-white/70 leading-relaxed">
+                            A dual-residency bridge was detected. Compile the cross-border bridge payload to synchronize currency conversions, RSU apportionments, and tax timing rules.
+                        </span>
+                    </div>
+                </div>
+                <a href="dtaa_bridge.html" class="px-4 py-2 bg-brandGold text-black font-black text-[10px] uppercase tracking-widest rounded-lg hover:brightness-110 transition-all whitespace-nowrap">
+                    Open DTAA Bridge &rarr;
+                </a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3156,6 +3203,13 @@
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2H — Tax Deductions (Chapter VI-A)</h2>
                 <p class="text-xs text-white/40 mt-1">Available under Old Regime only. Enter eligible investments and expenses to reduce taxable income.</p>
+                <div class="mt-4 p-4 bg-brandCyan/10 border border-brandCyan/20 rounded-xl flex items-start gap-3">
+                    <span class="text-lg">💡</span>
+                    <div>
+                        <div class="text-[11px] font-black tracking-widest text-brandCyan uppercase mb-1">Global Annual Projection</div>
+                        <div class="text-xs text-white/70 leading-relaxed">Unlike income which is strictly tracked per quarter, tax-saving deductions apply to the entire financial year. Any amount entered here is treated as your total projected deduction for the year, automatically lowering Advance Tax across all quarters. You do not need to re-enter deductions per quarter.</div>
+                    </div>
+                </div>
             </div>
 
             <div id="section-80c-group" class="flex flex-col gap-4 w-full mb-4">
@@ -3542,6 +3596,13 @@
             <div>
                 <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2I — Past Losses, Foreign Assets & Tax Credits</h2>
                 <p class="text-xs text-white/40 mt-1">Enter details about past losses you want to carry forward, your foreign assets, and taxes you have already paid.</p>
+                <div class="mt-4 p-4 bg-brandCyan/10 border border-brandCyan/20 rounded-xl flex items-start gap-3">
+                    <span class="text-lg">💡</span>
+                    <div>
+                        <div class="text-[11px] font-black tracking-widest text-brandCyan uppercase mb-1">Global Annual Projection</div>
+                        <div class="text-xs text-white/70 leading-relaxed">Unlike income which is strictly tracked per quarter, past losses and tax credits (TDS, Advance Tax) apply to the entire financial year. Any amount entered here is treated as your total for the year, automatically lowering your total tax liability across all quarters. You do not need to re-enter these amounts per quarter.</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Brought forward losses -->
@@ -4027,13 +4088,22 @@
     // LAYER 1 INDIA COMPLIANCE STATE OBJECT (Version 5.1 compliant)
     // ═══════════════════════════════════════════════════════════════════════
     const state = {
+        global_quarter: 'Q1',
         profile: {
             full_name: null,
             entity_type: 'individual',
             date_of_birth: null,
             pan: null,
             pan_aadhaar_linked: false,
-            tax_regime: 'NEW'
+            tax_regime: 'NEW',
+            turnover_lte_400cr: false,
+            is_section_8: false,
+            mat_book_profit: null,
+            opt_115ba: false,
+            opt_115baa: false,
+            opt_115bab: false,
+            mfg_setup_date: null,
+            mfg_commence_date: null
         },
         residency_detail: {
             live_tracking_active: false,
@@ -4061,7 +4131,8 @@
             trc_status: false,
             has_permanent_establishment_in_india: false,
             treaty_elections: [],
-            mfn_clause_invoked: false
+            mfn_clause_invoked: false,
+            dtaa_forced_nr: false
         },
         compliance_docs: {
             trc: { validity_start_date: null, validity_end_date: null, document_uploaded: false },
@@ -4093,6 +4164,7 @@
         domestic_income: {
             salary: {
                 has_salary_income: false,
+                taxable_salary_inr: null,
                 gross_salary_inr: null,
                 pwd_transport_allowance: {
                     is_eligible_pwd: false,
@@ -4187,10 +4259,20 @@
                 partner_firms: [],
                 msme_payables: [],
                 amt_credit_bf_inr: null,
-                amt_credit_bf_origin_ay: null
+                amt_credit_bf_origin_ay: null,
+                partner_remuneration_s40b_inr: null,
+                s44bbb_receipts_inr: null,
+                specified_business_s35AD_inr: null,
+                tonnage_tax_115V_inr: null
             },
             has_agricultural_income: false,
-            agricultural_income_inr: null
+            agricultural_income_inr: null,
+            capital_gains: {
+                short_term_15_pct: null
+            },
+            other_sources: {
+                interest_inr: null
+            }
         },
         other_sources: {
             has_other_sources_income: false,
@@ -4210,6 +4292,11 @@
             exempt_nps_withdrawal_inr: null,
             taxable_nps_withdrawal_inr: null,
             exempt_pf_withdrawal_inr: null,
+            angel_tax_premium_inr: null,
+            lic_maturity_inr: null,
+            local_authority_s10_20_inr: null,
+            minor_child_exemption_inr: null,
+            spousal_clubbing_s64_inr: null,
             miscellaneous_income_inr: null
         },
         deductions: {
@@ -4258,6 +4345,7 @@
                 is_nri_blocked: false
             },
             s80G: [],
+            s80ggb_ggc_political_donation_inr: null,
             s80GG: {
                 has_rent_paid_no_hra: false,
                 rent_paid_inr: null
@@ -4273,7 +4361,12 @@
             s80EEA_EE: {
                 affordable_home_loan_interest_inr: null,
                 loan_sanction_date: null
-            }
+            },
+            s80M: {
+                dividend_income_inr: null,
+                dividend_distributed_inr: null
+            },
+            special_entities: {}
         },
         carry_forward_losses: {
             has_brought_forward_losses: null,
@@ -4283,13 +4376,12 @@
             ltcg_loss_cf: [],
             house_property_loss_cf: [],
             unabsorbed_depreciation_cf: null,
-            unabsorbed_depreciation_attributable_to_additional_dep_inr: null
+            unabsorbed_depreciation_attributable_to_additional_dep_inr: null,
+            s79_shareholding_change_triggered: false
         },
         lrs_outbound: {
             total_lrs_remitted_this_fy_inr: null,
             lrs_purpose: null,
-            has_foreign_assets: null,
-            foreign_assets: [],
             has_received_foreign_income: null
         },
         tax_credits: {
@@ -4299,7 +4391,9 @@
             advance_tax_q4_15mar_inr: null,
             tds_already_deducted_inr: null,
             form_26as_uploaded: null,
-            foreign_tax_credit: []
+            foreign_tax_credit: [],
+            tcs_inr: null,
+            tds_inr: null
         },
         surcharge_buckets: {
             income_normal_slab_inr: null,
@@ -4308,14 +4402,273 @@
             income_ltcg_112_inr: null,
             income_stcg_other_inr: null,
             income_dividend_inr: null,
-            income_special_115BB_115BBJ_inr: null
+            income_special_115BB_115BBJ_inr: null,
+            income_special_115A_inr: null
+        },
+        nro_repatriation: {
+            cumulative_repatriated_usd_this_fy: null,
+            pending_repatriation_inr: null,
+            tds_deducted_on_nro_balance: false
+        },
+        brought_forward_losses: {
+            s79_shareholding_change: null,
+            entries: []
+        },
+        config: {
+            base_year: null
+        },
+        advance_tax_simulator: {
+            enabled: false
+        },
+        gift_received: {},
+        salary_exemptions: {},
+        other_exemptions: {},
+        capital_gains: {},
+        foreign_income: {},
+        foreign_assets: { has_foreign_assets: null, assets: [] },
+        active_quarter: 'Q1',
+        quarters: {
+            Q1: {}, Q2: {}, Q3: {}, Q4: {}
         },
         metadata: {
             financial_year: "FY2026-27",
             schema_version: "layer1_india_v5_1",
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            last_updated_at: new Date().toISOString()
         }
     };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // QUARTERLY COMPLIANCE ENGINE SETUP
+    // ═══════════════════════════════════════════════════════════════════════
+    // Take a snapshot of the clean, empty state for use in creating quarterly buckets
+    const defaultQuarterStateTemplate = JSON.stringify({
+        domestic_income: state.domestic_income,
+        other_sources: state.other_sources,
+        lrs_outbound: state.lrs_outbound,
+        nro_repatriation: state.nro_repatriation,
+        capital_gains: state.capital_gains
+    });
+
+    state.active_quarter = 'Q1';
+    state.quarters = {
+        Q1: JSON.parse(defaultQuarterStateTemplate),
+        Q2: JSON.parse(defaultQuarterStateTemplate),
+        Q3: JSON.parse(defaultQuarterStateTemplate),
+        Q4: JSON.parse(defaultQuarterStateTemplate)
+    };
+
+    function aggregateAnnualState() {
+        const annual = JSON.parse(defaultQuarterStateTemplate);
+        ['Q1', 'Q2', 'Q3', 'Q4'].forEach(q => {
+            const qs = state.quarters[q];
+            // Simple recursive sum for numbers
+            function mergeObjects(target, source, path) {
+                path = path || '';
+                for (let key in source) {
+                    if (source[key] === null) continue;
+                    const curPath = path ? path + '.' + key : key;
+                    if (typeof source[key] === 'number') {
+                        target[key] = (target[key] || 0) + source[key];
+                    } else if (typeof source[key] === 'boolean') {
+                        target[key] = target[key] || source[key];
+                    } else if (Array.isArray(source[key])) {
+                        if (!Array.isArray(target[key])) target[key] = [];
+                        // FIX: For business_entries, always merge by INDEX POSITION.
+                        // The i-th business in Q1 is the same business as the i-th
+                        // business in Q2/Q3/Q4. Name-based matching fails when the
+                        // business name field is left empty (the most common case).
+                        // Index-based matching correctly sums turnover across quarters
+                        // without creating duplicate rows in the Annual view.
+                        if (curPath === 'domestic_income.business_income.business_entries') {
+                            source[key].forEach((srcEntry, i) => {
+                                if (i < target[key].length) {
+                                    // Same slot = same business — recursively merge (sums numbers)
+                                    mergeObjects(target[key][i], srcEntry, curPath + '[' + i + ']');
+                                } else {
+                                    // New business added in a later quarter — add it
+                                    target[key].push(JSON.parse(JSON.stringify(srcEntry)));
+                                }
+                            });
+                        } else {
+                            // For other arrays, merge by index position
+                            source[key].forEach((srcItem, i) => {
+                                if (i < target[key].length) {
+                                    if (typeof srcItem === 'object' && srcItem !== null) {
+                                        mergeObjects(target[key][i], srcItem, curPath + '[' + i + ']');
+                                    } else if (typeof srcItem === 'number') {
+                                        target[key][i] = (target[key][i] || 0) + srcItem;
+                                    }
+                                } else {
+                                    target[key].push(JSON.parse(JSON.stringify(srcItem)));
+                                }
+                            });
+                        }
+                    } else if (typeof source[key] === 'object') {
+                        if (!target[key]) target[key] = {};
+                        mergeObjects(target[key], source[key], curPath);
+                    } else {
+                        target[key] = source[key];
+                    }
+                }
+            }
+            mergeObjects(annual, qs);
+        });
+        return annual;
+    }
+
+    function switchQuarter(quarter) {
+        if (state.active_quarter === quarter) return;
+
+        // Save current UI state to the currently active quarter before switching
+        if (state.active_quarter !== 'ANNUAL') {
+            state.quarters[state.active_quarter].domestic_income = JSON.parse(JSON.stringify(state.domestic_income));
+            state.quarters[state.active_quarter].other_sources = JSON.parse(JSON.stringify(state.other_sources));
+            state.quarters[state.active_quarter].lrs_outbound = JSON.parse(JSON.stringify(state.lrs_outbound));
+            state.quarters[state.active_quarter].nro_repatriation = JSON.parse(JSON.stringify(state.nro_repatriation));
+            state.quarters[state.active_quarter].capital_gains = JSON.parse(JSON.stringify(state.capital_gains));
+        }
+
+        state.active_quarter = quarter;
+        
+        // Update UI buttons
+        const btnClassesActive = "px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]".split(" ");
+        const btnClassesInactive = "px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5".split(" ");
+        
+        ['Q1', 'Q2', 'Q3', 'Q4', 'annual'].forEach(qId => {
+            const btn = document.getElementById('btn-q-' + qId.toLowerCase());
+            if (!btn) return;
+            if (qId === quarter || (quarter === 'ANNUAL' && qId === 'annual')) {
+                btn.className = '';
+                btnClassesActive.forEach(c => btn.classList.add(c));
+            } else {
+                btn.className = '';
+                btnClassesInactive.forEach(c => btn.classList.add(c));
+                if (qId === 'annual') btn.classList.add('ml-2');
+            }
+        });
+
+        // Load new state into the active form
+        let sourceState;
+        if (quarter === 'ANNUAL') {
+            sourceState = aggregateAnnualState();
+        } else {
+            sourceState = state.quarters[quarter];
+        }
+
+        const defaultQState = JSON.parse(defaultQuarterStateTemplate);
+
+        state.domestic_income = JSON.parse(JSON.stringify(sourceState.domestic_income || defaultQState.domestic_income));
+        state.other_sources = JSON.parse(JSON.stringify(sourceState.other_sources || defaultQState.other_sources));
+        state.lrs_outbound = JSON.parse(JSON.stringify(sourceState.lrs_outbound || defaultQState.lrs_outbound));
+        state.nro_repatriation = JSON.parse(JSON.stringify(sourceState.nro_repatriation || defaultQState.nro_repatriation));
+        state.capital_gains = JSON.parse(JSON.stringify(sourceState.capital_gains || defaultQState.capital_gains));
+
+        // FIX: If this quarter has no business entries yet, auto-scaffold the structure
+        // from whichever quarter already has entries. This means the user only needs to
+        // click "+ Add Business" once in Q1; switching to Q2/Q3/Q4 will pre-populate
+        // the business name/type/scheme so they only need to fill in that quarter's amounts.
+        if (quarter !== 'ANNUAL') {
+            const bizInc = state.domestic_income.business_income;
+            if (!bizInc.business_entries || bizInc.business_entries.length === 0) {
+                // Find a donor quarter that has entries
+                const donorQ = ['Q1','Q2','Q3','Q4'].find(q =>
+                    q !== quarter &&
+                    state.quarters[q] &&
+                    state.quarters[q].domestic_income &&
+                    state.quarters[q].domestic_income.business_income &&
+                    (state.quarters[q].domestic_income.business_income.business_entries || []).length > 0
+                );
+                if (donorQ) {
+                    const donorEntries = state.quarters[donorQ].domestic_income.business_income.business_entries;
+                    // Copy structure only — zero all income/receipt numeric fields
+                    const incomeFields = [
+                        'turnover_inr','gross_receipts_inr','digital_receipts_inr','cash_receipts_inr',
+                        'ada_digital_receipts_inr','ada_cash_receipts_inr','export_turnover_inr',
+                        'add_depreciation_inr','bad_debts_provision_inr','agri_portion_inr',
+                        'business_portion_inr','sez_profits_inr','sez_export_turnover_inr',
+                        'sez_total_turnover_inr'
+                    ];
+                    bizInc.business_entries = donorEntries.map(donor => {
+                        const scaffold = JSON.parse(JSON.stringify(donor));
+                        incomeFields.forEach(f => { scaffold[f] = null; });
+                        scaffold.revenue_breakdown = {}; // clear granular revenue
+                        return scaffold;
+                    });
+                    bizInc.has_business_or_fo_income = true;
+                    // Save scaffolded state back to this quarter
+                    state.quarters[quarter].domestic_income = JSON.parse(JSON.stringify(state.domestic_income));
+                }
+            }
+        }
+
+        // Re-render the UI with the loaded state
+        restoreIndiaDOMFromState();
+
+        // If annual, freeze all inputs. Else, unfreeze.
+        const allInputs = document.querySelectorAll('input, select, textarea');
+        if (quarter === 'ANNUAL') {
+            allInputs.forEach(input => {
+                input.setAttribute('data-q-disabled', 'true');
+                input.disabled = true;
+                input.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+            const functionalButtons = document.querySelectorAll('.glass-card button:not([onclick^="switchStep"]):not([onclick^="switchQuarter"]):not([id="btn-copy-payload"])');
+            functionalButtons.forEach(btn => {
+                btn.setAttribute('data-q-disabled', 'true');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            });
+            const globalBanner = document.getElementById('global-tax-year-banner');
+            if (globalBanner) {
+                globalBanner.classList.remove('hidden');
+                globalBanner.textContent = "VIEWING ANNUAL AGGREGATED SUMMARY. SWITCH TO A QUARTER TO EDIT.";
+            }
+        } else {
+            const allInputsAndButtons = document.querySelectorAll('input, select, textarea, button');
+            allInputsAndButtons.forEach(el => {
+                if (el.hasAttribute('data-q-disabled')) {
+                    el.disabled = false;
+                    el.removeAttribute('data-q-disabled');
+                    el.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                }
+            });
+            const globalBanner = document.getElementById('global-tax-year-banner');
+            if (globalBanner) {
+                globalBanner.classList.add('hidden');
+            }
+        }
+        evaluateSurchargeBuckets();
+    }
+
+    function autoFillYear() {
+        if (state.active_quarter === 'ANNUAL') return;
+        
+        const currentQ = state.active_quarter;
+        
+        // Ensure current state is saved to the active quarter bucket first
+        state.quarters[currentQ].domestic_income = JSON.parse(JSON.stringify(state.domestic_income));
+        state.quarters[currentQ].other_sources = JSON.parse(JSON.stringify(state.other_sources));
+        state.quarters[currentQ].lrs_outbound = JSON.parse(JSON.stringify(state.lrs_outbound));
+        state.quarters[currentQ].nro_repatriation = JSON.parse(JSON.stringify(state.nro_repatriation));
+        state.quarters[currentQ].capital_gains = JSON.parse(JSON.stringify(state.capital_gains));
+
+        // Copy this bucket to all other quarters
+        ['Q1', 'Q2', 'Q3', 'Q4'].forEach(q => {
+            if (q !== currentQ) {
+                state.quarters[q] = JSON.parse(JSON.stringify(state.quarters[currentQ]));
+            }
+        });
+
+        // Flash UI feedback
+        const btn = document.getElementById('btn-q-autofill');
+        if (btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span>✅ Copied to All</span>';
+            setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+        }
+        evaluateSurchargeBuckets();
+    }
 
     // ═══════════════════════════════════════════════════════════════════════
     // ACTIVE STEP CONTROL & STEP GATING
@@ -4514,14 +4867,14 @@
         if (lrsDiv) {
             if (lock === 'ROR') {
                 lrsDiv.classList.remove('hidden');
-                if (typeof renderLrsRows === 'function' && state.lrs_outbound.has_foreign_assets === null && document.querySelectorAll('#lrs-table tbody tr').length === 0) {
+                if (typeof renderLrsRows === 'function' && state.foreign_assets.has_foreign_assets === null && document.querySelectorAll('#lrs-table tbody tr').length === 0) {
                     toggleForeignAssets(null);
                 }
             } else {
                 lrsDiv.classList.add('hidden');
-                state.lrs_outbound.has_foreign_assets = false;
+                state.foreign_assets.has_foreign_assets = false;
                 state.lrs_outbound.has_received_foreign_income = false;
-                state.lrs_outbound.foreign_assets = [];
+                state.foreign_assets.assets = [];
                 const tbody = document.querySelector('#lrs-table tbody');
                 if (tbody) tbody.innerHTML = '';
             }
@@ -7722,9 +8075,11 @@
     window.addAssetBlock = function(bizIdx, branchIdx) {
         try {
             if (!state.domestic_income.business_income.asset_blocks) state.domestic_income.business_income.asset_blocks = [];
-            state.domestic_income.business_income.asset_blocks.push({
-                unit_biz_idx: parseInt(bizIdx, 10),
-                unit_branch_idx: branchIdx === null || branchIdx === 'null' ? null : parseInt(branchIdx, 10),
+            const parsedBizIdx = parseInt(bizIdx, 10);
+            const parsedBranchIdx = branchIdx === null || branchIdx === 'null' ? null : parseInt(branchIdx, 10);
+            const newBlock = {
+                unit_biz_idx: parsedBizIdx,
+                unit_branch_idx: parsedBranchIdx,
                 asset_class: 'plant_machinery_general',
                 opening_wdv_inr: null,
                 additions_during_year_inr: null,
@@ -7732,7 +8087,30 @@
                 sale_consideration_inr: null,
                 is_new_manufacturing_asset: false,
                 is_in_notified_backward_area: false
-            });
+            };
+            state.domestic_income.business_income.asset_blocks.push(newBlock);
+            // Propagate scaffold block (zeroed amounts) to same business in all other quarters
+            if (state.quarters) {
+                ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                    if (q === state.active_quarter) return;
+                    const qBiz = state.quarters[q] &&
+                                 state.quarters[q].domestic_income &&
+                                 state.quarters[q].domestic_income.business_income;
+                    if (!qBiz) return;
+                    if (!Array.isArray(qBiz.asset_blocks)) qBiz.asset_blocks = [];
+                    qBiz.asset_blocks.push({
+                        unit_biz_idx: parsedBizIdx,
+                        unit_branch_idx: parsedBranchIdx,
+                        asset_class: 'plant_machinery_general',
+                        opening_wdv_inr: null,
+                        additions_during_year_inr: null,
+                        addition_date: null,
+                        sale_consideration_inr: null,
+                        is_new_manufacturing_asset: false,
+                        is_in_notified_backward_area: false
+                    });
+                });
+            }
             saveLayer1State();
             if (typeof renderUnitAssetBlocks === 'function') renderUnitAssetBlocks();
         } catch(e) {
@@ -7744,6 +8122,17 @@
     window.removeAssetBlock = function(idx) {
         try {
             state.domestic_income.business_income.asset_blocks.splice(idx, 1);
+            // Remove same block index from all other quarters
+            if (state.quarters) {
+                ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                    if (q === state.active_quarter) return;
+                    const qBiz = state.quarters[q] &&
+                                 state.quarters[q].domestic_income &&
+                                 state.quarters[q].domestic_income.business_income;
+                    if (!qBiz || !Array.isArray(qBiz.asset_blocks)) return;
+                    if (qBiz.asset_blocks.length > idx) qBiz.asset_blocks.splice(idx, 1);
+                });
+            }
             saveLayer1State();
             if (typeof renderUnitAssetBlocks === 'function') renderUnitAssetBlocks();
         } catch(e) {
@@ -7760,6 +8149,20 @@
             actualVal = val === 'true';
         }
         state.domestic_income.business_income.asset_blocks[idx][field] = actualVal;
+        // Structural fields sync across all quarters; amounts stay per-quarter
+        const _assetStructuralFields = [
+            'asset_class', 'addition_date', 'is_new_manufacturing_asset', 'is_in_notified_backward_area'
+        ];
+        if (_assetStructuralFields.includes(field) && state.quarters) {
+            ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                if (q === state.active_quarter) return;
+                const qBiz = state.quarters[q] &&
+                             state.quarters[q].domestic_income &&
+                             state.quarters[q].domestic_income.business_income;
+                if (!qBiz || !Array.isArray(qBiz.asset_blocks)) return;
+                if (qBiz.asset_blocks[idx]) qBiz.asset_blocks[idx][field] = actualVal;
+            });
+        }
         saveLayer1State();
         if (typeof renderUnitAssetBlocks === 'function') renderUnitAssetBlocks();
     }
@@ -8792,13 +9195,40 @@
     function addBranchToBusiness(bizIdx) {
         const entry = state.domestic_income.business_income.business_entries[bizIdx];
         if (!entry.branches) entry.branches = [];
-        entry.branches.push({
+        const newBranch = {
             branch_name: '',
             is_sez: false,
             turnover_inr: null,
+            revenue_breakdown: {},
             direct_expenses: {},
             direct_assets: {}
-        });
+        };
+        entry.branches.push(newBranch);
+        // Propagate branch scaffold (zeroed income) to same business in all other quarters
+        if (state.quarters) {
+            ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                if (q === state.active_quarter) return;
+                const qBiz = state.quarters[q] &&
+                             state.quarters[q].domestic_income &&
+                             state.quarters[q].domestic_income.business_income;
+                if (!qBiz) return;
+                if (!Array.isArray(qBiz.business_entries)) qBiz.business_entries = [];
+                while (qBiz.business_entries.length <= bizIdx) qBiz.business_entries.push({});
+                if (!Array.isArray(qBiz.business_entries[bizIdx].branches))
+                    qBiz.business_entries[bizIdx].branches = [];
+                const branchIdx = entry.branches.length - 1; // index of the new branch
+                if (qBiz.business_entries[bizIdx].branches.length <= branchIdx) {
+                    qBiz.business_entries[bizIdx].branches.push({
+                        branch_name: '',
+                        is_sez: false,
+                        turnover_inr: null,
+                        revenue_breakdown: {},
+                        direct_expenses: {},
+                        direct_assets: {}
+                    });
+                }
+            });
+        }
         renderBusinessEntries();
     }
 
@@ -8806,6 +9236,20 @@
         const entry = state.domestic_income.business_income.business_entries[bizIdx];
         if (entry && entry.branches) {
             entry.branches.splice(branchIdx, 1);
+            // Remove same branch from all other quarters
+            if (state.quarters) {
+                ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                    if (q === state.active_quarter) return;
+                    const qBiz = state.quarters[q] &&
+                                 state.quarters[q].domestic_income &&
+                                 state.quarters[q].domestic_income.business_income;
+                    if (!qBiz || !Array.isArray(qBiz.business_entries)) return;
+                    const qEntry = qBiz.business_entries[bizIdx];
+                    if (qEntry && Array.isArray(qEntry.branches) && qEntry.branches.length > branchIdx) {
+                        qEntry.branches.splice(branchIdx, 1);
+                    }
+                });
+            }
             renderBusinessEntries();
             evaluateSurchargeBuckets();
         }
@@ -8855,6 +9299,21 @@
                 renderBusinessEntries(); // Re-render to show/hide dynamic fields
             } else {
                 entry.branches[branchIdx][field] = val || null;
+            }
+            // Structural branch fields sync to all quarters (name, SEZ flag)
+            const _branchStructuralFields = ['branch_name', 'is_sez', 'has_export_revenue'];
+            if (_branchStructuralFields.includes(field) && state.quarters) {
+                ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                    if (q === state.active_quarter) return;
+                    const qBiz = state.quarters[q] &&
+                                 state.quarters[q].domestic_income &&
+                                 state.quarters[q].domestic_income.business_income;
+                    if (!qBiz || !Array.isArray(qBiz.business_entries)) return;
+                    const qEntry = qBiz.business_entries[bizIdx];
+                    if (qEntry && Array.isArray(qEntry.branches) && qEntry.branches[branchIdx]) {
+                        qEntry.branches[branchIdx][field] = entry.branches[branchIdx][field];
+                    }
+                });
             }
             evaluateSurchargeBuckets();
             saveLayer1State();
@@ -9038,6 +9497,8 @@
         }
         
         syncTotalReceipts();
+        // FIX: Recalculate tax whenever a receipt field changes
+        evaluateSurchargeBuckets();
         saveLayer1State();
     }
 
@@ -9088,7 +9549,27 @@
               renderBusinessEntries();
               if (typeof renderUnitAssetBlocks === 'function') renderUnitAssetBlocks();
           }
-        
+
+        // Structural fields are shared business identity - auto-propagate to all quarters.
+        // Income/receipt fields stay per-quarter; name, code, scheme are synced everywhere.
+        const _structuralFields = [
+            'business_name', 'nature', 'business_code', 'profession_type',
+            'presumptive_scheme', 'is_sez', 'opt_115vg', 'opt_115bab', 'has_export_revenue'
+        ];
+        if (_structuralFields.includes(field) && state.quarters) {
+            ['Q1','Q2','Q3','Q4'].forEach(function(q) {
+                if (q === state.active_quarter) return;
+                const qBiz = state.quarters[q] &&
+                             state.quarters[q].domestic_income &&
+                             state.quarters[q].domestic_income.business_income;
+                if (!qBiz) return;
+                if (!Array.isArray(qBiz.business_entries)) qBiz.business_entries = [];
+                while (qBiz.business_entries.length <= idx) qBiz.business_entries.push({});
+                qBiz.business_entries[idx][field] = entry[field];
+                if (field === 'nature') qBiz.has_business_or_fo_income = true;
+            });
+        }
+
         validateS44ADEligibility();
         validateS44ADAEligibility();
         validateS44AEEligibility();
@@ -9781,7 +10262,7 @@ ${isProf ? '' : `
         const isSenior = isSeniorCitizen();
         const residency = state.residency_detail.final_india_residency_status || 'ROR';
         const isResident = residency === 'ROR' || residency === 'RNOR';
-        const hasBiz = state.business.has_business === true;
+        const hasBiz = state.domestic_income?.business_income?.has_business_or_fo_income === true;
         const isInd = (state.profile.entity_type || 'individual') === 'individual';
         
         if (isInd && isSenior && isResident && !hasBiz) {
@@ -10478,7 +10959,7 @@ ${isProf ? '' : `
     }
 
     function toggleForeignAssets(hasAssets) {
-        state.lrs_outbound.has_foreign_assets = hasAssets;
+        state.foreign_assets.has_foreign_assets = hasAssets;
         const container = document.getElementById('div-fa-table-container');
         const incomeGate = document.getElementById('div-fa-income-gate');
         const bmaWarn = document.getElementById('warn-fa-bma-penalty');
@@ -10580,7 +11061,7 @@ ${isProf ? '' : `
 
     function syncLrsState() {
         const items = [];
-        if (state.lrs_outbound.has_foreign_assets === true) {
+        if (state.foreign_assets.has_foreign_assets === true) {
             document.querySelectorAll('#lrs-table tbody tr').forEach(tr => {
                 items.push({
                     country: (tr.querySelector('.lrs-country').value || '').toUpperCase() || null,
@@ -10592,7 +11073,7 @@ ${isProf ? '' : `
                 });
             });
         }
-        state.lrs_outbound.foreign_assets = items;
+        state.foreign_assets.assets = items;
     }
 
     function renderLrsRows() {
@@ -10600,7 +11081,7 @@ ${isProf ? '' : `
         if (!tbody) return;
         tbody.innerHTML = '';
         
-        const list = state.lrs_outbound.foreign_assets || [];
+        const list = state.foreign_assets.assets || [];
         list.forEach(item => {
             const rowId = 'lrs-' + Date.now() + Math.random().toString(36).substring(2, 7);
             const tr = document.createElement('tr');
@@ -10634,7 +11115,7 @@ ${isProf ? '' : `
         if (typeof formatAllINRInputs === 'function') formatAllINRInputs();
 
         // Update Gating display
-        toggleForeignAssets(state.lrs_outbound.has_foreign_assets);
+        toggleForeignAssets(state.foreign_assets.has_foreign_assets);
         toggleReceivedForeignIncome(state.lrs_outbound.has_received_foreign_income);
     }
 
@@ -10849,6 +11330,58 @@ ${isProf ? '' : `
     // SURCHARGE BUCKETS & DYNAMIC CALCULATIONS
     // ═══════════════════════════════════════════════════════════════════════
     function evaluateSurchargeBuckets() {
+        try {
+            // Save active quarter BEFORE any calculation
+            if (state.active_quarter && state.active_quarter !== 'ANNUAL' && !window.isHeadlessSimulation) {
+                state.quarters[state.active_quarter].domestic_income = JSON.parse(JSON.stringify(state.domestic_income));
+                state.quarters[state.active_quarter].other_sources = JSON.parse(JSON.stringify(state.other_sources));
+                state.quarters[state.active_quarter].lrs_outbound = JSON.parse(JSON.stringify(state.lrs_outbound));
+                state.quarters[state.active_quarter].nro_repatriation = JSON.parse(JSON.stringify(state.nro_repatriation));
+                state.quarters[state.active_quarter].capital_gains = JSON.parse(JSON.stringify(state.capital_gains));
+            }
+
+            let activeDI, activeOS, activeLRS, activeNRO, activeCG;
+            let isQuarterly = (state.active_quarter && state.active_quarter !== 'ANNUAL');
+            
+            // Temporarily replace state with annual aggregation
+            if (isQuarterly && !window.isHeadlessSimulation) {
+                activeDI = state.domestic_income;
+                activeOS = state.other_sources;
+                activeLRS = state.lrs_outbound;
+                activeNRO = state.nro_repatriation;
+                activeCG = state.capital_gains;
+
+                const annual = aggregateAnnualState();
+                state.domestic_income = annual.domestic_income;
+                state.other_sources = annual.other_sources;
+                state.lrs_outbound = annual.lrs_outbound;
+                state.nro_repatriation = annual.nro_repatriation;
+                state.capital_gains = annual.capital_gains;
+            }
+
+            const ret = _evaluateSurchargeBuckets();
+
+            // Restore the state for UI forms
+            if (isQuarterly && !window.isHeadlessSimulation) {
+                state.domestic_income = activeDI;
+                state.other_sources = activeOS;
+                state.lrs_outbound = activeLRS;
+                state.nro_repatriation = activeNRO;
+                state.capital_gains = activeCG;
+            }
+
+            if (!window.isHeadlessSimulation) {
+                state.metadata.last_updated_at = new Date().toISOString();
+                localStorage.setItem('wising_layer1_india_state', JSON.stringify(state));
+            }
+
+            return ret;
+        } catch (e) {
+            console.error("evaluateSurchargeBuckets Error:", e);
+            return 0;
+        }
+    }
+    function _evaluateSurchargeBuckets() {
         const entity = state.profile.entity_type;
         const regime = state.profile.tax_regime; // 'NEW' or 'OLD'
 
@@ -11515,6 +12048,9 @@ ${isProf ? '' : `
         // 6. PERSIST STATE
 
         // ─────────────────────────────────────────────────────────────
+        // THE SAVE TO state.quarters AND localStorage HAS BEEN MOVED TO THE evaluateSurchargeBuckets WRAPPER
+        // SO THAT IT OPERATES ON THE QUARTER-SPECIFIC DATA, NOT THE AGGREGATED DATA.
+
         state.metadata.last_updated_at = new Date().toISOString();
         const optJson = document.getElementById('output-json');
         if (optJson) optJson.textContent = JSON.stringify(state, null, 2);
@@ -12171,8 +12707,85 @@ ${isProf ? '' : `
         const crd26AS = document.getElementById('crd-26as-uploaded');
         if (crd26AS) crd26AS.checked = state.tax_credits.form_26as_uploaded || false;
         
+        // Restore Salary DOM
+        const sal = state.domestic_income.salary;
+        if (sal) {
+            const elIdMapSal = {
+                'sal-gross': sal.gross_salary_inr,
+                'sal-basic': sal.basic_da_inr,
+                'sal-perq': sal.perquisites_inr,
+                'sal-esop': sal.esop_perquisite_inr,
+                'sal-prof-tax': sal.professional_tax_inr,
+                'sal-nps-emp': sal.employer_nps_contribution_inr,
+                'sal-prior': sal.prior_employer_salary_inr,
+                'sal-hra': sal.hra_received_inr,
+                'sal-rent': sal.rent_paid_inr,
+                'sal-lta': sal.lta_claimed_inr
+            };
+            for (const [id, val] of Object.entries(elIdMapSal)) {
+                const el = document.getElementById(id);
+                if (el) el.value = val !== null && val !== undefined ? val : '';
+            }
+            const elMetro = document.getElementById('sal-metro');
+            if (elMetro) elMetro.checked = sal.is_metro_city || false;
+            
+            const hasSal = document.getElementById('sal-has');
+            if (hasSal) hasSal.checked = sal.has_salary_income || false;
+        }
+
+        // Restore Business Fixed Inputs
+        const biz = state.domestic_income.business_income;
+        if (biz) {
+            const hasBiz = document.getElementById('biz-has');
+            if (hasBiz) hasBiz.checked = biz.has_business_or_fo_income || false;
+            
+            const elIdMapBiz = {
+                'biz-fno-profit': biz.non_speculative_income_inr,
+                'biz-fno-turnover': biz.fno_turnover_inr,
+                'biz-intra-profit': biz.speculative_income_inr,
+                'biz-intra-turnover': biz.speculative_turnover_inr,
+                'biz-s35ad': biz.specified_business_s35AD_inr,
+                'biz-general-gross-receipts': biz.gross_receipts_inr,
+                'biz-s44ad-exit': biz.s44AD_last_exit_ay,
+                'biz-s41-1': biz.s41_remission_income_inr,
+                'biz-s41-4': biz.s41_bad_debt_recovery_inr,
+                'biz-gst-collected': biz.gst_collected_inr,
+                'biz-amt-bf': biz.amt_credit_bf_inr,
+                'biz-amt-ay': biz.amt_credit_bf_origin_ay
+            };
+            for (const [id, val] of Object.entries(elIdMapBiz)) {
+                const el = document.getElementById(id);
+                if (el) el.value = val !== null && val !== undefined ? val : '';
+            }
+            const gstStatus = document.getElementById('biz-gst-status');
+            if (gstStatus && biz.gst_registration_status) gstStatus.value = biz.gst_registration_status;
+            
+            const profType = document.getElementById('biz-profession-type');
+            if (profType && biz.profession_type) profType.value = biz.profession_type;
+            
+            const bizCode = document.getElementById('biz-code');
+            if (bizCode && biz.business_code) bizCode.value = biz.business_code;
+            
+            const s44adOpted = document.getElementById('biz-s44ad-opted');
+            if (s44adOpted) s44adOpted.checked = biz.s44AD_opted_current_year || false;
+
+            const bizNatures = document.querySelectorAll('.biz-nature-chk');
+            bizNatures.forEach(cb => {
+                if (biz.nature_of_business) {
+                    cb.checked = biz.nature_of_business.includes(cb.value);
+                } else {
+                    cb.checked = false;
+                }
+            });
+        }
+
         // Restore Dynamic lists/cards
         restoreBankAccountsDOM();
+        if (typeof renderBusinessEntries === 'function') renderBusinessEntries();
+        if (typeof renderBankExpenses === 'function') renderBankExpenses();
+        if (typeof renderPartnerFirms === 'function') renderPartnerFirms();
+        if (typeof renderGoodsVehicles === 'function') renderGoodsVehicles();
+        if (typeof renderUnitAssetBlocks === 'function') renderUnitAssetBlocks();
         renderDtaaElections();
         renderLossCards();
         renderLrsRows();
@@ -12181,6 +12794,19 @@ ${isProf ? '' : `
     }
 
     window.onload = function() {
+        try {
+            _initWindowOnLoad();
+        } catch (e) {
+            console.error("Critical error during window.onload initialization:", e);
+        } finally {
+            // Guarantee that the UI gets unlocked even if an error occurs mid-initialization
+            if (typeof syncUnlockStatus === 'function') {
+                try { syncUnlockStatus(); } catch(e){}
+            }
+        }
+    }
+    
+    function _initWindowOnLoad() {
         const routerStr = localStorage.getItem('wising_router_state');
         if (!routerStr) {
             alert("No active Jurisdiction Router (Layer 0) state detected. Redirecting to Layer 0 to complete onboarding first.");
@@ -12248,6 +12874,31 @@ ${isProf ? '' : `
                 if (savedState.gift_received) Object.assign(state.gift_received, savedState.gift_received);
                 if (savedState.salary_exemptions) Object.assign(state.salary_exemptions, savedState.salary_exemptions);
                 if (savedState.other_exemptions) Object.assign(state.other_exemptions, savedState.other_exemptions);
+
+                // MIGRATION & QUARTER LOAD
+                if (savedState.quarters) {
+                    state.active_quarter = savedState.active_quarter || 'Q1';
+                    state.quarters = savedState.quarters;
+                } else {
+                    // Migration from annual: put all loaded income into Q1, keep Q2-Q4 blank
+                    state.active_quarter = 'Q1';
+                    state.quarters.Q1 = {
+                        domestic_income: JSON.parse(JSON.stringify(state.domestic_income)),
+                        other_sources: JSON.parse(JSON.stringify(state.other_sources)),
+                        lrs_outbound: JSON.parse(JSON.stringify(state.lrs_outbound)),
+                        nro_repatriation: JSON.parse(JSON.stringify(state.nro_repatriation)),
+                        capital_gains: JSON.parse(JSON.stringify(state.capital_gains))
+                    };
+                }
+                
+                // Now, ensure the MAIN state reflects the active quarter (or ANNUAL sum)
+                let sourceState = state.active_quarter === 'ANNUAL' ? aggregateAnnualState() : state.quarters[state.active_quarter];
+                ['domestic_income', 'other_sources', 'lrs_outbound', 'nro_repatriation', 'capital_gains'].forEach(key => {
+                    if (sourceState[key]) {
+                        state[key] = JSON.parse(JSON.stringify(sourceState[key]));
+                    }
+                });
+
             } catch (e) {
                 console.error("Error loading saved India L1 state:", e);
             }
@@ -12274,6 +12925,114 @@ ${isProf ? '' : `
             state.profile.date_of_birth = rData.date_of_birth;
             if (typeof derive80TTASection === 'function') derive80TTASection();
         }
+
+        // --- UNIVERSAL BIDIRECTIONAL HYDRATION ENGINE: US TO INDIA ---
+        try {
+            const routerStateStr = localStorage.getItem('wising_router_state');
+            let isDual = false;
+            if (routerStateStr) {
+                try {
+                    const rState = JSON.parse(routerStateStr);
+                    if (rState.jurisdiction === 'dual') isDual = true;
+                } catch(e){}
+            }
+
+            const usStateStr = localStorage.getItem('wising_us_state');
+            if (isDual && usStateStr) {
+                const usState = JSON.parse(usStateStr);
+                
+                // Hydrate US Bank Accounts -> India Schedule FA
+                if (usState.bank_accounts && usState.bank_accounts.length > 0) {
+                    state.bank_accounts = usState.bank_accounts.map(b => ({
+                        bank_name: b.bank_name,
+                        account_number: b.account_number,
+                        country: 'United States',
+                        peak_balance_inr: (b.max_balance_usd || 0) * 83.0,
+                        account_type: b.account_type || 'savings'
+                    }));
+                }
+                
+                // Hydrate US Brokerage/RSUs -> India Unlisted Equity (Schedule FA)
+                if (usState.equity_compensation) {
+                    state.unlisted_equity.transactions = state.unlisted_equity.transactions || [];
+                    if (usState.equity_compensation.rsu_vestings && usState.equity_compensation.rsu_vestings.length > 0) {
+                        usState.equity_compensation.rsu_vestings.forEach(rsu => {
+                            state.unlisted_equity.has_unlisted_equity_transaction = true;
+                            state.unlisted_equity.transactions.push({
+                                company_name: rsu.company_name || 'US Employer (RSU)',
+                                acquisition_date: rsu.vest_date || '',
+                                shares_acquired: rsu.shares_vested || 0,
+                                cost_inr: (rsu.gross_income_usd || 0) * 83.0
+                            });
+                        });
+                    }
+                }
+
+                // Hydrate US Businesses -> India Schedule FA (Unlisted Equity / Foreign Entities)
+                if (usState.income_us_source) {
+                    const ccorps = usState.income_us_source.c_corporations_1120 || [];
+                    const scorps = usState.income_us_source.s_corporations_k1 || [];
+                    const parts = usState.income_us_source.partnerships_k1 || [];
+                    
+                    const allUSBusinesses = [...ccorps, ...scorps, ...parts];
+                    
+                    if (allUSBusinesses.length > 0) {
+                        state.unlisted_equity = state.unlisted_equity || {};
+                        state.unlisted_equity.has_unlisted_equity_transaction = true;
+                        state.unlisted_equity.transactions = state.unlisted_equity.transactions || [];
+                        
+                        allUSBusinesses.forEach(biz => {
+                            const bizName = biz.corp_name || biz.partnership_name || biz.scorp_name || 'US Business Entity';
+                            state.unlisted_equity.transactions.push({
+                                company_name: bizName,
+                                acquisition_date: '',
+                                shares_acquired: 1,
+                                cost_inr: 1000 * 83.0
+                            });
+                        });
+                    }
+                }
+
+                // Hydrate US 401k & IRAs -> India Schedule FA (Trusts/Retirement)
+                if (usState.retirement_accounts) {
+                    state.foreign_assets = state.foreign_assets || {};
+                    state.foreign_assets.has_foreign_assets = true;
+                    state.foreign_assets.assets = state.foreign_assets.assets || [];
+                    
+                    const k401 = (usState.retirement_accounts['401k_employee_contribution_usd'] || 0) + (usState.retirement_accounts['401k_employer_match_usd'] || 0);
+                    if (k401 > 0) {
+                        state.foreign_assets.assets.push({
+                            asset_type: 'Trusts',
+                            country: 'United States',
+                            description: '401(k) Retirement Plan',
+                            value_inr: k401 * 83.0
+                        });
+                    }
+                }
+
+                // Hydrate US Taxes Withheld -> India Foreign Tax Credit (Schedule TR / Sec 90)
+                if (usState.withholding_and_estimated && usState.withholding_and_estimated.federal_withholding_total_usd > 0) {
+                    state.tax_credits = state.tax_credits || {};
+                    state.tax_credits.section_90_90A_91_relief_inr = (state.tax_credits.section_90_90A_91_relief_inr || 0) + (usState.withholding_and_estimated.federal_withholding_total_usd * 83.0);
+                }
+                // Hydrate US W-2 Salary -> India Salary
+                if (usState.income_us_source && usState.income_us_source.wages_w2 && usState.income_us_source.wages_w2.length > 0) {
+                    state.domestic_income = state.domestic_income || {};
+                    state.domestic_income.salary = state.domestic_income.salary || {};
+                    state.domestic_income.salary.has_salary_income = true;
+                    
+                    let totalWagesUsd = 0;
+                    usState.income_us_source.wages_w2.forEach(w => totalWagesUsd += (w.wages_box1_usd || 0));
+                    
+                    if (totalWagesUsd > 0) {
+                        state.domestic_income.salary.gross_salary_inr = (state.domestic_income.salary.gross_salary_inr || 0) + (totalWagesUsd * 83.0);
+                    }
+                }
+            }
+        } catch(e) {
+            console.error("Hydration Error: ", e);
+        }
+        // --- END HYDRATION ENGINE ---
 
         // Prefill days & citizen gating from Layer 0 determinations if not already in state
         if (state.residency_detail.days_in_india_current_year === undefined || state.residency_detail.days_in_india_current_year === null || !savedIndiaStateStr) {
@@ -12307,6 +13066,42 @@ ${isProf ? '' : `
 
         // Restore DOM inputs from the merged state
         restoreIndiaDOMFromState();
+
+        // Ensure active quarter button styling is correct
+        const btnClassesActive = "px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]".split(" ");
+        const btnClassesInactive = "px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5".split(" ");
+        ['Q1', 'Q2', 'Q3', 'Q4', 'ANNUAL'].forEach(qId => {
+            const btnId = qId === 'ANNUAL' ? 'btn-q-annual' : 'btn-q-' + qId.toLowerCase();
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            btn.className = '';
+            if (qId === state.active_quarter) {
+                btnClassesActive.forEach(c => btn.classList.add(c));
+            } else {
+                btnClassesInactive.forEach(c => btn.classList.add(c));
+                if (qId === 'ANNUAL') btn.classList.add('ml-2');
+            }
+        });
+
+        if (state.active_quarter === 'ANNUAL') {
+            const allInputs = document.querySelectorAll('input, select, textarea');
+            allInputs.forEach(input => {
+                input.setAttribute('data-q-disabled', 'true');
+                input.disabled = true;
+                input.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+            const functionalButtons = document.querySelectorAll('.glass-card button:not([onclick^="switchStep"]):not([onclick^="switchQuarter"]):not([id="btn-copy-payload"])');
+            functionalButtons.forEach(btn => {
+                btn.setAttribute('data-q-disabled', 'true');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            });
+            const globalBanner = document.getElementById('global-tax-year-banner');
+            if (globalBanner) {
+                globalBanner.classList.remove('hidden');
+                globalBanner.textContent = "VIEWING ANNUAL AGGREGATED SUMMARY. SWITCH TO A QUARTER TO EDIT.";
+            }
+        }
 
         // Initialize display and solvers
         runResidencySolver();
