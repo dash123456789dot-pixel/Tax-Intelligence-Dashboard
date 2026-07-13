@@ -1,0 +1,489 @@
+id="panel-step-profile" class="glass-card p-6 lg:p-8 flex flex-col gap-6">
+            <div>
+                <h2 class="text-xl font-bold text-white tracking-wide font-display uppercase">Screen 2A — Your Profile & Time in India</h2>
+                <p class="text-xs text-white/40 mt-1">Tell us about yourself and your time spent in India to automatically determine your tax residency status.</p>
+                <div class="mt-4 p-4 bg-brandCyan/10 border border-brandCyan/20 rounded-xl flex items-start gap-3">
+                    <span class="text-lg">💡</span>
+                    <div>
+                        <div class="text-[11px] font-black tracking-widest text-brandCyan uppercase mb-1">Global Annual Application</div>
+                        <div class="text-xs text-white/70 leading-relaxed">Unlike income which is strictly tracked per quarter, your tax residency status and age profile apply to the entire financial year. Any information entered here is treated as global for the year and cannot be different across quarters.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Parameters -->
+
+            <!-- Global Tax Entity & Profile -->
+            <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-4 transition-all">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Your Tax Entity Type</label>
+                        <select id="biz-entity-type" onchange="updateBizEntityType(this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-3 focus:border-brandGold focus:outline-none transition-all">
+                            <option value="individual" selected>Individual</option>
+                            <option value="huf">Hindu Undivided Family (HUF)</option>
+                            <option value="firm">Partnership Firm (Ordinary)</option>
+                            <option value="llp">Limited Liability Partnership (LLP)</option>
+                            <option value="company">Company</option>
+                            <option value="aop">Association of Persons / Body of Individuals (AOP/BOI)</option>
+                            <option value="trust">Trust /NGO/ Political Party</option>
+                            <option value="ajp">Artificial Juridical Person (AJP)</option>
+                            <option value="local">Local Authority</option>
+                        </select>
+                        <div id="warn-entity-presumptive" class="p-3 bg-brandRed/20 border border-brandRed text-brandRed text-[10px] font-bold rounded-xl hidden items-start gap-2 mt-2 transition-all">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                            <span id="warn-entity-text">Companies, LLPs, AOPs, and Trusts are NOT eligible for presumptive taxation under s.44AD.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Global PAN -->
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Permanent Account Number (PAN)</label>
+                        <input type="text" id="prof-pan" oninput="updateProfileField('pan', this.value.toUpperCase())" placeholder="AAAAA9999A" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono">
+                    </div>
+                </div>
+
+                <!-- Aadhaar Link Toggle -->
+                <div class="flex items-center justify-between p-4 bg-[#121212] border border-white/10 rounded-2xl mb-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-white/80">PAN Linked to Aadhaar?</span>
+                        <span class="text-[9px] text-white/30">If your PAN is not linked to Aadhaar, a higher tax rate will be deducted from your income.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-aadhaar-linked" onchange="updateProfileField('pan_aadhaar_linked', this.checked)" class="sr-only peer" checked>
+                        <div class="w-9 h-5 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
+                <!-- Tax Regime Toggle -->
+                <div id="div-prof-regime" class="border-t border-white/10 pt-4 mt-2 transition-all">
+                    <label class="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Tax Regime</label>
+                    <select id="prof-regime" onchange="updateProfileField('tax_regime', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                        <option value="NEW" class="bg-[#121212]">New Tax Regime (Default u/s 115BAC)</option>
+                        <option value="OLD" class="bg-[#121212]">Old Tax Regime (With Deductions)</option>
+                    </select>
+                    <p class="text-[9px] text-white/40 mt-1.5">Only Individuals, HUFs, AOPs, and BOIs can opt for the New Regime.</p>
+                </div>
+
+                        <!-- Corporate Tax Regime Selection (Domestic Companies Only) -->
+            <div id="div-corp-regimes" class="hidden p-5 bg-brandGold/5 border border-brandGold/20 rounded-2xl flex-col gap-4 transition-all">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-widest text-brandGold mb-1">Corporate Tax Regime</h3>
+                    <p class="text-[9px] text-white/40">Select the applicable corporate tax base. These regimes are mutually exclusive.</p>
+                </div>
+                
+                <!-- Standard / 400Cr -->
+                <div id="div-regime-400" class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-white/90">Standard Regime (Previous Year Turnover &lt;= ₹400 Cr?)</span>
+                        <span class="text-[8px] text-white/40">Determines if base tax rate is 25% instead of 30%.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-turnover-400" onchange="updateProfileField('turnover_lte_400cr', this.checked)" class="sr-only peer">
+                        <div class="w-7 h-4 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
+                <!-- 115BAA -->
+                <div id="div-regime-115baa" class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-white/90">Opting for 22% rate u/s 115BAA?</span>
+                        <span class="text-[8px] text-white/40">Irrevocable choice; surrenders most exemptions.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-opt-115baa" onchange="updateProfileField('opt_115baa', this.checked)" class="sr-only peer">
+                        <div class="w-7 h-4 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
+                <!-- 115BAB -->
+                <div id="div-regime-115bab" class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-white/90">Opting for 15% rate u/s 115BAB?</span>
+                        <span class="text-[8px] text-white/40">For NEW Manufacturing Companies only.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-opt-115bab" onchange="updateProfileField('opt_115bab', this.checked)" class="sr-only peer">
+                        <div class="w-7 h-4 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
+                <!-- 115BA -->
+                <div id="div-regime-115ba" class="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-white/90">Opting for 25% rate u/s 115BA?</span>
+                        <span class="text-[8px] text-white/40">For Manufacturing Companies setup after Mar 2016.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="prof-opt-115ba" onchange="updateProfileField('opt_115ba', this.checked)" class="sr-only peer">
+                        <div class="w-7 h-4 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brandGold"></div>
+                    </label>
+                </div>
+
+                <!-- Warning Block -->
+                <div id="warn-mfg-regime" class="hidden p-3 bg-brandGold/20 border border-brandGold/40 rounded-xl flex items-start gap-2">
+                    <span class="text-[10px] font-black text-brandGold uppercase mt-0.5">Note:</span>
+                    <span class="text-[9px] text-brandGold/80">This regime is strictly for manufacturing/power businesses. Non-compliant business codes added below will be flagged.</span>
+                </div>
+
+                <!-- Manufacturing Dates Block -->
+                <div id="mfg-dates-block" class="hidden flex-col gap-3 p-3 bg-black/40 border border-white/10 rounded-xl mt-2 w-full">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Date of Setup / Registration</label>
+                        <input type="date" id="prof-mfg-setup-date" onchange="updateProfileField('mfg_setup_date', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none [color-scheme:dark]">
+                    </div>
+                    <div id="mfg-commence-date-wrapper" class="hidden">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Date of Commencement of Manufacturing</label>
+                        <input type="date" id="prof-mfg-commence-date" onchange="updateProfileField('mfg_commence_date', this.value)" class="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none [color-scheme:dark]">
+                    </div>
+                    <div id="mfg-date-error" class="hidden text-[9px] text-red-500 font-bold mt-1"></div>
+                </div>
+
+
+                          </div>
+
+                          <!-- MAT Book Profit Input -->
+                        <div id="div-prof-mat-profit" class="hidden flex-col p-4 bg-white/5 border border-brandGold/20 rounded-2xl mb-2">
+                            <label class="text-xs font-bold text-brandGold mb-1">Book Profit computed u/s 115JB (₹)</label>
+                            <span class="text-[9px] text-white/40 mb-3">Required to calculate Minimum Alternate Tax (MAT) liability at 15%.</span>
+                            <input type="text" inputmode="numeric" id="prof-mat-profit" oninput="updateProfileField('mat_book_profit', this.value === '' ? null : parseINRCurrency(this.value))" class="inr-input w-full bg-black/50 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono">
+                        </div>
+
+            </div>
+
+            
+            
+            
+
+            <!-- Dual Residency Alert Container (Conditionally Visible) -->
+            <div id="dual-residency-alert" class="hidden p-5 bg-amber-500/5 border border-amber-500/20 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-amber-400 text-xl shrink-0">⚠️</span>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-black text-amber-400 uppercase tracking-widest font-display">Dual Residency Conflict Detected</span>
+                        <span class="text-xs text-white/70 leading-relaxed">
+                            You are classified as a tax resident under both Indian domestic laws (Fiscal Year: Apr–Mar) and US domestic laws (Calendar Year: Jan–Dec). This creates overlapping worldwide tax exposure.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Collapsible Panel 1: DTAA Art. 4 Tie-Breaker -->
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-brandGold">DTAA Article 4 Tie-Breaker</span>
+                        <p class="text-[10px] text-white/50 leading-relaxed">
+                            Under the India-US Treaty, you can resolve dual residency by breaking the tie to one country using these sequential tests: Permanent Home ➔ Center of Vital Interests ➔ Habitual Abode ➔ Nationality. Breaking the tie to the US allows you to file your Indian return as a Non-Resident and claim DTAA benefits.
+                        </p>
+                    </div>
+
+                    <!-- Collapsible Panel 2: Tax Year Mismatch & FTC -->
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-brandGold">Tax Year Mismatch &amp; FTC Apportionment</span>
+                        <p class="text-[10px] text-white/50 leading-relaxed">
+                            If you do not break the tie, you must claim a Foreign Tax Credit (FTC Form 67 / Section 90) to avoid double taxation in India. Because the Indian Fiscal Year (April–March) crosses two US Calendar Years, you must apportion US calendar-year earnings and withholdings to the corresponding Indian fiscal months.
+                        </p>
+                    </div>
+                </div>
+
+                                <!-- DTAA ARTICLE 4 TIE-BREAKER WIZARD -->
+                <div class="pt-4 border-t border-white/5 mt-2">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-brandGold mb-3 block">Run the Treaty Tie-Breaker Tests</span>
+                    <div class="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-white/5">
+                        <!-- Step 1: Permanent Home -->
+                        <div class="flex flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
+                            <label class="text-[9px] font-bold text-brandGold uppercase">Step 1: Permanent Home</label>
+                            <span class="text-[10px] text-white/70">Where do you have a permanent home available to you?</span>
+                            <select id="tb-home" onchange="evaluateTieBreaker()" class="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none">
+                                <option value="none">-- Select --</option>
+                                <option value="india">India Only</option>
+                                <option value="us">United States Only</option>
+                                <option value="both">Both Countries</option>
+                                <option value="neither">Neither Country</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 2: CVI -->
+                        <div id="tb-step-cvi" class="hidden flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
+                            <label class="text-[9px] font-bold text-brandGold uppercase">Step 2: Centre of Vital Interests</label>
+                            <span class="text-[10px] text-white/70">Where are your closer personal and economic relations?</span>
+                            <select id="tb-cvi" onchange="evaluateTieBreaker()" class="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none">
+                                <option value="none">-- Select --</option>
+                                <option value="india">Closer to India</option>
+                                <option value="us">Closer to United States</option>
+                                <option value="tie">Cannot be determined</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 3: Habitual Abode -->
+                        <div id="tb-step-abode" class="hidden flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
+                            <label class="text-[9px] font-bold text-brandGold uppercase">Step 3: Habitual Abode</label>
+                            <span class="text-[10px] text-white/70">Where is your habitual abode (customary living pattern)?</span>
+                            <select id="tb-abode" onchange="evaluateTieBreaker()" class="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none">
+                                <option value="none">-- Select --</option>
+                                <option value="india">India</option>
+                                <option value="us">United States</option>
+                                <option value="tie">Both or Neither</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 4: Nationality -->
+                        <div id="tb-step-nationality" class="hidden flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
+                            <label class="text-[9px] font-bold text-brandGold uppercase">Step 4: Nationality</label>
+                            <span class="text-[10px] text-white/70">What is your legal citizenship/nationality?</span>
+                            <select id="tb-nationality" onchange="evaluateTieBreaker()" class="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none">
+                                <option value="none">-- Select --</option>
+                                <option value="india">Indian Citizen</option>
+                                <option value="us">US Citizen</option>
+                                <option value="tie">Dual Citizen or Neither</option>
+                            </select>
+                        </div>
+
+                        <!-- Outcome Box -->
+                        <div id="tb-outcome-box" class="hidden p-3 rounded-xl border font-bold text-[10px] text-center mt-2 transition-all">
+                            <span id="tb-outcome-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-white/5 my-2">
+
+            <!-- Residency Core Parameters -->
+            <div class="flex flex-col gap-4">
+                
+                
+                <!-- NON-INDIVIDUAL RESIDENCY QUESTIONS (Injected) -->
+                <div id="div-res-wholly-outside" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is the control and management of its affairs situated wholly outside India?</span>
+                            <span class="text-[9px] text-white/30">If even partially in India, the entity is considered Resident.</span>
+                        </div>
+                        <select id="res-wholly-outside" onchange="updateResidencyField('is_wholly_outside_india', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="div-res-indian-company" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is it an Indian Company?</span>
+                            <span class="text-[9px] text-white/30">An Indian Company is always considered Resident in India.</span>
+                        </div>
+                        <select id="res-indian-company" onchange="updateResidencyField('is_indian_company', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="div-res-poem" class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Is its Place of Effective Management (POEM) in India?</span>
+                            <span class="text-[9px] text-white/30">Applies to foreign companies with active business control in India.</span>
+                        </div>
+                        <select id="res-poem" onchange="updateResidencyField('is_poem_in_india', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select...</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="div-karta-alert" class="hidden mt-2 p-3 bg-brandCyan/10 border border-brandCyan/30 rounded-xl flex flex-col gap-1">
+                    <span class="text-[10px] font-black text-brandCyan uppercase tracking-widest">Karta Physical Presence Test Required</span>
+                    <span class="text-[10px] text-brandCyan/70">Because the HUF is Resident, please answer the questions below regarding the <strong>Karta's</strong> physical presence in India to determine if the HUF is Ordinarily Resident (ROR) or Not Ordinarily Resident (RNOR).</span>
+                </div>
+
+<div id="div-residency-individual-container" class="flex flex-col gap-4 transition-all">
+<!-- Core India Days -->
+                <div id="div-res-core-days" class="p-4 bg-white/5 border border-white/10 rounded-2xl border-l-2 border-l-brandGold transition-all">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/90 uppercase tracking-widest flex items-center gap-2">
+                                Total Days in India
+                                <span id="badge-live-tracking" class="hidden text-[8px] px-1.5 py-0.5 rounded bg-brandGreen/20 border border-brandGreen/40 text-brandGreen font-black uppercase shadow-[0_0_8px_rgba(52,211,153,0.3)]">Live 🟢</span>
+                            </span>
+                            <span class="text-[9px] text-white/40 mt-0.5">Sum of Manual + Live Tracked Days</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                                <input type="text" inputmode="numeric" id="days-val" min="0" max="366" value="182" readonly class="inr-input w-16 bg-[#121212] border border-brandGold/30 rounded text-xs font-black text-brandGold font-mono px-2 py-1 focus:outline-none text-center opacity-80 cursor-default">
+                                <span class="text-xs font-black text-brandGold font-mono">days</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-black/40 rounded-xl border border-white/5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold text-white/70 uppercase">Manual Days Slider</span>
+                            <span class="text-[10px] text-brandGold font-mono font-bold" id="manual-days-val">182 days</span>
+                        </div>
+                        <input type="range" id="res-days-current" min="0" max="366" value="182" oninput="updateManualDays(this.value)" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-brandGold">
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <label class="flex items-center justify-between cursor-pointer group">
+                            <span class="text-[10px] font-bold text-white/70 uppercase group-hover:text-white transition-colors">Enable Live Date Tracking</span>
+                            <div class="relative inline-flex h-4 w-8 items-center rounded-full bg-white/10 transition-colors peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brandGold/50" id="toggle-live-track-bg">
+                                <input type="checkbox" id="toggle-live-track" class="peer sr-only" onchange="toggleLiveTracking(this.checked)">
+                                <span class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform translate-x-1" id="toggle-live-track-dot"></span>
+                            </div>
+                        </label>
+                        
+                        <div id="live-tracking-panel" class="hidden mt-4 flex flex-col gap-3 transition-all">
+                            <div id="live-trips-container" class="flex flex-col gap-3">
+                                <!-- Trips will be rendered here dynamically -->
+                            </div>
+                            <button onclick="addTrip()" class="w-full py-2 border border-dashed border-white/20 rounded-lg text-xs font-bold text-brandGold/70 hover:text-brandGold hover:border-brandGold/50 hover:bg-brandGold/5 transition-colors">
+                                + Add Trip
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- Preceding 4 Years >= 365 -->
+                <div class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden" id="div-p4y">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white/80">Have you spent 365 days or more in India during the last 4 years?</span>
+                            <span class="text-[9px] text-white/30">This is the sum of your days in India over the past 4 financial years.</span>
+                        </div>
+                        <select id="res-p4y" onchange="updateResidencyField('days_in_india_preceding_4_years_gte_365', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                    <!-- Employment status -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-emp">
+                        <label class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Did you leave India for Employment or as Ship Crew?</label>
+                        <select id="res-emp" onchange="updateResidencyField('employment_or_crew_status', this.value === 'null' ? null : this.value)" class="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                            <option value="null" disabled selected>Select an option...</option>
+                            <option value="none">No (Standard Rule)</option>
+                            <option value="employed_abroad">Yes, left India for employment this year</option>
+                            <option value="indian_ship_crew">Yes, left as an Indian Ship Crew member</option>
+                            <option value="foreign_ship_crew">Yes, left as a Foreign Ship Crew member</option>
+                        </select>
+                    </div>
+
+                    <!-- Departure year -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl hidden" id="div-departure">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">Is this the first year you left India for employment?</span>
+                                <span class="text-[9px] text-white/30">Special relaxed rules apply only in the year you leave.</span>
+                            </div>
+                            <select id="res-is-departure" onchange="updateResidencyField('is_departure_year', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Visitor flag -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-visitor">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">Are you an Indian Citizen or Person of Indian Origin (PIO) visiting India?</span>
+                                <span class="text-[9px] text-white/30">This activates the 120-day special visitor rule.</span>
+                            </div>
+                            <select id="res-visitor" onchange="updateResidencyField('came_on_visit_to_india_pio_citizen', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Historical 9 of 10 years NR -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-nr9">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">Were you a Non-Resident (NR) in 9 out of the last 10 years?</span>
+                                <span class="text-[9px] text-white/30">This helps determine if you are a Resident but Not Ordinarily Resident (RNOR).</span>
+                            </div>
+                            <select id="res-nr9" onchange="updateResidencyField('nr_years_last_10_gte_9', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Historical 7 years <= 729 -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-d7">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">Did you spend 729 days or less in India over the last 7 years?</span>
+                                <span class="text-[9px] text-white/30">This is another condition to determine if you are an RNOR.</span>
+                            </div>
+                            <select id="res-d7" onchange="updateResidencyField('days_in_india_last_7_years_lte_729', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- India source income above 15L -->
+                    
+                    <!-- HUF Historical 2 of 10 years Resident -->
+                    <div class="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl hidden" id="div-huf-nr9">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandCyan/90">Have you (the Karta) been a resident of India in at least 2 out of the 10 financial years immediately preceding the relevant financial year?</span>
+                            </div>
+                            <select id="res-huf-nr9" onchange="updateResidencyField('nr_years_last_10_gte_9', this.value === 'null' ? null : this.value === 'false')" class="w-32 bg-[#121212] border border-brandCyan/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandCyan focus:ring-0 focus:outline-none transition-all ml-4 flex-shrink-0">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- HUF Historical 7 years >= 730 -->
+                    <div class="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl hidden" id="div-huf-d7">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-brandCyan/90">Was your (the Karta's) total physical stay in India equal to or greater than 730 days during the 7 financial years immediately preceding the relevant financial year?</span>
+                            </div>
+                            <select id="res-huf-d7" onchange="updateResidencyField('days_in_india_last_7_years_lte_729', this.value === 'null' ? null : this.value === 'false')" class="w-32 bg-[#121212] border border-brandCyan/20 rounded-xl text-xs text-white px-3 py-2 focus:border-brandCyan focus:ring-0 focus:outline-none transition-all ml-4 flex-shrink-0">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- India source income above 15L -->
+                    <div class="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-inc15">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white/80">Is your Indian Income more than ₹15 Lakhs?</span>
+                                <span class="text-[9px] text-white/30">Only include income earned in India. This affects your deemed residency status.</span>
+                            </div>
+                            <select id="res-inc15" onchange="updateResidencyField('india_source_income_above_15l', this.value === 'null' ? null : this.value === 'true')" class="w-32 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all">
+                                <option value="null" disabled selected>Select...</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <!-- STEP 2: DTAA TREATY (Conditional) -->
+        <div 

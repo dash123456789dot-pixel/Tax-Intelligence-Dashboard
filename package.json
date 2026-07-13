@@ -1,0 +1,45 @@
+{
+  "name": "tax-intelligence-dashboard",
+  "version": "1.0.0",
+  "description": "A premium, audit-ready cross-border tax intelligence system designed for individuals with complex financial lives across India and the United States.",
+  "main": "dump_us.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dash123456789dot-pixel/Tax-Intelligence-Dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dash123456789dot-pixel/Tax-Intelligence-Dashboard/issues"
+  },
+  "homepage": "https://github.com/dash123456789dot-pixel/Tax-Intelligence-Dashboard#readme",
+  "dependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "@types/node": "^25.9.3",
+    "@xstate/react": "^6.1.0",
+    "lucide-react": "^1.18.0",
+    "next": "^14.2.35",
+    "pg": "^8.22.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-transition-group": "^4.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "xstate": "^5.32.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.1",
+    "@types/pg": "^8.20.0",
+    "@types/react": "19.2.17",
+    "@types/react-transition-group": "^4.4.12",
+    "autoprefixer": "^10.5.0"
+  }
+}

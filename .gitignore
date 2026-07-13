@@ -10,3 +10,39 @@ Thumbs.db
 
 # Local logs
 *.log
+
+# Dependencies
+node_modules/
+wising-backend/__pycache__/
+
+# Next.js build output
+.next/
+out/
+tsconfig.tsbuildinfo
+
+# Secrets/configs
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+wising-backend/.env
+wising-backend/.env.test
+
+# Test outputs and temp files
+*test_output*.txt
+*output*.txt
+*.json
+!package.json
+!tsconfig.json
+!Project Update/package.json
+!wising-frontend/package.json
+!wising-frontend/eslint.config.js
+!wising-frontend/vite.config.js
+!wising-backend/render.yaml
+!wising-backend/requirements.txt
+!wising-frontend/perfect_convert.cjs
+*.txt
+scratch*
+out.txt
+

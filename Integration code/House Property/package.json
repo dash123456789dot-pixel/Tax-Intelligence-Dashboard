@@ -1,0 +1,12 @@
+{
+  "name": "house-property-step",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "House Property step (Screen 2F / DOM-02) extracted from layer1_india.html, bound to an XState v5 machine.",
+  "dependencies": {
+    "xstate": "^5.32.4",
+    "@xstate/react": "^4.1.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
