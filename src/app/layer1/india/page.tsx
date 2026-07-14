@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Layer1IndiaProvider, useLayer1 } from '@/hooks/Layer1Context';
 import { Layer1Shell } from '@/components/layer1india/Layer1Shell';
 import FinancialSnapshotStep from '@/components/layer1india/FinancialSnapshotStep';
 import ResidencySolverStep from '@/components/layer1india/ResidencySolverStep';
 import SalaryStep from '@/components/layer1india/SalaryStep';
 import HousePropertyStep from '@/components/layer1india/HousePropertyStep';
+import BusinessStep from '@/components/layer1india/BusinessStep';
 import { useSelector } from '@xstate/react';
 import { STEP_DEFINITIONS, isStepVisible } from '@/machines/complianceSidebarMachine';
 
@@ -15,6 +16,9 @@ function MainContent() {
   const activeStep = useSelector(sidebarActor, (s: any) => s.context.activeStepId);
   const taxRegime = useSelector(sidebarActor, (s: any) => s.context.taxRegime);
   const entityType = useSelector(sidebarActor, (s: any) => s.context.entityType);
+  const residencyStatus = useSelector(sidebarActor, (s: any) => s.context.residencyStatus);
+
+  const [residencyContext, setResidencyContext] = useState<any>(null);
 
   const handleNextFromSnapshot = () => {
     const sidebarContext = sidebarActor.getSnapshot().context;
@@ -31,7 +35,8 @@ function MainContent() {
     sidebarActor.send({ type: 'STEP.SELECT', stepId: 'step-snapshot' });
   };
 
-  const handleContinueFromResidency = () => {
+  const handleContinueFromResidency = (resCtx: any) => {
+    setResidencyContext(resCtx);
     const sidebarContext = sidebarActor.getSnapshot().context;
     const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-profile');
     for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
@@ -79,6 +84,28 @@ function MainContent() {
     }
   };
 
+  const handleBackFromBusiness = () => {
+    const sidebarContext = sidebarActor.getSnapshot().context;
+    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-business');
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
+        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
+        return;
+      }
+    }
+  };
+
+  const handleContinueFromBusiness = () => {
+    const sidebarContext = sidebarActor.getSnapshot().context;
+    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-business');
+    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
+      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
+        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
+        return;
+      }
+    }
+  };
+
   return (
     <Layer1Shell>
       <div id="step-forms-container" className="h-full w-full">
@@ -107,7 +134,17 @@ function MainContent() {
             onContinue={handleContinueFromHP}
           />
         </div>
-        {activeStep !== 'step-snapshot' && activeStep !== 'step-profile' && activeStep !== 'step-salary' && activeStep !== 'step-hp' && (
+        <div style={{ display: activeStep === 'step-business' ? 'block' : 'none' }}>
+          <BusinessStep
+            taxRegime={taxRegime}
+            entityType={entityType}
+            isIndianCompany={residencyContext?.residency_detail?.is_indian_company ?? null}
+            residencyStatus={residencyStatus}
+            onBack={handleBackFromBusiness}
+            onContinue={handleContinueFromBusiness}
+          />
+        </div>
+        {activeStep !== 'step-snapshot' && activeStep !== 'step-profile' && activeStep !== 'step-salary' && activeStep !== 'step-hp' && activeStep !== 'step-business' && (
           <div className="flex items-center justify-center min-h-[300px] text-white/40 bg-white/5 border border-white/5 rounded-2xl font-mono text-xs uppercase tracking-widest">
             Step Form for {activeStep} will reside here
           </div>
