@@ -134,6 +134,13 @@ interface PropertyCardProps {
 
 function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardProps) {
   const update = (field: string) => (value: any) => send({ type: 'UPDATE_HP_FIELD', index: idx, field, value });
+  const [showTds, setShowTds] = useState(!!prop.tenant_tds_deducted_inr);
+
+  useEffect(() => {
+    if (prop.tenant_tds_deducted_inr === null) {
+      setShowTds(false);
+    }
+  }, [prop.tenant_tds_deducted_inr]);
 
   return (
     <div className="p-5 bg-[#121212] border border-white/10 rounded-2xl flex flex-col gap-5 relative group">
@@ -147,7 +154,7 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
         </svg>
       </button>
 
-      <h3 className="text-sm font-black text-white/80 tracking-widest uppercase">Property {idx + 1}</h3>
+      <h3 className="text-base font-sans font-black text-white/80 tracking-[0.01em] uppercase">Property {idx + 1}</h3>
 
       <div className="flex items-start gap-2 bg-brandGold/5 border border-brandGold/20 p-3 rounded-xl mb-4 mt-4">
         <svg className="w-4 h-4 text-brandGold mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,11 +188,11 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Property Use</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Property Use</label>
           <select
             value={prop.property_use}
             onChange={(e) => update('property_use')(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono"
+            className="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono [color-scheme:dark]"
           >
             <option className="bg-[#1c1c1c] text-white" value="SOP">Self-Occupied (SOP)</option>
             <option className="bg-[#1c1c1c] text-white" value="LOP">Let-Out (LOP)</option>
@@ -194,20 +201,20 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
         </div>
 
         <div>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Co-owner Share (%)</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Co-owner Share (%)</label>
           <InrBlurField id={`hp-share-${idx}`} value={prop.co_owner_share_percent} onCommit={update('co_owner_share_percent')} />
         </div>
       </div>
 
       {visibility.showFinancialValuesRepresent && (
         <div className="bg-brandGold/10 border border-brandGold/30 p-3 rounded-xl">
-          <label className="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1">
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1">
             Financial Values Represent
           </label>
           <select
             value={prop.financial_values_represent}
             onChange={(e) => update('financial_values_represent')(e.target.value)}
-            className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono"
+            className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 font-mono [color-scheme:dark]"
           >
             <option className="bg-[#1c1c1c] text-white" value="TOTAL_PROPERTY">
               Total Property Value (Engine will compute your share)
@@ -219,22 +226,47 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className={'transition-all ' + (!visibility.showGavAndTax ? 'opacity-30 pointer-events-none hidden' : '')}>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Gross Annual Value (GAV)</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40">Gross Annual Value (GAV)</label>
+            <button
+              type="button"
+              onClick={() => setShowTds(!showTds)}
+              className="text-[9px] font-sans font-bold text-brandGold/80 hover:text-brandGold uppercase tracking-wider"
+            >
+              + Add TDS
+            </button>
+          </div>
           <InrBlurField id={`hp-gav-${idx}`} value={prop.gross_annual_value_inr} onCommit={update('gross_annual_value_inr')} disabled={!visibility.showGavAndTax} />
+          {showTds && (
+            <div className="mt-3">
+              <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
+                Tenant TDS Deducted
+                <span className="block text-[8px] text-white/30 normal-case tracking-normal font-sans font-normal mt-0.5">
+                  s.194-I (10%, business tenant) or s.194-IB (2%, individual/HUF tenant)
+                </span>
+              </label>
+              <InrBlurField
+                id={`hp-tds-${idx}`}
+                value={prop.tenant_tds_deducted_inr}
+                onCommit={update('tenant_tds_deducted_inr')}
+                disabled={!visibility.showGavAndTax}
+              />
+            </div>
+          )}
         </div>
         <div className={'transition-all ' + (!visibility.showGavAndTax ? 'opacity-30 pointer-events-none hidden' : '')}>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Municipal Taxes Paid</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Municipal Taxes Paid</label>
           <InrBlurField id={`hp-tax-${idx}`} value={prop.municipal_taxes_paid_inr} onCommit={update('municipal_taxes_paid_inr')} disabled={!visibility.showGavAndTax} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className={'transition-all ' + (!visibility.showInterestFields ? 'opacity-30 pointer-events-none hidden' : '')}>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Interest on Borrowed Capital</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Interest on Borrowed Capital</label>
           <InrBlurField id={`hp-interest-${idx}`} value={prop.interest_on_borrowed_capital_inr} onCommit={update('interest_on_borrowed_capital_inr')} disabled={!visibility.showInterestFields} />
         </div>
         <div className={'transition-all ' + (!visibility.showInterestFields ? 'opacity-30 pointer-events-none hidden' : '')}>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Pre-Construction Interest</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Pre-Construction Interest</label>
           <InrBlurField id={`hp-preconstruction-${idx}`} value={prop.pre_construction_interest_inr} onCommit={update('pre_construction_interest_inr')} disabled={!visibility.showInterestFields} />
         </div>
       </div>
@@ -288,10 +320,10 @@ export default function HousePropertyStep({ taxRegime, entityType, onBack, onCon
       <div id="panel-step-hp" className="glass-card p-6 lg:p-8 flex flex-col gap-6">
         <div className="flex items-center justify-between border-b border-white/5 pb-4">
           <div>
-            <h2 className="text-xl font-bold text-white tracking-wide font-display uppercase">
+            <h2 className="text-[22px] font-sans font-bold text-white tracking-[0.01em] uppercase">
               Screen 2F — House Property <span className="text-white/40 text-sm ml-2">(DOM-02)</span>
             </h2>
-            <p className="text-xs text-white/50 mt-1 uppercase tracking-widest font-bold">
+            <p className="text-sm font-sans text-white/50 mt-1 uppercase tracking-[0.01em] font-bold">
               Rental Income &amp; Home Loan Interest
             </p>
           </div>

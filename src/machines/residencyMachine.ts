@@ -23,6 +23,7 @@ export const initialResidencyContext: Omit<ResidencyContext, 'ui'> = {
     is_poem_in_india: null,
     ship_nationality: null,
     liable_to_tax_in_another_country_being_indian_citizen: false,
+    us_person_certified_to_bank: null,
     final_india_residency_status: 'ROR',
   },
 

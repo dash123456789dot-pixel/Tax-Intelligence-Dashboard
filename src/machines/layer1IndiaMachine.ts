@@ -21,6 +21,7 @@ export const INITIAL_CONTEXT: Layer1IndiaContext = {
     days_in_india_last_7_years_lte_729: null, income_above_15l: null,
     liable_to_tax_in_another_country: false,
     is_wholly_outside_india: null, is_indian_company: null, is_poem_in_india: null,
+    us_person_certified_to_bank: null,
     final_india_residency_status: 'ROR',
   },
   dtaa: { dtaa_treaty_residence: 'none', dtaa_forced_nr: false },

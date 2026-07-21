@@ -36,10 +36,10 @@ const FS_CSS = `
 .fs-panel * { box-sizing: border-box; }
 @media (min-width: 1024px) { .fs-panel { padding: 32px; } }
 
-.fs-header h2 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.02em; margin: 0; }
+.fs-header h2 { font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.01em; margin: 0; }
 .fs-header p { font-size: 12px; color: rgba(255,255,255,0.4); margin: 6px 0 0; max-width: 640px; line-height: 1.6; }
 
-.fs-section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin: 0 0 16px; }
+.fs-section-title { font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin: 0 0 16px; }
 
 .fs-config-card { background: #0A0A0A; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 
@@ -56,7 +56,7 @@ const FS_CSS = `
   .fs-config-cell:first-child { border-left: none; }
 }
 
-.fs-field-label { display: block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(212,175,55,0.8); margin-bottom: 2px; }
+.fs-field-label { display: block; font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; color: rgba(212,175,55,0.8); margin-bottom: 2px; }
 .fs-field-label.muted { color: rgba(255,255,255,0.5); }
 
 .fs-select-wrap { position: relative; }
@@ -84,14 +84,14 @@ const FS_CSS = `
 
 .fs-corp-block { border-top: 1px solid rgba(212,175,55,0.2); background: rgba(212,175,55,0.05); display: flex; flex-direction: column; }
 .fs-corp-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.fs-corp-header h4 { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); margin: 0 0 4px; }
+.fs-corp-header h4 { font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; color: var(--gold); margin: 0 0 4px; }
 .fs-corp-header p { font-size: 9px; color: rgba(255,255,255,0.4); margin: 0; }
 .fs-corp-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 12px; }
 .fs-corp-row .fs-corp-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.9); }
 .fs-corp-row .fs-corp-hint { font-size: 8px; color: rgba(255,255,255,0.4); margin-top: 2px; }
 
 .fs-mfg-dates { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.1); }
-.fs-date-label { display: block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+.fs-date-label { display: block; font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
 .fs-date-input { width: 100%; background: #121212; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px; font-size: 13px; color: #fff; color-scheme: dark; font-family: inherit; }
 
 .fs-mat-box { display: flex; flex-direction: column; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; margin: 16px; }
@@ -104,13 +104,13 @@ const FS_CSS = `
 .fs-setup-card { display: flex; flex-direction: column; gap: 12px; padding: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; cursor: pointer; transition: background-color 0.3s; text-align: left; font-family: inherit; }
 .fs-setup-card:hover { background: rgba(255,255,255,0.1); }
 .fs-setup-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.fs-setup-top { display: flex; align-items: center; justify-content: space-between; }
+.fs-setup-top { display: flex; align-items: center; justify-content: justify-between; }
 .fs-setup-icon { font-size: 20px; }
 .fs-setup-radio { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; transition: background-color 0.15s, border-color 0.15s; flex-shrink: 0; }
 .fs-setup-radio.is-checked { background: var(--gold); border-color: var(--gold); }
 .fs-setup-check { opacity: 0; transition: opacity 0.15s; color: #000; }
 .fs-setup-check.is-checked { opacity: 1; }
-.fs-setup-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.15em; }
+.fs-setup-title { font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 700; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.01em; }
 .fs-setup-desc { font-size: 9px; color: rgba(255,255,255,0.4); line-height: 1.5; }
 
 .fs-footer { display: flex; justify-content: flex-end; }
@@ -228,7 +228,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
               <label className="fs-field-label">Your Tax Entity Type</label>
               <div className="fs-select-wrap">
                 <select
-                  className="fs-select"
+                  className="fs-select [color-scheme:dark]"
                   value={entityType}
                   onChange={(e) => send({ type: "ENTITY_TYPE.SET", value: e.target.value })}
                 >
@@ -259,7 +259,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                 <label className="fs-field-label">Tax Regime</label>
                 <div className="fs-select-wrap">
                   <select
-                    className="fs-select"
+                    className="fs-select [color-scheme:dark]"
                     value={taxRegime}
                     onChange={(e) => send({ type: "TAX_REGIME.SET", value: e.target.value })}
                   >
@@ -321,7 +321,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                     <label className="fs-date-label">Date of Setup / Registration</label>
                     <input
                       type="date"
-                      className="fs-date-input"
+                      className="fs-date-input [color-scheme:dark]"
                       value={corporate.mfgSetupDate}
                       onChange={(e) => send({ type: "CORP.MFG_SETUP_DATE.SET", value: e.target.value })}
                     />
@@ -331,7 +331,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                       <label className="fs-date-label">Date of Commencement of Manufacturing</label>
                       <input
                         type="date"
-                        className="fs-date-input"
+                        className="fs-date-input [color-scheme:dark]"
                         value={corporate.mfgCommenceDate}
                         onChange={(e) => send({ type: "CORP.MFG_COMMENCE_DATE.SET", value: e.target.value })}
                       />

@@ -1,16 +1,34 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
-import { useLayer1India as useLayer1IndiaHook } from './useLayer1India';
+import React, { createContext, useContext, useState } from 'react';
+import { useMachine } from '@xstate/react';
+import { complianceSidebarMachine } from '@/machines/complianceSidebarMachine';
+import { quarterMachine } from '@/machines/quarterMachine';
 
-type Layer1IndiaContextType = ReturnType<typeof useLayer1IndiaHook>;
+interface Layer1ContextType {
+  sidebarActor: any; // Type accurately if possible
+  quarterActor: any;
+  ctx: any; // Add specific types as you evolve
+}
 
-const Layer1IndiaContext = createContext<Layer1IndiaContextType | null>(null);
+const Layer1IndiaContext = createContext<Layer1ContextType | null>(null);
 
-export function Layer1IndiaProvider({ children }: { children: React.ReactNode }) {
-  const machine = useLayer1IndiaHook();
+export function Layer1IndiaProvider({ children, initialProfile }: { children: React.ReactNode, initialProfile?: any }) {
+  // Initialize standard dummy context or override with props
+  const [ctx] = useState({
+    profile: initialProfile || {
+      entity_type: 'individual',
+      tax_regime: 'NEW',
+      pan: 'ABCDE1234F',
+      date_of_birth: '1985-05-15'
+    }
+  });
+
+  const [, , sidebarActor] = useMachine(complianceSidebarMachine);
+  const [, , quarterActor] = useMachine(quarterMachine);
+
   return (
-    <Layer1IndiaContext.Provider value={machine}>
+    <Layer1IndiaContext.Provider value={{ sidebarActor, quarterActor, ctx }}>
       {children}
     </Layer1IndiaContext.Provider>
   );

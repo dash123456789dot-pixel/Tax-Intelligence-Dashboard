@@ -45,6 +45,7 @@ export type Layer1IndiaContext = {
     is_wholly_outside_india: boolean | null;
     is_indian_company: boolean | null;
     is_poem_in_india: boolean | null;
+    us_person_certified_to_bank: boolean | null;
     final_india_residency_status: ResidencyStatus;
   };
 

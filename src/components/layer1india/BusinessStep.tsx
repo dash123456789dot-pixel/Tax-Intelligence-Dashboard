@@ -92,7 +92,7 @@ function Accordion({ icon, title, defaultOpen = false, dimmed = false, children 
       open={defaultOpen}
       style={dimmed ? { opacity: 0.35, pointerEvents: 'none' } : undefined}
     >
-      <summary className="p-4 cursor-pointer text-xs font-black uppercase tracking-widest text-brandGold flex items-center justify-between list-none focus:outline-none">
+      <summary className="p-4 cursor-pointer text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold flex items-center justify-between list-none focus:outline-none">
         <div className="flex items-center gap-3">
           <span className="text-xl">{icon}</span>
           <span>{title}</span>
@@ -151,7 +151,7 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
   return (
     <div className="bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Business #{idx + 1}</span>
+        <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-white/40">Business #{idx + 1}</span>
         <button
           type="button"
           onClick={() => send({ type: 'REMOVE_BUSINESS_ENTRY', index: idx })}
@@ -163,7 +163,7 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business Name</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Business Name</label>
           <input
             type="text"
             value={entry.business_name || ''}
@@ -174,11 +174,11 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
         </div>
 
         <div>
-          <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax Treatment</label>
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Tax Treatment</label>
           <select
             value={scheme || ''}
             onChange={(e) => update('presumptive_scheme')(e.target.value || null)}
-            className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+            className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
           >
             {options.options.map((o) => (
               <option key={o.value} value={o.value} className="bg-[#1c1c1c] text-white">{o.label}</option>
@@ -188,11 +188,11 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
 
         {isProf ? (
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Profession Type (Rule 6F)</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Profession Type (Rule 6F)</label>
             <select
               value={entry.profession_type || ''}
               onChange={(e) => update('profession_type')(e.target.value || null)}
-              className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+              className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
             >
               <option value="">-- Select Profession --</option>
               {PROFESSION_OPTIONS.map(([v, l]) => <option key={v} value={v} className="bg-[#1c1c1c] text-white">{l}</option>)}
@@ -200,11 +200,11 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
           </div>
         ) : (
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Business Code</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Primary Business Code</label>
             <select
               value={entry.business_code || ''}
               onChange={(e) => update('business_code')(e.target.value || null)}
-              className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+              className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
             >
               <option value="">-- Select Business Code --</option>
               {BUSINESS_CODE_OPTIONS.map((grp) => (
@@ -220,11 +220,11 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
       {scheme === 's44AD' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-white/5 border border-white/10 rounded-xl">
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Digital Receipts (₹)</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Digital Receipts (₹)</label>
             <InrField id={`biz-entry-${idx}-digital`} value={entry.digital_receipts_inr} onCommit={update('digital_receipts_inr')} />
           </div>
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cash Receipts (₹)</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Cash Receipts (₹)</label>
             <InrField id={`biz-entry-${idx}-cash`} value={entry.cash_receipts_inr} onCommit={update('cash_receipts_inr')} />
           </div>
         </div>
@@ -233,11 +233,11 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
       {scheme === 's44ADA' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-white/5 border border-white/10 rounded-xl">
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Digital Receipts (₹)</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Digital Receipts (₹)</label>
             <InrField id={`biz-entry-${idx}-ada-digital`} value={entry.ada_digital_receipts_inr} onCommit={update('ada_digital_receipts_inr')} />
           </div>
           <div>
-            <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cash Receipts (₹)</label>
+            <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Cash Receipts (₹)</label>
             <InrField id={`biz-entry-${idx}-ada-cash`} value={entry.ada_cash_receipts_inr} onCommit={update('ada_cash_receipts_inr')} />
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function BusinessStep({
       <style>{BIZ_CSS}</style>
       <div id="panel-step-business" className="glass-card p-6 lg:p-8 flex flex-col gap-6">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-wide font-display uppercase">
+          <h2 className="text-[22px] font-sans font-bold text-white tracking-[0.01em] uppercase">
             Screen 2G — Business, Profession &amp; Trading Income
           </h2>
           <p className="text-xs text-white/40 mt-1">
@@ -336,7 +336,7 @@ export default function BusinessStep({
               {v.divProfSection8 && (
                 <div className="flex items-center justify-between p-4 bg-white/5 border border-brandGold/20 rounded-2xl mb-2">
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-brandGold">Section 8 Company (NGO)?</span>
+                    <span className="text-sm font-sans font-bold text-brandGold">Section 8 Company (NGO)?</span>
                     <span className="text-[9px] text-white/40">
                       Turn this on if this is a registered non-profit company claiming tax exemptions under Section 11/12 or 10(23C).
                     </span>
@@ -347,7 +347,7 @@ export default function BusinessStep({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-2 md:col-span-2">
-                  <label className="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">
+                  <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1.5">
                     What type of business do you run? (Select all that apply)
                   </label>
                   <div className="space-y-2 text-xs">
@@ -366,11 +366,11 @@ export default function BusinessStep({
 
                   {v.divBizCodeContainer && (
                     <div className="mt-4 border-t border-white/5 pt-4 transition-all">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Primary Business Code</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1.5">Primary Business Code</label>
                       <select
                         value={bi.business_code || ''}
                         onChange={(e) => send({ type: 'UPDATE_BIZ_CODE', value: e.target.value })}
-                        className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+                        className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                       >
                         <option value="">-- Select --</option>
                         <optgroup label="Eligible for Presumptive Taxation Scheme (Eligible Business)">
@@ -391,14 +391,14 @@ export default function BusinessStep({
             <Accordion icon="💰" title="Revenue & Receipts">
               {v.divFnoIncome && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
-                  <span className="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Options &amp; Derivatives (F&amp;O)</span>
+                  <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Profits from Options &amp; Derivatives (F&amp;O)</span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&amp;O Net Profit/Loss</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">F&amp;O Net Profit/Loss</label>
                       <InrField id="biz-fno-profit" value={bi.non_speculative_income_inr} onCommit={updateBizNum('non_speculative_income_inr')} />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">F&amp;O Absolute Turnover</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">F&amp;O Absolute Turnover</label>
                       <InrField id="biz-fno-turnover" value={bi.fno_turnover_inr} onCommit={updateBizNum('fno_turnover_inr')} />
                     </div>
                   </div>
@@ -407,14 +407,14 @@ export default function BusinessStep({
 
               {v.divIntradayIncome && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
-                  <span className="text-xs font-black uppercase tracking-widest text-brandGold">Profits from Day Trading (Speculative)</span>
+                  <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Profits from Day Trading (Speculative)</span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Net Profit/Loss</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Intraday Net Profit/Loss</label>
                       <InrField id="biz-intra-profit" value={bi.speculative_income_inr} onCommit={updateBizNum('speculative_income_inr')} />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Intraday Absolute Turnover</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Intraday Absolute Turnover</label>
                       <InrField id="biz-intra-turnover" value={bi.speculative_turnover_inr} onCommit={updateBizNum('speculative_turnover_inr')} />
                     </div>
                   </div>
@@ -424,7 +424,7 @@ export default function BusinessStep({
               {v.divPartnerIncome && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-widest text-brandGold">Partner / LLP Income (Partnership Firm Exemption)</span>
+                    <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Partner / LLP Income (Partnership Firm Exemption)</span>
                     <button
                       type="button"
                       onClick={() => send({ type: 'ADD_PARTNER_FIRM' })}
@@ -443,7 +443,7 @@ export default function BusinessStep({
                       bi.partner_firms.map((firm, idx) => (
                         <div key={idx} className="bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-4">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Firm / LLP #{idx + 1}</span>
+                            <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-white/40">Firm / LLP #{idx + 1}</span>
                             <button
                               type="button"
                               onClick={() => send({ type: 'REMOVE_PARTNER_FIRM', index: idx })}
@@ -453,7 +453,7 @@ export default function BusinessStep({
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Firm / LLP Name</label>
+                                <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Firm / LLP Name</label>
                                 <input
                                   type="text"
                                   value={firm.firm_name || ''}
@@ -463,11 +463,11 @@ export default function BusinessStep({
                                 />
                               </div>
                               <div>
-                                <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Entity Type</label>
+                                <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Entity Type</label>
                                 <select
                                   value={firm.entity_type}
                                   onChange={(e) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'entity_type', value: e.target.value })}
-                                  className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+                                  className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                                 >
                                   <option value="registered_firm">Registered Partnership Firm</option>
                                   <option value="llp">Limited Liability Partnership (LLP)</option>
@@ -475,19 +475,19 @@ export default function BusinessStep({
                               </div>
                             </div>
                             <div>
-                              <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">
+                              <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Remuneration / Salary / Bonus (₹) <span className="text-brandGold">— Taxable PGBP</span>
                               </label>
                               <InrField id={`partner-${idx}-remun`} value={firm.remuneration_from_entity_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'remuneration_from_entity_inr', value: v })} />
                             </div>
                             <div>
-                              <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">
+                              <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Interest on Capital (₹) <span className="text-brandGold">— Taxable PGBP</span>
                               </label>
                               <InrField id={`partner-${idx}-interest`} value={firm.interest_on_capital_from_entity_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'interest_on_capital_from_entity_inr', value: v })} />
                             </div>
                             <div className="md:col-span-2">
-                              <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">
+                              <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Share of Profit (₹) <span className="text-green-400">— EXEMPT under Partnership Firm Profit Share Exemption, enter for disclosure only</span>
                               </label>
                               <InrField id={`partner-${idx}-profit`} value={firm.profit_share_exempt_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'profit_share_exempt_inr', value: v })} />
@@ -503,7 +503,7 @@ export default function BusinessStep({
               {v.divBusinessEntries && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black uppercase tracking-widest text-brandGold">Your Businesses</span>
+                    <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Your Businesses</span>
                     <button
                       type="button"
                       onClick={() => send({ type: 'ADD_BUSINESS_ENTRY' })}
@@ -530,7 +530,7 @@ export default function BusinessStep({
               {v.divPresS44ae && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-black uppercase tracking-widest text-brandGold">Goods Transport Vehicles (Presumptive Taxation Scheme (Transporters) Scheme)</span>
+                    <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Goods Transport Vehicles (Presumptive Taxation Scheme (Transporters) Scheme)</span>
                     <span className="text-[10px] text-white/50 font-mono bg-white/5 px-2 py-1 rounded">{bi.goods_vehicles.length} / 10 Vehicles</span>
                   </div>
 
@@ -555,11 +555,11 @@ export default function BusinessStep({
                           </button>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pr-6">
                             <div>
-                              <label className="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Vehicle Type</label>
+                              <label className="block text-[10px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Vehicle Type</label>
                               <select
                                 value={v2.vehicle_type || ''}
                                 onChange={(e) => send({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'vehicle_type', value: e.target.value })}
-                                className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none"
+                                className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                               >
                                 <option value="">-- Select --</option>
                                 <option value="light">Light (≤ 12 MT)</option>
@@ -567,7 +567,7 @@ export default function BusinessStep({
                               </select>
                             </div>
                             <div>
-                              <label className="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">GVW (Tonnes)</label>
+                              <label className="block text-[10px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">GVW (Tonnes)</label>
                               <input
                                 type="number"
                                 disabled={!isHeavy}
@@ -578,7 +578,7 @@ export default function BusinessStep({
                               />
                             </div>
                             <div>
-                              <label className="block text-[8px] font-black uppercase tracking-widest text-white/40 mb-1">Months Owned</label>
+                              <label className="block text-[10px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Months Owned</label>
                               <input
                                 type="number"
                                 min="1"
@@ -609,9 +609,9 @@ export default function BusinessStep({
 
               {v.divS35adPipeline && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
-                  <span className="text-xs font-black uppercase tracking-widest text-brandGold">Special Corporate Business Schemes</span>
+                  <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Special Corporate Business Schemes</span>
                   <div>
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">
+                    <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                       Specified Business Deduction (Specified Business Capital Expenditure Deduction)
                     </label>
                     <InrField id="biz-s35ad" value={bi.specified_business_s35AD_inr} onCommit={updateBizNum('specified_business_s35AD_inr')} placeholder="₹ 0" />
@@ -622,8 +622,8 @@ export default function BusinessStep({
 
               {v.divGeneralGrossReceipts && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
-                  <span className="text-xs font-black uppercase tracking-widest text-brandGold">Professional Gross Receipts (Regular)</span>
-                  <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Gross Receipts (₹)</label>
+                  <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Professional Gross Receipts (Regular)</span>
+                  <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Total Gross Receipts (₹)</label>
                   <InrField id="biz-general-gross-receipts" value={bi.gross_receipts_inr} onCommit={updateBizNum('gross_receipts_inr')} />
                 </div>
               )}
@@ -650,10 +650,10 @@ export default function BusinessStep({
 
               {v.divPresS44ad && (
                 <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                  <span className="text-xs font-black uppercase tracking-widest text-brandGold">Presumptive Taxation Scheme (Eligible Business) 5-Year Lock-in Details</span>
+                  <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Presumptive Taxation Scheme (Eligible Business) 5-Year Lock-in Details</span>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Presumptive Taxation Scheme (Eligible Business) Last Exit AY (if opted out)</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Presumptive Taxation Scheme (Eligible Business) Last Exit AY (if opted out)</label>
                       <input
                         type="text"
                         value={bi.s44AD_last_exit_ay || ''}
@@ -703,28 +703,28 @@ export default function BusinessStep({
             {/* ACCORDION: Special Business Incomes (Trading & Firm) */}
             <Accordion icon="📈" title="Special Business Incomes (Trading &amp; Firm)">
               <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <span className="text-xs font-black uppercase tracking-widest text-brandGold">Deemed Business Income (Cessation of Trading Liability (Deemed Profit))</span>
+                <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Deemed Business Income (Cessation of Trading Liability (Deemed Profit))</span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Business liabilities you no longer have to pay</label>
+                    <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Business liabilities you no longer have to pay</label>
                     <InrField id="biz-s41-1" value={bi.s41_remission_income_inr} onCommit={updateBizNum('s41_remission_income_inr')} />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Old bad debts that you have now recovered</label>
+                    <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Old bad debts that you have now recovered</label>
                     <InrField id="biz-s41-4" value={bi.s41_bad_debt_recovery_inr} onCommit={updateBizNum('s41_bad_debt_recovery_inr')} />
                   </div>
                 </div>
               </div>
 
               <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
-                <span className="text-xs font-black uppercase tracking-widest text-brandGold">GST Registration Status</span>
+                <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">GST Registration Status</span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Registration Status</label>
+                    <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">GST Registration Status</label>
                     <select
                       value={bi.gst_registration_status}
                       onChange={(e) => send({ type: 'SET_GST_STATUS', value: e.target.value })}
-                      className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
+                      className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="unregistered">Unregistered</option>
                       <option value="regular">Regular Taxpayer (GSTIN issued)</option>
@@ -738,7 +738,7 @@ export default function BusinessStep({
 
                   {bi.gst_registration_status === 'regular' && (
                     <div className="md:col-span-2">
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">GST Collected from Customers — Output Tax (₹)</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">GST Collected from Customers — Output Tax (₹)</label>
                       <InrField id="biz-gst-collected" value={bi.gst_collected_inr} onCommit={updateBizNum('gst_collected_inr')} placeholder="0" />
                       <p className="text-[9px] text-white/30 mt-1">This is a liability, not income. It will be subtracted from gross receipts to arrive at taxable turnover.</p>
                     </div>
@@ -750,7 +750,7 @@ export default function BusinessStep({
             {/* AMT Credit Section (regime-locked) */}
             <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-widest text-brandGold">AMT Credit Brought Forward — Alternate Minimum Tax (AMT)</span>
+                <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">AMT Credit Brought Forward — Alternate Minimum Tax (AMT)</span>
                 <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10 text-white/50 font-black uppercase tracking-wider">Old Regime Only</span>
               </div>
 
@@ -779,12 +779,12 @@ export default function BusinessStep({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">AMT Credit Carried Forward (₹)</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">AMT Credit Carried Forward (₹)</label>
                       <InrField id="biz-amt-bf" value={bi.amt_credit_bf_inr} onCommit={updateBizNum('amt_credit_bf_inr')} placeholder="0" />
                       <p className="text-[9px] text-white/30 mt-1">Aggregate credit across all eligible prior AYs still within the 15-year window.</p>
                     </div>
                     <div>
-                      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Oldest AMT Credit Origin AY</label>
+                      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Oldest AMT Credit Origin AY</label>
                       <input
                         type="text"
                         value={bi.amt_credit_bf_origin_ay || ''}

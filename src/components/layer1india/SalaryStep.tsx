@@ -60,7 +60,7 @@ function InrField({ id, label, tooltip, value, onCommit, className = '', inputCl
 
   return (
     <div className={className}>
-      <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1 flex items-center gap-1 w-fit">
+      <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1 flex items-center gap-1 w-fit">
         {label}
         {tooltip && <Tooltip text={tooltip} />}
       </label>
@@ -133,7 +133,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
       <style>{SALARY_CSS}</style>
       <div id="panel-step-salary" className="glass-card p-6 lg:p-8 flex flex-col gap-6">
         <div>
-          <h2 id="title-step-income" className="text-xl font-bold text-white tracking-wide font-display uppercase">
+          <h2 id="title-step-income" className="text-[22px] font-sans font-bold text-white tracking-[0.01em] uppercase">
             Screen 2E — Salary
           </h2>
           <p className="text-xs text-white/40 mt-1">Enter details about your salary, allowances, and exemptions.</p>
@@ -142,7 +142,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
         {/* Salary Details */}
         <div id="div-salary-master" className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4 transition-all">
           <div className="flex items-center justify-between border-b border-white/5 pb-2">
-            <span className="text-xs font-black uppercase tracking-widest text-brandGold font-display">
+            <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">
               Salary Income &amp; Exemptions
             </span>
             <ToggleSwitch checked={sal.has_salary_income} onChange={(val) => send({ type: 'TOGGLE_SALARY_SECTION', value: val })} />
@@ -153,7 +153,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
               {/* Form 130 Autofill Upload — no wiring in the original DOM script (dead input), kept for visual parity only */}
               <div className="p-5 bg-brandGold/10 border border-brandGold/30 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex flex-col">
-                  <span className="text-sm font-black text-brandGold uppercase tracking-widest flex items-center gap-2">
+                  <span className="text-base font-sans font-black text-brandGold uppercase tracking-[0.01em] flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
@@ -212,7 +212,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
 
                 {/* ESOP Perquisite Events */}
                 <div className="col-span-full mt-2">
-                  <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-2">
+                  <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-2">
                     ESOP Perquisite Grants (Itemized)
                   </label>
                   <div id="div-esop-list" className="space-y-2">
@@ -226,7 +226,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           ×
                         </button>
                         <div className="col-span-2">
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">Employer Name</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">Employer Name</label>
                           <input
                             type="text"
                             value={ev.employer_name || ''}
@@ -235,7 +235,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">Grant Date</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">Grant Date</label>
                           <input
                             type="date"
                             value={ev.grant_date || ''}
@@ -244,7 +244,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">Vest/Exercise Date</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">Vest/Exercise Date</label>
                           <input
                             type="date"
                             value={ev.vesting_or_exercise_date || ''}
@@ -253,7 +253,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">Shares</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">Shares</label>
                           <input
                             type="number"
                             step="any"
@@ -263,7 +263,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">FMV/Share</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">FMV/Share</label>
                           <input
                             type="number"
                             step="any"
@@ -273,7 +273,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-white/40 mb-1">Exercise Price</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-white/40 mb-1">Exercise Price</label>
                           <input
                             type="number"
                             step="any"
@@ -283,7 +283,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           />
                         </div>
                         <div>
-                          <label className="block text-[8px] uppercase tracking-widest text-brandGold mb-1">Perq Value</label>
+                          <label className="block text-[10px] font-sans uppercase tracking-[0.01em] text-brandGold mb-1">Perq Value</label>
                           <input
                             type="number"
                             step="any"
@@ -341,7 +341,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
               {/* HRA Exemption Section */}
               {v.showOldRegimeFields && (
                 <div className="p-4 bg-[#161616] border border-white/10 rounded-xl flex flex-col gap-3 sal-old-regime-field">
-                  <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">
+                  <span className="text-[12px] font-sans font-bold text-white/80 uppercase tracking-[0.01em]">
                     House Rent Allowance (HRA) Exemption
                   </span>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -375,7 +375,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
 
               {/* Special Allowances Section */}
               <div className="p-4 bg-[#161616] border border-white/10 rounded-xl flex flex-col gap-4">
-                <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">Special Allowances</span>
+                <span className="text-[12px] font-sans font-bold text-white/80 uppercase tracking-[0.01em]">Special Allowances</span>
 
                 {/* PwD */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end border-b border-white/5 pb-4">

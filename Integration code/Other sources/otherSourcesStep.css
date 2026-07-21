@@ -1,0 +1,48 @@
+/* Extracted verbatim (relevant subset) from layer1_india.html's <style> block.
+   Import this once globally (e.g. in your app's root) alongside Tailwind. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #050505;
+    color: #A1A1AA;
+    background-image:
+        radial-gradient(circle at top right, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.02) 0%, transparent 40%);
+    background-attachment: fixed;
+}
+
+.glass-card {
+    background-color: rgba(18, 18, 18, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(212, 175, 55, 0.2);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
+}
+
+/* range input thumb styling for res-days-current (accent-brandGold covers modern
+   browsers via Tailwind's `accent-*`; these rules are a fallback / refinement) */
+input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #D4AF37;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}

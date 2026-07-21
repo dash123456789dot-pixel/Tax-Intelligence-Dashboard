@@ -1,6 +1,7 @@
 import '../styles/router.css';
 import '../styles/layer1india.css';
 import '../styles/Positions_layer1_india.css';
+import { AuthProvider } from '../components/AuthContext';
 
 export default function RootLayout({
   children,
@@ -10,7 +11,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

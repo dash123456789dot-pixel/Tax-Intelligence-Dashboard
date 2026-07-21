@@ -1,0 +1,12 @@
+{
+  "name": "business-step",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Business & Profession step (Screen 2G / DOM-03) extracted from layer1_india.html, bound to an XState v5 machine with cross-step dependencies on the Residency Solver step.",
+  "dependencies": {
+    "xstate": "^5.32.4",
+    "@xstate/react": "^4.1.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

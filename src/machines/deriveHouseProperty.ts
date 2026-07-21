@@ -13,6 +13,7 @@ export interface PropertyDetails {
   property_use: 'SOP' | 'LOP' | 'DLOP';
   gross_annual_value_inr: number | null;
   municipal_taxes_paid_inr: number | null;
+  tenant_tds_deducted_inr: number | null;
   interest_on_borrowed_capital_inr: number | null;
   pre_construction_interest_inr: number | null;
   is_self_occupied_with_loan: boolean;
@@ -68,6 +69,7 @@ export function defaultProperty(): PropertyDetails {
     property_use: 'SOP',
     gross_annual_value_inr: null,
     municipal_taxes_paid_inr: null,
+    tenant_tds_deducted_inr: null,
     interest_on_borrowed_capital_inr: null,
     pre_construction_interest_inr: null,
     is_self_occupied_with_loan: false,
@@ -88,10 +90,11 @@ export function applyHPFieldUpdate(prop: PropertyDetails, field: string, rawVal:
 
   const next = { ...prop, [field]: val } as PropertyDetails;
 
-  // Zero out GAV and Taxes if SOP
+  // Zero out GAV, Taxes, and Tenant TDS if SOP
   if (field === 'property_use' && val === 'SOP') {
     next.gross_annual_value_inr = null;
     next.municipal_taxes_paid_inr = null;
+    next.tenant_tds_deducted_inr = null;
     // Also zero out interest if New Regime
     if (taxRegime === 'NEW') {
       next.interest_on_borrowed_capital_inr = null;

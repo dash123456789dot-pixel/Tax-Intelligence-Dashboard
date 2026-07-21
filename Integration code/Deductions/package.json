@@ -1,0 +1,12 @@
+{
+  "name": "deductions-step",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Deductions step (Screen 2J, Chapter VI-A) extracted from layer1_india.html, bound to an XState v5 machine. Gated behind the Old Tax Regime (verified against source, correcting the 'always visible' task premise); NRI/salary/entity cross-step dependencies from the Residency Solver, Financial Life Snapshot, and Salary steps.",
+  "dependencies": {
+    "xstate": "^5.32.4",
+    "@xstate/react": "^4.1.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

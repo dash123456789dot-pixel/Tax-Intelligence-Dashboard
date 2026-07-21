@@ -3,8 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useLayer1 } from '@/hooks/Layer1Context';
+import { useSelector } from '@xstate/react';
 
 export function Header() {
+  const { quarterActor } = useLayer1();
+  const activeQuarter = useSelector(quarterActor, (s: any) => s.context.activeQuarter);
+
   return (
     <header className="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur-md border-b border-white/5">
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
@@ -25,24 +29,34 @@ export function Header() {
         
         <div className="flex items-center space-x-4 lg:space-x-6">
           {/* Quarter Switcher */}
-          <div className="hidden md:flex items-center bg-[#0a0a0a] border border-white/10 rounded-xl p-1 shadow-inner gap-1 quarter-switcher">
-            <button className="px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]">
-              Q1 <span className="hidden lg:inline text-[8px] opacity-70 ml-1">APR-JUN</span>
-            </button>
-            <button className="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
-              Q2 <span className="hidden lg:inline text-[8px] opacity-50 ml-1">JUL-SEP</span>
-            </button>
-            <button className="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
-              Q3 <span className="hidden lg:inline text-[8px] opacity-50 ml-1">OCT-DEC</span>
-            </button>
-            <button className="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5">
-              Q4 <span className="hidden lg:inline text-[8px] opacity-50 ml-1">JAN-MAR</span>
-            </button>
-            <button className="px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5 ml-2">
-              ANNUAL
-            </button>
+          <div className="flex items-center bg-[#0a0a0a] border border-white/10 rounded-xl p-1 shadow-inner gap-1 quarter-switcher overflow-x-auto hide-scrollbar max-w-full">
+            {(['Q1', 'Q2', 'Q3', 'Q4', 'ANNUAL'] as const).map((qId) => {
+              const isActive = activeQuarter === qId;
+              const activeClasses = "px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]";
+              const inactiveClasses = "px-4 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-gray-400 border border-white/10 bg-black hover:text-white hover:bg-white/5";
+              
+              let label = qId;
+              let subtitle = '';
+              if (qId === 'Q1') subtitle = 'APR-JUN';
+              if (qId === 'Q2') subtitle = 'JUL-SEP';
+              if (qId === 'Q3') subtitle = 'OCT-DEC';
+              if (qId === 'Q4') subtitle = 'JAN-MAR';
+
+              return (
+                <button 
+                  key={qId} 
+                  onClick={() => quarterActor.send({ type: 'QUARTER.SWITCH', quarter: qId })}
+                  className={`${isActive ? activeClasses : inactiveClasses} ${qId === 'ANNUAL' ? 'ml-2' : ''}`}
+                >
+                  {label} {subtitle && <span className={`hidden lg:inline text-[8px] ml-1 ${isActive ? 'opacity-70' : 'opacity-50'}`}>{subtitle}</span>}
+                </button>
+              );
+            })}
             <div className="w-px h-6 bg-white/10 mx-1"></div>
-            <button className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-brandCyan border border-brandCyan/30 bg-brandCyan/10 hover:bg-brandCyan/20 flex items-center gap-1" title="Copy current quarter to all other quarters">
+            <button 
+              onClick={() => quarterActor.send({ type: 'QUARTER.AUTO_FILL' })}
+              className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all text-brandCyan border border-brandCyan/30 bg-brandCyan/10 hover:bg-brandCyan/20 flex items-center gap-1" title="Copy current quarter to all other quarters"
+            >
               <span>🪄 Auto-Fill Year</span>
             </button>
           </div>

@@ -20,6 +20,7 @@ export interface ResidencyDetail {
   is_poem_in_india: boolean | null;
   ship_nationality: string | null;
   liable_to_tax_in_another_country_being_indian_citizen: boolean;
+  us_person_certified_to_bank: boolean | null;
   final_india_residency_status: string;
   _fy_end_year?: number;
 }

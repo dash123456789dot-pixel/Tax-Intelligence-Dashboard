@@ -69,10 +69,10 @@ interface QuestionRowProps {
 
 function QuestionRow({ id, title, subtitle, children }: QuestionRowProps) {
   return (
-    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl" id={id}>
+    <div className="p-4 bg-white/5 border border-white/10 rounded-2xl [color-scheme:dark]" id={id}>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-white/80">{title}</span>
+          <span className="text-sm font-sans font-bold text-white/80 tracking-[0.01em]">{title}</span>
           {subtitle && <span className="text-[9px] text-white/30">{subtitle}</span>}
         </div>
         {children}
@@ -131,7 +131,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
       <style>{RESIDENCY_CSS}</style>
       <div id="panel-step-profile" className="glass-card p-6 lg:p-8 flex flex-col gap-6">
         <div>
-          <h2 className="text-xl font-bold text-white tracking-wide font-display uppercase">
+          <h2 className="text-[22px] font-sans font-bold text-white tracking-[0.01em] uppercase">
             Screen 2A - Residency Detection
           </h2>
           <p className="text-xs text-white/40 mt-1">
@@ -140,7 +140,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
           <div className="mt-4 p-4 bg-brandCyan/10 border border-brandCyan/20 rounded-xl flex items-start gap-3">
             <span className="text-lg">💡</span>
             <div>
-              <div className="text-[11px] font-black tracking-widest text-brandCyan uppercase mb-1">
+              <div className="text-[13px] font-sans font-black tracking-[0.01em] text-brandCyan uppercase mb-1">
                 Global Annual Application
               </div>
               <div className="text-xs text-white/70 leading-relaxed">
@@ -158,7 +158,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
             <div className="flex items-start gap-3">
               <span className="text-amber-400 text-xl shrink-0">⚠️</span>
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-black text-amber-400 uppercase tracking-widest font-display">
+                <span className="text-sm font-sans font-black text-amber-400 uppercase tracking-[0.01em]">
                   Dual Residency Conflict Detected
                 </span>
                 <span className="text-xs text-white/70 leading-relaxed">
@@ -170,7 +170,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-brandGold">
+                <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-brandGold">
                   DTAA Article 4 Tie-Breaker
                 </span>
                 <p className="text-[10px] text-white/50 leading-relaxed">
@@ -181,7 +181,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                 </p>
               </div>
               <div className="p-4 bg-white/5 border border-white/5 rounded-xl flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-brandGold">
+                <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-brandGold">
                   Tax Year Mismatch &amp; FTC Apportionment
                 </span>
                 <p className="text-[10px] text-white/50 leading-relaxed">
@@ -195,17 +195,17 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
             {/* DTAA ARTICLE 4 TIE-BREAKER WIZARD */}
             <div className="pt-4 border-t border-white/5 mt-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-brandGold mb-3 block">
+              <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-3 block">
                 Run the Treaty Tie-Breaker Tests
               </span>
               <div className="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-white/5">
                 <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
-                  <label className="text-[9px] font-bold text-brandGold uppercase">Step 1: Permanent Home</label>
+                  <label className="text-[11px] font-sans font-bold text-brandGold uppercase">Step 1: Permanent Home</label>
                   <span className="text-[10px] text-white/70">Where do you have a permanent home available to you?</span>
                   <select
                     value={dtaa.tb_home}
                     onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'home', value: e.target.value })}
-                    className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none"
+                    className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                   >
                     <option value="none">-- Select --</option>
                     <option value="india">India Only</option>
@@ -217,12 +217,12 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
                 {tb.showCvi && (
                   <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
-                    <label className="text-[9px] font-bold text-brandGold uppercase">Step 2: Centre of Vital Interests</label>
+                    <label className="text-[11px] font-sans font-bold text-brandGold uppercase">Step 2: Centre of Vital Interests</label>
                     <span className="text-[10px] text-white/70">Where are your closer personal and economic relations?</span>
                     <select
                       value={dtaa.tb_cvi}
                       onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'cvi', value: e.target.value })}
-                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none"
+                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
                       <option value="india">Closer to India</option>
@@ -234,12 +234,12 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
                 {tb.showAbode && (
                   <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
-                    <label className="text-[9px] font-bold text-brandGold uppercase">Step 3: Habitual Abode</label>
+                    <label className="text-[11px] font-sans font-bold text-brandGold uppercase">Step 3: Habitual Abode</label>
                     <span className="text-[10px] text-white/70">Where is your habitual abode (customary living pattern)?</span>
                     <select
                       value={dtaa.tb_abode}
                       onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'abode', value: e.target.value })}
-                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none"
+                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
                       <option value="india">India</option>
@@ -251,12 +251,12 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
                 {tb.showNationality && (
                   <div className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg border border-white/5">
-                    <label className="text-[9px] font-bold text-brandGold uppercase">Step 4: Nationality</label>
+                    <label className="text-[11px] font-sans font-bold text-brandGold uppercase">Step 4: Nationality</label>
                     <span className="text-[10px] text-white/70">What is your legal citizenship/nationality?</span>
                     <select
                       value={dtaa.tb_nationality}
                       onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'nationality', value: e.target.value })}
-                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none"
+                      className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
                       <option value="india">Indian Citizen</option>
@@ -327,7 +327,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
           {v.divCompanyResidency && (
             <div id="div-company-residency" className="p-5 bg-brandGold/5 border border-brandGold/20 rounded-2xl flex flex-col gap-4 transition-all mb-4">
               <div>
-                <h3 className="text-xs font-black uppercase tracking-widest text-brandGold mb-1">Company Residency (POEM)</h3>
+                <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1">Company Residency (POEM)</h3>
                 <p className="text-[9px] text-white/40">Raw facts for POEM determination.</p>
               </div>
 
@@ -348,11 +348,11 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
               {v.divCrKmpLoc && (
                 <div id="div-cr-kmp-loc" className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                  <label className="block text-[10px] font-bold text-white/90 mb-2">Key Management Location</label>
+                  <label className="block text-[12px] font-sans font-bold text-white/90 mb-2">Key Management Location</label>
                   <select
                     value={cr.key_management_location}
                     onChange={(e) => updateCompany('key_management_location', e.target.value)}
-                    className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0"
+                    className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 [color-scheme:dark]"
                   >
                     <option value="" disabled>Select location</option>
                     <option value="india">India</option>
@@ -375,7 +375,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
               {v.divCrDirs && (
                 <div id="div-cr-dirs" className="flex gap-4">
                   <div className="flex-1 p-3 bg-white/5 border border-white/10 rounded-xl">
-                    <label className="block text-[10px] font-bold text-white/90 mb-2">Directors in India (Count)</label>
+                    <label className="block text-[12px] font-sans font-bold text-white/90 mb-2">Directors in India (Count)</label>
                     <input
                       type="number"
                       value={cr.directors_in_india_count}
@@ -384,7 +384,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     />
                   </div>
                   <div className="flex-1 p-3 bg-white/5 border border-white/10 rounded-xl">
-                    <label className="block text-[10px] font-bold text-white/90 mb-2">Directors Outside (Count)</label>
+                    <label className="block text-[12px] font-sans font-bold text-white/90 mb-2">Directors Outside (Count)</label>
                     <input
                       type="number"
                       value={cr.directors_outside_india_count}
@@ -399,7 +399,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
           {v.divKartaAlert && (
             <div id="div-karta-alert" className="mt-2 p-3 bg-brandCyan/10 border border-brandCyan/30 rounded-xl flex flex-col gap-1">
-              <span className="text-[10px] font-black text-brandCyan uppercase tracking-widest">
+              <span className="text-[12px] font-sans font-black text-brandCyan uppercase tracking-[0.01em]">
                 Karta Physical Presence Test Required
               </span>
               <span className="text-[10px] text-brandCyan/70">
@@ -416,7 +416,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                 <div id="div-res-core-days" className="p-4 bg-white/5 border border-white/10 rounded-2xl border-l-2 border-l-brandGold transition-all">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-white/90 uppercase tracking-widest flex items-center gap-2">
+                      <span className="text-sm font-sans font-bold text-white/90 uppercase tracking-[0.01em] flex items-center gap-2">
                         Total Days in India
                         {hasActiveLiveTrip && (
                           <span
@@ -444,7 +444,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
                   <div className="mt-4 p-3 bg-black/40 rounded-xl border border-white/5">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-bold text-white/70 uppercase">Manual Days Slider</span>
+                      <span className="text-[12px] font-sans font-bold text-white/70 uppercase">Manual Days Slider</span>
                       <span id="manual-days-val" className="text-[10px] text-brandGold font-mono font-bold">
                         {rd.manual_days} days
                       </span>
@@ -462,7 +462,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
                   <div className="mt-4 pt-4 border-t border-white/10">
                     <label className="flex items-center justify-between cursor-pointer group">
-                      <span className="text-[10px] font-bold text-white/70 uppercase group-hover:text-white transition-colors">
+                      <span className="text-[12px] font-sans font-bold text-white/70 uppercase group-hover:text-white transition-colors">
                         Enable Live Date Tracking
                       </span>
                       <div
@@ -503,23 +503,23 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                                 </button>
                               )}
                               <div className="flex flex-col gap-1">
-                                <label className="text-[9px] font-bold text-white/50 uppercase">Arrival Date {idx + 1}</label>
+                                <label className="text-[11px] font-sans font-bold text-white/50 uppercase">Arrival Date {idx + 1}</label>
                                 <input
                                   type="date"
                                   value={trip.arrival_date || ''}
                                   onChange={(e) => send({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'arrival_date', value: e.target.value })}
-                                  className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20"
+                                  className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20 [color-scheme:dark]"
                                 />
                               </div>
                               <div className="flex flex-col gap-1">
-                                <label className="text-[9px] font-bold text-white/50 uppercase">
+                                <label className="text-[11px] font-sans font-bold text-white/50 uppercase">
                                   Departure Date {idx + 1} <span className="text-white/30 lowercase">(optional)</span>
                                 </label>
                                 <input
                                   type="date"
                                   value={trip.departure_date || ''}
                                   onChange={(e) => send({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'departure_date', value: e.target.value })}
-                                  className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20"
+                                  className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20 [color-scheme:dark]"
                                 />
                               </div>
                             </div>
@@ -549,13 +549,13 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
 
               {v.divEmp && (
                 <div className="p-4 bg-white/5 border border-white/10 rounded-2xl" id="div-emp">
-                  <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1.5">
                     Did you leave India for Employment or as Ship Crew?
                   </label>
                   <select
                     value={rd.employment_or_crew_status === null ? 'null' : rd.employment_or_crew_status}
                     onChange={(e) => updateField('employment_or_crew_status', e.target.value === 'null' ? null : e.target.value)}
-                    className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all"
+                    className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all [color-scheme:dark]"
                   >
                     <option value="null" disabled>Select an option...</option>
                     <option value="none">No (Standard Rule)</option>
@@ -609,7 +609,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
               {v.divHufNr9 && (
                 <div className="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl" id="div-huf-nr9">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-brandCyan/90">
+                    <span className="text-sm font-sans font-bold text-brandCyan/90 tracking-[0.01em]">
                       Have you (the Karta) been a resident of India in at least 2 out of the 10 financial years
                       immediately preceding the relevant Tax Year?
                     </span>
@@ -625,7 +625,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
               {v.divHufD7 && (
                 <div className="p-4 bg-brandCyan/5 border border-brandCyan/20 rounded-2xl" id="div-huf-d7">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-brandCyan/90">
+                    <span className="text-sm font-sans font-bold text-brandCyan/90 tracking-[0.01em]">
                       Was your (the Karta&apos;s) total physical stay in India equal to or greater than 730 days during
                       the 7 financial years immediately preceding the relevant Tax Year?
                     </span>
@@ -647,6 +647,23 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                   <YesNoSelect value={rd.india_source_income_above_15l} onChange={(val) => updateField('india_source_income_above_15l', val)} />
                 </QuestionRow>
               )}
+
+              <QuestionRow
+                id="div-us-person-cert"
+                title="US Person Self-Certification (W-9/FATCA) on File With Indian Banks?"
+                subtitle="Only relevant if you are a US citizen, Green Card holder, or US tax resident. Under FATCA/IGA, Indian banks must report US-person accounts."
+              >
+                <select
+                  id="res-us-person-cert"
+                  value={rd.us_person_certified_to_bank === null ? 'null' : String(rd.us_person_certified_to_bank)}
+                  onChange={(e) => updateField('us_person_certified_to_bank', e.target.value === 'null' ? null : e.target.value === 'true')}
+                  className="w-48 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all [color-scheme:dark]"
+                >
+                  <option value="null">-- Not sure / not applicable --</option>
+                  <option value="true">Yes — certified</option>
+                  <option value="false">No — not certified</option>
+                </select>
+              </QuestionRow>
             </div>
           )}
         </div>
