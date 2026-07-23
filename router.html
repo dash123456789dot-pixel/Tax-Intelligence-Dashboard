@@ -188,18 +188,138 @@
         <!-- Dynamic Questions Container -->
         <div id="questions-viewport" class="flex-grow relative min-h-[280px]">
             
-            <!-- Q0: Base Tax Year -->
-            <div data-question-id="base_tax_year" class="question-slide flex flex-col justify-center">
+            
+            <!-- NEW Q_JUR: Jurisdiction -->
+            <div data-question-id="primary_jurisdiction" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Setup: Step 1</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Which jurisdictions are involved?</h2>
+                <div class="flex flex-col gap-3">
+                    <button onclick="handleStringInput('primary_jurisdiction', 'india')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="india">🇮🇳 India Only</button>
+                    <button onclick="handleStringInput('primary_jurisdiction', 'us')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="us">🇺🇸 US Only</button>
+                    <button onclick="handleStringInput('primary_jurisdiction', 'cross_border')" class="tb-btn py-3 border border-white/10 hover:border-[#8B5CF6]/50 rounded-xl bg-white/5 hover:bg-[#8B5CF6]/5 transition-all text-sm font-bold px-6 text-left" data-val="cross_border">🌐 Cross-Border (Both)</button>
+                </div>
+            </div>
+
+            <!-- NEW Q_ENT_US: US Entity Type -->
+            <div data-question-id="us_entity_type" class="question-slide flex flex-col justify-center">
+                <span class="text-brandCyan font-bold text-xs uppercase tracking-widest mb-3">Setup: US Entity</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Select the US Entity Structure</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="handleStringInput('us_entity_type', 'individual')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="individual">👤 Individual</button>
+                    <button onclick="handleStringInput('us_entity_type', 'c_corp')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="c_corp">🏢 C-Corporation</button>
+                    <button onclick="handleStringInput('us_entity_type', 's_corp')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="s_corp">🏬 S-Corporation</button>
+                    <button onclick="handleStringInput('us_entity_type', 'partnership')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="partnership">🤝 Partnership / LLC</button>
+                    <button onclick="handleStringInput('us_entity_type', 'trust')" class="tb-btn py-3 border border-white/10 hover:border-brandCyan/50 rounded-xl bg-white/5 hover:bg-brandCyan/5 transition-all text-sm font-bold px-6 text-left" data-val="trust">🏛️ Trust / Estate</button>
+                </div>
+            </div>
+
+            <!-- NEW Q_ENT_IN: India Entity Type -->
+            <div data-question-id="india_entity_type" class="question-slide flex flex-col justify-center">
+                <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Setup: India Entity</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Select the India Entity Structure</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="handleStringInput('india_entity_type', 'individual')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="individual">👤 Individual</button>
+                    <button onclick="handleStringInput('india_entity_type', 'huf')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="huf">👨‍👩‍👧‍👦 HUF</button>
+                    <button onclick="handleStringInput('india_entity_type', 'company')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="company">🏢 Company</button>
+                    <button onclick="handleStringInput('india_entity_type', 'llp')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="llp">🤝 LLP</button>
+                    <button onclick="handleStringInput('india_entity_type', 'partnership')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="partnership">🤝 Partnership Firm</button>
+                    <button onclick="handleStringInput('india_entity_type', 'trust')" class="tb-btn py-3 border border-white/10 hover:border-brandGold/50 rounded-xl bg-white/5 hover:bg-brandGold/5 transition-all text-sm font-bold px-6 text-left" data-val="trust">🏛️ Trust</button>
+                </div>
+            </div>
+
+            <div data-question-id="personal_tax_ids" class="question-slide flex flex-col justify-center">
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">Personal Tax Identifiers</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Enter Personal Tax IDs</h2>
+                <div class="space-y-3" id="dynamic-personal-tax-id-container">
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="validateGates()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                    </button>
+                </div>
+                <p id="gate-error-msg-personal" class="text-xs text-brandRed font-bold mt-4 hidden">Please complete all required fields.</p>
+            </div>
+
+            
+            <div data-question-id="us_business_demographics" class="question-slide flex flex-col justify-center">
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">US Entity Demographics</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">US Entity Details</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">US Legal Entity Name</label>
+                        <input type="text" placeholder="e.g. Acme LLC" oninput="routerState.us_entity_name = this.value; saveState();" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandCyan/50 outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">US Date of Incorporation / Formation</label>
+                        <input type="date" onchange="routerState.us_formation_date = this.value; saveState();" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandCyan/50 outline-none transition-colors">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="validateGates()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                    </button>
+                </div>
+                <p id="gate-error-msg-us-demo" class="text-xs text-brandRed font-bold mt-4 hidden">Please provide all Entity details.</p>
+            </div>
+
+            <div data-question-id="us_business_tax_ids" class="question-slide flex flex-col justify-center">
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">US Business Tax Identifiers</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">US Business Tax IDs</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">US EIN (Employer Identification Number)</label>
+                        <input type="text" oninput="formatEIN(this)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandCyan/50 outline-none transition-colors" placeholder="XX-XXXXXXX">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="validateGates()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                    </button>
+                </div>
+                <p id="gate-error-msg-us-tax" class="text-xs text-brandRed font-bold mt-4 hidden">Please complete all required fields.</p>
+            </div>
+
+            <div data-question-id="india_business_demographics" class="question-slide flex flex-col justify-center">
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">Indian Entity Demographics</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Indian Entity Details</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">Indian Legal Entity Name</label>
+                        <input type="text" placeholder="e.g. Acme Private Limited" oninput="routerState.india_entity_name = this.value; saveState();" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandGold/50 outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">Indian Date of Incorporation / Formation</label>
+                        <input type="date" onchange="routerState.india_formation_date = this.value; saveState();" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandGold/50 outline-none transition-colors">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="validateGates()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Continue</span>
+                    </button>
+                </div>
+                <p id="gate-error-msg-india-demo" class="text-xs text-brandRed font-bold mt-4 hidden">Please provide all Entity details.</p>
+            </div>
+
+            <div data-question-id="india_business_tax_ids" class="question-slide flex flex-col justify-center">
+                <span class="text-white/40 font-bold text-xs uppercase tracking-widest mb-3">Indian Business Tax Identifiers</span>
+                <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Indian Business Tax IDs</h2>
+                <div class="space-y-3" id="dynamic-india-tax-id-container">
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button onclick="validateGates()" class="px-6 py-3 bg-brandGold text-black font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2">
+                        <span>Complete Routing</span>
+                    </button>
+                </div>
+                <p id="gate-error-msg-india-tax" class="text-xs text-brandRed font-bold mt-4 hidden">Please complete all required fields.</p>
+            </div>
+
+<div data-question-id="base_tax_year" class="question-slide flex flex-col justify-center">
                 <span class="text-brandGold font-bold text-xs uppercase tracking-widest mb-3">Question 00</span>
                 <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight font-display">Which Tax Year are you filing for?</h2>
                 <p class="text-xs text-white/40 mb-8 leading-relaxed">This establishes the baseline calendar for both the US (Jan-Dec) and Indian (Apr-Mar) tax engines.</p>
                 <div class="relative max-w-sm">
                     <select id="base-year-select" onchange="handleIntInput('base_tax_year', this.value)" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-2xl font-black text-white focus:border-brandGold/50 outline-none transition-colors appearance-none cursor-pointer">
-                        <option value="2022" class="bg-[#121212] text-white">2022 (US TY22 / India FY22-23)</option>
-                        <option value="2023" class="bg-[#121212] text-white" selected>2023 (US TY23 / India FY23-24)</option>
-                        <option value="2024" class="bg-[#121212] text-white">2024 (US TY24 / India FY24-25)</option>
-                        <option value="2025" class="bg-[#121212] text-white">2025 (US TY25 / India FY25-26)</option>
-                        <option value="2026" class="bg-[#121212] text-white">2026 (US TY26 / India FY26-27)</option>
+                        <option value="2026" class="bg-[#121212] text-white" selected>2026 (US TY26 / India TY26-27)</option>
                     </select>
                     <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
                         <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -650,26 +770,205 @@
         "tb_nationality"
     ];
 
+    function saveState() {
+        localStorage.setItem('wising_router_state', JSON.stringify(routerState));
+    }
+
     let activeQuestions = [];
     let currentQuestionIndex = 0;
 
     // ═══════════════════════════════════════════════════════════════════════
     // CORE DERIVED CALCULATIONS
     // ═══════════════════════════════════════════════════════════════════════
+    
+
+    function preparePersonalTaxIdSlide() {
+        const container = document.getElementById('dynamic-personal-tax-id-container');
+        let html = '';
+        const jur = routerState.primary_jurisdiction;
+        
+        if (jur === 'india' || jur === 'cross_border') {
+            if (routerState.india_entity_type === 'individual') {
+                html += `
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">Indian PAN (Permanent Account Number)</label>
+                        <input type="text" id="input-pan" oninput="routerState.pan = this.value; saveState();" value="${routerState.pan || ''}" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandGold/50 outline-none transition-colors uppercase" placeholder="ABCDE1234F">
+                    </div>
+                `;
+            }
+        }
+        if (jur === 'us' || jur === 'cross_border') {
+            if (routerState.us_entity_type === 'individual') {
+                html += `
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">US SSN / ITIN</label>
+                        <input type="text" id="input-ssn" oninput="formatSSN(this)" value="${routerState.ssn || ''}" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandCyan/50 outline-none transition-colors" placeholder="XXX-XX-XXXX">
+                    </div>
+                `;
+            }
+        }
+        container.innerHTML = html;
+    }
+
+    function prepareIndiaBusinessTaxIdSlide() {
+        const container = document.getElementById('dynamic-india-tax-id-container');
+        if(!container) return;
+        
+        let html = '';
+        const indEnt = routerState.india_entity_type;
+        if (indEnt && indEnt !== 'individual') {
+            // PAN is always required for Indian businesses
+            let panLabel = 'Indian Corporate PAN';
+            if (indEnt === 'huf') panLabel = 'Indian HUF PAN';
+            else if (indEnt === 'trust') panLabel = 'Indian Trust PAN';
+            else if (indEnt === 'partnership' || indEnt === 'llp') panLabel = 'Indian Firm PAN';
+            
+            html += `
+                <div>
+                    <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">${panLabel}</label>
+                    <input type="text" id="input-corp-pan" oninput="routerState.corp_pan = this.value; saveState();" value="${routerState.corp_pan || ''}" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandGold/50 outline-none transition-colors uppercase" placeholder="ABCDE1234F">
+                </div>
+            `;
+            
+            // Secondary ID (CIN/LLPIN/Reg)
+            if (indEnt !== 'huf') {
+                let secLabel = 'Registration Number (Optional)';
+                let secPlaceholder = 'Reg No.';
+                if (indEnt === 'company') {
+                    secLabel = 'Indian CIN (Corporate Identity Number)';
+                    secPlaceholder = 'U12345MH2024PTC123456';
+                } else if (indEnt === 'llp') {
+                    secLabel = 'Indian LLPIN (LLP Identification Number)';
+                    secPlaceholder = 'AAA-1234';
+                }
+                
+                html += `
+                    <div>
+                        <label class="block text-[10px] text-white/50 mb-1 uppercase tracking-widest font-black">${secLabel}</label>
+                        <input type="text" id="input-cin" oninput="routerState.cin = this.value; saveState();" value="${routerState.cin || ''}" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-lg font-black text-white focus:border-brandGold/50 outline-none transition-colors uppercase" placeholder="${secPlaceholder}">
+                    </div>
+                `;
+            }
+        }
+        container.innerHTML = html;
+    }
+    
+    function formatSSN(input) {
+        let val = input.value.replace(/\D/g, '');
+        if (val.length > 9) val = val.substring(0, 9);
+        if (val.length > 5) {
+            input.value = val.substring(0, 3) + '-' + val.substring(3, 5) + '-' + val.substring(5);
+        } else if (val.length > 3) {
+            input.value = val.substring(0, 3) + '-' + val.substring(3);
+        } else {
+            input.value = val;
+        }
+        routerState.ssn = input.value;
+        saveState();
+    }
+
+    function formatEIN(input) {
+        let val = input.value.replace(/\D/g, '');
+        if (val.length > 9) val = val.substring(0, 9);
+        if (val.length > 2) {
+            input.value = val.substring(0, 2) + '-' + val.substring(2);
+        } else {
+            input.value = val;
+        }
+        routerState.ein = input.value;
+        saveState();
+    }
+
+    function validateGates() {
+        const currentId = activeQuestions[currentQuestionIndex];
+        let valid = true;
+        let errMsg = null;
+        
+        if (currentId === 'personal_tax_ids') {
+            errMsg = document.getElementById('gate-error-msg-personal');
+            if (routerState.us_entity_type === 'individual' && (!routerState.ssn || routerState.ssn.trim() === '')) valid = false;
+            if ((routerState.india_entity_type === 'individual') && (!routerState.pan || routerState.pan.trim() === '')) valid = false;
+        } else if (currentId === 'business_tax_ids') {
+            errMsg = document.getElementById('gate-error-msg-business');
+            if (routerState.us_entity_type && routerState.us_entity_type !== 'individual') {
+                if (!routerState.ein || routerState.ein.trim() === '') valid = false;
+            }
+            if (routerState.india_entity_type && routerState.india_entity_type !== 'individual') {
+                if (!routerState.corp_pan || routerState.corp_pan.trim() === '') valid = false;
+                
+                if (routerState.india_entity_type === 'company' || routerState.india_entity_type === 'llp') {
+                    if (!routerState.cin || routerState.cin.trim() === '') valid = false;
+                }
+            }
+        }
+        
+        if (errMsg) {
+            if (!valid) {
+                errMsg.classList.remove('hidden');
+                return;
+            }
+            errMsg.classList.add('hidden');
+        }
+        
+        // Check if this is the final slide
+        if (currentQuestionIndex >= activeQuestions.length - 1) {
+            finalizeAndRoute();
+        } else {
+            advanceQuestion();
+        }
+    }
+    
+    function finalizeAndRoute() {
+        evaluateFlags();
+        
+        routerState.layer0_completed = true;
+        saveState();
+        
+        // Show report
+        const qHeader = document.getElementById('questionnaire-header');
+        const qProgress = document.getElementById('questionnaire-progress');
+        const qFooter = document.getElementById('questionnaire-footer');
+        qHeader.classList.add('hidden');
+        qProgress.classList.add('hidden');
+        qFooter.classList.add('hidden');
+        const completeSlide = document.getElementById('flow-complete-slide');
+        
+        // Un-hide all question-slides first, then hide them
+        const allSlides = document.querySelectorAll('.question-slide');
+        allSlides.forEach(slide => {
+            slide.classList.remove('active', 'prev-slide');
+        });
+        
+        completeSlide.classList.add('active');
+        renderCompletionReport();
+    }
+
     function evaluateFlags() {
         // 1. Evaluate India Flag
-        routerState.india_flag = 
-            routerState.is_indian_citizen === true ||
-            routerState.is_pio_or_oci === true ||
-            (routerState.india_days !== null && routerState.india_days > 0) ||
-            routerState.has_india_source_income_or_assets === true;
+        if (routerState.india_entity_type === 'individual') {
+            routerState.india_flag = 
+                routerState.is_indian_citizen === true ||
+                routerState.is_pio_or_oci === true ||
+                (routerState.india_days !== null && routerState.india_days > 0) ||
+                routerState.has_india_source_income_or_assets === true;
+        } else if (routerState.india_entity_type && routerState.india_entity_type !== 'individual') {
+            routerState.india_flag = (routerState.primary_jurisdiction === 'india' || routerState.primary_jurisdiction === 'cross_border');
+        } else {
+            routerState.india_flag = false;
+        }
 
         // 2. Evaluate US Flag
-        routerState.us_flag = 
-            routerState.is_us_citizen === true ||
-            routerState.has_green_card === true ||
-            (routerState.was_in_us_this_year === true && routerState.us_days !== null && routerState.us_days > 0) ||
-            routerState.has_us_source_income_or_assets === true;
+        if (routerState.us_entity_type === 'individual') {
+            routerState.us_flag = 
+                routerState.is_us_citizen === true ||
+                routerState.has_green_card === true ||
+                (routerState.was_in_us_this_year === true && routerState.us_days !== null && routerState.us_days > 0) ||
+                routerState.has_us_source_income_or_assets === true;
+        } else if (routerState.us_entity_type && routerState.us_entity_type !== 'individual') {
+            routerState.us_flag = (routerState.primary_jurisdiction === 'us' || routerState.primary_jurisdiction === 'cross_border');
+        } else {
+            routerState.us_flag = false;
+        }
 
         // 3. Evaluate Jurisdiction
         if (routerState.india_flag && routerState.us_flag) {
@@ -732,13 +1031,13 @@
         
         // Update texts
         const idH2 = document.getElementById('q-india-days-h2');
-        if(idH2) idH2.textContent = `How many days were you physically present in India during the Financial Year?`;
+        if(idH2) idH2.textContent = `How many days were you physically present in India during the Tax Year?`;
         
         const idP = document.getElementById('q-india-days-p');
         if(idP) idP.textContent = indiaRange;
         
         const iaH2 = document.getElementById('q-india-assets-h2');
-        if(iaH2) iaH2.textContent = `Do you have any India-source income or Indian-situs assets during the Financial Year (${indiaStart} – ${indiaEnd})?`;
+        if(iaH2) iaH2.textContent = `Do you have any India-source income or Indian-situs assets during the Tax Year (${indiaStart} – ${indiaEnd})?`;
         
         const uwH2 = document.getElementById('q-us-was-h2');
         if(uwH2) uwH2.textContent = `Were you physically present in the United States at any point during the Tax Year?`;
@@ -756,82 +1055,115 @@
         if(uaH2) uaH2.textContent = `Do you have any US-source income or US-situs assets during the Tax Year (${usStart} – ${usEnd})?`;
         
         const qlH2 = document.getElementById('q-liable-h2');
-        if(qlH2) qlH2.textContent = `Are you personally liable to pay income tax in any other country during the Financial Year (${indiaStart} – ${indiaEnd})?`;
+        if(qlH2) qlH2.textContent = `Are you personally liable to pay income tax in any other country during the Tax Year (${indiaStart} – ${indiaEnd})?`;
         
         const qliH2 = document.getElementById('q-left-india-h2');
-        if(qliH2) qliH2.textContent = `Did you leave India during the Financial Year (${indiaStart} – ${indiaEnd}) specifically for employment abroad or as a ship crew member?`;
+        if(qliH2) qliH2.textContent = `Did you leave India during the Tax Year (${indiaStart} – ${indiaEnd}) specifically for employment abroad or as a ship crew member?`;
     }
 
     function getQuestionsToShow() {
         const list = [];
+
+        // Q_JUR
+        list.push("primary_jurisdiction");
         
-        list.push("base_tax_year");
-        list.push("full_name");
-        list.push("date_of_birth");
-        
-        // Q1 (Citizen) is always shown
-        list.push("is_indian_citizen");
-        
-        // Q2 (PIO/OCI) shown if Q1 is false
-        if (routerState.is_indian_citizen === false) {
-            list.push("is_pio_or_oci");
+        // Entity Types
+        if (routerState.primary_jurisdiction === 'us' || routerState.primary_jurisdiction === 'cross_border') {
+            list.push("us_entity_type");
+        }
+        if (routerState.primary_jurisdiction === 'india' || routerState.primary_jurisdiction === 'cross_border') {
+            list.push("india_entity_type");
         }
         
-        // Q3 (India days) always shown
-        list.push("india_days");
+        // Check Individual trigger
+        const isIndividual = (routerState.us_entity_type === 'individual' || routerState.india_entity_type === 'individual');
         
-        // Q4 (India assets) always shown
-        list.push("has_india_source_income_or_assets");
-        
-        // Q5 (US Citizen) always shown
-        list.push("is_us_citizen");
-        
-        // Q6 (Green Card) shown if Q5 is false
-        if (routerState.is_us_citizen === false) {
-            list.push("has_green_card");
-        }
-        
-        // Q7 (Was in US) always shown
-        list.push("was_in_us_this_year");
-        
-        // Q7b (US days) shown if Q7 is true
-        if (routerState.was_in_us_this_year === true) {
-            list.push("us_days");
-        }
-        
-        // Q7c (US assets) always shown
-        list.push("has_us_source_income_or_assets");
-        
-        // Q8 (Liable to tax other) shown if Q1 is true
-        if (routerState.is_indian_citizen === true) {
-            list.push("liable_to_tax_in_another_country");
-        }
-        
-        // Q9 (Left for employment) shown if Q1 is true
-        if (routerState.is_indian_citizen === true) {
-            list.push("left_india_for_employment_this_year");
-        }
-        
-        // --- Tie Breaker Questions ---
-        if (routerState.is_statutory_dual_resident) {
-            list.push("tb_permanent_home");
-            if (routerState.tb_permanent_home === 'both' || routerState.tb_permanent_home === 'neither') {
-                list.push("tb_vital_interests");
-                if (routerState.tb_vital_interests === 'undetermined') {
-                    list.push("tb_habitual_abode");
-                    if (routerState.tb_habitual_abode === 'both' || routerState.tb_habitual_abode === 'neither') {
-                        list.push("tb_nationality");
-                    }
+        if (isIndividual) {
+            // Push old flow
+            list.push("base_tax_year");
+            list.push("full_name");
+            list.push("date_of_birth");
+            
+            const jur = routerState.primary_jurisdiction;
+            
+            if (routerState.india_entity_type === 'individual') {
+                // Q1 (Citizen) is always shown
+                list.push("is_indian_citizen");
+                
+                // Q2 (PIO/OCI) shown if Q1 is false
+                if (routerState.is_indian_citizen === false) {
+                    list.push("is_pio_or_oci");
+                }
+                
+                // Q3 (India days) always shown
+                list.push("india_days");
+                
+                // Q4 (India assets) always shown
+                list.push("has_india_source_income_or_assets");
+            }
+            
+            if (routerState.us_entity_type === 'individual') {
+                // Q5 (US Citizen) always shown
+                list.push("is_us_citizen");
+                
+                // Q6 (Green Card) shown if Q5 is false
+                if (routerState.is_us_citizen === false) {
+                    list.push("has_green_card");
+                }
+                
+                // Q7 (Was in US) always shown
+                list.push("was_in_us_this_year");
+                
+                // Q7b (US days) shown if Q7 is true
+                if (routerState.was_in_us_this_year === true) {
+                    list.push("us_days");
+                }
+                
+                // Q7c (US assets) always shown
+                list.push("has_us_source_income_or_assets");
+            }
+            
+            if (routerState.india_entity_type === 'individual') {
+                // Q8 (Liable to tax other) shown if Q1 is true
+                if (routerState.is_indian_citizen === true) {
+                    list.push("liable_to_tax_in_another_country");
+                }
+                
+                // Q9 (Left for employment) shown if Q1 is true
+                if (routerState.is_indian_citizen === true) {
+                    list.push("left_india_for_employment_this_year");
                 }
             }
+            
+            // --- Tie Breaker Questions (Moved to Layer 1) ---
+            
+            // After individual test, collect Tax IDs
+            list.push("personal_tax_ids");
+            // We push US then India individually
+            if (routerState.us_entity_type && routerState.us_entity_type !== 'individual') {
+                list.push("us_business_demographics");
+                list.push("us_business_tax_ids");
+            }
+            if (routerState.india_entity_type && routerState.india_entity_type !== 'individual') {
+                list.push("india_business_demographics");
+                list.push("india_business_tax_ids");
+            }
+        } else {
+            // Pure Business Path
+            list.push("base_tax_year");
+            if (routerState.us_entity_type && routerState.us_entity_type !== 'individual') {
+                list.push("us_business_demographics");
+                list.push("us_business_tax_ids");
+            }
+            if (routerState.india_entity_type && routerState.india_entity_type !== 'individual') {
+                list.push("india_business_demographics");
+                list.push("india_business_tax_ids");
+            }
         }
-        
+
         return list;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // TYPEFORM TRANSITIONS & NAVIGATION
-    // ═══════════════════════════════════════════════════════════════════════
     function updateActiveQuestionsList() {
         activeQuestions = getQuestionsToShow();
         
@@ -852,6 +1184,20 @@
 
         const isComplete = currentQuestionIndex >= activeQuestions.length;
 
+
+        // Dynamic Button Text for Last Slide
+        const activeSlide = document.querySelector('.question-slide.active');
+        if (activeSlide) {
+            const btnSpan = activeSlide.querySelector('button span');
+            if (btnSpan && (active === 'us_business_tax_ids' || active === 'india_business_tax_ids' || active === 'personal_tax_ids')) {
+                if (currentQuestionIndex === activeQuestions.length - 1) {
+                    btnSpan.innerText = 'Complete Routing';
+                } else {
+                    btnSpan.innerText = 'Continue';
+                }
+            }
+        }
+
         // Progress bar fill estimation
         const progressPct = isComplete ? 100 : Math.round((currentQuestionIndex / activeQuestions.length) * 100);
         document.getElementById('progress-bar-fill').style.width = `${progressPct}%`;
@@ -864,17 +1210,14 @@
         const qProgress = document.getElementById('questionnaire-progress');
         const qFooter = document.getElementById('questionnaire-footer');
 
+        
+        if (!isComplete) {
+            if (activeQuestions[currentQuestionIndex] === 'personal_tax_ids') preparePersonalTaxIdSlide();
+            if (activeQuestions[currentQuestionIndex] === 'india_business_tax_ids') prepareIndiaBusinessTaxIdSlide();
+        }
+        
         if (isComplete) {
-            // Hide standard questionnaire headers, progress, and footers to give report full space
-            qHeader.classList.add('hidden');
-            qProgress.classList.add('hidden');
-            qFooter.classList.add('hidden');
-            
-            const completeSlide = document.getElementById('flow-complete-slide');
-            completeSlide.classList.add('active');
-            
-            // Render Report on complete slide
-            renderCompletionReport();
+            finalizeAndRoute();
         } else {
             // Restore visibility of questionnaire shell components
             qHeader.classList.remove('hidden');
@@ -1021,6 +1364,40 @@
     // ═══════════════════════════════════════════════════════════════════════
     // HANDLERS FOR USER INPUTS
     // ═══════════════════════════════════════════════════════════════════════
+    
+    function handleStringInput(questionId, value) {
+        routerState[questionId] = value;
+        
+        // Clean up child states if jurisdiction changes
+        if (questionId === 'primary_jurisdiction') {
+            if (value === 'india') {
+                routerState.us_entity_type = null;
+            } else if (value === 'us') {
+                routerState.india_entity_type = null;
+            }
+        }
+        saveState();
+        
+        // Remove styling from all buttons in this slide
+        const currentSlide = document.querySelector('.question-slide.active');
+        if (currentSlide) {
+            const btns = currentSlide.querySelectorAll('.tb-btn');
+            btns.forEach(b => {
+                b.classList.remove('input-pill-selected');
+                b.classList.add('bg-white/5', 'text-white/50');
+            });
+            // Add styling to clicked button
+            const clickedBtn = currentSlide.querySelector(`[data-val="${value}"]`);
+            if (clickedBtn) {
+                clickedBtn.classList.add('input-pill-selected');
+                clickedBtn.classList.remove('bg-white/5', 'text-white/50');
+            }
+        }
+        
+        setTimeout(() => {
+            advanceQuestion();
+        }, 300);
+    }
     function handleTextInput(questionId, value) {
         routerState[questionId] = value.trim() === '' ? null : value.trim();
         evaluateFlags();
