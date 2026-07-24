@@ -45,7 +45,7 @@ const INCOME_TYPE_OPTIONS = [
 ];
 
 function ElectionRow({ election, idx, send }: { election: any, idx: number, send: any }) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_ELECTION', index: idx, field, value } as any);
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_ELECTION', index: idx, field, value } as any);
   return (
     <>
       <tr className="border-b border-white/5">
@@ -84,7 +84,7 @@ function ElectionRow({ election, idx, send }: { election: any, idx: number, send
         </td>
         <td className="p-2 text-right">
           <button
-            onClick={() => send({ type: 'REMOVE_ELECTION', index: idx } as any)}
+            onClick={() => (send as any)({ type: 'REMOVE_ELECTION', index: idx } as any)}
             className="text-red-400 hover:text-red-300 font-bold px-3 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-[9px] uppercase tracking-widest transition-all"
           >
             Remove
@@ -118,8 +118,19 @@ function ElectionRow({ election, idx, send }: { election: any, idx: number, send
   );
 }
 
-export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
+interface DtaaStepProps {
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function DtaaStep({ initialContext, onBack, onContinue, onAutoSave }: DtaaStepProps) {
   const [state, send] = useMachine(dtaaMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
 
   const ctx = state.context;
   const { dtaa, compliance_docs, ui } = ctx;
@@ -138,7 +149,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1.5">Your Current Home Country (Tax Residency)</label>
                 <select
                   value={dtaa.tax_residency_country || ''}
-                  onChange={(e) => send({ type: 'SET_TAX_RESIDENCY_COUNTRY', value: e.target.value } as any)}
+                  onChange={(e) => (send as any)({ type: 'SET_TAX_RESIDENCY_COUNTRY', value: e.target.value } as any)}
                   className="w-full !bg-[#121212] !text-white border border-white/10 rounded-xl text-xs px-4 py-3 focus:border-brandGold focus:ring-0 focus:outline-none transition-all [color-scheme:dark]"
                 >
                   <option value="">-- Select Country --</option>
@@ -158,7 +169,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                   <span className="text-xs font-bold text-white/80">Do you have a Tax Residency Certificate (TRC)?</span>
                   <span className="text-[9px] text-white/30">This is an official document from your home country proving your tax residency.</span>
                 </div>
-                <ToggleSwitch checked={dtaa.trc_status} onChange={(val) => send({ type: 'TOGGLE_TRC_STATUS', value: val } as any)} />
+                <ToggleSwitch checked={dtaa.trc_status} onChange={(val) => (send as any)({ type: 'TOGGLE_TRC_STATUS', value: val } as any)} />
               </div>
 
               {v.divTrcUpload && (
@@ -168,7 +179,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                     <input
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => send({ type: 'UPDATE_COMP_TRC', field: 'document_uploaded', value: (e.target.files?.length || 0) > 0 } as any)}
+                      onChange={(e) => (send as any)({ type: 'UPDATE_COMP_TRC', field: 'document_uploaded', value: (e.target.files?.length || 0) > 0 } as any)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-brandGold file:text-black hover:file:brightness-110"
                     />
                   </div>
@@ -177,7 +188,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                     <input
                       type="date"
                       value={compliance_docs.trc.validity_start_date || ''}
-                      onChange={(e) => send({ type: 'UPDATE_COMP_TRC', field: 'validity_start_date', value: e.target.value } as any)}
+                      onChange={(e) => (send as any)({ type: 'UPDATE_COMP_TRC', field: 'validity_start_date', value: e.target.value } as any)}
                       className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono"
                     />
                   </div>
@@ -186,7 +197,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                     <input
                       type="date"
                       value={compliance_docs.trc.validity_end_date || ''}
-                      onChange={(e) => send({ type: 'UPDATE_COMP_TRC', field: 'validity_end_date', value: e.target.value } as any)}
+                      onChange={(e) => (send as any)({ type: 'UPDATE_COMP_TRC', field: 'validity_end_date', value: e.target.value } as any)}
                       className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono"
                     />
                   </div>
@@ -200,7 +211,7 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
                   <span className="text-xs font-bold text-white/80">Do you have a Permanent Establishment (PE) in India?</span>
                   <span className="text-[9px] text-white/30">A PE usually means a fixed place of business in India. Having one affects your ability to claim standard treaty benefits.</span>
                 </div>
-                <ToggleSwitch checked={dtaa.has_permanent_establishment_in_india} onChange={(val) => send({ type: 'TOGGLE_PERMANENT_ESTABLISHMENT', value: val } as any)} />
+                <ToggleSwitch checked={dtaa.has_permanent_establishment_in_india} onChange={(val) => (send as any)({ type: 'TOGGLE_PERMANENT_ESTABLISHMENT', value: val } as any)} />
               </div>
               {v.divPeAlert && (
                 <div id="div-pe-alert" className="mt-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
@@ -222,11 +233,11 @@ export default function DtaaStep({ initialContext, onBack, onContinue }: any) {
               <h3 className="text-xs font-black uppercase tracking-widest text-brandGold">Treaty Tax Rates (Claim Lower Rates)</h3>
               <div className="flex gap-2">
                 {v.showUsAutofillBtn && (
-                  <button onClick={() => send({ type: 'AUTOFILL_US_TREATY' } as any)} className="px-3 py-1 bg-brandGold/10 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
+                  <button onClick={() => (send as any)({ type: 'AUTOFILL_US_TREATY' } as any)} className="px-3 py-1 bg-brandGold/10 hover:bg-brandGold/30 text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
                     ⚡ Auto-Fill US Rates
                   </button>
                 )}
-                <button onClick={() => send({ type: 'ADD_ELECTION' } as any)} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
+                <button onClick={() => (send as any)({ type: 'ADD_ELECTION' } as any)} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
                   + Add Stream
                 </button>
               </div>

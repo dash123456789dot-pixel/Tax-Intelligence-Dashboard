@@ -102,9 +102,10 @@ interface ResidencySolverStepProps {
   sidebarActorRef: ActorRef<any, any>;
   onBack: () => void;
   onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
 }
 
-export default function ResidencySolverStep({ initialContext, sidebarActorRef, onBack, onContinue }: ResidencySolverStepProps) {
+export default function ResidencySolverStep({ initialContext, sidebarActorRef, onBack, onContinue, onAutoSave }: ResidencySolverStepProps) {
   const sidebarEntityType = useSelector(sidebarActorRef, (s: any) => s.context.entityType);
 
   const [state, send] = useMachine(residencyMachine, {
@@ -116,15 +117,19 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
   });
 
   useEffect(() => {
-    send({ type: 'SET_ENTITY_TYPE', value: sidebarEntityType });
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
+  useEffect(() => {
+    (send as any)({ type: 'SET_ENTITY_TYPE', value: sidebarEntityType });
   }, [sidebarEntityType, send]);
 
   const ctx = state.context;
   const { residency_detail: rd, company_residency: cr, dtaa, ui } = ctx;
   const { visibility: v, tieBreaker: tb, showDualResidencyAlert, hasActiveLiveTrip } = ui;
 
-  const updateField = (field: string, value: any) => send({ type: 'UPDATE_RESIDENCY_FIELD', field, value });
-  const updateCompany = (field: string, value: any) => send({ type: 'UPDATE_COMPANY_RESIDENCY', field, value });
+  const updateField = (field: string, value: any) => (send as any)({ type: 'UPDATE_RESIDENCY_FIELD', field, value });
+  const updateCompany = (field: string, value: any) => (send as any)({ type: 'UPDATE_COMPANY_RESIDENCY', field, value });
 
   return (
     <>
@@ -204,7 +209,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                   <span className="text-[10px] text-white/70">Where do you have a permanent home available to you?</span>
                   <select
                     value={dtaa.tb_home}
-                    onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'home', value: e.target.value })}
+                    onChange={(e) => (send as any)({ type: 'SET_TIE_BREAKER', field: 'home', value: e.target.value })}
                     className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                   >
                     <option value="none">-- Select --</option>
@@ -221,7 +226,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     <span className="text-[10px] text-white/70">Where are your closer personal and economic relations?</span>
                     <select
                       value={dtaa.tb_cvi}
-                      onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'cvi', value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: 'SET_TIE_BREAKER', field: 'cvi', value: e.target.value })}
                       className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
@@ -238,7 +243,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     <span className="text-[10px] text-white/70">Where is your habitual abode (customary living pattern)?</span>
                     <select
                       value={dtaa.tb_abode}
-                      onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'abode', value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: 'SET_TIE_BREAKER', field: 'abode', value: e.target.value })}
                       className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
@@ -255,7 +260,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     <span className="text-[10px] text-white/70">What is your legal citizenship/nationality?</span>
                     <select
                       value={dtaa.tb_nationality}
-                      onChange={(e) => send({ type: 'SET_TIE_BREAKER', field: 'nationality', value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: 'SET_TIE_BREAKER', field: 'nationality', value: e.target.value })}
                       className="bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2 mt-1 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="none">-- Select --</option>
@@ -455,7 +460,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                       min="0"
                       max="366"
                       value={rd.manual_days}
-                      onChange={(e) => send({ type: 'SET_MANUAL_DAYS', value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: 'SET_MANUAL_DAYS', value: e.target.value })}
                       className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-brandGold"
                     />
                   </div>
@@ -475,7 +480,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                           type="checkbox"
                           id="toggle-live-track"
                           checked={rd.live_tracking_active}
-                          onChange={(e) => send({ type: 'TOGGLE_LIVE_TRACKING', value: e.target.checked })}
+                          onChange={(e) => (send as any)({ type: 'TOGGLE_LIVE_TRACKING', value: e.target.checked })}
                           className="peer sr-only"
                         />
                         <span
@@ -494,7 +499,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                             <div key={idx} className="relative grid grid-cols-2 gap-3 p-3 bg-black/20 rounded-xl border border-white/5 group">
                               {rd.trips.length > 1 && (
                                 <button
-                                  onClick={() => send({ type: 'REMOVE_TRIP', index: idx })}
+                                  onClick={() => (send as any)({ type: 'REMOVE_TRIP', index: idx })}
                                   className="absolute -top-2 -right-2 w-5 h-5 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
                                 >
                                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -507,7 +512,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                                 <input
                                   type="date"
                                   value={trip.arrival_date || ''}
-                                  onChange={(e) => send({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'arrival_date', value: e.target.value })}
+                                  onChange={(e) => (send as any)({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'arrival_date', value: e.target.value })}
                                   className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20 [color-scheme:dark]"
                                 />
                               </div>
@@ -518,7 +523,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                                 <input
                                   type="date"
                                   value={trip.departure_date || ''}
-                                  onChange={(e) => send({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'departure_date', value: e.target.value })}
+                                  onChange={(e) => (send as any)({ type: 'UPDATE_TRIP_DATE', index: idx, field: 'departure_date', value: e.target.value })}
                                   className="w-full bg-[#121212] border border-white/10 rounded px-2 py-1.5 text-xs text-white focus:border-brandGold focus:outline-none placeholder-white/20 [color-scheme:dark]"
                                 />
                               </div>
@@ -526,7 +531,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                           ))}
                         </div>
                         <button
-                          onClick={() => send({ type: 'ADD_TRIP' })}
+                          onClick={() => (send as any)({ type: 'ADD_TRIP' })}
                           className="w-full py-2 border border-dashed border-white/20 rounded-lg text-xs font-bold text-brandGold/70 hover:text-brandGold hover:border-brandGold/50 hover:bg-brandGold/5 transition-colors"
                         >
                           + Add Trip
@@ -616,7 +621,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     <YesNoSelect
                       className="border-brandCyan/20 focus:border-brandCyan ml-4 flex-shrink-0"
                       value={rd.nr_years_last_10_gte_9 === null ? null : !rd.nr_years_last_10_gte_9}
-                      onChange={(val) => send({ type: 'UPDATE_HUF_NR9', value: val })}
+                      onChange={(val) => (send as any)({ type: 'UPDATE_HUF_NR9', value: val })}
                     />
                   </div>
                 </div>
@@ -632,7 +637,7 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                     <YesNoSelect
                       className="border-brandCyan/20 focus:border-brandCyan ml-4 flex-shrink-0"
                       value={rd.days_in_india_last_7_years_lte_729 === null ? null : !rd.days_in_india_last_7_years_lte_729}
-                      onChange={(val) => send({ type: 'UPDATE_HUF_D7', value: val })}
+                      onChange={(val) => (send as any)({ type: 'UPDATE_HUF_D7', value: val })}
                     />
                   </div>
                 </div>

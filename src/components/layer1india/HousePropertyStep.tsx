@@ -133,7 +133,7 @@ interface PropertyCardProps {
 }
 
 function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardProps) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_HP_FIELD', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_HP_FIELD', index: idx, field, value });
   const [showTds, setShowTds] = useState(!!prop.tenant_tds_deducted_inr);
 
   useEffect(() => {
@@ -146,7 +146,7 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
     <div className="p-5 bg-[#121212] border border-white/10 rounded-2xl flex flex-col gap-5 relative group">
       <button
         type="button"
-        onClick={() => send({ type: 'REMOVE_HOUSE_PROPERTY', index: idx })}
+        onClick={() => (send as any)({ type: 'REMOVE_HOUSE_PROPERTY', index: idx })}
         className="absolute top-4 right-4 text-white/20 hover:text-brandRed transition-colors"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,19 +170,19 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
           label="Home Loan Cert."
           icon="🏦"
           status={prop._uploads.loan}
-          onStart={() => send({ type: 'HP_UPLOAD_START', index: idx, slot: 'loan' })}
+          onStart={() => (send as any)({ type: 'HP_UPLOAD_START', index: idx, slot: 'loan' })}
         />
         <UploadSlot
           label="Rental Agreement"
           icon="📄"
           status={prop._uploads.rent}
-          onStart={() => send({ type: 'HP_UPLOAD_START', index: idx, slot: 'rent' })}
+          onStart={() => (send as any)({ type: 'HP_UPLOAD_START', index: idx, slot: 'rent' })}
         />
         <UploadSlot
           label="Municipal Tax"
           icon="🏛️"
           status={prop._uploads.tax}
-          onStart={() => send({ type: 'HP_UPLOAD_START', index: idx, slot: 'tax' })}
+          onStart={() => (send as any)({ type: 'HP_UPLOAD_START', index: idx, slot: 'tax' })}
         />
       </div>
 
@@ -291,21 +291,31 @@ function PropertyCard({ prop, idx, visibility, taxRegime, send }: PropertyCardPr
 interface HousePropertyStepProps {
   taxRegime: string;
   entityType: string;
+  initialContext?: any;
   onBack?: (targetStepId: string) => void;
   onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
 }
 
-export default function HousePropertyStep({ taxRegime, entityType, onBack, onContinue }: HousePropertyStepProps) {
+export default function HousePropertyStep({ taxRegime, entityType, initialContext, onBack, onContinue, onAutoSave }: HousePropertyStepProps) {
   const [state, send] = useMachine(housePropertyMachine, {
-    input: { tax_regime: taxRegime, entity_type: entityType },
+    input: {
+      tax_regime: taxRegime,
+      entity_type: entityType,
+      ...(initialContext || {})
+    },
   });
 
   useEffect(() => {
-    send({ type: 'SET_TAX_REGIME', value: taxRegime });
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
+  useEffect(() => {
+    (send as any)({ type: 'SET_TAX_REGIME', value: taxRegime });
   }, [taxRegime, send]);
 
   useEffect(() => {
-    send({ type: 'SET_ENTITY_TYPE', value: entityType });
+    (send as any)({ type: 'SET_ENTITY_TYPE', value: entityType });
   }, [entityType, send]);
 
   const ctx = state.context;
@@ -337,7 +347,7 @@ export default function HousePropertyStep({ taxRegime, entityType, onBack, onCon
                 Includes properties generating rent or properties with an active home loan.
               </span>
             </div>
-            <ToggleSwitch checked={hp.has_house_property_income} onChange={(val) => send({ type: 'TOGGLE_HP_SECTION', value: val })} />
+            <ToggleSwitch checked={hp.has_house_property_income} onChange={(val) => (send as any)({ type: 'TOGGLE_HP_SECTION', value: val })} />
           </div>
         </div>
 
@@ -351,7 +361,7 @@ export default function HousePropertyStep({ taxRegime, entityType, onBack, onCon
 
             <button
               type="button"
-              onClick={() => send({ type: 'ADD_HOUSE_PROPERTY' })}
+              onClick={() => (send as any)({ type: 'ADD_HOUSE_PROPERTY' })}
               className="w-full py-4 border border-dashed border-white/20 hover:border-brandGold hover:bg-brandGold/5 rounded-2xl flex items-center justify-center gap-2 text-white/60 hover:text-brandGold transition-all font-bold text-xs uppercase tracking-widest"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

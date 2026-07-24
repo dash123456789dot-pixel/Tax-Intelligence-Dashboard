@@ -11,7 +11,8 @@ export type LossesAndCreditsEvent =
   | { type: 'UPDATE_CREDIT'; field: string; value: number | null }
   | { type: 'TOGGLE_26AS'; value: boolean }
   | { type: 'TOGGLE_SIMULATOR'; value: boolean }
-  | { type: 'UPDATE_SIM_FIELD'; field: string; value: string | number | null };
+  | { type: 'UPDATE_SIM_FIELD'; field: string; value: string | number | null }
+  | { type: 'HYDRATE'; value: any };
 
 export const lossesAndCreditsMachine = setup({
   types: {
@@ -97,6 +98,12 @@ export const lossesAndCreditsMachine = setup({
       sim_other: ({ context, event }) => event.type === 'UPDATE_SIM_FIELD' && event.field === 'sim_other' ? (event.value as number | null) : context.sim_other,
       sim_cg_quarter: ({ context, event }) => event.type === 'UPDATE_SIM_FIELD' && event.field === 'sim_cg_quarter' ? (event.value as string) : context.sim_cg_quarter,
     }),
+    hydrateContext: assign(({ context, event }) => {
+      if (event.type === 'HYDRATE') {
+        return { ...context, ...event.value };
+      }
+      return context;
+    }),
   }
 }).createMachine({
   id: 'lossesAndCredits',
@@ -142,6 +149,7 @@ export const lossesAndCreditsMachine = setup({
         'TOGGLE_26AS': { actions: 'toggle26AS' },
         'TOGGLE_SIMULATOR': { actions: 'toggleSimulator' },
         'UPDATE_SIM_FIELD': { actions: 'updateSimField' },
+        'HYDRATE': { actions: 'hydrateContext' },
       }
     }
   }

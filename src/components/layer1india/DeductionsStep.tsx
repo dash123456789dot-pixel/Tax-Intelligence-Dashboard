@@ -74,11 +74,11 @@ function DisabilityCard({ title, blocked, checked, onCheckedChange, showDetails,
 }
 
 function DonationRow({ row, idx, visibility, send }: any) {
-  const update = (field: string) => (value: string | boolean) => send({ type: 'UPDATE_80G_ROW', index: idx, field, value });
+  const update = (field: string) => (value: string | boolean) => (send as any)({ type: 'UPDATE_80G_ROW', index: idx, field, value });
   return (
     <div className="g80-card bg-black/30 border border-white/10 rounded-2xl p-4 flex flex-col gap-3">
       <div className="flex justify-end">
-        <button onClick={() => send({ type: 'REMOVE_80G_ROW', index: idx })} className="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">
+        <button onClick={() => (send as any)({ type: 'REMOVE_80G_ROW', index: idx })} className="text-brandRed/70 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all">
           ✕ Remove
         </button>
       </div>
@@ -139,8 +139,20 @@ function DonationRow({ row, idx, visibility, send }: any) {
 
 // ---- main component ---------------------------------------------------
 
-export default function DeductionsStep({ initialContext, onBack, onContinue }: any) {
-  const [state, send] = useMachine(deductionsMachine, { input: initialContext });
+interface DeductionsStepProps {
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function DeductionsStep({ initialContext, onBack, onContinue, onAutoSave }: DeductionsStepProps) {
+  const [state, send] = useMachine(deductionsMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
   const ctx = state.context;
   const d = ctx.deductions;
   const { visibility: v, computedS80G } = ctx.ui;
@@ -180,54 +192,54 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">EPF (Employee Provident Fund)</label>
-                  <InrField value={d.s80C.epf_employee_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'epf_employee_inr', value: val })} />
+                  <InrField value={d.s80C.epf_employee_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'epf_employee_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">PPF (Public Provident Fund)</label>
-                  <InrField value={d.s80C.ppf_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'ppf_inr', value: val })} />
+                  <InrField value={d.s80C.ppf_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'ppf_inr', value: val })} />
                   <NriWarning show={v.showPpfNriWarning} text="Fresh PPF contributions blocked for NRIs" />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">ELSS (Mutual Funds)</label>
-                  <InrField value={d.s80C.elss_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'elss_inr', value: val })} />
+                  <InrField value={d.s80C.elss_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'elss_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Life Insurance Premium</label>
-                  <InrField value={d.s80C.life_insurance_premium_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'life_insurance_premium_inr', value: val })} />
+                  <InrField value={d.s80C.life_insurance_premium_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'life_insurance_premium_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Home Loan Principal Repayment</label>
-                  <InrField value={d.s80C.principal_home_loan_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'principal_home_loan_inr', value: val })} />
+                  <InrField value={d.s80C.principal_home_loan_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'principal_home_loan_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NSC (National Savings Cert.)</label>
-                  <InrField value={d.s80C.nsc_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'nsc_inr', value: val })} />
+                  <InrField value={d.s80C.nsc_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'nsc_inr', value: val })} />
                   <NriWarning show={v.showNscNriWarning} text="Fresh NSC investments blocked for NRIs" />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Children's Tuition Fees</label>
-                  <InrField value={d.s80C.tuition_fees_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'tuition_fees_inr', value: val })} />
+                  <InrField value={d.s80C.tuition_fees_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'tuition_fees_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Sukanya Samriddhi Yojana (SSY)</label>
-                  <InrField value={d.s80C.sukanya_samriddhi_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'sukanya_samriddhi_inr', value: val })} />
+                  <InrField value={d.s80C.sukanya_samriddhi_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'sukanya_samriddhi_inr', value: val })} />
                   <NriWarning show={v.showSsyNriWarning} text="Fresh SSY accounts blocked for NRIs" />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Tax-Saving Fixed Deposit (5-year)</label>
-                  <InrField value={d.s80C.tax_saving_fd_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'tax_saving_fd_inr', value: val })} />
+                  <InrField value={d.s80C.tax_saving_fd_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'tax_saving_fd_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Stamp Duty &amp; Registration</label>
-                  <InrField value={d.s80C.stamp_duty_registration_inr} onCommit={(val) => send({ type: 'UPDATE_80C', field: 'stamp_duty_registration_inr', value: val })} />
+                  <InrField value={d.s80C.stamp_duty_registration_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80C', field: 'stamp_duty_registration_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">LIC Annuity Premium (Pension Fund Contributions Deduction)</label>
-                  <InrField value={d.s80CCC_80CCD1.lic_annuity_premium_inr} onCommit={(val) => send({ type: 'UPDATE_80CCC_80CCD1', field: 'lic_annuity_premium_inr', value: val })} />
+                  <InrField value={d.s80CCC_80CCD1.lic_annuity_premium_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80CCC_80CCD1', field: 'lic_annuity_premium_inr', value: val })} />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Employee Contribution (Section 124(1))</label>
-                  <InrField value={d.s80CCC_80CCD1.nps_employee_contribution_inr} onCommit={(val) => send({ type: 'UPDATE_80CCC_80CCD1', field: 'nps_employee_contribution_inr', value: val })} />
+                  <InrField value={d.s80CCC_80CCD1.nps_employee_contribution_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80CCC_80CCD1', field: 'nps_employee_contribution_inr', value: val })} />
                 </div>
               </div>
             </div>
@@ -239,7 +251,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">NPS Voluntary Contribution Section 124(1B)</label>
-                <InrField value={d.s80CCD_1B.nps_additional_inr} onCommit={(val) => send({ type: 'UPDATE_NPS_ADD', field: 'nps_additional_inr', value: val })} />
+                <InrField value={d.s80CCD_1B.nps_additional_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_NPS_ADD', field: 'nps_additional_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">This is an additional deduction exclusively for NPS contributions, over and above the ₹1.5L cap of Section 123.</p>
               </div>
             </div>
@@ -254,38 +266,38 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Self, Spouse &amp; Children</label>
-                <InrField value={d.s80D.self_family_premium_inr} onCommit={(val) => send({ type: 'UPDATE_80D_NUM', field: 'self_family_premium_inr', value: val })} />
+                <InrField value={d.s80D.self_family_premium_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80D_NUM', field: 'self_family_premium_inr', value: val })} />
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Self &amp; Family (Max ₹5,000 sub-limit)</label>
-                <InrField value={d.s80D.self_family_preventive_checkup_inr} onCommit={(val) => send({ type: 'UPDATE_80D_NUM', field: 'self_family_preventive_checkup_inr', value: val })} />
+                <InrField value={d.s80D.self_family_preventive_checkup_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80D_NUM', field: 'self_family_preventive_checkup_inr', value: val })} />
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Premium — Parents</label>
-                <InrField value={d.s80D.parents_premium_inr} onCommit={(val) => send({ type: 'UPDATE_80D_NUM', field: 'parents_premium_inr', value: val })} />
+                <InrField value={d.s80D.parents_premium_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80D_NUM', field: 'parents_premium_inr', value: val })} />
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Preventive Health Checkup — Parents (Max ₹5,000 sub-limit)</label>
-                <InrField value={d.s80D.parents_preventive_checkup_inr} onCommit={(val) => send({ type: 'UPDATE_80D_NUM', field: 'parents_preventive_checkup_inr', value: val })} />
+                <InrField value={d.s80D.parents_preventive_checkup_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80D_NUM', field: 'parents_preventive_checkup_inr', value: val })} />
               </div>
               <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-white/80 font-display">Are Parents Senior Citizens?</span>
                   <span className="text-[9px] text-white/30 font-sans">Increases parent deduction cap from ₹25,000 to ₹50,000.</span>
                 </div>
-                <ToggleSwitch checked={d.s80D.parents_are_senior} onChange={(val) => send({ type: 'UPDATE_80D_BOOL', field: 'parents_are_senior', value: val })} />
+                <ToggleSwitch checked={d.s80D.parents_are_senior} onChange={(val) => (send as any)({ type: 'UPDATE_80D_BOOL', field: 'parents_are_senior', value: val })} />
               </div>
               <div className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-white/80 font-display">Parents Have Health Insurance Policy?</span>
                   <span className="text-[9px] text-white/30 font-sans">If false, allows parents' medical expenditures to be claimed.</span>
                 </div>
-                <ToggleSwitch checked={d.s80D.parents_has_health_insurance} onChange={(val) => send({ type: 'UPDATE_80D_BOOL', field: 'parents_has_health_insurance', value: val })} />
+                <ToggleSwitch checked={d.s80D.parents_has_health_insurance} onChange={(val) => (send as any)({ type: 'UPDATE_80D_BOOL', field: 'parents_has_health_insurance', value: val })} />
               </div>
               {v.show80DParentsMed && (
                 <div className="md:col-span-2">
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Medical Expenditure — Parents (Only if Seniors &amp; No Policy in force)</label>
-                  <InrField value={d.s80D.parents_medical_expenditure_inr} onCommit={(val) => send({ type: 'UPDATE_80D_NUM', field: 'parents_medical_expenditure_inr', value: val })} />
+                  <InrField value={d.s80D.parents_medical_expenditure_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80D_NUM', field: 'parents_medical_expenditure_inr', value: val })} />
                   <p className="text-[9px] text-white/30 mt-1">Deductible up to ₹50,000 for senior citizen parents who do not have any active health insurance coverage.</p>
                 </div>
               )}
@@ -297,14 +309,14 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             title="Dependent Disability Maintenance Deduction — Maintenance & Medical Treatment of Disabled Dependent"
             blocked={v.is80DDBlocked}
             checked={d.s80DD.has_disabled_dependents}
-            onCheckedChange={(val: boolean) => send({ type: 'UPDATE_DD_BOOL', section: 's80DD', field: 'has_disabled_dependents', value: val })}
+            onCheckedChange={(val: boolean) => (send as any)({ type: 'UPDATE_DD_BOOL', section: 's80DD', field: 'has_disabled_dependents', value: val })}
             showDetails={v.show80DDDetails}
           >
             <div>
               <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
               <select
                 value={d.s80DD.disability_percentage || ''}
-                onChange={(e) => send({ type: 'UPDATE_DD_FIELD', section: 's80DD', field: 'disability_percentage', value: e.target.value })}
+                onChange={(e) => (send as any)({ type: 'UPDATE_DD_FIELD', section: 's80DD', field: 'disability_percentage', value: e.target.value })}
                 className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
               >
                 <option value="">-- Select Disability Level --</option>
@@ -319,7 +331,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             title="Medical Treatment for Specified Diseases — Medical Treatment Expenses for Specified Diseases"
             blocked={v.is80DDBBlocked}
             checked={d.s80DDB.has_specified_diseases_treatment}
-            onCheckedChange={(val: boolean) => send({ type: 'UPDATE_DD_BOOL', section: 's80DDB', field: 'has_specified_diseases_treatment', value: val })}
+            onCheckedChange={(val: boolean) => (send as any)({ type: 'UPDATE_DD_BOOL', section: 's80DDB', field: 'has_specified_diseases_treatment', value: val })}
             showDetails={v.show80DDBDetails}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -327,7 +339,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patient Category</label>
                 <select
                   value={d.s80DDB.patient_category || ''}
-                  onChange={(e) => send({ type: 'UPDATE_DD_FIELD', section: 's80DDB', field: 'patient_category', value: e.target.value })}
+                  onChange={(e) => (send as any)({ type: 'UPDATE_DD_FIELD', section: 's80DDB', field: 'patient_category', value: e.target.value })}
                   className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
                 >
                   <option value="">-- Select Category --</option>
@@ -337,7 +349,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Actual Medical Expenses Incurred (₹)</label>
-                <InrField value={d.s80DDB.medical_expenses_inr} onCommit={(val) => send({ type: 'UPDATE_DD_NUM', section: 's80DDB', field: 'medical_expenses_inr', value: val })} />
+                <InrField value={d.s80DDB.medical_expenses_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_DD_NUM', section: 's80DDB', field: 'medical_expenses_inr', value: val })} />
               </div>
             </div>
           </DisabilityCard>
@@ -347,14 +359,14 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             title="Self-Disability Deduction — Deduction in Case of Person with Disability (Self)"
             blocked={v.is80UBlocked}
             checked={d.s80U.has_self_disability}
-            onCheckedChange={(val: boolean) => send({ type: 'UPDATE_DD_BOOL', section: 's80U', field: 'has_self_disability', value: val })}
+            onCheckedChange={(val: boolean) => (send as any)({ type: 'UPDATE_DD_BOOL', section: 's80U', field: 'has_self_disability', value: val })}
             showDetails={v.show80UDetails}
           >
             <div>
               <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Disability Percentage</label>
               <select
                 value={d.s80U.disability_percentage || ''}
-                onChange={(e) => send({ type: 'UPDATE_DD_FIELD', section: 's80U', field: 'disability_percentage', value: e.target.value })}
+                onChange={(e) => (send as any)({ type: 'UPDATE_DD_FIELD', section: 's80U', field: 'disability_percentage', value: e.target.value })}
                 className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none"
               >
                 <option value="">-- Select Disability Level --</option>
@@ -375,12 +387,12 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
                 <span className="text-xs font-bold text-white/80 font-display">Claim Rent Paid Deduction (For Non-HRA Salaried)?</span>
                 <span className="text-[9px] text-white/30 font-sans">Available only if you do not receive House Rent Allowance (HRA) from an employer.</span>
               </div>
-              <ToggleSwitch checked={d.s80GG.has_rent_paid_no_hra} disabled={v.is80GGBlocked} onChange={(val) => send({ type: 'UPDATE_80GG_BOOL', field: 'has_rent_paid_no_hra', value: val })} />
+              <ToggleSwitch checked={d.s80GG.has_rent_paid_no_hra} disabled={v.is80GGBlocked} onChange={(val) => (send as any)({ type: 'UPDATE_80GG_BOOL', field: 'has_rent_paid_no_hra', value: val })} />
             </div>
             {v.show80GGRentInput && (
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total Rent Paid During the FY (₹)</label>
-                <InrField value={d.s80GG.rent_paid_inr} onCommit={(val) => send({ type: 'UPDATE_80GG_NUM', field: 'rent_paid_inr', value: val })} />
+                <InrField value={d.s80GG.rent_paid_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80GG_NUM', field: 'rent_paid_inr', value: val })} />
               </div>
             )}
           </div>
@@ -389,7 +401,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
           <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-widest text-brandGold font-display">Charitable Donations &amp; Contributions — Donations to Charities / Approved Funds</span>
-              <button onClick={() => send({ type: 'ADD_80G_ROW' })} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
+              <button onClick={() => (send as any)({ type: 'ADD_80G_ROW' })} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
                 + Add Donation
               </button>
             </div>
@@ -407,21 +419,21 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             {v.show80IAC && (
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Eligible Start-up Business Deduction</label>
-                <InrField value={d.s80IAC_inr} onCommit={(val) => send({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80IAC_inr', value: val })} />
+                <InrField value={d.s80IAC_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80IAC_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">100% deduction of profits for 3 consecutive years for eligible startups (Companies/LLPs).</p>
               </div>
             )}
             {v.show80LA && (
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Offshore Banking Unit Deduction</label>
-                <InrField value={d.s80LA_inr} onCommit={(val) => send({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80LA_inr', value: val })} />
+                <InrField value={d.s80LA_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80LA_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">100% deduction for 10 consecutive years for units in IFSC/SEZ.</p>
               </div>
             )}
             {v.show80P && (
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Cooperative Society Deduction</label>
-                <InrField value={d.s80P_inr} onCommit={(val) => send({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80P_inr', value: val })} />
+                <InrField value={d.s80P_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_SPECIAL_DEDUCTION', field: 's80P_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">Deduction for income of Cooperative Societies from specified activities.</p>
               </div>
             )}
@@ -432,7 +444,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <span className="text-xs font-black uppercase tracking-widest text-brandGold font-display">{v.politicalTitle}</span>
             <div>
               <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Donations via Non-Cash Modes (₹)</label>
-              <InrField value={d.s80ggb_ggc_political_donation_inr} onCommit={(val) => send({ type: 'UPDATE_POLITICAL_DONATION', value: val })} />
+              <InrField value={d.s80ggb_ggc_political_donation_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_POLITICAL_DONATION', value: val })} />
               <p className="text-[9px] text-white/30 mt-1">100% deduction for contributions to registered political parties or electoral trusts. Cash donations are strictly not allowed.</p>
             </div>
           </div>
@@ -446,12 +458,12 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Savings Account Interest (₹)</label>
-                <InrField value={d.s80TTA_TTB.savings_interest_inr} onCommit={(val) => send({ type: 'UPDATE_80TTA', field: 'savings_interest_inr', value: val })} />
+                <InrField value={d.s80TTA_TTB.savings_interest_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80TTA', field: 'savings_interest_inr', value: val })} />
               </div>
               {v.show80TTAFdField && (
                 <div>
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">FD / RD Interest (₹, Interest Income Deduction (Senior Citizen Deposits) Senior only)</label>
-                  <InrField value={d.s80TTA_TTB.fd_rd_interest_inr} onCommit={(val) => send({ type: 'UPDATE_80TTA', field: 'fd_rd_interest_inr', value: val })} />
+                  <InrField value={d.s80TTA_TTB.fd_rd_interest_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80TTA', field: 'fd_rd_interest_inr', value: val })} />
                 </div>
               )}
               <div className="md:col-span-2">
@@ -472,7 +484,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
               <span className="text-xs font-black uppercase tracking-widest text-brandGold font-display">Inter-Corporate Dividend Deduction — Inter-Corporate Dividends</span>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Dividends Distributed (₹)</label>
-                <InrField value={d.s80M.dividend_inr} onCommit={(val) => send({ type: 'UPDATE_80M', field: 'dividend_inr', value: val })} />
+                <InrField value={d.s80M.dividend_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80M', field: 'dividend_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">Deduction available for domestic companies receiving dividends from another domestic company, foreign company, or business trust, and distributing dividends to their shareholders.</p>
               </div>
             </div>
@@ -484,12 +496,12 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Author Royalty Income Deduction</label>
-                <InrField value={d.s80QQB_inr} onCommit={(val) => send({ type: 'UPDATE_ROYALTY_DEDUCTION', field: 's80QQB_inr', value: val })} />
+                <InrField value={d.s80QQB_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_ROYALTY_DEDUCTION', field: 's80QQB_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for authors of certain books.</p>
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Patent Royalty Income Deduction</label>
-                <InrField value={d.s80RRB_inr} onCommit={(val) => send({ type: 'UPDATE_ROYALTY_DEDUCTION', field: 's80RRB_inr', value: val })} />
+                <InrField value={d.s80RRB_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_ROYALTY_DEDUCTION', field: 's80RRB_inr', value: val })} />
                 <p className="text-[9px] text-white/30 mt-1">Max deduction ₹3,00,000 for royalty on patents.</p>
               </div>
             </div>
@@ -500,7 +512,7 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <span className="text-xs font-black uppercase tracking-widest text-brandGold font-display">Education Loan Interest Deduction — Interest on Education Loan</span>
             <div>
               <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Education Loan Interest Repaid (₹)</label>
-              <InrField value={d.s80E.education_loan_interest_inr} onCommit={(val) => send({ type: 'UPDATE_80E', field: 'education_loan_interest_inr', value: val })} />
+              <InrField value={d.s80E.education_loan_interest_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80E', field: 'education_loan_interest_inr', value: val })} />
               <p className="text-[9px] text-white/30 mt-1">Deductible for interest paid on loans taken for higher education of self, spouse, children, or students for whom you are the legal guardian. No upper limit on deduction; valid for up to 8 years.</p>
             </div>
           </div>
@@ -512,14 +524,14 @@ export default function DeductionsStep({ initialContext, onBack, onContinue }: a
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Additional Home Loan Interest (₹)</label>
-                <InrField value={d.s80EEA_EE.affordable_home_loan_interest_inr} onCommit={(val) => send({ type: 'UPDATE_80EEA', field: 'affordable_home_loan_interest_inr', value: val })} />
+                <InrField value={d.s80EEA_EE.affordable_home_loan_interest_inr} onCommit={(val) => (send as any)({ type: 'UPDATE_80EEA', field: 'affordable_home_loan_interest_inr', value: val })} />
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Loan Sanction Date</label>
                 <input
                   type="date"
                   value={d.s80EEA_EE.loan_sanction_date || ''}
-                  onChange={(e) => send({ type: 'UPDATE_80EEA', field: 'loan_sanction_date', value: e.target.value })}
+                  onChange={(e) => (send as any)({ type: 'UPDATE_80EEA', field: 'loan_sanction_date', value: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white font-mono px-3 py-2 focus:border-brandGold focus:ring-0"
                 />
               </div>

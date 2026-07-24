@@ -131,7 +131,10 @@ export const capitalGainsMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'capitalGainsStep',
-  context: ({ input }) => deriveAll({ ...initialCapitalGainsContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialCapitalGainsContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

@@ -141,6 +141,12 @@ function applyCorpMutualExclusivity(corporate: FinancialSnapshotContext["corpora
   return next;
 }
 
+const safeForward = (ref: ActorRef<any, any> | null | undefined, event: any) => {
+  if (ref && typeof ref.send === 'function') {
+    ref.send(event);
+  }
+};
+
 export const financialSnapshotMachine = setup({
   types: {
     context: {} as FinancialSnapshotContext,
@@ -250,32 +256,64 @@ export const financialSnapshotMachine = setup({
 
     forwardEntityType: ({ context, event }) => {
       if (event.type === "ENTITY_TYPE.SET") {
-        context.sidebarActorRef?.send({ type: "ENTITY_TYPE.SET", value: event.value });
+        safeForward(context.sidebarActorRef, { type: "ENTITY_TYPE.SET", value: event.value });
       }
     },
     forwardTaxRegime: ({ context }) => {
-      context.sidebarActorRef?.send({ type: "TAX_REGIME.SET", regime: context.taxRegime });
+      safeForward(context.sidebarActorRef, { type: "TAX_REGIME.SET", regime: context.taxRegime });
     },
     forwardIncomeHead: ({ context, event }) => {
       if (event.type === "INCOME_HEAD.TOGGLE") {
-        console.log("FORWARDING INCOME_HEAD.TOGGLE:", event.head, event.checked, "to sidebar:", !!context.sidebarActorRef);
-        context.sidebarActorRef?.send({ type: "INCOME_HEAD.TOGGLE", head: event.head, checked: event.checked });
+        safeForward(context.sidebarActorRef, { type: "INCOME_HEAD.TOGGLE", head: event.head, checked: event.checked });
       }
     },
     forwardInternational: ({ context, event }) => {
       if (event.type === "INTERNATIONAL.TOGGLE") {
-        context.sidebarActorRef?.send({ type: "INTERNATIONAL.TOGGLE", checked: event.checked });
+        safeForward(context.sidebarActorRef, { type: "INTERNATIONAL.TOGGLE", checked: event.checked });
       }
+    },
+    forwardPan: ({ context, event }) => {
+      if (event.type === "PAN.SET") {
+        safeForward(context.sidebarActorRef, { type: "PAN.SET", value: event.value });
+      }
+    },
+    forwardAadhaar: ({ context, event }) => {
+      if (event.type === "AADHAAR_LINKED.TOGGLE") {
+        safeForward(context.sidebarActorRef, { type: "AADHAAR_LINKED.TOGGLE", checked: event.checked });
+      }
+    },
+    forwardCorporate: ({ context }) => {
+      safeForward(context.sidebarActorRef, { type: "CORP.UPDATE", corporate: context.corporate });
     },
   },
 }).createMachine({
   id: "financialSnapshot",
-  context: ({ input }) => {
-    console.log("financialSnapshotMachine INITIALIZING CONTEXT WITH INPUT:", input);
-    return {
-      ...initialContext,
-      sidebarActorRef: (input as any)?.sidebarActorRef ?? null,
-    };
+  context: ({ input }: any) => {
+      const inputRef = (input as any)?.sidebarActorRef;
+      let hydratedContext = { ...initialContext };
+      
+      if (inputRef && typeof inputRef.getSnapshot === 'function') {
+        const snap = inputRef.getSnapshot();
+        if (snap && snap.context) {
+          const sCtx = snap.context;
+          hydratedContext = {
+            ...initialContext,
+            entityType: sCtx.entityType || initialContext.entityType,
+            taxRegime: sCtx.taxRegime || initialContext.taxRegime,
+            pan: sCtx.pan || initialContext.pan,
+            panAadhaarLinked: sCtx.panAadhaarLinked !== undefined ? sCtx.panAadhaarLinked : initialContext.panAadhaarLinked,
+            hasInternationalAssets: sCtx.hasInternationalAssets !== undefined ? sCtx.hasInternationalAssets : initialContext.hasInternationalAssets,
+            residencyStatus: sCtx.residencyStatus || initialContext.residencyStatus,
+            incomeHeads: { ...initialContext.incomeHeads, ...(sCtx.incomeHeads || {}) },
+            corporate: { ...initialContext.corporate, ...(sCtx.corporate || {}) }
+          };
+        }
+      }
+      
+      return {
+        ...hydratedContext,
+        sidebarActorRef: inputRef ?? null,
+      };
   },
   initial: "editing",
   states: {
@@ -284,17 +322,17 @@ export const financialSnapshotMachine = setup({
         "ENTITY_TYPE.SET": {
           actions: ["setEntityType", "forwardEntityType", "forwardTaxRegime"],
         },
-        "PAN.SET": { actions: "setPan" },
+        "PAN.SET": { actions: ["setPan", "forwardPan"] },
         "TAX_REGIME.SET": { actions: ["setTaxRegime", "forwardTaxRegime"] },
-        "AADHAAR_LINKED.TOGGLE": { actions: "toggleAadhaarLinked" },
+        "AADHAAR_LINKED.TOGGLE": { actions: ["toggleAadhaarLinked", "forwardAadhaar"] },
 
-        "CORP.TURNOVER_400.TOGGLE": { actions: "setCorpField" },
-        "CORP.OPT_115BAA.TOGGLE": { actions: "setCorpField" },
-        "CORP.OPT_115BAB.TOGGLE": { actions: "setCorpField" },
-        "CORP.OPT_115BA.TOGGLE": { actions: "setCorpField" },
-        "CORP.MFG_SETUP_DATE.SET": { actions: "setMfgSetupDate" },
-        "CORP.MFG_COMMENCE_DATE.SET": { actions: "setMfgCommenceDate" },
-        "CORP.MAT_PROFIT.SET": { actions: "setMatProfit" },
+        "CORP.TURNOVER_400.TOGGLE": { actions: ["setCorpField", "forwardCorporate"] },
+        "CORP.OPT_115BAA.TOGGLE": { actions: ["setCorpField", "forwardCorporate"] },
+        "CORP.OPT_115BAB.TOGGLE": { actions: ["setCorpField", "forwardCorporate"] },
+        "CORP.OPT_115BA.TOGGLE": { actions: ["setCorpField", "forwardCorporate"] },
+        "CORP.MFG_SETUP_DATE.SET": { actions: ["setMfgSetupDate", "forwardCorporate"] },
+        "CORP.MFG_COMMENCE_DATE.SET": { actions: ["setMfgCommenceDate", "forwardCorporate"] },
+        "CORP.MAT_PROFIT.SET": { actions: ["setMatProfit", "forwardCorporate"] },
 
         "INCOME_HEAD.TOGGLE": { actions: ["setIncomeHead", "forwardIncomeHead"] },
         "INTERNATIONAL.TOGGLE": { actions: ["setInternational", "forwardInternational"] },

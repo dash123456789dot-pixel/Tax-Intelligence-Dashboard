@@ -85,7 +85,10 @@ export const otherSourcesMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'otherSourcesStep',
-  context: ({ input }: any) => deriveAll({ ...initialOtherSourcesContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialOtherSourcesContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

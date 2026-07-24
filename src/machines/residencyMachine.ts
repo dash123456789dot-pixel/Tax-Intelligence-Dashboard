@@ -90,12 +90,9 @@ export const residencyMachine = setup({
   },
 }).createMachine({
   id: 'residencySolver',
-  context: ({ input }) => {
-    const initial = {
-      ...initialResidencyContext,
-      sidebarActorRef: (input as any)?.sidebarActorRef ?? null,
-    };
-    return deriveAll(initial as ResidencyContext);
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialResidencyContext, ...inputCtx } as ResidencyContext);
   },
   initial: 'ready',
   states: {

@@ -87,13 +87,25 @@ function Tooltip({ text }: { text: string }) {
 
 // ---- main component ---------------------------------------------------
 
-export default function OtherSourcesStep({ initialContext, onBack, onContinue }: any) {
+interface OtherSourcesStepProps {
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function OtherSourcesStep({ initialContext, onBack, onContinue, onAutoSave }: OtherSourcesStepProps) {
   const [state, send] = useMachine(otherSourcesMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
   const ctx = state.context;
   const { other_sources: os, agricultural: ag, ui } = ctx;
   const { visibility: v } = ui;
 
-  const update = (field: string) => (raw: string) => send({ type: 'UPDATE_OS_FIELD', field, value: raw } as any);
+  const update = (field: string) => (raw: string) => (send as any)({ type: 'UPDATE_OS_FIELD', field, value: raw } as any);
 
   return (
     <div id="panel-step-os" className="glass-card p-6 lg:p-8 flex flex-col gap-6">
@@ -108,7 +120,7 @@ export default function OtherSourcesStep({ initialContext, onBack, onContinue }:
           <h3 className="text-sm font-bold text-white mb-1">Do you have any income from other sources?</h3>
           <p className="text-[10px] text-white/40">Includes savings interest, FDs, bonds, dividends, pension, and gaming.</p>
         </div>
-        <ToggleSwitch checked={os.has_other_sources_income} onChange={(val) => send({ type: 'TOGGLE_OS_SECTION', value: val } as any)} />
+        <ToggleSwitch checked={os.has_other_sources_income} onChange={(val) => (send as any)({ type: 'TOGGLE_OS_SECTION', value: val } as any)} />
       </div>
 
       {v.divOsSection && (
@@ -337,12 +349,12 @@ export default function OtherSourcesStep({ initialContext, onBack, onContinue }:
                   <span className="text-xs font-bold text-white/80">Agricultural Income (Tax Exempt)</span>
                   <span className="text-[9px] text-white/30">This income is generally tax-free, but we need the amount for accurate tax calculation.</span>
                 </div>
-                <ToggleSwitch size="sm" checked={ag.has_agricultural_income} onChange={(val) => send({ type: 'TOGGLE_AGRI_SECTION', value: val } as any)} />
+                <ToggleSwitch size="sm" checked={ag.has_agricultural_income} onChange={(val) => (send as any)({ type: 'TOGGLE_AGRI_SECTION', value: val } as any)} />
               </div>
               {ag.has_agricultural_income && (
                 <div id="div-agri-section">
                   <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Agricultural Income Amount (₹)</label>
-                  <InrField id="ag-income" value={ag.agricultural_income_inr} onCommit={(v2: string) => send({ type: 'UPDATE_AGRI_INCOME', value: v2 } as any)} className="max-w-sm" />
+                  <InrField id="ag-income" value={ag.agricultural_income_inr} onCommit={(v2: string) => (send as any)({ type: 'UPDATE_AGRI_INCOME', value: v2 } as any)} className="max-w-sm" />
                 </div>
               )}
             </div>

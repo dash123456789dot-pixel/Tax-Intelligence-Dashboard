@@ -86,11 +86,14 @@ function recompute({ context }: any) {
 }
 
 export const deductionsMachine = setup({
-  types: { context: {} as any, events: {} as any },
+  types: { context: {} as any, events: {} as { type: string; value?: any; field?: string } },
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'deductionsStep',
-  context: ({ input }: any) => deriveAll({ ...initialDeductionsContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialDeductionsContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

@@ -40,7 +40,10 @@ export const foreignAssetsMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'foreignAssetsStep',
-  context: ({ input }: any) => deriveAll({ ...initialForeignAssetsContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialForeignAssetsContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

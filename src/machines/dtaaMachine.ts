@@ -63,11 +63,10 @@ export const dtaaMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'dtaaStep',
-  context: ({ input }: any) => deriveAll({ 
-    ...initialDtaaContext, 
-    ...(input || {}),
-    dtaa: { ...initialDtaaContext.dtaa, ...(input?.dtaa || {}) }
-  }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialDtaaContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

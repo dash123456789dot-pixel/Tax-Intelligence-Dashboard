@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Layer1IndiaProvider, useLayer1 } from '@/hooks/Layer1Context';
 import { Layer1Shell } from '@/components/layer1india/Layer1Shell';
 import FinancialSnapshotStep from '@/components/layer1india/FinancialSnapshotStep';
@@ -17,11 +17,12 @@ import BankAccountsStep from '@/components/layer1india/BankAccountsStep';
 import DeductionsStep from '@/components/layer1india/DeductionsStep';
 import LossesAndCreditsStep from '@/components/layer1india/LossesAndCreditsStep';
 import FinalTaxStep from '@/components/layer1india/FinalTaxStep';
+import { SaveAndNextPopup } from '@/components/layer1india/SaveAndNextPopup';
 import { useSelector } from '@xstate/react';
 import { STEP_DEFINITIONS, isStepVisible } from '@/machines/complianceSidebarMachine';
 
 function MainContent() {
-  const { ctx, sidebarActor, quarterActor } = useLayer1();
+  const { ctx, sidebarActor, quarterActor, submitStep } = useLayer1();
   const activeStep = useSelector(sidebarActor, (s: any) => s.context.activeStepId);
   const activeQuarter = useSelector(quarterActor, (s: any) => s.context.activeQuarter);
   const currentQuarterData = useSelector(quarterActor, (s: any) => s.context.quarters[activeQuarter]) || {};
@@ -35,15 +36,65 @@ function MainContent() {
   const residencyContext = currentQuarterData.residency || null;
   const salaryContext = currentQuarterData.salary || null;
 
-  const handleNextFromSnapshot = () => {
+  // Popup state
+  const [pendingSubmission, setPendingSubmission] = useState<{ stepId: string, data: any, executeNext: () => void } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Memoize all autoSave handlers to prevent infinite render loops in steps
+  const autoSaveHandlers = useMemo(() => ({
+    residency: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'residency', data }),
+    salary: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'salary', data }),
+    hp: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'hp', data }),
+    business: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'business', data }),
+    cg: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'cg', data }),
+    os: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'os', data }),
+    dtaa: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'dtaa', data }),
+    fa: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'fa', data }),
+    compliance: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'compliance', data }),
+    bank: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'bank', data }),
+    deductions: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'deductions', data }),
+    credits: (data: any) => quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'credits', data }),
+  }), [quarterActor, activeQuarter]);
+
+  const executeNextStep = (currentStepId: string) => {
     const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-snapshot');
+    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === currentStepId);
     for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
       if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
         sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
         return;
       }
     }
+  };
+
+  const triggerSaveAndNext = (dbStepId: string, data: any, currentStepId: string, customNext?: () => void) => {
+    // Fallback to quarter store if no data passed
+    const finalData = data || quarterActor.getSnapshot().context.quarters[activeQuarter]?.[dbStepId] || {};
+    setPendingSubmission({
+      stepId: dbStepId,
+      data: finalData,
+      executeNext: customNext || (() => executeNextStep(currentStepId))
+    });
+  };
+
+  const handlePopupConfirm = async () => {
+    if (!pendingSubmission) return;
+    setIsSubmitting(true);
+    try {
+      if (submitStep) {
+        await submitStep(pendingSubmission.stepId, pendingSubmission.data);
+      }
+      pendingSubmission.executeNext();
+      setPendingSubmission(null);
+    } catch (e) {
+      alert("Failed to save data. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleNextFromSnapshot = () => {
+    executeNextStep('step-snapshot');
   };
 
   const handleBackFromResidency = () => {
@@ -52,14 +103,7 @@ function MainContent() {
 
   const handleContinueFromResidency = (resCtx: any) => {
     quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'residency', data: resCtx });
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-profile');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('residency', resCtx, 'step-profile');
   };
 
   const handleBackFromSalary = () => {
@@ -75,14 +119,7 @@ function MainContent() {
 
   const handleContinueFromSalary = (salCtx: any) => {
     quarterActor.send({ type: 'QUARTER.UPDATE_DATA', quarter: activeQuarter, stepId: 'salary', data: salCtx });
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-salary');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('salary', salCtx, 'step-salary');
   };
 
   const handleBackFromHP = (targetStepId: string) => {
@@ -90,14 +127,7 @@ function MainContent() {
   };
 
   const handleContinueFromHP = () => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-hp');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('hp', null, 'step-hp');
   };
 
   const handleBackFromBusiness = () => {
@@ -112,14 +142,7 @@ function MainContent() {
   };
 
   const handleContinueFromBusiness = () => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-business');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('business', null, 'step-business');
   };
 
   const handleBackFromCG = () => {
@@ -134,16 +157,8 @@ function MainContent() {
   };
 
   const handleContinueFromCG = (cgCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-cg');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('cg', cgCtx, 'step-cg');
   };
-
 
   const handleBackFromOS = () => {
     const sidebarContext = sidebarActor.getSnapshot().context;
@@ -157,16 +172,8 @@ function MainContent() {
   };
 
   const handleContinueFromOS = (osCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-os');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('os', osCtx, 'step-os');
   };
-
 
   const handleBackFromDtaa = () => {
     const sidebarContext = sidebarActor.getSnapshot().context;
@@ -180,14 +187,7 @@ function MainContent() {
   };
 
   const handleContinueFromDtaa = (dtaaCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-dtaa');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('dtaa', dtaaCtx, 'step-dtaa');
   };
 
   const handleBackFromForeignAssets = () => {
@@ -202,14 +202,7 @@ function MainContent() {
   };
 
   const handleContinueFromForeignAssets = (faCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-fa');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('fa', faCtx, 'step-fa');
   };
 
   const handleBackFromCompliance = () => {
@@ -224,14 +217,7 @@ function MainContent() {
   };
 
   const handleContinueFromCompliance = (compCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-compliance');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('compliance', compCtx, 'step-compliance');
   };
 
   const handleBackFromBank = (targetStepId: string) => {
@@ -239,7 +225,9 @@ function MainContent() {
   };
 
   const handleContinueFromBank = (bankCtx: any, targetStepId: string) => {
-    sidebarActor.send({ type: 'STEP.SELECT', stepId: targetStepId });
+    triggerSaveAndNext('bank', bankCtx, 'step-bank', () => {
+      sidebarActor.send({ type: 'STEP.SELECT', stepId: targetStepId });
+    });
   };
 
   const handleBackFromDeductions = () => {
@@ -254,14 +242,7 @@ function MainContent() {
   };
 
   const handleContinueFromDeductions = (dedCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-deductions');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('deductions', dedCtx, 'step-deductions');
   };
 
   const handleBackFromCredits = () => {
@@ -276,14 +257,7 @@ function MainContent() {
   };
 
   const handleContinueFromCredits = (creditsCtx: any) => {
-    const sidebarContext = sidebarActor.getSnapshot().context;
-    const currentIndex = STEP_DEFINITIONS.findIndex((s) => s.id === 'step-credits');
-    for (let i = currentIndex + 1; i < STEP_DEFINITIONS.length; i++) {
-      if (isStepVisible(sidebarContext, STEP_DEFINITIONS[i].id)) {
-        sidebarActor.send({ type: 'STEP.SELECT', stepId: STEP_DEFINITIONS[i].id });
-        return;
-      }
-    }
+    triggerSaveAndNext('credits', creditsCtx, 'step-credits');
   };
 
   const handleBackFromOutput = () => {
@@ -298,7 +272,6 @@ function MainContent() {
   };
 
   const handleContinueFromOutput = () => {
-    // Navigate back to dashboard root (Wealth Dashboard)
     window.location.href = '/';
   };
 
@@ -330,6 +303,7 @@ function MainContent() {
             }}
             onBack={handleBackFromResidency}
             onContinue={handleContinueFromResidency}
+            onAutoSave={autoSaveHandlers.residency}
           />
         )}
         {activeStep === 'step-salary' && (
@@ -338,6 +312,8 @@ function MainContent() {
             taxRegime={taxRegime}
             onBack={handleBackFromSalary}
             onContinue={handleContinueFromSalary}
+            initialContext={salaryContext}
+            onAutoSave={autoSaveHandlers.salary}
           />
         )}
         {activeStep === 'step-hp' && (
@@ -347,6 +323,8 @@ function MainContent() {
             entityType={entityType}
             onBack={() => handleBackFromHP('step-salary')}
             onContinue={handleContinueFromHP}
+            initialContext={currentQuarterData.hp || null}
+            onAutoSave={autoSaveHandlers.hp}
           />
         )}
         {activeStep === 'step-business' && (
@@ -358,6 +336,8 @@ function MainContent() {
             residencyStatus={residencyStatus}
             onBack={handleBackFromBusiness}
             onContinue={handleContinueFromBusiness}
+            initialContext={currentQuarterData.business || null}
+            onAutoSave={autoSaveHandlers.business}
           />
         )}
         {activeStep === 'step-cg' && (
@@ -369,6 +349,8 @@ function MainContent() {
             hasCapitalGains={hasCapitalGains}
             onBack={handleBackFromCG}
             onContinue={handleContinueFromCG}
+            initialContext={currentQuarterData.cg || null}
+            onAutoSave={autoSaveHandlers.cg}
           />
         )}
         {activeStep === 'step-os' && (
@@ -376,6 +358,8 @@ function MainContent() {
             key={`${activeQuarter}-os`}
             onBack={handleBackFromOS}
             onContinue={handleContinueFromOS}
+            initialContext={currentQuarterData.os || null}
+            onAutoSave={autoSaveHandlers.os}
           />
         )}
         {activeStep === 'step-dtaa' && (
@@ -384,9 +368,11 @@ function MainContent() {
             initialContext={{
               residency_status: residencyStatus,
               entity_type: entityType,
+              ...currentQuarterData.dtaa
             }}
             onBack={handleBackFromDtaa}
             onContinue={handleContinueFromDtaa}
+            onAutoSave={autoSaveHandlers.dtaa}
           />
         )}
         {activeStep === 'step-fa' && (
@@ -396,9 +382,11 @@ function MainContent() {
               residency_status: residencyStatus,
               entity_type: entityType,
               setup_international: sidebarActor.getSnapshot().context.hasInternationalAssets,
+              ...currentQuarterData.fa
             }}
             onBack={handleBackFromForeignAssets}
             onContinue={handleContinueFromForeignAssets}
+            onAutoSave={autoSaveHandlers.fa}
           />
         )}
         {activeStep === 'step-compliance' && (
@@ -407,9 +395,11 @@ function MainContent() {
             initialContext={{
               residency_status: residencyStatus,
               entity_type: entityType,
+              ...currentQuarterData.compliance
             }}
             onBack={handleBackFromCompliance}
             onContinue={handleContinueFromCompliance}
+            onAutoSave={autoSaveHandlers.compliance}
           />
         )}
         {activeStep === 'step-bank' && (
@@ -417,6 +407,8 @@ function MainContent() {
             key={`${activeQuarter}-bank`}
             onBack={handleBackFromBank}
             onContinue={handleContinueFromBank}
+            initialContext={currentQuarterData.bank || null}
+            onAutoSave={autoSaveHandlers.bank}
           />
         )}
         {activeStep === 'step-deductions' && (
@@ -424,15 +416,17 @@ function MainContent() {
             key={`${activeQuarter}-deductions`}
             initialContext={{
               tax_regime: taxRegime,
-              entity_type: entityType,
+              entityType: entityType,
               date_of_birth: ctx.profile?.date_of_birth ?? null,
               final_india_residency_status: residencyStatus,
               is_indian_company: residencyContext?.residency_detail?.is_indian_company ?? null,
               has_salary_income: salaryContext?.salary?.has_salary_income ?? false,
               hra_received_inr: salaryContext?.salary?.hra_received_inr ?? null,
+              ...currentQuarterData.deductions
             }}
             onBack={handleBackFromDeductions}
             onContinue={handleContinueFromDeductions}
+            onAutoSave={autoSaveHandlers.deductions}
           />
         )}
         {activeStep === 'step-credits' && (
@@ -440,13 +434,15 @@ function MainContent() {
             key={`${activeQuarter}-credits`}
             initialContext={{
               tax_regime: taxRegime,
-              entity_type: entityType,
+              entityType: entityType,
               residency_status: residencyStatus,
               age: age,
               has_business_income: sidebarActor.getSnapshot().context.incomeHeads.business,
+              ...currentQuarterData.credits
             }}
             onBack={handleBackFromCredits}
             onContinue={handleContinueFromCredits}
+            onAutoSave={autoSaveHandlers.credits}
           />
         )}
         {activeStep === 'step-output' && (
@@ -473,6 +469,14 @@ function MainContent() {
           </div>
         )}
       </div>
+
+      {pendingSubmission && (
+        <SaveAndNextPopup
+          onConfirm={handlePopupConfirm}
+          onCancel={() => setPendingSubmission(null)}
+          isSubmitting={isSubmitting}
+        />
+      )}
     </Layer1Shell>
   );
 }

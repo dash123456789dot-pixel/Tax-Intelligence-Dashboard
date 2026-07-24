@@ -110,23 +110,29 @@ function ToggleSwitch({ checked, onChange, activeClass = 'peer-checked:bg-brandG
 
 interface SalaryStepProps {
   taxRegime: string;
+  initialContext?: any;
   onBack?: () => void;
   onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
 }
 
-export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStepProps) {
-  const [state, send] = useMachine(salaryMachine, { input: { tax_regime: taxRegime } });
+export default function SalaryStep({ taxRegime, initialContext, onBack, onContinue, onAutoSave }: SalaryStepProps) {
+  const [state, send] = useMachine(salaryMachine, { input: { tax_regime: taxRegime, ...(initialContext || {}) } });
 
   useEffect(() => {
-    send({ type: 'SET_TAX_REGIME', value: taxRegime });
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
+  useEffect(() => {
+    (send as any)({ type: 'SET_TAX_REGIME', value: taxRegime });
   }, [taxRegime, send]);
 
   const ctx = state.context;
   const { salary: sal, ui } = ctx;
   const { visibility: v } = ui;
 
-  const updateNum = (field: string) => (raw: string) => send({ type: 'UPDATE_SALARY_NUM', field, value: raw });
-  const updateNestedNum = (objName: string, field: string) => (raw: string) => send({ type: 'UPDATE_SALARY_NESTED_NUM', objName, field, value: raw });
+  const updateNum = (field: string) => (raw: string) => (send as any)({ type: 'UPDATE_SALARY_NUM', field, value: raw });
+  const updateNestedNum = (objName: string, field: string) => (raw: string) => (send as any)({ type: 'UPDATE_SALARY_NESTED_NUM', objName, field, value: raw });
 
   return (
     <>
@@ -145,7 +151,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
             <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">
               Salary Income &amp; Exemptions
             </span>
-            <ToggleSwitch checked={sal.has_salary_income} onChange={(val) => send({ type: 'TOGGLE_SALARY_SECTION', value: val })} />
+            <ToggleSwitch checked={sal.has_salary_income} onChange={(val) => (send as any)({ type: 'TOGGLE_SALARY_SECTION', value: val })} />
           </div>
 
           {v.divSalarySection && (
@@ -220,7 +226,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                       <div key={idx} className="esop-card p-3 bg-[#121212] border border-white/10 rounded-xl grid grid-cols-4 gap-3 relative">
                         <button
                           type="button"
-                          onClick={() => send({ type: 'REMOVE_ESOP_ROW', index: idx })}
+                          onClick={() => (send as any)({ type: 'REMOVE_ESOP_ROW', index: idx })}
                           className="absolute -top-2 -right-2 w-5 h-5 bg-brandRed rounded-full text-white text-xs flex items-center justify-center shadow-lg hover:scale-110 transition-all z-10"
                         >
                           ×
@@ -230,7 +236,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           <input
                             type="text"
                             value={ev.employer_name || ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'employer_name', value: e.target.value || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'employer_name', value: e.target.value || null })}
                             className="esop-emp w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0"
                           />
                         </div>
@@ -239,7 +245,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           <input
                             type="date"
                             value={ev.grant_date || ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'grant_date', value: e.target.value || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'grant_date', value: e.target.value || null })}
                             className="esop-grant-date w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0 [color-scheme:dark]"
                           />
                         </div>
@@ -248,7 +254,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                           <input
                             type="date"
                             value={ev.vesting_or_exercise_date || ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'vesting_or_exercise_date', value: e.target.value || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'vesting_or_exercise_date', value: e.target.value || null })}
                             className="esop-vest-date w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0 [color-scheme:dark]"
                           />
                         </div>
@@ -258,7 +264,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                             type="number"
                             step="any"
                             value={ev.shares ?? ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'shares', value: parseFloat(e.target.value) || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'shares', value: parseFloat(e.target.value) || null })}
                             className="esop-shares w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0"
                           />
                         </div>
@@ -268,7 +274,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                             type="number"
                             step="any"
                             value={ev.fmv_per_share_inr ?? ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'fmv_per_share_inr', value: parseFloat(e.target.value) || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'fmv_per_share_inr', value: parseFloat(e.target.value) || null })}
                             className="esop-fmv w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0"
                           />
                         </div>
@@ -278,7 +284,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                             type="number"
                             step="any"
                             value={ev.exercise_price_per_share_inr ?? ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'exercise_price_per_share_inr', value: parseFloat(e.target.value) || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'exercise_price_per_share_inr', value: parseFloat(e.target.value) || null })}
                             className="esop-exercise w-full bg-white/5 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0"
                           />
                         </div>
@@ -288,7 +294,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                             type="number"
                             step="any"
                             value={ev.perquisite_value_inr ?? ''}
-                            onChange={(e) => send({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'perquisite_value_inr', value: parseFloat(e.target.value) || null })}
+                            onChange={(e) => (send as any)({ type: 'UPDATE_ESOP_ROW', index: idx, field: 'perquisite_value_inr', value: parseFloat(e.target.value) || null })}
                             className="esop-perq w-full bg-brandGold/10 border border-brandGold/30 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:ring-0 font-mono"
                           />
                         </div>
@@ -297,7 +303,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                   </div>
                   <button
                     type="button"
-                    onClick={() => send({ type: 'ADD_ESOP_ROW' })}
+                    onClick={() => (send as any)({ type: 'ADD_ESOP_ROW' })}
                     className="mt-2 w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl text-[10px] font-bold text-white/60 hover:text-white transition-all"
                   >
                     + Add ESOP Grant
@@ -365,7 +371,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                       <span className="text-xs font-bold text-white/80">Metro Accommodation?</span>
                       <ToggleSwitch
                         checked={sal.is_metro_city}
-                        onChange={(val) => send({ type: 'UPDATE_SALARY_BOOL', field: 'is_metro_city', value: val })}
+                        onChange={(val) => (send as any)({ type: 'UPDATE_SALARY_BOOL', field: 'is_metro_city', value: val })}
                         activeClass="peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold peer-checked:after:border-brandGold"
                       />
                     </div>
@@ -383,7 +389,7 @@ export default function SalaryStep({ taxRegime, onBack, onContinue }: SalaryStep
                     <span className="text-xs font-bold text-white/80">Eligible PwD? (Blind/Deaf/Orthopedic)</span>
                     <ToggleSwitch
                       checked={sal.pwd_transport_allowance.is_eligible_pwd}
-                      onChange={(val) => send({ type: 'TOGGLE_PWD_ALLOWANCE', value: val })}
+                      onChange={(val) => (send as any)({ type: 'TOGGLE_PWD_ALLOWANCE', value: val })}
                       activeClass="peer-checked:bg-brandGold/20 peer-checked:after:bg-brandGold peer-checked:after:border-brandGold"
                     />
                   </div>

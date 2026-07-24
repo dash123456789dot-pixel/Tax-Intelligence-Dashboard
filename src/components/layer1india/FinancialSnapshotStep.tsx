@@ -230,7 +230,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                 <select
                   className="fs-select [color-scheme:dark]"
                   value={entityType}
-                  onChange={(e) => send({ type: "ENTITY_TYPE.SET", value: e.target.value })}
+                  onChange={(e) => (send as any)({ type: "ENTITY_TYPE.SET", value: e.target.value })}
                 >
                   {ENTITY_OPTIONS.map(([value, label]) => (
                     <option key={value} value={value}>
@@ -248,7 +248,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                 className="fs-input mono"
                 placeholder="ABCPS1234K (Optional)"
                 value={pan}
-                onChange={(e) => send({ type: "PAN.SET", value: e.target.value })}
+                onChange={(e) => (send as any)({ type: "PAN.SET", value: e.target.value })}
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                   <select
                     className="fs-select [color-scheme:dark]"
                     value={taxRegime}
-                    onChange={(e) => send({ type: "TAX_REGIME.SET", value: e.target.value })}
+                    onChange={(e) => (send as any)({ type: "TAX_REGIME.SET", value: e.target.value })}
                   >
                     <option value="NEW">New Tax Regime (Default Sec 115BAC)</option>
                     <option value="OLD">Old Tax Regime (With Deductions)</option>
@@ -277,7 +277,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
               </div>
               <ToggleSwitch
                 checked={panAadhaarLinked}
-                onChange={(checked) => send({ type: "AADHAAR_LINKED.TOGGLE", checked })}
+                onChange={(checked) => (send as any)({ type: "AADHAAR_LINKED.TOGGLE", checked })}
               />
             </div>
           </div>
@@ -302,7 +302,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                     <ToggleSwitch
                       size="sm"
                       checked={corporate[key]}
-                      onChange={(checked) => send({ type: row.event, checked })}
+                      onChange={(checked) => (send as any)({ type: row.event, checked })}
                     />
                   </div>
                 );
@@ -323,7 +323,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                       type="date"
                       className="fs-date-input [color-scheme:dark]"
                       value={corporate.mfgSetupDate}
-                      onChange={(e) => send({ type: "CORP.MFG_SETUP_DATE.SET", value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: "CORP.MFG_SETUP_DATE.SET", value: e.target.value })}
                     />
                   </div>
                   {showsMfgCommenceDateField(context) && (
@@ -333,7 +333,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                         type="date"
                         className="fs-date-input [color-scheme:dark]"
                         value={corporate.mfgCommenceDate}
-                        onChange={(e) => send({ type: "CORP.MFG_COMMENCE_DATE.SET", value: e.target.value })}
+                        onChange={(e) => (send as any)({ type: "CORP.MFG_COMMENCE_DATE.SET", value: e.target.value })}
                       />
                     </div>
                   )}
@@ -352,7 +352,7 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
                 className="fs-mat-input"
                 value={corporate.matBookProfit ?? ""}
                 onChange={(e) =>
-                  send({ type: "CORP.MAT_PROFIT.SET", value: e.target.value === "" ? null : e.target.value })
+                  (send as any)({ type: "CORP.MAT_PROFIT.SET", value: e.target.value === "" ? null : e.target.value })
                 }
               />
             </div>
@@ -369,21 +369,21 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
             title="Employment"
             desc="Form 16, Salary, RSUs, Allowances."
             checked={incomeHeads.salary}
-            onToggle={(checked) => send({ type: "INCOME_HEAD.TOGGLE", head: "salary", checked })}
+            onToggle={(checked) => (send as any)({ type: "INCOME_HEAD.TOGGLE", head: "salary", checked })}
           />
           <SetupCard
             icon="🏠"
             title="Real Estate"
             desc="Rental Income, Home Loan Interest (Section 24b)."
             checked={incomeHeads.houseProperty}
-            onToggle={(checked) => send({ type: "INCOME_HEAD.TOGGLE", head: "houseProperty", checked })}
+            onToggle={(checked) => (send as any)({ type: "INCOME_HEAD.TOGGLE", head: "houseProperty", checked })}
           />
           <SetupCard
             icon="🏢"
             title="Business & Trading"
             desc="F&O Trading, Freelance, Presumptive (44AD/ADA)."
             checked={incomeHeads.business}
-            onToggle={(checked) => send({ type: "INCOME_HEAD.TOGGLE", head: "business", checked })}
+            onToggle={(checked) => (send as any)({ type: "INCOME_HEAD.TOGGLE", head: "business", checked })}
           />
         </div>
       </div>
@@ -397,21 +397,21 @@ export function FinancialSnapshotFields({ context, send, onNext }: FinancialSnap
             title="Capital Gains"
             desc="Sold property, stocks, mutual funds, crypto."
             checked={incomeHeads.capitalGains}
-            onToggle={(checked) => send({ type: "INCOME_HEAD.TOGGLE", head: "capitalGains", checked })}
+            onToggle={(checked) => (send as any)({ type: "INCOME_HEAD.TOGGLE", head: "capitalGains", checked })}
           />
           <SetupCard
             icon="💰"
             title="Other Sources"
             desc="Interest, dividends, PF withdrawals, gifts."
             checked={incomeHeads.otherSources}
-            onToggle={(checked) => send({ type: "INCOME_HEAD.TOGGLE", head: "otherSources", checked })}
+            onToggle={(checked) => (send as any)({ type: "INCOME_HEAD.TOGGLE", head: "otherSources", checked })}
           />
           <SetupCard
             icon="✈️"
             title="International"
             desc="Foreign assets, foreign income, or claiming DTAA relief."
             checked={hasInternationalAssets}
-            onToggle={(checked) => send({ type: "INTERNATIONAL.TOGGLE", checked })}
+            onToggle={(checked) => (send as any)({ type: "INTERNATIONAL.TOGGLE", checked })}
           />
         </div>
       </div>
@@ -442,7 +442,7 @@ export default function FinancialSnapshotStep({
 
   const residencyStatus = useSelector(sidebarActorRef, (s) => s.context.residencyStatus);
   useEffect(() => {
-    snapSend({ type: "RESIDENCY_STATUS.SYNC", status: residencyStatus });
+    (snapSend as any)({ type: "RESIDENCY_STATUS.SYNC", status: residencyStatus });
   }, [residencyStatus, snapSend]);
 
   return (

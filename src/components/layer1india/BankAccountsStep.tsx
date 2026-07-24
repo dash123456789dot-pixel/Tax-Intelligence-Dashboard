@@ -5,7 +5,7 @@
 // React port of panel-step-bank ("Screen 2D — Bank Accounts") 
 // ────────────────────────────────────────────────────────────────────────
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMachine } from '@xstate/react';
 import { bankAccountsMachine } from '@/machines/bankAccountsMachine';
 
@@ -33,18 +33,18 @@ function UploadBox({ status, onStart }: any) {
 }
 
 function BankRow({ row, idx, visibility, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_BANK_FIELD', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_BANK_FIELD', index: idx, field, value });
 
   return (
     <div className="bank-card bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg">
       <div className="flex justify-between items-center border-b border-white/10 pb-3">
         <h3 className="text-xs font-black uppercase tracking-widest text-brandGold">Bank Account Details</h3>
-        <button onClick={() => send({ type: 'REMOVE_BANK_ROW', index: idx })} className="text-[10px] uppercase font-bold tracking-wider text-brandRed/80 hover:text-brandRed transition-colors">
+        <button onClick={() => (send as any)({ type: 'REMOVE_BANK_ROW', index: idx })} className="text-[10px] uppercase font-bold tracking-wider text-brandRed/80 hover:text-brandRed transition-colors">
           Delete Entry
         </button>
       </div>
 
-      <UploadBox status={row._upload} onStart={() => send({ type: 'START_BANK_UPLOAD', index: idx })} />
+      <UploadBox status={row._upload} onStart={() => (send as any)({ type: 'START_BANK_UPLOAD', index: idx })} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
         <div>
@@ -61,7 +61,7 @@ function BankRow({ row, idx, visibility, send }: any) {
           <label className="block text-[10px] text-white/60 mb-1">Account Type</label>
           <select
             value={row.account_type}
-            onChange={(e) => send({ type: 'UPDATE_BANK_TYPE', index: idx, value: e.target.value })}
+            onChange={(e) => (send as any)({ type: 'UPDATE_BANK_TYPE', index: idx, value: e.target.value })}
             className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none transition-all"
           >
             <option value="SAVINGS">Savings</option>
@@ -189,8 +189,20 @@ function BankRow({ row, idx, visibility, send }: any) {
   );
 }
 
-export default function BankAccountsStep({ initialContext, onBack, onContinue }: any) {
+interface BankAccountsStepProps {
+  initialContext?: any;
+  onBack?: (target: string) => void;
+  onContinue?: (context: any, target: string) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function BankAccountsStep({ initialContext, onBack, onContinue, onAutoSave }: BankAccountsStepProps) {
   const [state, send] = useMachine(bankAccountsMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
   const ctx = state.context;
   const { bank_accounts, nro_repatriation_inputs, ui } = ctx;
   const { visibility: v, backTarget, nextTarget } = ui;
@@ -207,7 +219,7 @@ export default function BankAccountsStep({ initialContext, onBack, onContinue }:
       <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-white/5 pb-2">
           <span className="text-xs font-black uppercase tracking-widest text-brandGold">Your Indian Bank Accounts (Savings, NRO, NRE)</span>
-          <button onClick={() => send({ type: 'ADD_BANK_ROW' } as any)} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
+          <button onClick={() => (send as any)({ type: 'ADD_BANK_ROW' } as any)} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all">
             + Add Bank
           </button>
         </div>
@@ -222,7 +234,7 @@ export default function BankAccountsStep({ initialContext, onBack, onContinue }:
                   type="text"
                   inputMode="numeric"
                   value={nro_repatriation_inputs.cumulative_repatriated_usd_this_fy_raw || ''}
-                  onChange={(e) => send({ type: 'UPDATE_NRO_REPATRIATION', field: 'cumulative_repatriated_usd_this_fy_raw', value: e.target.value } as any)}
+                  onChange={(e) => (send as any)({ type: 'UPDATE_NRO_REPATRIATION', field: 'cumulative_repatriated_usd_this_fy_raw', value: e.target.value } as any)}
                   placeholder="e.g. 50000"
                   className="inr-input w-full bg-[#1A1A1A] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none"
                 />
@@ -233,7 +245,7 @@ export default function BankAccountsStep({ initialContext, onBack, onContinue }:
                   type="text"
                   inputMode="numeric"
                   value={nro_repatriation_inputs.pending_repatriation_inr_raw || ''}
-                  onChange={(e) => send({ type: 'UPDATE_NRO_REPATRIATION', field: 'pending_repatriation_inr_raw', value: e.target.value } as any)}
+                  onChange={(e) => (send as any)({ type: 'UPDATE_NRO_REPATRIATION', field: 'pending_repatriation_inr_raw', value: e.target.value } as any)}
                   placeholder="e.g. 1000000"
                   className="inr-input w-full bg-[#1A1A1A] border border-white/10 rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:outline-none"
                 />
@@ -242,7 +254,7 @@ export default function BankAccountsStep({ initialContext, onBack, onContinue }:
                 <input
                   type="checkbox"
                   checked={nro_repatriation_inputs.tds_deducted_on_nro_balance}
-                  onChange={(e) => send({ type: 'UPDATE_NRO_REPATRIATION', field: 'tds_deducted_on_nro_balance', value: e.target.checked } as any)}
+                  onChange={(e) => (send as any)({ type: 'UPDATE_NRO_REPATRIATION', field: 'tds_deducted_on_nro_balance', value: e.target.checked } as any)}
                   className="w-3 h-3 rounded border-white/20 bg-[#1A1A1A] text-brandGold focus:ring-brandGold"
                 />
                 <label className="text-[10px] text-white/80">TDS Deducted on NRO Balance</label>

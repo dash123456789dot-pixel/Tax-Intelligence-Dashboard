@@ -40,7 +40,10 @@ export const complianceMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'complianceStep',
-  context: ({ input }: any) => deriveAll({ ...initialComplianceContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialComplianceContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

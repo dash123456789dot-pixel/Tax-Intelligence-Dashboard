@@ -6,7 +6,7 @@
 // & Special Rates") from layer1_india.html.
 // ────────────────────────────────────────────────────────────────────────
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMachine } from '@xstate/react';
 import { complianceMachine } from '@/machines/complianceMachine';
 
@@ -32,8 +32,20 @@ const INCOME_TYPE_OPTIONS = [
   ['ROYALTY_FTS', 'Royalty / FTS'],
 ];
 
-export default function ComplianceStep({ initialContext, onBack, onContinue }: any) {
+interface ComplianceStepProps {
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function ComplianceStep({ initialContext, onBack, onContinue, onAutoSave }: ComplianceStepProps) {
   const [state, send] = useMachine(complianceMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
   const ctx = state.context;
   const { form_10f, section_197_cert, chapter_xiia_elected } = ctx.compliance_docs;
   const { visibility: v } = ctx.ui;
@@ -61,7 +73,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                 <span className="text-xs font-bold text-white/80">Have you filed Form 41 online?</span>
                 <span className="text-[9px] text-white/30">This form is required for Non-Residents to claim tax treaty benefits in India.</span>
               </div>
-              <ToggleSwitch checked={form_10f.is_filed} onChange={(val: any) => send({ type: 'TOGGLE_10F_FILED', value: val } as any)} />
+              <ToggleSwitch checked={form_10f.is_filed} onChange={(val: any) => (send as any)({ type: 'TOGGLE_10F_FILED', value: val } as any)} />
             </div>
 
             {v.div10fAck && (
@@ -78,7 +90,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                           accept=".pdf,.png,.jpg,.jpeg"
                           className="hidden"
                           onChange={(e) => {
-                            if (e.target.files?.[0]) send({ type: 'START_10F_UPLOAD' } as any);
+                            if (e.target.files?.[0]) (send as any)({ type: 'START_10F_UPLOAD' } as any);
                           }}
                         />
                       </label>
@@ -91,7 +103,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                     <input
                       type="text"
                       value={form_10f.ack_number || ''}
-                      onChange={(e) => send({ type: 'UPDATE_10F_ACK', value: e.target.value } as any)}
+                      onChange={(e) => (send as any)({ type: 'UPDATE_10F_ACK', value: e.target.value } as any)}
                       placeholder="15 Digit Number"
                       className={
                         'w-full bg-[#121212] border rounded-lg text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none font-mono transition-all ' +
@@ -111,7 +123,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                 <span className="text-xs font-bold text-white/80">Do you hold a Lower Tax Deduction Certificate?</span>
                 <span className="text-[9px] text-white/30">This certificate from the tax department allows your income to be taxed at a lower rate.</span>
               </div>
-              <ToggleSwitch checked={section_197_cert.is_available} onChange={(val: any) => send({ type: 'TOGGLE_S197_AVAILABLE', value: val } as any)} />
+              <ToggleSwitch checked={section_197_cert.is_available} onChange={(val: any) => (send as any)({ type: 'TOGGLE_S197_AVAILABLE', value: val } as any)} />
             </div>
 
             {v.divS197Detail && (
@@ -130,7 +142,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                           accept=".pdf,.png,.jpg,.jpeg"
                           className="hidden"
                           onChange={(e) => {
-                            if (e.target.files?.[0]) send({ type: 'START_S197_UPLOAD' } as any);
+                            if (e.target.files?.[0]) (send as any)({ type: 'START_S197_UPLOAD' } as any);
                           }}
                         />
                       </label>
@@ -146,7 +158,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                     inputMode="numeric"
                     placeholder="e.g. 0.05"
                     value={section_197_cert.rate ?? ''}
-                    onChange={(e) => send({ type: 'UPDATE_S197_FIELD', field: 'rate', value: e.target.value } as any)}
+                    onChange={(e) => (send as any)({ type: 'UPDATE_S197_FIELD', field: 'rate', value: e.target.value } as any)}
                     className={
                       'inr-input w-full bg-black/20 border rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono ' +
                       (section_197_cert._upload === 'success' ? 'ring-2 ring-green-500 bg-green-500/10 border-white/10' : 'border-white/10')
@@ -158,7 +170,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                   <input
                     type="date"
                     value={section_197_cert.validity_start_date || ''}
-                    onChange={(e) => send({ type: 'UPDATE_S197_FIELD', field: 'validity_start_date', value: e.target.value } as any)}
+                    onChange={(e) => (send as any)({ type: 'UPDATE_S197_FIELD', field: 'validity_start_date', value: e.target.value } as any)}
                     className={
                       'w-full bg-black/20 border rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono ' +
                       (section_197_cert._upload === 'success' ? 'ring-2 ring-green-500 bg-green-500/10 border-white/10' : 'border-white/10')
@@ -170,7 +182,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                   <input
                     type="date"
                     value={section_197_cert.validity_end_date || ''}
-                    onChange={(e) => send({ type: 'UPDATE_S197_FIELD', field: 'validity_end_date', value: e.target.value } as any)}
+                    onChange={(e) => (send as any)({ type: 'UPDATE_S197_FIELD', field: 'validity_end_date', value: e.target.value } as any)}
                     className={
                       'w-full bg-black/20 border rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:ring-0 focus:outline-none transition-all font-mono ' +
                       (section_197_cert._upload === 'success' ? 'ring-2 ring-green-500 bg-green-500/10 border-white/10' : 'border-white/10')
@@ -186,7 +198,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                         <input
                           type="checkbox"
                           checked={section_197_cert.covered_income_types.includes(value)}
-                          onChange={(e) => send({ type: 'TOGGLE_S197_INCOME_TYPE', value, checked: e.target.checked } as any)}
+                          onChange={(e) => (send as any)({ type: 'TOGGLE_S197_INCOME_TYPE', value, checked: e.target.checked } as any)}
                           className="rounded bg-black border-white/20 text-brandGold focus:ring-brandGold focus:ring-offset-0 focus:ring-1"
                         />
                         <span className="text-[10px] text-white/80 font-bold tracking-wide uppercase">{label}</span>
@@ -207,7 +219,7 @@ export default function ComplianceStep({ initialContext, onBack, onContinue }: a
                 <strong className="text-blue-400">📝 Note:</strong> This selection is completely flexible and can be declared or changed at the end of the year when you file your Income Tax Return (ITR).
               </span>
             </div>
-            <ToggleSwitch checked={chapter_xiia_elected} onChange={(val: any) => send({ type: 'TOGGLE_CHAPTER_XIIA', value: val } as any)} />
+            <ToggleSwitch checked={chapter_xiia_elected} onChange={(val: any) => (send as any)({ type: 'TOGGLE_CHAPTER_XIIA', value: val } as any)} />
           </div>
         </>
       )}

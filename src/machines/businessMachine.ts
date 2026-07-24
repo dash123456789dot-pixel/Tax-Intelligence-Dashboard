@@ -125,7 +125,10 @@ export const businessMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'businessStep',
-  context: ({ input }) => deriveAll({ ...initialBusinessContext, ...(input as any || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialBusinessContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

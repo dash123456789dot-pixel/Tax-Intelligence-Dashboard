@@ -6,8 +6,13 @@ import { useLayer1 } from '@/hooks/Layer1Context';
 import { useSelector } from '@xstate/react';
 
 export function Header() {
-  const { quarterActor } = useLayer1();
+  const { quarterActor, financialYear } = useLayer1();
   const activeQuarter = useSelector(quarterActor, (s: any) => s.context.activeQuarter);
+
+  const startYear = parseInt(financialYear?.split('-')[0] || '2024', 10);
+  const endYear = startYear + 1;
+  const startYrStr = `'${String(startYear).slice(-2)}`;
+  const endYrStr = `'${String(endYear).slice(-2)}`;
 
   return (
     <header className="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur-md border-b border-white/5">
@@ -37,10 +42,10 @@ export function Header() {
               
               let label = qId;
               let subtitle = '';
-              if (qId === 'Q1') subtitle = 'APR-JUN';
-              if (qId === 'Q2') subtitle = 'JUL-SEP';
-              if (qId === 'Q3') subtitle = 'OCT-DEC';
-              if (qId === 'Q4') subtitle = 'JAN-MAR';
+              if (qId === 'Q1') subtitle = `APR ${startYrStr}-JUN ${startYrStr}`;
+              if (qId === 'Q2') subtitle = `JUL ${startYrStr}-SEP ${startYrStr}`;
+              if (qId === 'Q3') subtitle = `OCT ${startYrStr}-DEC ${startYrStr}`;
+              if (qId === 'Q4') subtitle = `JAN ${endYrStr}-MAR ${endYrStr}`;
 
               return (
                 <button 

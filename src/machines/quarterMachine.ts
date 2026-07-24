@@ -11,6 +11,10 @@ export interface QuarterData {
   fa?: any;
   deductions?: any;
   credits?: any;
+  residency?: any;
+  dtaa?: any;
+  compliance?: any;
+  bank?: any;
 }
 
 export interface QuarterContext {
@@ -26,7 +30,8 @@ export interface QuarterContext {
 export type QuarterEvent =
   | { type: 'QUARTER.SWITCH'; quarter: QuarterType }
   | { type: 'QUARTER.UPDATE_DATA'; quarter: QuarterType; stepId: keyof QuarterData; data: any }
-  | { type: 'QUARTER.AUTO_FILL' };
+  | { type: 'QUARTER.AUTO_FILL' }
+  | { type: 'HYDRATE'; quarters: QuarterContext['quarters'] };
 
 export const quarterMachine = setup({
   types: {
@@ -64,6 +69,14 @@ export const quarterMachine = setup({
           Q4: clone(q1Data)
         };
       }
+    }),
+    hydrateContext: assign({
+      quarters: ({ event, context }) => {
+        if (event.type === 'HYDRATE') {
+          return event.quarters;
+        }
+        return context.quarters;
+      }
     })
   }
 }).createMachine({
@@ -89,6 +102,9 @@ export const quarterMachine = setup({
         },
         'QUARTER.AUTO_FILL': {
           actions: 'autoFillFromQ1'
+        },
+        'HYDRATE': {
+          actions: 'hydrateContext'
         }
       }
     }

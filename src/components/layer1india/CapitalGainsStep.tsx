@@ -89,13 +89,13 @@ function CurrencyAmount({ currency, onCurrencyChange, amount, onAmountCommit, cu
 // ---- Property Row ----------------------------------------------------
 
 function PropertyRow({ property, idx, visibility, override, exemptionOptions, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_PROPERTY', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_PROPERTY', index: idx, field, value });
 
   return (
     <div className="bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg">
       <div className="flex justify-between items-center border-b border-white/10 pb-3">
         <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Property Details</h3>
-        <DeleteRowButton onClick={() => send({ type: 'REMOVE_PROPERTY', index: idx })} />
+        <DeleteRowButton onClick={() => (send as any)({ type: 'REMOVE_PROPERTY', index: idx })} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,7 +185,7 @@ function PropertyRow({ property, idx, visibility, override, exemptionOptions, se
       <div className="bg-white/5 p-4 rounded-lg border border-white/10">
         <div className="flex items-center justify-between mb-2 border-b border-white/5 pb-2">
           <h5 className="text-[11px] font-sans font-black text-white/60 uppercase tracking-[0.01em]">Cost of Improvement (Renovations/Additions)</h5>
-          <button onClick={() => send({ type: 'ADD_IMPROVEMENT', index: idx })} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-[0.01em] transition-all">
+          <button onClick={() => (send as any)({ type: 'ADD_IMPROVEMENT', index: idx })} className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-[0.01em] transition-all">
             + Add Improvement
           </button>
         </div>
@@ -194,13 +194,13 @@ function PropertyRow({ property, idx, visibility, override, exemptionOptions, se
             <div key={imp.id || impIdx} className="flex items-end gap-3 p-3 bg-[#1a1a1a] rounded-lg border border-white/10 relative">
               <div className="flex-1">
                 <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Date of Improvement</label>
-                <input type="date" value={imp.improvement_date || ''} onChange={(e) => send({ type: 'UPDATE_IMPROVEMENT', index: idx, impIndex: impIdx, field: 'improvement_date', value: e.target.value })} className="w-full !bg-[#121212] !text-white border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none font-mono [color-scheme:dark]" />
+                <input type="date" value={imp.improvement_date || ''} onChange={(e) => (send as any)({ type: 'UPDATE_IMPROVEMENT', index: idx, impIndex: impIdx, field: 'improvement_date', value: e.target.value })} className="w-full !bg-[#121212] !text-white border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none font-mono [color-scheme:dark]" />
               </div>
               <div className="flex-1">
                 <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Cost (INR)</label>
-                <InrField value={imp.improvement_cost_inr} onCommit={(v) => send({ type: 'UPDATE_IMPROVEMENT', index: idx, impIndex: impIdx, field: 'improvement_cost_inr', value: v })} placeholder="0" />
+                <InrField value={imp.improvement_cost_inr} onCommit={(v) => (send as any)({ type: 'UPDATE_IMPROVEMENT', index: idx, impIndex: impIdx, field: 'improvement_cost_inr', value: v })} placeholder="0" />
               </div>
-              <button onClick={() => send({ type: 'REMOVE_IMPROVEMENT', index: idx, impIndex: impIdx })} className="px-2 py-1.5 bg-brandRed/10 hover:bg-brandRed/20 text-brandRed rounded text-[9px] font-black uppercase tracking-[0.01em] transition-all">
+              <button onClick={() => (send as any)({ type: 'REMOVE_IMPROVEMENT', index: idx, impIndex: impIdx })} className="px-2 py-1.5 bg-brandRed/10 hover:bg-brandRed/20 text-brandRed rounded text-[9px] font-black uppercase tracking-[0.01em] transition-all">
                 Del
               </button>
             </div>
@@ -320,12 +320,12 @@ function PropertyRow({ property, idx, visibility, override, exemptionOptions, se
 // ---- Buyback Row ----------------------------------------------------
 
 function BuybackRow({ buyback, idx, derived, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_BUYBACK', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_BUYBACK', index: idx, field, value });
   return (
     <div className="bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg">
       <div className="flex justify-between items-center border-b border-white/10 pb-3">
         <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Buyback Details</h3>
-        <DeleteRowButton onClick={() => send({ type: 'REMOVE_BUYBACK', index: idx })} />
+        <DeleteRowButton onClick={() => (send as any)({ type: 'REMOVE_BUYBACK', index: idx })} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -404,10 +404,10 @@ const ASSET_CLASS_OPTIONS = [
 ];
 
 function FinancialRow({ tx, idx, visibility, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_FINANCIAL_TX', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_FINANCIAL_TX', index: idx, field, value });
   return (
     <div className="fin-card p-4 bg-[#1a1a1a] border border-white/10 rounded-xl relative">
-      <button onClick={() => send({ type: 'REMOVE_FINANCIAL_TX', index: idx })} className="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold hover:brightness-110 font-sans p-1">✕</button>
+      <button onClick={() => (send as any)({ type: 'REMOVE_FINANCIAL_TX', index: idx })} className="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold hover:brightness-110 font-sans p-1">✕</button>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 pr-8">
         <div>
           <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1.5">Asset Class</label>
@@ -529,12 +529,12 @@ function FinancialRow({ tx, idx, visibility, send }: any) {
 // ---- Commodity Row ----------------------------------------------------
 
 function CommodityRow({ commodity, idx, visibility, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_COMMODITY', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_COMMODITY', index: idx, field, value });
   return (
     <div className="bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg">
       <div className="flex justify-between items-center border-b border-white/10 pb-3">
         <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Commodity Details</h3>
-        <DeleteRowButton onClick={() => send({ type: 'REMOVE_COMMODITY', index: idx })} />
+        <DeleteRowButton onClick={() => (send as any)({ type: 'REMOVE_COMMODITY', index: idx })} />
       </div>
       <div className="flex space-x-6 pb-2">
         <label className="flex items-center space-x-2 cursor-pointer">
@@ -604,12 +604,12 @@ function CommodityRow({ commodity, idx, visibility, send }: any) {
 // ---- Unlisted Equity Row ----------------------------------------------------
 
 function UnlistedRow({ unlisted, idx, visibility, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_UNLISTED', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_UNLISTED', index: idx, field, value });
   return (
     <div className="bg-[#161616] border border-white/10 rounded-2xl p-5 flex flex-col gap-6 relative shadow-lg">
       <div className="flex justify-between items-center border-b border-white/10 pb-3">
         <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Private Shares Transferred</h3>
-        <DeleteRowButton onClick={() => send({ type: 'REMOVE_UNLISTED', index: idx })} />
+        <DeleteRowButton onClick={() => (send as any)({ type: 'REMOVE_UNLISTED', index: idx })} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -723,23 +723,30 @@ interface CapitalGainsStepProps {
   entityType: string;
   residencyStatus: string;
   hasCapitalGains: boolean;
-  onBack: () => void;
-  onContinue: (context: any) => void;
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
 }
 
-export default function CapitalGainsStep({ taxRegime, entityType, residencyStatus, hasCapitalGains, onBack, onContinue }: CapitalGainsStepProps) {
+export default function CapitalGainsStep({ taxRegime, entityType, residencyStatus, hasCapitalGains, initialContext, onBack, onContinue, onAutoSave }: CapitalGainsStepProps) {
   const [state, send] = useMachine(capitalGainsMachine, { 
     input: {
       entity_type: entityType,
       final_india_residency_status: residencyStatus,
-      has_capital_gains: hasCapitalGains
+      has_capital_gains: hasCapitalGains,
+      ...(initialContext || {})
     } 
   });
   
   useEffect(() => {
-    send({ type: 'SET_ENTITY_TYPE', value: entityType });
-    send({ type: 'SET_RESIDENCY_STATUS', value: residencyStatus });
-    send({ type: 'SET_HAS_CAPITAL_GAINS', value: hasCapitalGains });
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
+  useEffect(() => {
+    (send as any)({ type: 'SET_ENTITY_TYPE', value: entityType });
+    (send as any)({ type: 'SET_RESIDENCY_STATUS', value: residencyStatus });
+    (send as any)({ type: 'SET_HAS_CAPITAL_GAINS', value: hasCapitalGains });
   }, [entityType, residencyStatus, hasCapitalGains, send]);
 
   const ctx = state.context;
@@ -763,7 +770,7 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
           <p className="text-[10px] text-white/40">Includes property, mutual funds, stocks, crypto, gold, buybacks, etc.</p>
         </div>
         <label className="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" checked={ctx.cg_section_gate_open} onChange={(e) => send({ type: 'TOGGLE_CG_SECTION', value: e.target.checked })} className="sr-only peer" />
+          <input type="checkbox" checked={ctx.cg_section_gate_open} onChange={(e) => (send as any)({ type: 'TOGGLE_CG_SECTION', value: e.target.checked })} className="sr-only peer" />
           <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brandGold peer-checked:after:bg-black" />
         </label>
       </div>
@@ -775,10 +782,10 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
             <ModuleHeader
               title="Immovable Property Sales"
               hasValue={property.has_indian_property_transaction}
-              onToggle={(val: any) => send({ type: 'TOGGLE_PROPERTY_MODULE', value: val })}
+              onToggle={(val: any) => (send as any)({ type: 'TOGGLE_PROPERTY_MODULE', value: val })}
               noOptionLabel="No Property"
               yesOptionLabel="Yes, Own or Sold Property"
-              onAdd={() => send({ type: 'ADD_PROPERTY' })}
+              onAdd={() => (send as any)({ type: 'ADD_PROPERTY' })}
               addLabel="+ Add Property"
             />
             {property.has_indian_property_transaction && (
@@ -795,10 +802,10 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
             <ModuleHeader
               title="Share Buybacks"
               hasValue={share_buyback.has_buyback_transaction}
-              onToggle={(val: any) => send({ type: 'TOGGLE_BUYBACK_MODULE', value: val })}
+              onToggle={(val: any) => (send as any)({ type: 'TOGGLE_BUYBACK_MODULE', value: val })}
               noOptionLabel="No Buybacks"
               yesOptionLabel="Yes, Tendered Shares"
-              onAdd={() => send({ type: 'ADD_BUYBACK' })}
+              onAdd={() => (send as any)({ type: 'ADD_BUYBACK' })}
               addLabel="+ Add Buyback"
             />
             {share_buyback.has_buyback_transaction && (
@@ -815,10 +822,10 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
             <ModuleHeader
               title="Stocks and Crypto Trading"
               hasValue={financial_holdings.has_financial_transactions}
-              onToggle={(val: any) => send({ type: 'TOGGLE_FINANCIAL_MODULE', value: val })}
+              onToggle={(val: any) => (send as any)({ type: 'TOGGLE_FINANCIAL_MODULE', value: val })}
               noOptionLabel="No Transactions"
               yesOptionLabel="Yes, CG Events Exist"
-              onAdd={() => send({ type: 'ADD_FINANCIAL_TX' })}
+              onAdd={() => (send as any)({ type: 'ADD_FINANCIAL_TX' })}
               addLabel="+ Add CG Entry"
               addDisabled={financial_holdings.active_tab !== 'manual'}
             />
@@ -828,7 +835,7 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
                   {['upload', 'api', 'manual'].map((tab) => (
                     <button
                       key={tab}
-                      onClick={() => send({ type: 'SWITCH_FIN_TAB', value: tab })}
+                      onClick={() => (send as any)({ type: 'SWITCH_FIN_TAB', value: tab })}
                       className={
                         'px-4 py-2 text-xs font-bold transition-all ' +
                         (financial_holdings.active_tab === tab ? 'text-brandGold border-b-2 border-brandGold' : 'text-white/40 hover:text-white')
@@ -861,7 +868,7 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
                         <FinancialRow key={tx.id || idx} tx={tx} idx={idx} visibility={v.financials[idx]} send={send} />
                       ))}
                     </div>
-                    <button onClick={() => send({ type: 'ADD_FINANCIAL_TX' })} className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl text-xs font-bold text-white/60 hover:text-white transition-all">
+                    <button onClick={() => (send as any)({ type: 'ADD_FINANCIAL_TX' })} className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl text-xs font-bold text-white/60 hover:text-white transition-all">
                       + Add Asset Transaction
                     </button>
                   </div>
@@ -875,10 +882,10 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
             <ModuleHeader
               title="Physical Gold & Sovereign Gold Bonds (SGBs)"
               hasValue={commodities.has_commodity_transactions}
-              onToggle={(val: any) => send({ type: 'TOGGLE_COMMODITY_MODULE', value: val })}
+              onToggle={(val: any) => (send as any)({ type: 'TOGGLE_COMMODITY_MODULE', value: val })}
               noOptionLabel="No Transactions"
               yesOptionLabel="Yes, I hold or sold Gold/SGBs"
-              onAdd={() => send({ type: 'ADD_COMMODITY' })}
+              onAdd={() => (send as any)({ type: 'ADD_COMMODITY' })}
               addLabel="+ Add Transaction"
             />
             {commodities.has_commodity_transactions && (
@@ -895,10 +902,10 @@ export default function CapitalGainsStep({ taxRegime, entityType, residencyStatu
             <ModuleHeader
               title="Profits from Selling Private Company Shares"
               hasValue={unlisted_equity.has_unlisted_equity_transaction}
-              onToggle={(val: any) => send({ type: 'TOGGLE_UNLISTED_MODULE', value: val })}
+              onToggle={(val: any) => (send as any)({ type: 'TOGGLE_UNLISTED_MODULE', value: val })}
               noOptionLabel="No Private Shares Sold"
               yesOptionLabel="Yes, Private Shares Sold"
-              onAdd={() => send({ type: 'ADD_UNLISTED' })}
+              onAdd={() => (send as any)({ type: 'ADD_UNLISTED' })}
               addLabel="+ Add Transfer"
             />
             {unlisted_equity.has_unlisted_equity_transaction && (

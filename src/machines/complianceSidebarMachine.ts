@@ -20,6 +20,17 @@ export interface SidebarContext {
   };
   activeStepId: string;
   collapsedPhaseIds: string[];
+  pan: string;
+  panAadhaarLinked: boolean;
+  corporate: {
+    turnoverLte400Cr: boolean;
+    opt115BAA: boolean;
+    opt115BAB: boolean;
+    opt115BA: boolean;
+    mfgSetupDate: string;
+    mfgCommenceDate: string;
+    matBookProfit: string | null;
+  };
   sidebarActorRef?: ActorRef<any, any> | null;
 }
 
@@ -30,7 +41,11 @@ export type SidebarEvent =
   | { type: "TAX_REGIME.SET"; regime: string }
   | { type: "ENTITY_TYPE.SET"; value: string }
   | { type: "INTERNATIONAL.TOGGLE"; checked: boolean }
-  | { type: "INCOME_HEAD.TOGGLE"; head: string; checked: boolean };
+  | { type: "INCOME_HEAD.TOGGLE"; head: string; checked: boolean }
+  | { type: "PAN.SET"; value: string }
+  | { type: "AADHAAR_LINKED.TOGGLE"; checked: boolean }
+  | { type: "CORP.UPDATE"; corporate: any }
+  | { type: "HYDRATE"; payload: Partial<SidebarContext> };
 
 export interface StepDefinition {
   id: string;
@@ -147,6 +162,17 @@ const initialContext: SidebarContext = {
   },
   activeStepId: "step-snapshot",
   collapsedPhaseIds: [],
+  pan: "",
+  panAadhaarLinked: true,
+  corporate: {
+    turnoverLte400Cr: false,
+    opt115BAA: false,
+    opt115BAB: false,
+    opt115BA: false,
+    mfgSetupDate: "",
+    mfgCommenceDate: "",
+    matBookProfit: null,
+  },
 };
 
 export const complianceSidebarMachine = setup({
@@ -239,6 +265,30 @@ export const complianceSidebarMachine = setup({
       activeStepId: ({ context }) =>
         isStepUnlocked(context, context.activeStepId) ? context.activeStepId : "step-profile",
     }),
+    setPan: assign({
+      pan: ({ event }) => {
+        if (event.type === "PAN.SET") return event.value;
+        return "";
+      },
+    }),
+    setAadhaarLinked: assign({
+      panAadhaarLinked: ({ event }) => {
+        if (event.type === "AADHAAR_LINKED.TOGGLE") return event.checked;
+        return true;
+      },
+    }),
+    setCorporate: assign({
+      corporate: ({ event, context }) => {
+        if (event.type === "CORP.UPDATE") return { ...context.corporate, ...event.corporate };
+        return context.corporate;
+      },
+    }),
+    hydrateContext: assign(({ event, context }) => {
+      if (event.type === "HYDRATE") {
+        return { ...context, ...event.payload };
+      }
+      return context;
+    }),
   },
 }).createMachine({
   id: "complianceSidebar",
@@ -268,6 +318,18 @@ export const complianceSidebarMachine = setup({
         },
         "INCOME_HEAD.TOGGLE": {
           actions: "setIncomeHead",
+        },
+        "PAN.SET": {
+          actions: "setPan",
+        },
+        "AADHAAR_LINKED.TOGGLE": {
+          actions: "setAadhaarLinked",
+        },
+        "CORP.UPDATE": {
+          actions: "setCorporate",
+        },
+        "HYDRATE": {
+          actions: "hydrateContext",
         },
       },
     },

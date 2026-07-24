@@ -80,7 +80,11 @@ export const salaryMachine = setup({
   },
 }).createMachine({
   id: 'salaryStep',
-  context: ({ input }) => deriveAll({ ...initialSalaryContext, ...(input as any || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    // Extract tax_regime to ensure it's available, but don't overwrite if input provides more
+    return deriveAll({ ...initialSalaryContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

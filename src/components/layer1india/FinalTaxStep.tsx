@@ -30,7 +30,7 @@ export default function FinalTaxStep({ initialContext, onBack, onContinue }: Fin
   const validation = getValidationStatus(state.context);
 
   const handleCopyPayload = () => {
-    send({ type: 'COPY_PAYLOAD' });
+    (send as any)({ type: 'COPY_PAYLOAD' });
   };
 
   return (

@@ -144,7 +144,7 @@ interface BusinessEntryCardProps {
 }
 
 function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_BUSINESS_ENTRY', index: idx, field, value });
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_BUSINESS_ENTRY', index: idx, field, value });
   const isProf = entry.nature === 'professional';
   const scheme = entry.presumptive_scheme;
 
@@ -154,7 +154,7 @@ function BusinessEntryCard({ entry, idx, options, send }: BusinessEntryCardProps
         <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-white/40">Business #{idx + 1}</span>
         <button
           type="button"
-          onClick={() => send({ type: 'REMOVE_BUSINESS_ENTRY', index: idx })}
+          onClick={() => (send as any)({ type: 'REMOVE_BUSINESS_ENTRY', index: idx })}
           className="text-brandRed/60 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all"
         >
           ✕ Remove
@@ -263,8 +263,10 @@ interface BusinessStepProps {
   entityType: string;
   isIndianCompany: boolean | null;
   residencyStatus: string;
+  initialContext?: any;
   onBack?: () => void;
   onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
 }
 
 export default function BusinessStep({
@@ -272,8 +274,10 @@ export default function BusinessStep({
   entityType,
   isIndianCompany,
   residencyStatus,
+  initialContext,
   onBack,
   onContinue,
+  onAutoSave,
 }: BusinessStepProps) {
   const [state, send] = useMachine(businessMachine, {
     input: {
@@ -281,31 +285,36 @@ export default function BusinessStep({
       entity_type: entityType,
       is_indian_company: isIndianCompany,
       final_india_residency_status: residencyStatus,
+      ...(initialContext || {})
     },
   });
 
   useEffect(() => {
-    send({ type: 'SET_TAX_REGIME', value: taxRegime });
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
+  useEffect(() => {
+    (send as any)({ type: 'SET_TAX_REGIME', value: taxRegime });
   }, [taxRegime, send]);
 
   useEffect(() => {
-    send({ type: 'SET_ENTITY_TYPE', value: entityType });
+    (send as any)({ type: 'SET_ENTITY_TYPE', value: entityType });
   }, [entityType, send]);
 
   useEffect(() => {
-    send({ type: 'SET_IS_INDIAN_COMPANY', value: isIndianCompany });
+    (send as any)({ type: 'SET_IS_INDIAN_COMPANY', value: isIndianCompany });
   }, [isIndianCompany, send]);
 
   useEffect(() => {
-    send({ type: 'SET_RESIDENCY_STATUS', value: residencyStatus });
+    (send as any)({ type: 'SET_RESIDENCY_STATUS', value: residencyStatus });
   }, [residencyStatus, send]);
 
   const ctx = state.context;
   const { business_income: bi, ui } = ctx;
   const { visibility: v, gstContextNote, amtExpiry } = ui || { visibility: {} as any, gstContextNote: '', amtExpiry: {} as any };
 
-  const updateBizNum = (field: string) => (raw: string) => send({ type: 'UPDATE_BIZ_NUM', field, value: raw });
-  const updateBizField = (field: string) => (raw: any) => send({ type: 'UPDATE_BIZ_FIELD', field, value: raw });
+  const updateBizNum = (field: string) => (raw: string) => (send as any)({ type: 'UPDATE_BIZ_NUM', field, value: raw });
+  const updateBizField = (field: string) => (raw: any) => (send as any)({ type: 'UPDATE_BIZ_FIELD', field, value: raw });
 
   return (
     <>
@@ -326,7 +335,7 @@ export default function BusinessStep({
             <span className="text-xs font-bold text-white/80">Do you have income from a business, profession, or trading?</span>
             <span className="text-[9px] text-white/30">This will open the business income section.</span>
           </div>
-          <ToggleSwitch checked={bi.has_business_or_fo_income} onChange={(val) => send({ type: 'TOGGLE_BUSINESS_MODULE', value: val })} />
+          <ToggleSwitch checked={bi.has_business_or_fo_income} onChange={(val) => (send as any)({ type: 'TOGGLE_BUSINESS_MODULE', value: val })} />
         </div>
 
         {v.divBusinessContainer && (
@@ -341,7 +350,7 @@ export default function BusinessStep({
                       Turn this on if this is a registered non-profit company claiming tax exemptions under Section 11/12 or 10(23C).
                     </span>
                   </div>
-                  <ToggleSwitch checked={ctx.is_section_8} onChange={(val) => send({ type: 'TOGGLE_SECTION_8', value: val })} />
+                  <ToggleSwitch checked={ctx.is_section_8} onChange={(val) => (send as any)({ type: 'TOGGLE_SECTION_8', value: val })} />
                 </div>
               )}
 
@@ -356,7 +365,7 @@ export default function BusinessStep({
                         <input
                           type="checkbox"
                           checked={bi.nature_of_business.includes(opt.value)}
-                          onChange={() => send({ type: 'TOGGLE_BIZ_NATURE', value: opt.value })}
+                          onChange={() => (send as any)({ type: 'TOGGLE_BIZ_NATURE', value: opt.value })}
                           className="rounded border-white/10 bg-white/5 text-brandGold focus:ring-0"
                         />
                         <span>{opt.label}</span>
@@ -369,7 +378,7 @@ export default function BusinessStep({
                       <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1.5">Primary Business Code</label>
                       <select
                         value={bi.business_code || ''}
-                        onChange={(e) => send({ type: 'UPDATE_BIZ_CODE', value: e.target.value })}
+                        onChange={(e) => (send as any)({ type: 'UPDATE_BIZ_CODE', value: e.target.value })}
                         className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                       >
                         <option value="">-- Select --</option>
@@ -427,7 +436,7 @@ export default function BusinessStep({
                     <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Partner / LLP Income (Partnership Firm Exemption)</span>
                     <button
                       type="button"
-                      onClick={() => send({ type: 'ADD_PARTNER_FIRM' })}
+                      onClick={() => (send as any)({ type: 'ADD_PARTNER_FIRM' })}
                       className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all"
                     >
                       + Add Firm
@@ -446,7 +455,7 @@ export default function BusinessStep({
                             <span className="text-[12px] font-sans font-black uppercase tracking-[0.01em] text-white/40">Firm / LLP #{idx + 1}</span>
                             <button
                               type="button"
-                              onClick={() => send({ type: 'REMOVE_PARTNER_FIRM', index: idx })}
+                              onClick={() => (send as any)({ type: 'REMOVE_PARTNER_FIRM', index: idx })}
                               className="text-brandRed/60 hover:text-brandRed text-[9px] font-black uppercase tracking-widest transition-all"
                             >✕ Remove</button>
                           </div>
@@ -457,7 +466,7 @@ export default function BusinessStep({
                                 <input
                                   type="text"
                                   value={firm.firm_name || ''}
-                                  onChange={(e) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'firm_name', value: e.target.value })}
+                                  onChange={(e) => (send as any)({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'firm_name', value: e.target.value })}
                                   placeholder="e.g. ABC &amp; Co."
                                   className="w-full bg-white/5 border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0"
                                 />
@@ -466,7 +475,7 @@ export default function BusinessStep({
                                 <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Entity Type</label>
                                 <select
                                   value={firm.entity_type}
-                                  onChange={(e) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'entity_type', value: e.target.value })}
+                                  onChange={(e) => (send as any)({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'entity_type', value: e.target.value })}
                                   className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                                 >
                                   <option value="registered_firm">Registered Partnership Firm</option>
@@ -478,19 +487,19 @@ export default function BusinessStep({
                               <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Remuneration / Salary / Bonus (₹) <span className="text-brandGold">— Taxable PGBP</span>
                               </label>
-                              <InrField id={`partner-${idx}-remun`} value={firm.remuneration_from_entity_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'remuneration_from_entity_inr', value: v })} />
+                              <InrField id={`partner-${idx}-remun`} value={firm.remuneration_from_entity_inr} onCommit={(v) => (send as any)({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'remuneration_from_entity_inr', value: v })} />
                             </div>
                             <div>
                               <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Interest on Capital (₹) <span className="text-brandGold">— Taxable PGBP</span>
                               </label>
-                              <InrField id={`partner-${idx}-interest`} value={firm.interest_on_capital_from_entity_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'interest_on_capital_from_entity_inr', value: v })} />
+                              <InrField id={`partner-${idx}-interest`} value={firm.interest_on_capital_from_entity_inr} onCommit={(v) => (send as any)({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'interest_on_capital_from_entity_inr', value: v })} />
                             </div>
                             <div className="md:col-span-2">
                               <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">
                                 Share of Profit (₹) <span className="text-green-400">— EXEMPT under Partnership Firm Profit Share Exemption, enter for disclosure only</span>
                               </label>
-                              <InrField id={`partner-${idx}-profit`} value={firm.profit_share_exempt_inr} onCommit={(v) => send({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'profit_share_exempt_inr', value: v })} />
+                              <InrField id={`partner-${idx}-profit`} value={firm.profit_share_exempt_inr} onCommit={(v) => (send as any)({ type: 'UPDATE_PARTNER_FIRM', index: idx, field: 'profit_share_exempt_inr', value: v })} />
                             </div>
                           </div>
                         </div>
@@ -506,7 +515,7 @@ export default function BusinessStep({
                     <span className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Your Businesses</span>
                     <button
                       type="button"
-                      onClick={() => send({ type: 'ADD_BUSINESS_ENTRY' })}
+                      onClick={() => (send as any)({ type: 'ADD_BUSINESS_ENTRY' })}
                       className="px-3 py-1 bg-white/10 hover:bg-brandGold/20 hover:text-brandGold rounded text-[9px] font-black uppercase tracking-widest transition-all"
                     >
                       + Add Business
@@ -548,7 +557,7 @@ export default function BusinessStep({
                         <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-xl relative">
                           <button
                             type="button"
-                            onClick={() => send({ type: 'REMOVE_GOODS_VEHICLE', index: i })}
+                            onClick={() => (send as any)({ type: 'REMOVE_GOODS_VEHICLE', index: i })}
                             className="absolute top-3 right-3 text-white/30 hover:text-brandRed transition-colors"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -558,7 +567,7 @@ export default function BusinessStep({
                               <label className="block text-[10px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">Vehicle Type</label>
                               <select
                                 value={v2.vehicle_type || ''}
-                                onChange={(e) => send({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'vehicle_type', value: e.target.value })}
+                                onChange={(e) => (send as any)({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'vehicle_type', value: e.target.value })}
                                 className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                               >
                                 <option value="">-- Select --</option>
@@ -572,7 +581,7 @@ export default function BusinessStep({
                                 type="number"
                                 disabled={!isHeavy}
                                 value={v2.gvw_tonnes ?? ''}
-                                onChange={(e) => send({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'gvw_tonnes', value: e.target.value })}
+                                onChange={(e) => (send as any)({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'gvw_tonnes', value: e.target.value })}
                                 placeholder="e.g. 15"
                                 className={`w-full bg-[#121212] ${isHeavy ? 'border-white/10 text-white' : 'border-transparent text-white/20'} border rounded-lg text-xs px-2 py-2 focus:border-brandGold focus:outline-none placeholder-white/20`}
                               />
@@ -584,7 +593,7 @@ export default function BusinessStep({
                                 min="1"
                                 max="12"
                                 value={v2.months_owned ?? ''}
-                                onChange={(e) => send({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'months_owned', value: e.target.value })}
+                                onChange={(e) => (send as any)({ type: 'UPDATE_GOODS_VEHICLE', index: i, field: 'months_owned', value: e.target.value })}
                                 placeholder="1-12"
                                 className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-2 py-2 focus:border-brandGold focus:outline-none placeholder-white/20"
                               />
@@ -597,7 +606,7 @@ export default function BusinessStep({
 
                   <button
                     type="button"
-                    onClick={() => send({ type: 'ADD_GOODS_VEHICLE' })}
+                    onClick={() => (send as any)({ type: 'ADD_GOODS_VEHICLE' })}
                     disabled={bi.goods_vehicles.length >= 10}
                     className="mt-2 w-full py-2.5 rounded-xl border border-white/10 hover:border-brandGold/50 hover:bg-white/5 text-xs text-white/70 hover:text-brandGold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
                   >
@@ -723,7 +732,7 @@ export default function BusinessStep({
                     <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/40 mb-1">GST Registration Status</label>
                     <select
                       value={bi.gst_registration_status}
-                      onChange={(e) => send({ type: 'SET_GST_STATUS', value: e.target.value })}
+                      onChange={(e) => (send as any)({ type: 'SET_GST_STATUS', value: e.target.value })}
                       className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none [color-scheme:dark]"
                     >
                       <option value="unregistered">Unregistered</option>

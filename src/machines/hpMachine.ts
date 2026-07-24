@@ -47,7 +47,10 @@ export const housePropertyMachine = setup({
   },
 }).createMachine({
   id: 'housePropertyStep',
-  context: ({ input }) => deriveAll({ ...initialHPContext, ...(input as any || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialHPContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {

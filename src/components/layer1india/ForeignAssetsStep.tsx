@@ -58,11 +58,11 @@ const CATEGORY_GROUPS = [
 ];
 
 function FaRow({ row, idx, visibility, send }: any) {
-  const update = (field: string) => (value: any) => send({ type: 'UPDATE_FA_FIELD', index: idx, field, value } as any);
+  const update = (field: string) => (value: any) => (send as any)({ type: 'UPDATE_FA_FIELD', index: idx, field, value } as any);
 
   return (
     <div className="fa-card p-4 bg-[#1a1a1a] border border-white/10 rounded-xl relative transition-all">
-      <button onClick={() => send({ type: 'REMOVE_FA_ROW', index: idx } as any)} className="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">
+      <button onClick={() => (send as any)({ type: 'REMOVE_FA_ROW', index: idx } as any)} className="absolute top-4 right-4 text-brandRed/60 hover:text-brandRed font-bold font-sans p-1">
         ✕
       </button>
 
@@ -85,7 +85,7 @@ function FaRow({ row, idx, visibility, send }: any) {
         <label className="block text-[9px] font-black uppercase tracking-widest text-brandGold mb-1.5">Asset / Income Category</label>
         <select
           value={row.category}
-          onChange={(e) => send({ type: 'UPDATE_FA_CATEGORY', index: idx, value: e.target.value } as any)}
+          onChange={(e) => (send as any)({ type: 'UPDATE_FA_CATEGORY', index: idx, value: e.target.value } as any)}
           className="w-full bg-[#121212] border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none font-sans"
         >
           {CATEGORY_GROUPS.map((grp) => (
@@ -130,11 +130,11 @@ function FaRow({ row, idx, visibility, send }: any) {
             <label className="text-[9px] font-black uppercase tracking-widest text-brandGold">Asset Status:</label>
             <div className="flex space-x-4">
               <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="radio" checked={row.status !== 'sold'} onChange={() => send({ type: 'UPDATE_FA_STATUS', index: idx, value: 'holding' } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
+                <input type="radio" checked={row.status !== 'sold'} onChange={() => (send as any)({ type: 'UPDATE_FA_STATUS', index: idx, value: 'holding' } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
                 <span className="text-[10px] font-bold text-white/80">Currently Holding</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <input type="radio" checked={row.status === 'sold'} onChange={() => send({ type: 'UPDATE_FA_STATUS', index: idx, value: 'sold' } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
+                <input type="radio" checked={row.status === 'sold'} onChange={() => (send as any)({ type: 'UPDATE_FA_STATUS', index: idx, value: 'sold' } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
                 <span className="text-[10px] font-bold text-white/80">Sold this Year</span>
               </label>
             </div>
@@ -189,7 +189,7 @@ function FaRow({ row, idx, visibility, send }: any) {
             </div>
             <div className="flex flex-col justify-end">
               <label className="flex items-center space-x-2 cursor-pointer mb-2">
-                <input type="checkbox" checked={row.claim_dtaa_relief} onChange={(e) => send({ type: 'TOGGLE_FA_DTAA', index: idx, value: e.target.checked } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
+                <input type="checkbox" checked={row.claim_dtaa_relief} onChange={(e) => (send as any)({ type: 'TOGGLE_FA_DTAA', index: idx, value: e.target.checked } as any)} className="rounded bg-white/10 border-white/20 text-brandGold focus:ring-0" />
                 <span className="text-[10px] font-bold text-white/80">Claim DTAA Relief?</span>
               </label>
             </div>
@@ -219,8 +219,20 @@ function FaRow({ row, idx, visibility, send }: any) {
   );
 }
 
-export default function ForeignAssetsStep({ initialContext, onBack, onContinue }: any) {
+interface ForeignAssetsStepProps {
+  initialContext?: any;
+  onBack?: () => void;
+  onContinue?: (context: any) => void;
+  onAutoSave?: (context: any) => void;
+}
+
+export default function ForeignAssetsStep({ initialContext, onBack, onContinue, onAutoSave }: ForeignAssetsStepProps) {
   const [state, send] = useMachine(foreignAssetsMachine as any, { input: initialContext });
+
+  useEffect(() => {
+    onAutoSave?.(state.context);
+  }, [state.context, onAutoSave]);
+
   const ctx = state.context;
   const { foreign_assets: fa, lrs_outbound: lrs, ui } = ctx;
   const { visibility: v, lrsTcs } = ui;
@@ -241,8 +253,8 @@ export default function ForeignAssetsStep({ initialContext, onBack, onContinue }
           </div>
           <YesNoTriState
             value={fa.has_foreign_assets}
-            onYes={() => send({ type: 'TOGGLE_FOREIGN_ASSETS', value: true } as any)}
-            onNo={() => send({ type: 'TOGGLE_FOREIGN_ASSETS', value: false } as any)}
+            onYes={() => (send as any)({ type: 'TOGGLE_FOREIGN_ASSETS', value: true } as any)}
+            onNo={() => (send as any)({ type: 'TOGGLE_FOREIGN_ASSETS', value: false } as any)}
           />
         </div>
 
@@ -260,8 +272,8 @@ export default function ForeignAssetsStep({ initialContext, onBack, onContinue }
             </div>
             <YesNoTriState
               value={lrs.has_received_foreign_income}
-              onYes={() => send({ type: 'TOGGLE_RECEIVED_FOREIGN_INCOME', value: true } as any)}
-              onNo={() => send({ type: 'TOGGLE_RECEIVED_FOREIGN_INCOME', value: false } as any)}
+              onYes={() => (send as any)({ type: 'TOGGLE_RECEIVED_FOREIGN_INCOME', value: true } as any)}
+              onNo={() => (send as any)({ type: 'TOGGLE_RECEIVED_FOREIGN_INCOME', value: false } as any)}
             />
           </div>
         )}
@@ -278,12 +290,12 @@ export default function ForeignAssetsStep({ initialContext, onBack, onContinue }
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Total money sent abroad this year (₹) — for TCS tracking</label>
-                <InrField value={lrs.total_lrs_remitted_this_fy_inr} onCommit={(val: any) => send({ type: 'UPDATE_LRS_TOTAL', value: val } as any)} />
+                <InrField value={lrs.total_lrs_remitted_this_fy_inr} onCommit={(val: any) => (send as any)({ type: 'UPDATE_LRS_TOTAL', value: val } as any)} />
                 <span className="text-[8px] text-white/30 mt-1 block">Base LRS threshold is ₹10 Lakhs (except for tour packages). TCS rates vary from 0%, 2%, to 20% depending on purpose.</span>
               </div>
               <div>
                 <label className="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Primary Purpose of LRS Remittance</label>
-                <select value={lrs.lrs_purpose || ''} onChange={(e) => send({ type: 'UPDATE_LRS_PURPOSE', value: e.target.value } as any)} className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
+                <select value={lrs.lrs_purpose || ''} onChange={(e) => (send as any)({ type: 'UPDATE_LRS_PURPOSE', value: e.target.value } as any)} className="w-full bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none">
                   <option value="">-- Select Purpose --</option>
                   <option value="investment">Investment (Equity/Property)</option>
                   <option value="education_own_funds">Overseas Education (Own Funds)</option>
@@ -320,7 +332,7 @@ export default function ForeignAssetsStep({ initialContext, onBack, onContinue }
                   <FaRow key={idx} row={row} idx={idx} visibility={v.rows[idx]} send={send} />
                 ))}
               </div>
-              <button onClick={() => send({ type: 'ADD_FA_ROW' } as any)} className="mt-2 w-full py-3 bg-white/5 hover:bg-white/10 border border-brandGold/20 border-dashed rounded-xl text-xs font-bold text-brandGold/60 hover:text-brandGold transition-all uppercase tracking-widest">
+              <button onClick={() => (send as any)({ type: 'ADD_FA_ROW' } as any)} className="mt-2 w-full py-3 bg-white/5 hover:bg-white/10 border border-brandGold/20 border-dashed rounded-xl text-xs font-bold text-brandGold/60 hover:text-brandGold transition-all uppercase tracking-widest">
                 + Add Foreign Asset / Income
               </button>
             </div>

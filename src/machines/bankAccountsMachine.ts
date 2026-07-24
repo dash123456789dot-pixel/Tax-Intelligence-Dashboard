@@ -30,7 +30,10 @@ export const bankAccountsMachine = setup({
   actions: { recomputeDerived: assign(recompute) },
 }).createMachine({
   id: 'bankAccountsStep',
-  context: ({ input }: any) => deriveAll({ ...initialBankAccountsContext, ...(input || {}) }),
+  context: ({ input }: any) => {
+    const inputCtx = (input as any) || {};
+    return deriveAll({ ...initialBankAccountsContext, ...inputCtx });
+  },
   initial: 'ready',
   states: {
     ready: {
