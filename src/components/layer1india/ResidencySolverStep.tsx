@@ -652,23 +652,6 @@ export default function ResidencySolverStep({ initialContext, sidebarActorRef, o
                   <YesNoSelect value={rd.india_source_income_above_15l} onChange={(val) => updateField('india_source_income_above_15l', val)} />
                 </QuestionRow>
               )}
-
-              <QuestionRow
-                id="div-us-person-cert"
-                title="US Person Self-Certification (W-9/FATCA) on File With Indian Banks?"
-                subtitle="Only relevant if you are a US citizen, Green Card holder, or US tax resident. Under FATCA/IGA, Indian banks must report US-person accounts."
-              >
-                <select
-                  id="res-us-person-cert"
-                  value={rd.us_person_certified_to_bank === null ? 'null' : String(rd.us_person_certified_to_bank)}
-                  onChange={(e) => updateField('us_person_certified_to_bank', e.target.value === 'null' ? null : e.target.value === 'true')}
-                  className="w-48 bg-[#121212] border border-white/10 rounded-xl text-xs text-white px-3 py-2 focus:border-brandGold focus:ring-0 focus:outline-none transition-all [color-scheme:dark]"
-                >
-                  <option value="null">-- Not sure / not applicable --</option>
-                  <option value="true">Yes — certified</option>
-                  <option value="false">No — not certified</option>
-                </select>
-              </QuestionRow>
             </div>
           )}
         </div>
