@@ -22,6 +22,7 @@ export interface ResidencyDetail {
   liable_to_tax_in_another_country_being_indian_citizen: boolean;
   us_person_certified_to_bank: boolean | null;
   final_india_residency_status: string;
+  dtaa_worldwide_ceded: boolean;
   _fy_end_year?: number;
 }
 
@@ -251,13 +252,14 @@ export function runResidencySolver(context: ResidencyContext) {
     }
   }
 
+  let dtaa_worldwide_ceded = false;
   if (context.dtaa.dtaa_treaty_residence === 'us' || context.dtaa.dtaa_forced_nr === true) {
-    status = 'NR';
-    path = 'DTAA Article 4 Treaty Tie-Breaker to United States';
-    scope = 'India-source income only (DTAA Article 4 non-resident status).';
+    dtaa_worldwide_ceded = true;
+    path = path + ' (Note: DTAA Article 4 Treaty Tie-Breaker to United States overrides worldwide taxation)';
+    scope = 'India-source income only (DTAA Article 4 non-resident status overrides domestic residency).';
   }
 
-  return { status, path, scope };
+  return { status, path, scope, dtaa_worldwide_ceded };
 }
 
 export function computeVisibility(context: ResidencyContext) {
@@ -422,7 +424,7 @@ export function deriveAll(rawContext: ResidencyContext, now = new Date()) {
   const cert = runResidencySolver(context);
   context = {
     ...context,
-    residency_detail: { ...context.residency_detail, final_india_residency_status: cert.status },
+    residency_detail: { ...context.residency_detail, final_india_residency_status: cert.status, dtaa_worldwide_ceded: cert.dtaa_worldwide_ceded },
   };
 
   const visibility = computeVisibility(context);

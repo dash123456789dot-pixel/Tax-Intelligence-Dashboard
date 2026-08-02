@@ -611,7 +611,7 @@ function UnlistedRow({ unlisted, idx, visibility, send }: any) {
         <h3 className="text-sm font-sans font-black uppercase tracking-[0.01em] text-brandGold">Private Shares Transferred</h3>
         <DeleteRowButton onClick={() => (send as any)({ type: 'REMOVE_UNLISTED', index: idx })} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/60 mb-1">Company Name</label>
           <input type="text" value={unlisted.company_name || ''} onChange={(e) => update('company_name')(e.target.value)} placeholder="e.g. ABC Pvt Ltd" className="w-full !bg-[#121212] !text-white border border-white/10 rounded-lg text-xs text-white px-3 py-2.5 focus:border-brandGold focus:outline-none" />
@@ -619,6 +619,10 @@ function UnlistedRow({ unlisted, idx, visibility, send }: any) {
         <div>
           <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-white/60 mb-1">Number of Shares</label>
           <InrField value={unlisted.number_of_shares} onCommit={update('number_of_shares')} placeholder="0" />
+        </div>
+        <div className="bg-brandGold/5 p-2 rounded-lg border border-brandGold/20">
+          <label className="block text-[11px] font-sans font-black uppercase tracking-[0.01em] text-brandGold mb-1">Linked Client Profile ID</label>
+          <input type="text" value={unlisted.linked_client_id || ''} onChange={(e) => update('linked_client_id')(e.target.value)} placeholder="e.g. C-12345" className="w-full !bg-[#121212] !text-white border border-brandGold/30 rounded-lg text-xs text-white px-2 py-1.5 focus:border-brandGold focus:outline-none" />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -22,7 +22,7 @@ import { useSelector } from '@xstate/react';
 import { STEP_DEFINITIONS, isStepVisible } from '@/machines/complianceSidebarMachine';
 
 function MainContent() {
-  const { ctx, sidebarActor, quarterActor, submitStep } = useLayer1();
+  const { ctx, sidebarActor, quarterActor, submitStep, submitFinal } = useLayer1();
   const activeStep = useSelector(sidebarActor, (s: any) => s.context.activeStepId);
   const activeQuarter = useSelector(quarterActor, (s: any) => s.context.activeQuarter);
   const currentQuarterData = useSelector(quarterActor, (s: any) => s.context.quarters[activeQuarter]) || {};
@@ -81,13 +81,11 @@ function MainContent() {
     if (!pendingSubmission) return;
     setIsSubmitting(true);
     try {
-      if (submitStep) {
-        await submitStep(pendingSubmission.stepId, pendingSubmission.data);
-      }
+      // Data is only saved to sessionStorage on step transition per requirements
       pendingSubmission.executeNext();
       setPendingSubmission(null);
     } catch (e) {
-      alert("Failed to save data. Please try again.");
+      alert("Failed to proceed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -271,8 +269,39 @@ function MainContent() {
     }
   };
 
-  const handleContinueFromOutput = () => {
-    window.location.href = '/';
+  const handleContinueFromOutput = async () => {
+    try {
+      setIsSubmitting(true);
+      const allData = { 
+        sidebar: sidebarActor.getSnapshot().context, 
+        quarters: quarterActor.getSnapshot().context.quarters 
+      };
+      if (submitFinal) {
+        await submitFinal(allData);
+      }
+      
+      // Determine next route based on router jurisdiction
+      let nextRoute = '/';
+      try {
+        const uId = sessionStorage.getItem("userId") || "admin-01";
+        const sessionKey = `wising_router_state_${uId}`;
+        const routerPayload = sessionStorage.getItem(sessionKey);
+        if (routerPayload) {
+          const parsed = JSON.parse(routerPayload);
+          if (parsed.jurisdiction === 'dual' || parsed.jurisdiction === 'us_only') {
+            nextRoute = '/layer1/us';
+          }
+        }
+      } catch (err) {
+        console.error("Failed to parse router jurisdiction", err);
+      }
+      
+      window.location.href = nextRoute;
+    } catch (e) {
+      alert("Failed to submit final data. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   let age = null;
@@ -481,10 +510,14 @@ function MainContent() {
   );
 }
 
+import ProtectedRoute from '@/components/ProtectedRoute';
+
 export default function Layer1IndiaPage() {
   return (
-    <Layer1IndiaProvider>
-      <MainContent />
-    </Layer1IndiaProvider>
+    <ProtectedRoute>
+      <Layer1IndiaProvider>
+        <MainContent />
+      </Layer1IndiaProvider>
+    </ProtectedRoute>
   );
 }

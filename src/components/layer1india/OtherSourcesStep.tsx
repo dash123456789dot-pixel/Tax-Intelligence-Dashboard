@@ -186,11 +186,11 @@ export default function OtherSourcesStep({ initialContext, onBack, onContinue, o
                     <div className="flex flex-col gap-1 mt-1">
                       {/* Dead in the original (no onchange handler) — rendered inert to match */}
                       <label className="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" className="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3" />
+                        <input type="checkbox" checked={os.gifts_exemption_marriage || false} onChange={(e) => (send as any)({ type: 'UPDATE_OS_FIELD', field: 'gifts_exemption_marriage', value: e.target.checked } as any)} className="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3" />
                         <span className="text-[9px] uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Exempt: Received on occasion of marriage</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" className="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3" />
+                        <input type="checkbox" checked={os.gifts_exemption_relative || false} onChange={(e) => (send as any)({ type: 'UPDATE_OS_FIELD', field: 'gifts_exemption_relative', value: e.target.checked } as any)} className="form-checkbox bg-transparent border-white/20 text-brandGold rounded focus:ring-brandGold/50 transition-colors w-3 h-3" />
                         <span className="text-[9px] uppercase tracking-wider text-white/40 group-hover:text-white/60 transition-colors">Exempt: Received from specified relative</span>
                       </label>
                     </div>

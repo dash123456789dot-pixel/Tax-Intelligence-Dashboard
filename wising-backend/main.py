@@ -5,6 +5,7 @@ from routers.auth import router as auth_router
 from routers.broker import router as broker_router
 from routers.websockets import router as ws_router
 from routers.dashboard import router as dashboard_router
+from routers.router_flow import router as router_flow_router
 
 app = FastAPI(title="Wising Backend")
 
@@ -22,6 +23,7 @@ app.include_router(auth_router)
 app.include_router(broker_router)
 app.include_router(ws_router)
 app.include_router(dashboard_router)
+app.include_router(router_flow_router)
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Wising Backend API"}

@@ -34,23 +34,25 @@ export function useRouterMachine() {
   useEffect(() => {
     const initSession = async () => {
       try {
-        await fetch(`${API_BASE_URL}/api/session/init`, { method: 'POST' });
-        console.log("[Router] Backend session initialized.");
+        const uId = sessionStorage.getItem("userId") || "admin-01";
+        const sessionKey = `${STORAGE_KEY}_${uId}`;
 
-        // Read tax year from local storage or default to '2025'
+        // Read tax year from sessionStorage or default to '2025'
         let initialYear = '2025';
         try {
-          const localData = localStorage.getItem(STORAGE_KEY);
+          const localData = sessionStorage.getItem(sessionKey);
           if (localData) {
             const parsed = JSON.parse(localData);
             if (parsed.base_tax_year) {
               initialYear = parsed.base_tax_year;
             }
+            send({ type: 'HYDRATE', context: parsed });
+          } else {
+             send({ type: 'HYDRATE', context: { ...INITIAL_CONTEXT, base_tax_year: initialYear } });
           }
         } catch (e) {}
 
         prevYearRef.current = initialYear;
-        await loadSavedState(initialYear);
       } catch (err) {
         console.error('[Router] Session initialization failed:', err);
       }
@@ -63,33 +65,15 @@ export function useRouterMachine() {
     if (ctx.base_tax_year && ctx.base_tax_year !== prevYearRef.current) {
       const newYear = ctx.base_tax_year;
       prevYearRef.current = newYear;
-      loadSavedState(newYear);
     }
   }, [ctx.base_tax_year]);
 
-  // 3. Persist to localStorage and cache to Redis (debounced) on context changes
+  // 3. Persist to sessionStorage on context changes
   useEffect(() => {
     if (!ctx) return;
-    
-    // Save to localStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ctx));
-
-    // Only cache to backend if base_tax_year is selected
-    if (!ctx.base_tax_year) return;
-
-    const delayDebounceFn = setTimeout(async () => {
-      try {
-        await fetch(`${API_BASE_URL}/api/router-cache`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ctx),
-        });
-      } catch (err) {
-        console.error('[Router] Failed to cache state to Redis:', err);
-      }
-    }, 1000); // 1-second debounce
-
-    return () => clearTimeout(delayDebounceFn);
+    const uId = sessionStorage.getItem("userId") || "admin-01";
+    const sessionKey = `${STORAGE_KEY}_${uId}`;
+    sessionStorage.setItem(sessionKey, JSON.stringify(ctx));
   }, [ctx]);
 
   // 4. Save to PostgreSQL database permanently when router questionnaire is complete
@@ -97,16 +81,17 @@ export function useRouterMachine() {
     if (ctx.isComplete && ctx.base_tax_year) {
       const persistToDB = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/router-persist`, {
+          const uId = sessionStorage.getItem("userId") || "admin-01";
+          const res = await fetch(`${API_BASE_URL}/api/v1/router/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(ctx),
+            body: JSON.stringify({ ...ctx, user_id: uId, client_id: 'default_client' }),
           });
           const result = await res.json();
-          if (result.success) {
+          if (res.ok) {
             console.log('[Router] Session successfully persisted permanently to PostgreSQL!');
           } else {
-            console.error('[Router] DB persistence returned error:', result.error);
+            console.error('[Router] DB persistence returned error:', result.error || res.statusText);
           }
         } catch (err) {
           console.error('[Router] Failed to persist session to DB:', err);
@@ -114,7 +99,7 @@ export function useRouterMachine() {
       };
       persistToDB();
     }
-  }, [ctx.isComplete, ctx.base_tax_year, ctx]);
+  }, [ctx.isComplete, ctx.base_tax_year]);
 
   // Helpers for the UI layer
   const currentQuestionId = ctx.activeQuestions[ctx.currentQuestionIndex] ?? null;
@@ -135,12 +120,12 @@ export function useRouterMachine() {
     // Typed send helpers
     setBool: (fieldId: keyof RouterContext, value: boolean) =>
       send({ type: 'SET_BOOL', fieldId: fieldId as any, value }),
-    setInt: (fieldId: 'india_days' | 'us_days', value: number) =>
-      send({ type: 'SET_INT', fieldId, value }),
-    setText: (fieldId: 'full_name' | 'base_tax_year', value: string) =>
+    setInt: (fieldId: keyof RouterContext, value: number) =>
+      send({ type: 'SET_INT', fieldId: fieldId as any, value }),
+    setText: (fieldId: keyof RouterContext, value: string) =>
       send({ type: 'SET_TEXT', fieldId: fieldId as any, value }),
-    setDate: (value: string) =>
-      send({ type: 'SET_DATE', fieldId: 'date_of_birth', value }),
+    setDate: (fieldId: keyof RouterContext, value: string) =>
+      send({ type: 'SET_DATE', fieldId: fieldId as any, value }),
     advance: () => send({ type: 'ADVANCE' }),
     back: () => send({ type: 'BACK' }),
     reset: async () => {

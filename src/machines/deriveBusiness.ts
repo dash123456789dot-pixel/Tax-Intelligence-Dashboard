@@ -241,7 +241,7 @@ export function validateS44AD(entries: BusinessEntry[], s44AD_last_exit_ay: stri
     const match = s44AD_last_exit_ay.match(/(?:AY\s*)?(\d{4})(?:-\d{2,4})?/i);
     if (match) {
       const exitYear = parseInt(match[1], 10);
-      const CURRENT_AY_START = 2024;
+      const CURRENT_AY_START = new Date().getFullYear() - (new Date().getMonth() < 3 ? 1 : 0);
       if (CURRENT_AY_START - exitYear < 5 && CURRENT_AY_START - exitYear > 0) lockInActive = true;
     }
   }
@@ -416,7 +416,7 @@ export function computeAmtExpiry(amtVal: number | null | undefined, originAyStr:
   if (!match) return { show: false, text: '' };
 
   const originYear = parseInt(match[1], 10);
-  const currentAY = today.getFullYear() + (today.getMonth() >= 3 ? 1 : 0);
+  const currentAY = today.getFullYear() - (today.getMonth() < 3 ? 1 : 0);
   const expiryYear = originYear + 15;
   const yearsToExpiry = expiryYear - currentAY;
 

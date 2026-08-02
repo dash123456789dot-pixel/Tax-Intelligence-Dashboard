@@ -6,7 +6,7 @@ import { useLayer1 } from '@/hooks/Layer1Context';
 import { useSelector } from '@xstate/react';
 
 export function Header() {
-  const { quarterActor, financialYear } = useLayer1();
+  const { quarterActor, financialYear, setFinancialYear } = useLayer1();
   const activeQuarter = useSelector(quarterActor, (s: any) => s.context.activeQuarter);
 
   const startYear = parseInt(financialYear?.split('-')[0] || '2024', 10);
@@ -35,6 +35,18 @@ export function Header() {
         <div className="flex items-center space-x-4 lg:space-x-6">
           {/* Quarter Switcher */}
           <div className="flex items-center bg-[#0a0a0a] border border-white/10 rounded-xl p-1 shadow-inner gap-1 quarter-switcher overflow-x-auto hide-scrollbar max-w-full">
+            <select
+              value={financialYear}
+              onChange={(e) => {
+                 setFinancialYear(e.target.value);
+                 // If needed, update router payload in sessionStorage to match
+              }}
+              className="px-2 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all bg-black border border-white/10 text-white hover:bg-white/5 mr-2 outline-none appearance-none cursor-pointer"
+            >
+              <option value="2023-24">FY 2023-24</option>
+              <option value="2024-25">FY 2024-25</option>
+              <option value="2025-26">FY 2025-26</option>
+            </select>
             {(['Q1', 'Q2', 'Q3', 'Q4', 'ANNUAL'] as const).map((qId) => {
               const isActive = activeQuarter === qId;
               const activeClasses = "px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all bg-white/10 border border-brandGold text-brandGold shadow-[0_0_15px_rgba(255,215,0,0.1)]";

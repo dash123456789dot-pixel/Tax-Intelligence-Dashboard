@@ -35,12 +35,20 @@ export function formatINRDisplay(numericValue: any): string {
 // additionally derives family_pension_standard_deduction_inr = min(15000,
 // round(gross/3)) as a side effect.
 export function applyOSFieldUpdate(otherSources: any, field: string, rawVal: any): any {
-  const value = rawVal === '' ? null : parseINRCurrency(rawVal);
+  let value = rawVal;
+  if (typeof rawVal !== 'boolean') {
+    value = rawVal === '' ? null : parseINRCurrency(rawVal);
+  }
   let next = { ...otherSources, has_other_sources_income: true, [field]: value };
   if (field === 'family_pension_gross_inr') {
     const gross = value || 0;
     next.family_pension_standard_deduction_inr = Math.min(15000, Math.round(gross / 3));
   }
+  
+  if (next.gifts_exemption_marriage || next.gifts_exemption_relative) {
+    next.gifts_above_50k_inr = 0;
+  }
+  
   return next;
 }
 
@@ -99,6 +107,9 @@ export function computeVisibility(context: any): any {
 
 export function deriveAll(rawContext: any): any {
   const context = { ...rawContext };
+  if (context.other_sources.gifts_exemption_marriage || context.other_sources.gifts_exemption_relative) {
+    context.other_sources.gifts_above_50k_inr = 0;
+  }
   const visibility = computeVisibility(context);
   return { ...context, ui: { visibility } };
 }

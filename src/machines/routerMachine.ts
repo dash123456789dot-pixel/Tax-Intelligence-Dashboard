@@ -7,37 +7,30 @@ import {
 
 export const INITIAL_CONTEXT: RouterContext = {
   // Inputs — all null
+  primary_jurisdiction: null,
+  us_entity_type: null,
+  india_entity_type: null,
   base_tax_year: null,
   full_name: null,
   date_of_birth: null,
-  is_indian_citizen: null,
-  is_pio_or_oci: null,
-  india_days: null,
-  has_india_source_income_or_assets: null,
-  is_us_citizen: null,
-  has_green_card: null,
-  was_in_us_this_year: null,
-  us_days: null,
-  has_us_source_income_or_assets: null,
-  liable_to_tax_in_another_country: null,
-  left_india_for_employment_this_year: null,
-  tb_permanent_home: null,
-  tb_vital_interests: null,
-  tb_habitual_abode: null,
-  tb_nationality: null,
+
+  pan: null,
+  ssn: null,
+  us_entity_name: null,
+  us_formation_date: null,
+  ein: null,
+  india_entity_name: null,
+  india_formation_date: null,
+  corp_pan: null,
+  cin: null,
   // Derived
   india_flag: false,
   us_flag: false,
   jurisdiction: 'none',
-  is_statutory_dual_resident: false,
-  tie_breaker_winner: null,
   // Navigation
   currentQuestionIndex: 0,
   activeQuestions: [
-    'base_tax_year', 'full_name', 'date_of_birth', 'is_indian_citizen',
-    'india_days', 'has_india_source_income_or_assets',
-    'is_us_citizen', 'was_in_us_this_year',
-    'has_us_source_income_or_assets',
+    'primary_jurisdiction'
   ],
   isComplete: false,
 };
@@ -86,11 +79,18 @@ export const routerMachine = createMachine({
             return { ...updated, ...next, isComplete: isNowComplete };
           }),
         },
+        SET_STRING: {
+          actions: assign(({ context, event }) => {
+            const updated = { ...context, [event.fieldId]: event.value };
+            const next = recompute(updated as RouterContext);
+            return { ...updated, ...next };
+          }),
+        },
         SET_TEXT: {
           actions: assign(({ context, event }) => {
             console.log("SET_TEXT event received:", event);
             const updated = { ...context, [event.fieldId]: event.value };
-            console.log("Updated context base_tax_year:", updated.base_tax_year);
+            console.log(`Updated context ${event.fieldId}:`, updated[event.fieldId as keyof RouterContext]);
             return { ...updated, ...recompute(updated as RouterContext) };
           }),
         },

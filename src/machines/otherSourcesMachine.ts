@@ -32,6 +32,8 @@ export const initialOtherSourcesContext = {
     dividend_inr: null,                   // visible: os-dividend
     dividend_tds_inr: null,               // visible (collapsible): os-dividend-tds
     gifts_above_50k_inr: null,            // visible (conditional: hidden+auto-zeroed for Trust entities): os-gifts
+    gifts_exemption_marriage: false,
+    gifts_exemption_relative: false,
     local_authority_s10_20_inr: null,     // visible (conditional: entity === 'local'): os-local-authority
     spousal_clubbing_s64_inr: null,       // visible (conditional: individual only): os-spousal-clubbing
     minor_child_exemption_inr: null,      // visible (conditional: individual only): os-minor-child

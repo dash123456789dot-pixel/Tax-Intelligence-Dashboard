@@ -33,6 +33,40 @@ export type QuarterEvent =
   | { type: 'QUARTER.AUTO_FILL' }
   | { type: 'HYDRATE'; quarters: QuarterContext['quarters'] };
 
+function splitFlow(node: any): [any, any, any, any] {
+  if (node === null || node === undefined) return [null, null, null, null];
+  if (Array.isArray(node)) {
+    const out: [any[], any[], any[], any[]] = [[], [], [], []];
+    node.forEach((el) => {
+      const parts = splitFlow(el);
+      for (let i = 0; i < 4; i++) out[i].push(parts[i]);
+    });
+    return out;
+  }
+  if (typeof node === 'object') {
+    const out: [any, any, any, any] = [{}, {}, {}, {}];
+    for (const k in node) {
+      if (!Object.prototype.hasOwnProperty.call(node, k)) continue;
+      const v = node[k];
+      if (typeof v === 'number') {
+        const base = Math.floor(v / 4);
+        const rem = v - base * 3;
+        out[0][k] = base;
+        out[1][k] = base;
+        out[2][k] = base;
+        out[3][k] = rem;
+      } else if (typeof v === 'boolean' || typeof v === 'string') {
+        out[0][k] = out[1][k] = out[2][k] = out[3][k] = v;
+      } else {
+        const parts = splitFlow(v);
+        for (let i = 0; i < 4; i++) out[i][k] = parts[i];
+      }
+    }
+    return out;
+  }
+  return [node, node, node, node];
+}
+
 export const quarterMachine = setup({
   types: {
     context: {} as QuarterContext,
@@ -60,13 +94,13 @@ export const quarterMachine = setup({
     autoFillFromQ1: assign({
       quarters: ({ context }) => {
         const q1Data = context.quarters.Q1;
-        // Deep clone Q1 data to Q2, Q3, Q4
-        const clone = (data: any) => JSON.parse(JSON.stringify(data || {}));
+        const spread = splitFlow(q1Data);
         return {
           ...context.quarters,
-          Q2: clone(q1Data),
-          Q3: clone(q1Data),
-          Q4: clone(q1Data)
+          Q1: spread[0],
+          Q2: spread[1],
+          Q3: spread[2],
+          Q4: spread[3]
         };
       }
     }),

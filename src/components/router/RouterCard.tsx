@@ -15,6 +15,16 @@ import NumberQuestion from './questions/NumberQuestion';
 import { SelectQuestion } from './questions/SelectQuestion';
 import ResultScreen from './result/ResultScreen';
 
+// Custom Slides
+import JurisdictionSlide from './questions/JurisdictionSlide';
+import UsEntitySlide from './questions/UsEntitySlide';
+import IndiaEntitySlide from './questions/IndiaEntitySlide';
+import PersonalTaxIdsSlide from './questions/PersonalTaxIdsSlide';
+import UsBusinessDemographicsSlide from './questions/UsBusinessDemographicsSlide';
+import UsBusinessTaxIdsSlide from './questions/UsBusinessTaxIdsSlide';
+import IndiaBusinessDemographicsSlide from './questions/IndiaBusinessDemographicsSlide';
+import IndiaBusinessTaxIdsSlide from './questions/IndiaBusinessTaxIdsSlide';
+
 export default function RouterCard({ machine }: { machine: ReturnType<typeof useRouterMachine> }) {
   const { ctx, currentQuestionId, isComplete, progressPct, setBool, setInt, setText, setDate, advance, back, reset } = machine;
   
@@ -69,8 +79,12 @@ export default function RouterCard({ machine }: { machine: ReturnType<typeof use
               ) : currentDef ? (
                 <div className="w-full">
                   <div className="flex flex-col justify-start text-left mb-10">
-                    <span className="text-brandGold font-bold text-xs uppercase tracking-widest mb-3 block">
-                      Question {(ctx.currentQuestionIndex + 1).toString().padStart(2, '0')}
+                    <span className={`font-bold text-xs uppercase tracking-widest mb-3 block ${
+                      currentDef.labelColor === 'brandCyan' ? 'text-brandCyan' : 
+                      currentDef.labelColor === 'brandGold' ? 'text-brandGold' : 
+                      'text-white/40'
+                    }`}>
+                      {currentDef.questionLabel || `Question ${(ctx.currentQuestionIndex + 1).toString().padStart(2, '0')}`}
                     </span>
                     <h2 className="text-3xl lg:text-4xl font-bold text-white tracking-tight font-display">
                       {currentDef.heading}
@@ -105,7 +119,7 @@ export default function RouterCard({ machine }: { machine: ReturnType<typeof use
                     <DateQuestion 
                       def={currentDef} 
                       value={ctx[currentQuestionId as keyof typeof ctx] as string | null} 
-                      onChange={(val) => setDate(val)} 
+                      onChange={(val) => setDate(currentQuestionId as any, val)} 
                       onAdvance={advance}
                     />
                   )}
@@ -124,6 +138,49 @@ export default function RouterCard({ machine }: { machine: ReturnType<typeof use
                       onChange={(val) => setText(currentQuestionId as any, val)}
                       onContinue={advance}
                     />
+                  )}
+                  {currentDef.type === 'custom' && (
+                    <>
+                      {currentQuestionId === 'primary_jurisdiction' && (
+                        <JurisdictionSlide 
+                          def={currentDef}
+                          value={ctx.primary_jurisdiction}
+                          onChange={(val) => setText('primary_jurisdiction', val)}
+                          onAdvance={advance}
+                        />
+                      )}
+                      {currentQuestionId === 'us_entity_type' && (
+                        <UsEntitySlide 
+                          def={currentDef}
+                          value={ctx.us_entity_type}
+                          onChange={(val) => setText('us_entity_type', val)}
+                          onAdvance={advance}
+                        />
+                      )}
+                      {currentQuestionId === 'india_entity_type' && (
+                        <IndiaEntitySlide 
+                          def={currentDef}
+                          value={ctx.india_entity_type}
+                          onChange={(val) => setText('india_entity_type', val)}
+                          onAdvance={advance}
+                        />
+                      )}
+                      {currentQuestionId === 'personal_tax_ids' && (
+                        <PersonalTaxIdsSlide machine={machine} onAdvance={advance} />
+                      )}
+                      {currentQuestionId === 'us_business_demographics' && (
+                        <UsBusinessDemographicsSlide machine={machine} onAdvance={advance} />
+                      )}
+                      {currentQuestionId === 'us_business_tax_ids' && (
+                        <UsBusinessTaxIdsSlide machine={machine} onAdvance={advance} />
+                      )}
+                      {currentQuestionId === 'india_business_demographics' && (
+                        <IndiaBusinessDemographicsSlide machine={machine} onAdvance={advance} />
+                      )}
+                      {currentQuestionId === 'india_business_tax_ids' && (
+                        <IndiaBusinessTaxIdsSlide machine={machine} onAdvance={advance} />
+                      )}
+                    </>
                   )}
                 </div>
               ) : null}

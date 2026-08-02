@@ -25,6 +25,7 @@ export const initialResidencyContext: Omit<ResidencyContext, 'ui'> = {
     liable_to_tax_in_another_country_being_indian_citizen: false,
     us_person_certified_to_bank: null,
     final_india_residency_status: 'ROR',
+    dtaa_worldwide_ceded: false,
   },
 
   company_residency: {

@@ -221,6 +221,7 @@ export function defaultCommodity(id: string): CommodityTx {
 export interface UnlistedTx {
   id: string;
   company_name: string;
+  linked_client_id: string | null;
   acquisition_date: string | null;
   cost_per_share: number | null;
   cost_per_share_currency: string;
@@ -237,6 +238,7 @@ export function defaultUnlisted(id: string): UnlistedTx {
   return {
     id,
     company_name: '',
+    linked_client_id: null,
     acquisition_date: null,
     cost_per_share: null,
     cost_per_share_currency: 'INR',

@@ -20,10 +20,12 @@ export function useFormDraft<T>(quarterType: string, financialYear: string, init
         const dbRes = await fetchWithAuth(`/api/v1/layer1/db/${quarterType}?financial_year=${financialYear}`);
         const dbData = await dbRes.json();
 
-        // 2. Try localStorage draft
+        // 2. Try sessionStorage draft
         let localData = null;
         try {
-          const localStr = localStorage.getItem(localKey);
+          const uId = sessionStorage.getItem("userId") || "admin-01";
+          const localKey = `layer1_draft_${uId}_${quarterType}_${financialYear}`;
+          const localStr = sessionStorage.getItem(localKey);
           if (localStr) {
             localData = JSON.parse(localStr);
           }
@@ -86,10 +88,12 @@ export function useFormDraft<T>(quarterType: string, financialYear: string, init
       if (JSON.stringify(newData) !== JSON.stringify(prevDataRef.current)) {
         setSaving(true);
         try {
-          localStorage.setItem(localKey, JSON.stringify(newData));
+          const uId = sessionStorage.getItem("userId") || "admin-01";
+          const dynamicLocalKey = `layer1_draft_${uId}_${quarterType}_${financialYear}`;
+          sessionStorage.setItem(dynamicLocalKey, JSON.stringify(newData));
           prevDataRef.current = newData;
         } catch (err) {
-          console.error("Failed to save draft to localStorage", err);
+          console.error("Failed to save draft to sessionStorage", err);
         } finally {
           setSaving(false);
         }
@@ -117,8 +121,33 @@ export function useFormDraft<T>(quarterType: string, financialYear: string, init
     }
   };
 
-  const submitFinal = async () => {
-    // Kept for signature compatibility, unused now
+  const submitFinal = async (allData: any) => {
+    try {
+      if (!allData || !allData.quarters) return;
+      
+      const quarters = Object.keys(allData.quarters);
+      for (const q of quarters) {
+        const qData = allData.quarters[q];
+        if (!qData) continue;
+        
+        const steps = Object.keys(qData);
+        for (const stepId of steps) {
+          try {
+            await fetchWithAuth(`/api/v1/layer1/submit/${stepId}/${q}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ financial_year: financialYear, data: qData[stepId] }),
+            });
+            console.log(`Step ${stepId} for quarter ${q} submitted successfully.`);
+          } catch (err) {
+            console.error(`Failed to submit data for step ${stepId} in quarter ${q}`, err);
+          }
+        }
+      }
+    } catch(e) {
+      console.error("Final submit failed", e);
+      throw e;
+    }
   };
 
   return { data, updateData, submitFinal, submitStep, loading, saving };

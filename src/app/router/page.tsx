@@ -1,4 +1,5 @@
 import RouterShell from '@/components/router/RouterShell';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export const metadata = {
   title: 'WISING Wealth Intelligence - Jurisdiction Router',
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function RouterPage() {
-  return <RouterShell />;
+  return (
+    <ProtectedRoute>
+      <RouterShell />
+    </ProtectedRoute>
+  );
 }

@@ -1,4 +1,4 @@
-export type QuestionType = 'bool' | 'text' | 'date' | 'number' | 'select';
+export type QuestionType = 'bool' | 'text' | 'date' | 'number' | 'select' | 'custom';
 
 export interface SelectOption {
   value: string;
@@ -11,22 +11,40 @@ export interface QuestionDef {
   heading: string;
   footnote?: string;
   questionLabel?: string;
-  labelColor?: 'brandGold' | 'brandCyan';
+  labelColor?: 'brandGold' | 'brandCyan' | 'brandPurple';
   options?: SelectOption[]; // For 'select' type
 }
 
 export const ROUTER_QUESTIONS: Record<string, QuestionDef> = {
+  primary_jurisdiction: {
+    id: 'primary_jurisdiction',
+    type: 'custom',
+    heading: 'Which jurisdictions are involved?',
+    questionLabel: 'Setup: Step 1',
+    labelColor: 'brandGold',
+  },
+  us_entity_type: {
+    id: 'us_entity_type',
+    type: 'custom',
+    heading: 'Select the US Entity Structure',
+    questionLabel: 'Setup: US Entity',
+    labelColor: 'brandCyan',
+  },
+  india_entity_type: {
+    id: 'india_entity_type',
+    type: 'custom',
+    heading: 'Select the India Entity Structure',
+    questionLabel: 'Setup: India Entity',
+    labelColor: 'brandGold',
+  },
   base_tax_year: {
     id: 'base_tax_year',
     type: 'select',
     heading: 'Which Tax Year are you filing for?',
-    footnote: 'Select the primary tax year for this assessment.',
+    footnote: 'This establishes the baseline calendar for both the US (Jan-Dec) and Indian (Apr-Mar) tax engines.',
+    questionLabel: 'Question 00',
     options: [
-      { value: '2022', label: '2022 (US TY22 / India FY22-23)' },
-      { value: '2023', label: '2023 (US TY23 / India FY23-24)' },
-      { value: '2024', label: '2024 (US TY24 / India FY24-25)' },
-      { value: '2025', label: '2025 (US TY25 / India FY25-26)' },
-      { value: '2026', label: '2026 (US TY26 / India FY26-27)' }
+      { value: '2026', label: '2026 (US TY26 / India TY26-27)' }
     ],
     labelColor: 'brandGold',
   },
@@ -35,12 +53,16 @@ export const ROUTER_QUESTIONS: Record<string, QuestionDef> = {
     type: 'text',
     heading: 'What is your full name?',
     footnote: 'Flag Role: Personal information synced to Specialist compliance workspaces.',
+    questionLabel: 'Question 01a',
+    labelColor: 'brandGold',
   },
   date_of_birth: {
     id: 'date_of_birth',
     type: 'date',
     heading: 'What is your date of birth?',
     footnote: 'Flag Role: Personal information synced to Specialist compliance workspaces.',
+    questionLabel: 'Question 01b',
+    labelColor: 'brandGold',
   },
   is_indian_citizen: {
     id: 'is_indian_citizen',
@@ -130,55 +152,36 @@ export const ROUTER_QUESTIONS: Record<string, QuestionDef> = {
     questionLabel: 'Question 09 (Pass-Through)',
     labelColor: 'brandGold',
   },
-  tb_permanent_home: {
-    id: 'tb_permanent_home',
-    type: 'select',
-    heading: 'Where do you have a permanent home available to you?',
-    footnote: 'DTAA Tie-Breaker Step 1 (Article 4). A permanent home is arranged and retained for your continuous use.',
-    options: [
-      { value: 'india', label: 'India Only' },
-      { value: 'us', label: 'US Only' },
-      { value: 'both', label: 'Both Countries' },
-      { value: 'neither', label: 'Neither Country' }
-    ],
-    labelColor: 'brandCyan',
+  personal_tax_ids: {
+    id: 'personal_tax_ids',
+    type: 'custom',
+    heading: 'Enter Personal Tax IDs',
+    questionLabel: 'Personal Tax Identifiers',
+    labelColor: 'brandGold', // It's white/40 in HTML, but we'll adapt in the UI
   },
-  tb_vital_interests: {
-    id: 'tb_vital_interests',
-    type: 'select',
-    heading: 'Where is your center of vital interests?',
-    footnote: 'DTAA Tie-Breaker Step 2. Where are your closest personal and economic relations?',
-    options: [
-      { value: 'india', label: 'Closer to India' },
-      { value: 'us', label: 'Closer to the US' },
-      { value: 'undetermined', label: 'Cannot be determined' }
-    ],
-    labelColor: 'brandCyan',
+  us_business_demographics: {
+    id: 'us_business_demographics',
+    type: 'custom',
+    heading: 'US Entity Details',
+    questionLabel: 'US Entity Demographics',
   },
-  tb_habitual_abode: {
-    id: 'tb_habitual_abode',
-    type: 'select',
-    heading: 'Where do you have an habitual abode?',
-    footnote: 'DTAA Tie-Breaker Step 3. In which country do you live more habitually/routinely?',
-    options: [
-      { value: 'india', label: 'India' },
-      { value: 'us', label: 'United States' },
-      { value: 'both', label: 'Both / Undetermined' },
-      { value: 'neither', label: 'Neither' }
-    ],
-    labelColor: 'brandCyan',
+  us_business_tax_ids: {
+    id: 'us_business_tax_ids',
+    type: 'custom',
+    heading: 'US Business Tax IDs',
+    questionLabel: 'US Business Tax Identifiers',
   },
-  tb_nationality: {
-    id: 'tb_nationality',
-    type: 'select',
-    heading: 'What is your nationality / citizenship?',
-    footnote: 'DTAA Tie-Breaker Step 4. Usually decided by mutual agreement if dual national.',
-    options: [
-      { value: 'india', label: 'Indian Citizen' },
-      { value: 'us', label: 'US Citizen' },
-      { value: 'other', label: 'Other / Dual' }
-    ],
-    labelColor: 'brandCyan',
+  india_business_demographics: {
+    id: 'india_business_demographics',
+    type: 'custom',
+    heading: 'Indian Entity Details',
+    questionLabel: 'Indian Entity Demographics',
+  },
+  india_business_tax_ids: {
+    id: 'india_business_tax_ids',
+    type: 'custom',
+    heading: 'Indian Business Tax IDs',
+    questionLabel: 'Indian Business Tax Identifiers',
   }
 };
 

@@ -11,7 +11,9 @@ interface Layer1ContextType {
   quarterActor: any;
   ctx: any; // Add specific types as you evolve
   submitStep: (stepId: string, stepData: any) => Promise<void>;
+  submitFinal: (allData: any) => Promise<void>;
   financialYear: string;
+  setFinancialYear: (year: string) => void;
 }
 
 const Layer1IndiaContext = createContext<Layer1ContextType | null>(null);
@@ -58,7 +60,7 @@ export function Layer1IndiaProvider({ children, initialProfile }: { children: Re
   }, []);
 
   // Load from Draft / Auto-save using dynamic financialYear
-  const { data: draftData, updateData, loading, submitStep } = useFormDraft("ALL", financialYear, {});
+  const { data: draftData, updateData, loading, submitStep, submitFinal } = useFormDraft("ALL", financialYear, {});
 
   const [hasHydrated, setHasHydrated] = useState(false);
 
@@ -123,7 +125,7 @@ export function Layer1IndiaProvider({ children, initialProfile }: { children: Re
   }, [hasHydrated, sidebarActor, quarterActor, updateData]);
 
   return (
-    <Layer1IndiaContext.Provider value={{ sidebarActor, quarterActor, ctx, submitStep, financialYear }}>
+    <Layer1IndiaContext.Provider value={{ sidebarActor, quarterActor, ctx, submitStep, submitFinal, financialYear, setFinancialYear }}>
       {loading ? (
         <div className="flex h-screen items-center justify-center text-white/40">Loading your draft...</div>
       ) : (
